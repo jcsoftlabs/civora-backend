@@ -1,7 +1,6 @@
 import { error, fail } from "@sveltejs/kit";
 import { ApiFailure, api } from "$lib/server/api";
 import { currentSession } from "$lib/server/session";
-import { uploadFile } from "$lib/server/upload";
 import { fromPartyLocal } from "$lib/datetime";
 import { audienceFrom, type StoredAudience } from "./audience";
 import type { Actions, PageServerLoad, RequestEvent } from "./$types";
@@ -111,10 +110,8 @@ export const actions: Actions = {
   savePublication: (event) =>
     act(event, async (f, token, ip) => {
       const media: string[] = [];
-      for (const file of f.getAll("media")) {
-        if (file instanceof File && file.size > 0)
-          media.push(await uploadFile(file, "publication_media", { token, ip }));
-      }
+      // Médias déjà déposés par le navigateur (envoi direct) ; l'API vérifie qu'ils sont prêts et du bon usage.
+      for (const id of f.getAll("mediaFileIds").map(String)) if (/^[0-9a-f-]{36}$/i.test(id)) media.push(id);
       const body = {
         kind: text(f, "kind"),
         title: i18n(f, "title"),

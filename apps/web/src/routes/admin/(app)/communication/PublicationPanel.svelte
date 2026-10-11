@@ -8,6 +8,7 @@
   import { enhance } from "$app/forms";
   import { Button, Field, SidePanel } from "@civora/ui";
   import DateTimeField from "$lib/components/DateTimeField.svelte";
+  import { UploadError, uploadDirect } from "$lib/upload-client";
   import { format, translator, type MessageKey } from "$lib/i18n";
   import AudienceBuilder from "./AudienceBuilder.svelte";
   import type { Publication } from "./+page.server";
@@ -30,6 +31,27 @@
   let kind = $derived(p?.kind ?? "announcement");
   let scheduling = $state(false);
   const KINDS = ["announcement", "news", "editorial", "podcast", "album"] as const;
+
+  // Médias envoyés directement au stockage (un podcast peut peser 100 Mo : il ne passe pas par le serveur web).
+  let mediaIds = $state<string[]>([]);
+  let progress = $state<number | null>(null);
+  let uploadError = $state<string | null>(null);
+  async function pickMedia(e: Event & { currentTarget: HTMLInputElement }) {
+    const files = [...(e.currentTarget.files ?? [])];
+    uploadError = null;
+    const ids: string[] = [];
+    try {
+      for (const [i, file] of files.entries()) {
+        progress = i / files.length;
+        ids.push(await uploadDirect(file, "publication_media", (x) => (progress = (i + x) / files.length)));
+      }
+      mediaIds = ids;
+    } catch (err) {
+      uploadError = tk(`error.${err instanceof UploadError ? err.code : "upload_failed"}`);
+    } finally {
+      progress = null;
+    }
+  }
   const online = $derived(!!p?.publishedAt && new Date(p.publishedAt) <= new Date());
   const message = $derived(
     form?.code
@@ -55,7 +77,7 @@
   closeLabel={t("admin.sheet.close")}
   {onclose}
 >
-  <form method="POST" action="?/savePublication" enctype="multipart/form-data" use:enhance={submit} class="stack">
+  <form method="POST" action="?/savePublication" use:enhance={submit} class="stack">
     {#if message}<p class="msg" class:bad={message.bad} role="status">{message.text}</p>{/if}
     {#if p}<input type="hidden" name="id" value={p.id} />{/if}
 
@@ -85,10 +107,25 @@
         <span>{t("admin.pub.media")}</span>
         <input
           type="file"
-          name="media"
           multiple={kind === "album"}
           accept={kind === "album" ? "image/jpeg,image/png,image/webp" : "audio/mpeg,audio/mp4,audio/aac,audio/x-m4a"}
+          onchange={pickMedia}
         />
+        {#each mediaIds as id (id)}<input type="hidden" name="mediaFileIds" value={id} />{/each}
+        {#if progress !== null}
+          <span
+            class="bar"
+            role="progressbar"
+            aria-valuenow={Math.round(progress * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            <span style:width="{Math.round(progress * 100)}%"></span>
+          </span>
+        {:else if mediaIds.length}
+          <small class="ok">{format(t("admin.pub.media.count"), { n: String(mediaIds.length) })}</small>
+        {/if}
+        {#if uploadError}<small class="err">{uploadError}</small>{/if}
         <small>{t(kind === "album" ? "admin.pub.media.album" : "admin.pub.media.podcast")}</small>
         {#if p}<small>{t("admin.pub.media.replace")}</small>{/if}
       </label>
@@ -191,6 +228,25 @@
     gap: var(--s-2);
     font-size: var(--fs-14);
     font-weight: 600;
+  }
+  .bar {
+    display: block;
+    height: 8px;
+    border-radius: var(--r-pill);
+    background: var(--c-line-soft);
+    overflow: hidden;
+  }
+  .bar span {
+    display: block;
+    height: 100%;
+    background: var(--c-primary);
+  }
+  .area small.ok {
+    color: var(--c-success-text);
+    font-weight: 600;
+  }
+  .area small.err {
+    color: var(--c-danger-text);
   }
   .area small {
     font-weight: 400;
