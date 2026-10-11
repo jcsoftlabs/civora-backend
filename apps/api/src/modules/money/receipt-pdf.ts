@@ -44,6 +44,19 @@ const LABELS = {
 } as const;
 
 /** Reçu PDF A5, une page : en-tête du parti, membre, lignes de cotisation, total. */
+/** Date et heure du reçu à l'heure d'Haïti, sur 12 heures avec AM ou PM : « 11 octobre 2026 à 8:41 PM ». */
+export function issuedAt(iso: string): string {
+  return new Intl.DateTimeFormat("fr-FR", {
+    timeZone: "America/Port-au-Prince",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(new Date(iso));
+}
+
 export function receiptPdf(r: ReceiptView, lang: MessageLocale): Promise<Buffer> {
   const t = LABELS[lang];
   return new Promise((resolve, reject) => {
@@ -59,7 +72,7 @@ export function receiptPdf(r: ReceiptView, lang: MessageLocale): Promise<Buffer>
       doc.font("Helvetica-Bold").fontSize(9).text(label, { continued: true }).font("Helvetica").text(`  ${value}`);
     };
     row(t.number, r.number);
-    row(t.date, r.issuedAt.slice(0, 10));
+    row(t.date, issuedAt(r.issuedAt));
     row(t.member, `${r.member.name} (${r.member.number})`);
     row(t.method, t.methods[r.provider] ?? r.provider);
     if (r.recordedBy) row(t.recordedBy, r.recordedBy);

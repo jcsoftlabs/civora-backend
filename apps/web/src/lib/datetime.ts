@@ -14,7 +14,7 @@ const FULL = fmt({ day: "numeric", month: "long", year: "numeric", hour: "numeri
 export const formatTime = (d: Date | string) => TIME.format(new Date(d));
 /** « 17 oct., 9:00 AM » */
 export const formatDayTime = (d: Date | string) => DAY_TIME.format(new Date(d));
-/** « 17 octobre 2026, 9:00 AM » */
+/** « 17 octobre 2026 à 9:00 AM » */
 export const formatDateTime = (d: Date | string) => FULL.format(new Date(d));
 
 /** Décalage d'Haïti à cet instant, en minutes (−300 l'hiver, −240 l'été). */

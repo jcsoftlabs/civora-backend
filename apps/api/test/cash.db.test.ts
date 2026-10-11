@@ -244,3 +244,11 @@ describe("reçus et historique", () => {
     expect((await call("GET", "/payments/summary", marie.token)).statusCode).toBe(403);
   });
 });
+
+describe("date du reçu", () => {
+  it("à l'heure d'Haïti, sur 12 heures : un soir en Haïti n'est pas le lendemain", async () => {
+    const { issuedAt } = await import("../src/modules/money/receipt-pdf.js");
+    expect(issuedAt("2026-10-12T01:41:00.000Z")).toBe("11 octobre 2026 à 9:41 PM");
+    expect(issuedAt("2026-01-15T14:05:00.000Z")).toBe("15 janvier 2026 à 9:05 AM");
+  });
+});
