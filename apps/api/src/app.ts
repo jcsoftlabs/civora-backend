@@ -9,13 +9,14 @@ import type { Config } from "./config.js";
 import { randomBytes } from "node:crypto";
 import { EntitlementsCache, fetchEntitlements } from "./lib/entitlements.js";
 import { LazyKeyProvider } from "./lib/lazy-key-provider.js";
-import { LogEmailSender, ResendEmailSender } from "./lib/messaging/email.js";
+import { LogEmailSender, ResendEmailSender, type EmailSender } from "./lib/messaging/email.js";
 import { createSmsSender } from "./lib/messaging/sms.js";
 import { PartyKeys } from "./lib/party-keys.js";
 import auditRoutes from "./modules/audit/routes.js";
 import authRoutes from "./modules/auth/routes.js";
 import territoryRoutes from "./modules/territory/routes.js";
 import organRoutes from "./modules/organs/routes.js";
+import { ApplicationsService } from "./modules/members/applications.js";
 import { IdentityService } from "./modules/members/identity.js";
 import memberRoutes from "./modules/members/routes.js";
 import { MembersService } from "./modules/members/service.js";
@@ -32,6 +33,7 @@ export interface AppDeps {
   auth?: AuthService;
   /** Partagées par l'authentification (2FA) et les pièces d'identité. */
   keys?: PartyKeys;
+  email?: EmailSender;
 }
 
 export async function buildApp(config: Config, deps: AppDeps = {}) {
@@ -78,14 +80,15 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   await app.register(tenant, { entitlements: deps.entitlements ?? new EntitlementsCache(fetchEntitlements) });
 
   const keys = deps.keys ?? new PartyKeys(new LazyKeyProvider());
+  const emailSender = config.RESEND_API_KEY
+    ? new ResendEmailSender(config.RESEND_API_KEY, config.RESEND_FROM)
+    : new LogEmailSender(app.log);
   const authService =
     deps.auth ??
     new AuthService({
       // Hors production, un secret aléatoire par processus suffit (les codes en cours expirent au redémarrage).
       secret: config.AUTH_SECRET ? Buffer.from(config.AUTH_SECRET) : randomBytes(32),
-      email: config.RESEND_API_KEY
-        ? new ResendEmailSender(config.RESEND_API_KEY, config.RESEND_FROM)
-        : new LogEmailSender(app.log),
+      email: emailSender,
       sms: createSmsSender(config.SMS_PROVIDER, app.log),
       keys,
     });
@@ -94,7 +97,10 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   await app.register(auditRoutes);
   await app.register(territoryRoutes);
   await app.register(organRoutes);
-  await app.register(memberRoutes, { members: new MembersService(authService, new IdentityService(keys)) });
+  await app.register(memberRoutes, {
+    members: new MembersService(authService, new IdentityService(keys)),
+    applications: new ApplicationsService(deps.email ?? emailSender),
+  });
 
   app.get("/health", async () => ({ ok: true }));
 

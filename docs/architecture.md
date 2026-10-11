@@ -76,6 +76,8 @@ await withParty(ctx.partyId, async (tx) => {
 - Pièce d'identité chiffrée dès l'adhésion ; un numéro déjà présent dans le parti est refusé sans dire à qui il appartient. Numéro de membre séquentiel par parti, sous verrou (pas de doublon). Un compte n'adhère qu'à un parti.
 - Fiche : le membre lit et corrige la sienne ; un responsable la lit avec `members.read` et la modifie (statut, catégorie, étiquettes) avec `members.write`, dans sa zone. La valeur d'une pièce n'apparaît jamais dans la fiche : lecture dédiée, `identity.read`, auditée.
 - Statuts (ADH-03) : libellés du parti en français et en créole, rang ; créés et modifiés avec `settings.party`, audités.
+- Validation (ADH-06) : file des demandes en attente limitée à la zone du responsable (`members.approve`), décision et note auditées, e-mail au membre dans sa langue ; le motif d'un rejet reste au journal et n'est jamais envoyé.
+- Export (ADH-12) : CSV (point-virgule et BOM UTF-8 pour Excel en français), Excel ou PDF, filtres (adhésion, zone, statut, étiquettes, diaspora). Portée imposée en SQL (`zoneScope`) : un filtre sur une autre zone ne donne rien de plus. Jamais de pièce d'identité ; formules neutralisées (injection CSV) ; 50 000 lignes au plus en direct (au-delà, job à venir) ; 10 exports par heure et par session ; chaque export audité avec format, filtres et volume, sans aucune donnée de membre.
 
 ## 4. Données sensibles
 

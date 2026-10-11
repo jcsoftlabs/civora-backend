@@ -37,3 +37,33 @@ export const OTP_MESSAGES: Record<MessageLocale, OtpMessage> = {
 export function messageLocale(locale: string | null | undefined): MessageLocale {
   return locale === "ht" ? "ht" : "fr";
 }
+
+interface ApplicationMessage {
+  approvedSubject: (party: string) => string;
+  approvedText: (party: string, number: string) => string;
+  rejectedSubject: (party: string) => string;
+  rejectedText: (party: string) => string;
+}
+
+/** Décision sur une adhésion (ADH-06). Le motif d'un rejet n'est jamais envoyé : il reste interne au parti. */
+export const APPLICATION_MESSAGES: Record<MessageLocale, ApplicationMessage> = {
+  fr: {
+    approvedSubject: (party) => `Votre adhésion à ${party} est validée`,
+    approvedText: (party, number) =>
+      `Bienvenue. Votre adhésion à ${party} est validée.\n\nVotre numéro de membre : ${number}\n\n` +
+      `Ouvrez l'application pour retrouver votre carte et les prochains rassemblements.`,
+    rejectedSubject: (party) => `Votre demande d'adhésion à ${party}`,
+    rejectedText: (party) =>
+      `Votre demande d'adhésion à ${party} n'a pas été retenue.\n\n` +
+      `Pour en savoir plus, contactez le responsable de votre section.`,
+  },
+  ht: {
+    approvedSubject: (party) => `Yo valide adezyon ou nan ${party}`,
+    approvedText: (party, number) =>
+      `Byenvini. Yo valide adezyon ou nan ${party}.\n\nNimewo manm ou : ${number}\n\n` +
+      `Louvri aplikasyon an pou w jwenn kat ou ak pwochen rasanbleman yo.`,
+    rejectedSubject: (party) => `Demann adezyon ou nan ${party}`,
+    rejectedText: (party) =>
+      `Yo pa aksepte demann adezyon ou nan ${party}.\n\n` + `Pou plis enfòmasyon, kontakte responsab seksyon ou.`,
+  },
+};

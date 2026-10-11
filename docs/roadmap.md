@@ -31,7 +31,7 @@ Jalon : NOU migré sans perte, tests d'isolation réussis entre deux partis fict
 
 ### Membres et argent
 - [ ] Inscription mobile, fiche membre, statuts configurables, mode d'adhésion (ADH-01 à ADH-04) : API faite ; photo (stockage R2) et écrans mobiles à faire
-- [ ] Validation des adhésions, export journalisé (ADH-06, ADH-12)
+- [x] Validation des adhésions, export journalisé (ADH-06, ADH-12)
 - [ ] Formules de cotisation, échéances (FIN-03, FIN-05)
 - [ ] MonCash, NatCash, KashPaw : webhooks, job de vérification, idempotence, comptes marchands du parti (FIN-01, FIN-12)
 - [ ] Saisie des espèces par un trésorier, reçu (FIN-10)

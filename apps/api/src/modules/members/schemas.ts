@@ -52,3 +52,10 @@ export const admissionUpdate = z.object({ admissionMode: z.enum(ADMISSION_MODES)
 export const idParam = z.object({ id: z.string().uuid() });
 export const identityParam = z.object({ id: z.string().uuid(), identityId: z.string().uuid() });
 export const slugParam = z.object({ slug });
+
+export const decisionBody = z.object({
+  score: z.number().int().min(0).max(100).optional(),
+  /** Motif interne au parti : au journal d'audit, jamais envoyé au candidat. */
+  reason: z.string().trim().max(500).optional(),
+});
+export const scoreBody = z.object({ score: z.number().int().min(0).max(100) });
