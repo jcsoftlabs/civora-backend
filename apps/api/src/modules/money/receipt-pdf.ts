@@ -46,15 +46,20 @@ const LABELS = {
 /** Reçu PDF A5, une page : en-tête du parti, membre, lignes de cotisation, total. */
 /** Date et heure du reçu à l'heure d'Haïti, sur 12 heures avec AM ou PM : « 11 octobre 2026 à 8:41 PM ». */
 export function issuedAt(iso: string): string {
-  return new Intl.DateTimeFormat("fr-FR", {
-    timeZone: "America/Port-au-Prince",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  }).format(new Date(iso));
+  return (
+    new Intl.DateTimeFormat("fr-FR", {
+      timeZone: "America/Port-au-Prince",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+      .format(new Date(iso))
+      // Espace normale avant AM / PM, quelle que soit la version de Node (ICU).
+      .replace(/[\u202f\u00a0]/g, " ")
+  );
 }
 
 export function receiptPdf(r: ReceiptView, lang: MessageLocale): Promise<Buffer> {

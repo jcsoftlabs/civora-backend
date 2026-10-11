@@ -3,8 +3,16 @@
 
 export const PARTY_TIME_ZONE = "America/Port-au-Prince";
 
-const fmt = (opts: Intl.DateTimeFormatOptions) =>
-  new Intl.DateTimeFormat("fr-FR", { timeZone: PARTY_TIME_ZONE, ...opts });
+/**
+ * Espaces normalisés : selon la version de Node ou du navigateur (ICU), « 9:00 AM » s'écrit avec une espace
+ * fine insécable (U+202F) ou normale. Une seule forme évite les écarts entre rendu serveur et navigateur.
+ */
+const spaces = (s: string) => s.replace(/[\u202f\u00a0]/g, " ");
+
+const fmt = (opts: Intl.DateTimeFormatOptions) => {
+  const f = new Intl.DateTimeFormat("fr-FR", { timeZone: PARTY_TIME_ZONE, ...opts });
+  return { format: (d: Date) => spaces(f.format(d)) };
+};
 
 const TIME = fmt({ hour: "numeric", minute: "2-digit", hour12: true });
 const DAY_TIME = fmt({ day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true });
@@ -59,4 +67,4 @@ export function toPartyLocal(d: Date | string | null | undefined): string {
 
 /** Format libre à l'heure d'Haïti (dates seules comprises : un soir en Haïti est déjà le lendemain en UTC). */
 export const partyFormat = (opts: Intl.DateTimeFormatOptions) =>
-  new Intl.DateTimeFormat("fr-FR", { timeZone: PARTY_TIME_ZONE, ...(opts.hour ? { hour12: true } : {}), ...opts });
+  fmt({ ...(opts.hour ? { hour12: true } : {}), ...opts });
