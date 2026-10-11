@@ -202,10 +202,50 @@
     color: var(--c-surface);
     background: color-mix(in srgb, var(--c-surface) 8%, transparent);
   }
+  /*
+   * Module ouvert : un onglet de classeur. La tuile prend le papier de la page et s'y raccorde par deux arrondis
+   * inversés ; l'icône passe à la couleur du parti. On voit d'où sort la page affichée.
+   */
+  ul {
+    align-self: stretch;
+  }
+  li {
+    display: flex;
+    justify-content: center;
+  }
+  li:has(a[aria-current="page"]) {
+    justify-content: flex-end;
+  }
   a[aria-current="page"] {
-    color: var(--c-surface);
-    background: color-mix(in srgb, var(--c-surface) 12%, transparent);
-    box-shadow: inset 3px 0 0 var(--c-accent-bright);
+    position: relative;
+    width: 60px;
+    border-radius: 14px 0 0 14px;
+    background: var(--c-paper);
+    color: var(--c-primary);
+  }
+  a[aria-current="page"]:hover {
+    background: var(--c-paper);
+    color: var(--c-primary);
+  }
+  a[aria-current="page"]::before,
+  a[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+  }
+  a[aria-current="page"]::before {
+    top: -14px;
+    background: radial-gradient(circle at 0 0, transparent 14px, var(--c-paper) 14.5px);
+  }
+  a[aria-current="page"]::after {
+    bottom: -14px;
+    background: radial-gradient(circle at 0 100%, transparent 14px, var(--c-paper) 14.5px);
+  }
+  a[aria-current="page"] svg {
+    stroke-width: 2;
   }
   a:focus-visible,
   .avatar:focus-visible {
@@ -333,8 +373,33 @@
     .me {
       flex: none;
     }
+    /* Téléphone : l'onglet descend du bord supérieur de la barre, raccordé à la page au-dessus. */
+    ul {
+      align-self: stretch;
+      align-items: flex-start;
+    }
+    li,
+    li:has(a[aria-current="page"]) {
+      justify-content: center;
+    }
     a[aria-current="page"] {
-      box-shadow: inset 0 -3px 0 var(--c-accent-bright);
+      width: 50px;
+      height: 52px;
+      border-radius: 0 0 14px 14px;
+    }
+    a[aria-current="page"]::before,
+    a[aria-current="page"]::after {
+      top: 0;
+      bottom: auto;
+    }
+    a[aria-current="page"]::before {
+      right: auto;
+      left: -14px;
+      background: radial-gradient(circle at 0 100%, transparent 14px, var(--c-paper) 14.5px);
+    }
+    a[aria-current="page"]::after {
+      right: -14px;
+      background: radial-gradient(circle at 100% 100%, transparent 14px, var(--c-paper) 14.5px);
     }
     .menu {
       left: auto;
