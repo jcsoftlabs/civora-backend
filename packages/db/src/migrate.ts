@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
+import { syncZones } from "./zones.js";
 
 // Migrations avec le rôle propriétaire, puis réapplication des politiques RLS.
 // Connexion directe obligatoire : PgBouncer en mode transaction casse les DDL multi-instructions et les verrous.
@@ -20,5 +21,6 @@ await owner.unsafe(readFileSync(new URL("../sql/roles.sql", import.meta.url), "u
 await migrate(drizzle(owner), { migrationsFolder: new URL("../migrations", import.meta.url).pathname });
 await owner.unsafe(readFileSync(new URL("../sql/rls.sql", import.meta.url), "utf8"));
 await owner.unsafe(readFileSync(new URL("../sql/audit.sql", import.meta.url), "utf8"));
+const zoneCount = await syncZones(owner); // SOC-05 : référentiel territorial
 await owner.end();
-console.log("Migrations et politiques RLS appliquées.");
+console.log(`Migrations et politiques RLS appliquées, ${zoneCount} zones à jour.`);

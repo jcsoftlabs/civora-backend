@@ -1,0 +1,413 @@
+{
+  "source": "Liste tenue par civora : pays et villes de la diaspora haïtienne. À compléter à la demande des partis.",
+  "zones": [
+    {
+      "code": "DIA",
+      "level": "diaspora",
+      "name": "Diaspora",
+      "nameHt": "Dyaspora",
+      "parent": null,
+      "path": "diaspora"
+    },
+    {
+      "code": "DIA-US",
+      "level": "diaspora_pays",
+      "name": "États-Unis",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.us"
+    },
+    {
+      "code": "DIA-US-MIA",
+      "level": "diaspora_ville",
+      "name": "Miami",
+      "nameHt": null,
+      "parent": "DIA-US",
+      "path": "diaspora.us.mia"
+    },
+    {
+      "code": "DIA-US-FLL",
+      "level": "diaspora_ville",
+      "name": "Fort Lauderdale",
+      "nameHt": null,
+      "parent": "DIA-US",
+      "path": "diaspora.us.fll"
+    },
+    {
+      "code": "DIA-US-ORL",
+      "level": "diaspora_ville",
+      "name": "Orlando",
+      "nameHt": null,
+      "parent": "DIA-US",
+      "path": "diaspora.us.orl"
+    },
+    {
+      "code": "DIA-US-NYC",
+      "level": "diaspora_ville",
+      "name": "New York",
+      "nameHt": null,
+      "parent": "DIA-US",
+      "path": "diaspora.us.nyc"
+    },
+    {
+      "code": "DIA-US-BOS",
+      "level": "diaspora_ville",
+      "name": "Boston",
+      "nameHt": null,
+      "parent": "DIA-US",
+      "path": "diaspora.us.bos"
+    },
+    {
+      "code": "DIA-US-NWK",
+      "level": "diaspora_ville",
+      "name": "Newark",
+      "nameHt": null,
+      "parent": "DIA-US",
+      "path": "diaspora.us.nwk"
+    },
+    {
+      "code": "DIA-US-ATL",
+      "level": "diaspora_ville",
+      "name": "Atlanta",
+      "nameHt": null,
+      "parent": "DIA-US",
+      "path": "diaspora.us.atl"
+    },
+    {
+      "code": "DIA-US-PHL",
+      "level": "diaspora_ville",
+      "name": "Philadelphie",
+      "nameHt": null,
+      "parent": "DIA-US",
+      "path": "diaspora.us.phl"
+    },
+    {
+      "code": "DIA-US-CHI",
+      "level": "diaspora_ville",
+      "name": "Chicago",
+      "nameHt": null,
+      "parent": "DIA-US",
+      "path": "diaspora.us.chi"
+    },
+    {
+      "code": "DIA-US-WAS",
+      "level": "diaspora_ville",
+      "name": "Washington",
+      "nameHt": null,
+      "parent": "DIA-US",
+      "path": "diaspora.us.was"
+    },
+    {
+      "code": "DIA-CA",
+      "level": "diaspora_pays",
+      "name": "Canada",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.ca"
+    },
+    {
+      "code": "DIA-CA-MTL",
+      "level": "diaspora_ville",
+      "name": "Montréal",
+      "nameHt": null,
+      "parent": "DIA-CA",
+      "path": "diaspora.ca.mtl"
+    },
+    {
+      "code": "DIA-CA-LAV",
+      "level": "diaspora_ville",
+      "name": "Laval",
+      "nameHt": null,
+      "parent": "DIA-CA",
+      "path": "diaspora.ca.lav"
+    },
+    {
+      "code": "DIA-CA-QUE",
+      "level": "diaspora_ville",
+      "name": "Québec",
+      "nameHt": null,
+      "parent": "DIA-CA",
+      "path": "diaspora.ca.que"
+    },
+    {
+      "code": "DIA-CA-OTT",
+      "level": "diaspora_ville",
+      "name": "Ottawa",
+      "nameHt": null,
+      "parent": "DIA-CA",
+      "path": "diaspora.ca.ott"
+    },
+    {
+      "code": "DIA-CA-TOR",
+      "level": "diaspora_ville",
+      "name": "Toronto",
+      "nameHt": null,
+      "parent": "DIA-CA",
+      "path": "diaspora.ca.tor"
+    },
+    {
+      "code": "DIA-FR",
+      "level": "diaspora_pays",
+      "name": "France",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.fr"
+    },
+    {
+      "code": "DIA-FR-PAR",
+      "level": "diaspora_ville",
+      "name": "Paris et Île-de-France",
+      "nameHt": null,
+      "parent": "DIA-FR",
+      "path": "diaspora.fr.par"
+    },
+    {
+      "code": "DIA-FR-LYS",
+      "level": "diaspora_ville",
+      "name": "Lyon",
+      "nameHt": null,
+      "parent": "DIA-FR",
+      "path": "diaspora.fr.lys"
+    },
+    {
+      "code": "DIA-FR-MRS",
+      "level": "diaspora_ville",
+      "name": "Marseille",
+      "nameHt": null,
+      "parent": "DIA-FR",
+      "path": "diaspora.fr.mrs"
+    },
+    {
+      "code": "DIA-GP",
+      "level": "diaspora_pays",
+      "name": "Guadeloupe",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.gp"
+    },
+    {
+      "code": "DIA-GP-PTP",
+      "level": "diaspora_ville",
+      "name": "Pointe-à-Pitre",
+      "nameHt": null,
+      "parent": "DIA-GP",
+      "path": "diaspora.gp.ptp"
+    },
+    {
+      "code": "DIA-MQ",
+      "level": "diaspora_pays",
+      "name": "Martinique",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.mq"
+    },
+    {
+      "code": "DIA-MQ-FDF",
+      "level": "diaspora_ville",
+      "name": "Fort-de-France",
+      "nameHt": null,
+      "parent": "DIA-MQ",
+      "path": "diaspora.mq.fdf"
+    },
+    {
+      "code": "DIA-GF",
+      "level": "diaspora_pays",
+      "name": "Guyane",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.gf"
+    },
+    {
+      "code": "DIA-GF-CAY",
+      "level": "diaspora_ville",
+      "name": "Cayenne",
+      "nameHt": null,
+      "parent": "DIA-GF",
+      "path": "diaspora.gf.cay"
+    },
+    {
+      "code": "DIA-DO",
+      "level": "diaspora_pays",
+      "name": "République dominicaine",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.do"
+    },
+    {
+      "code": "DIA-DO-SDQ",
+      "level": "diaspora_ville",
+      "name": "Saint-Domingue",
+      "nameHt": null,
+      "parent": "DIA-DO",
+      "path": "diaspora.do.sdq"
+    },
+    {
+      "code": "DIA-DO-STI",
+      "level": "diaspora_ville",
+      "name": "Santiago de los Caballeros",
+      "nameHt": null,
+      "parent": "DIA-DO",
+      "path": "diaspora.do.sti"
+    },
+    {
+      "code": "DIA-CL",
+      "level": "diaspora_pays",
+      "name": "Chili",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.cl"
+    },
+    {
+      "code": "DIA-CL-SCL",
+      "level": "diaspora_ville",
+      "name": "Santiago",
+      "nameHt": null,
+      "parent": "DIA-CL",
+      "path": "diaspora.cl.scl"
+    },
+    {
+      "code": "DIA-BR",
+      "level": "diaspora_pays",
+      "name": "Brésil",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.br"
+    },
+    {
+      "code": "DIA-BR-SAO",
+      "level": "diaspora_ville",
+      "name": "São Paulo",
+      "nameHt": null,
+      "parent": "DIA-BR",
+      "path": "diaspora.br.sao"
+    },
+    {
+      "code": "DIA-MX",
+      "level": "diaspora_pays",
+      "name": "Mexique",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.mx"
+    },
+    {
+      "code": "DIA-MX-TIJ",
+      "level": "diaspora_ville",
+      "name": "Tijuana",
+      "nameHt": null,
+      "parent": "DIA-MX",
+      "path": "diaspora.mx.tij"
+    },
+    {
+      "code": "DIA-BS",
+      "level": "diaspora_pays",
+      "name": "Bahamas",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.bs"
+    },
+    {
+      "code": "DIA-BS-NAS",
+      "level": "diaspora_ville",
+      "name": "Nassau",
+      "nameHt": null,
+      "parent": "DIA-BS",
+      "path": "diaspora.bs.nas"
+    },
+    {
+      "code": "DIA-TC",
+      "level": "diaspora_pays",
+      "name": "Îles Turques-et-Caïques",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.tc"
+    },
+    {
+      "code": "DIA-CU",
+      "level": "diaspora_pays",
+      "name": "Cuba",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.cu"
+    },
+    {
+      "code": "DIA-JM",
+      "level": "diaspora_pays",
+      "name": "Jamaïque",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.jm"
+    },
+    {
+      "code": "DIA-PA",
+      "level": "diaspora_pays",
+      "name": "Panama",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.pa"
+    },
+    {
+      "code": "DIA-VE",
+      "level": "diaspora_pays",
+      "name": "Venezuela",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.ve"
+    },
+    {
+      "code": "DIA-AR",
+      "level": "diaspora_pays",
+      "name": "Argentine",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.ar"
+    },
+    {
+      "code": "DIA-BE",
+      "level": "diaspora_pays",
+      "name": "Belgique",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.be"
+    },
+    {
+      "code": "DIA-CH",
+      "level": "diaspora_pays",
+      "name": "Suisse",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.ch"
+    },
+    {
+      "code": "DIA-ES",
+      "level": "diaspora_pays",
+      "name": "Espagne",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.es"
+    },
+    {
+      "code": "DIA-DE",
+      "level": "diaspora_pays",
+      "name": "Allemagne",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.de"
+    },
+    {
+      "code": "DIA-GB",
+      "level": "diaspora_pays",
+      "name": "Royaume-Uni",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.gb"
+    },
+    {
+      "code": "DIA-IT",
+      "level": "diaspora_pays",
+      "name": "Italie",
+      "nameHt": null,
+      "parent": "DIA",
+      "path": "diaspora.it"
+    }
+  ]
+}

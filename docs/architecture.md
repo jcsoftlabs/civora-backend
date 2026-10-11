@@ -59,7 +59,9 @@ await withParty(ctx.partyId, async (tx) => {
 
 ## 3. Permissions et territoire
 
-- Zones en arbre : pays, département, commune, section communale, plus la diaspora (pays, ville). Colonne `path` de type `ltree` pour tester « zone dans sous-arbre » en une condition.
+- Zones en arbre : pays, département, commune, section communale, plus la diaspora (racine, pays, ville). Colonne `path` de type `ltree`, construite à partir des codes officiels (`ht.ht01.ht0114.ht0114_01`, `diaspora.us.mia`), pour tester « zone dans sous-arbre » en une condition.
+- Référentiel : `packages/db/data/zones-ht.json`, généré par `packages/db/scripts/build-zones.py` depuis le jeu de données officiel du **CNIGS** (« Haiti - Subnational Administrative Boundaries », HDX, licence **CC BY-IGO** : citer « Données territoriales : CNIGS » dans les mentions de l'application). 10 départements, 140 communes (codification 2018), 570 sections communales, noms créoles des départements et communes. La diaspora (`zones-diaspora.json`) est tenue à la main. Chargement idempotent à chaque migration (`syncZones`), une requête par niveau. Lecture publique : `GET /zones`, `/zones/search` (sans accents, nom français ou créole), `/zones/:code` (fil d'Ariane).
+- Profondeur selon le palier (`structureLevels`, `packages/shared/src/territory.ts`) pour les organes et les postes : Essentiel = national et communes ; Mouvement ajoute départements et villes de la diaspora ; National ajoute les sections communales. Un membre se localise toujours jusqu'à la section communale.
 - Les droits viennent des postes occupés (`post_holders`) ; chaque poste porte un ensemble de permissions (`permissions.ts`) et une portée territoriale. Un trésorier de section ne voit que sa section.
 - Vérification en deux couches : RLS pour le parti, `authorize(permission, zone)` dans l'API pour le rôle et la zone.
 

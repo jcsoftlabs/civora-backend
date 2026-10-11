@@ -49,7 +49,8 @@ const post = (url: string, payload: unknown, opts: { token?: string; ip?: string
 const get = (url: string, token?: string) =>
   app.inject({ url, remoteAddress: freshIp(), headers: token ? { authorization: `Bearer ${token}` } : {} });
 
-const lastCode = () => /(\d{6})/.exec(email.sent.at(-1)?.text ?? "")?.[1] ?? "";
+// Le code suit « : » en fin de ligne ; le nom du parti de test peut lui-même contenir 6 chiffres.
+const lastCode = () => /: (\d{6})\n/.exec(email.sent.at(-1)?.text ?? "")?.[1] ?? "";
 
 async function login(addr: string, slug = slugA) {
   const before = email.sent.length;

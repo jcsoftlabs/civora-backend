@@ -78,3 +78,14 @@ export async function withAuthLookup<T>(
     return fn(tx);
   });
 }
+
+/**
+ * Lecture du référentiel partagé (zones), hors contexte de parti, en transaction en lecture seule.
+ * Les tables métier restent invisibles ici (RLS sans app.party_id) ; aucune écriture possible.
+ */
+export async function withReferenceData<T>(fn: (tx: Tx) => Promise<T>): Promise<T> {
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`set transaction read only`);
+    return fn(tx);
+  });
+}

@@ -1,0 +1,5775 @@
+{
+  "source": "CNIGS, Haiti - Subnational Administrative Boundaries (COD-AB), HDX, https://data.humdata.org/dataset/cod-ab-hti",
+  "license": "CC BY-IGO",
+  "note": "Codification 2018 (140 communes). Les communes créées depuis sont à ajouter quand le CNIGS ou l'IHSI les publient.",
+  "zones": [
+    {
+      "code": "HT",
+      "level": "pays",
+      "name": "Haïti",
+      "nameHt": "Ayiti",
+      "parent": null,
+      "path": "ht"
+    },
+    {
+      "code": "HT05",
+      "level": "departement",
+      "parent": "HT",
+      "name": "Artibonite",
+      "nameHt": "Latibonit",
+      "path": "ht.ht05"
+    },
+    {
+      "code": "HT06",
+      "level": "departement",
+      "parent": "HT",
+      "name": "Centre",
+      "nameHt": "Sant",
+      "path": "ht.ht06"
+    },
+    {
+      "code": "HT08",
+      "level": "departement",
+      "parent": "HT",
+      "name": "Grand'Anse",
+      "nameHt": "Grandans",
+      "path": "ht.ht08"
+    },
+    {
+      "code": "HT10",
+      "level": "departement",
+      "parent": "HT",
+      "name": "Nippes",
+      "nameHt": "Nip",
+      "path": "ht.ht10"
+    },
+    {
+      "code": "HT03",
+      "level": "departement",
+      "parent": "HT",
+      "name": "Nord",
+      "nameHt": "Nò",
+      "path": "ht.ht03"
+    },
+    {
+      "code": "HT04",
+      "level": "departement",
+      "parent": "HT",
+      "name": "Nord-Est",
+      "nameHt": "Nòdès",
+      "path": "ht.ht04"
+    },
+    {
+      "code": "HT09",
+      "level": "departement",
+      "parent": "HT",
+      "name": "Nord-Ouest",
+      "nameHt": "Nòdwès",
+      "path": "ht.ht09"
+    },
+    {
+      "code": "HT07",
+      "level": "departement",
+      "parent": "HT",
+      "name": "Sud",
+      "nameHt": "Sid",
+      "path": "ht.ht07"
+    },
+    {
+      "code": "HT02",
+      "level": "departement",
+      "parent": "HT",
+      "name": "Sud-Est",
+      "nameHt": "Sidès",
+      "path": "ht.ht02"
+    },
+    {
+      "code": "HT01",
+      "level": "departement",
+      "parent": "HT",
+      "name": "Ouest",
+      "nameHt": "Lwès",
+      "path": "ht.ht01"
+    },
+    {
+      "code": "HT0812",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Abricots",
+      "nameHt": "Abriko",
+      "path": "ht.ht08.ht0812"
+    },
+    {
+      "code": "HT0321",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Acul du Nord",
+      "nameHt": "Akil dinò",
+      "path": "ht.ht03.ht0321"
+    },
+    {
+      "code": "HT0922",
+      "level": "commune",
+      "parent": "HT09",
+      "name": "Anse-à-Foleur",
+      "nameHt": "Ansafolè",
+      "path": "ht.ht09.ht0922"
+    },
+    {
+      "code": "HT0234",
+      "level": "commune",
+      "parent": "HT02",
+      "name": "Anse-à-Pître",
+      "nameHt": "Ansapit",
+      "path": "ht.ht02.ht0234"
+    },
+    {
+      "code": "HT1021",
+      "level": "commune",
+      "parent": "HT10",
+      "name": "Anse-à-Veau",
+      "nameHt": "Ansavo",
+      "path": "ht.ht10.ht1021"
+    },
+    {
+      "code": "HT0151",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Anse à Galets",
+      "nameHt": "Ansa galè",
+      "path": "ht.ht01.ht0151"
+    },
+    {
+      "code": "HT0821",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Anse d'Hainault",
+      "nameHt": "Ansdeno",
+      "path": "ht.ht08.ht0821"
+    },
+    {
+      "code": "HT0523",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Anse Rouge",
+      "nameHt": "Ans Rouj",
+      "path": "ht.ht05.ht0523"
+    },
+    {
+      "code": "HT0731",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Aquin",
+      "nameHt": "Aken",
+      "path": "ht.ht07.ht0731"
+    },
+    {
+      "code": "HT0141",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Arcahaie",
+      "nameHt": "Akayè",
+      "path": "ht.ht01.ht0141"
+    },
+    {
+      "code": "HT1024",
+      "level": "commune",
+      "parent": "HT10",
+      "name": "Arnaud",
+      "nameHt": "Ano",
+      "path": "ht.ht10.ht1024"
+    },
+    {
+      "code": "HT0723",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Arniquet",
+      "nameHt": "Anikè",
+      "path": "ht.ht07.ht0723"
+    },
+    {
+      "code": "HT0332",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Bahon",
+      "nameHt": "Baron",
+      "path": "ht.ht03.ht0332"
+    },
+    {
+      "code": "HT0932",
+      "level": "commune",
+      "parent": "HT09",
+      "name": "Baie de Henne",
+      "nameHt": "Bèdeyèn",
+      "path": "ht.ht09.ht0932"
+    },
+    {
+      "code": "HT0221",
+      "level": "commune",
+      "parent": "HT02",
+      "name": "Bainet",
+      "nameHt": "Benè",
+      "path": "ht.ht02.ht0221"
+    },
+    {
+      "code": "HT1031",
+      "level": "commune",
+      "parent": "HT10",
+      "name": "Baradères",
+      "nameHt": "Baradè",
+      "path": "ht.ht10.ht1031"
+    },
+    {
+      "code": "HT0362",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Bas Limbé",
+      "nameHt": "Ba Lenbe",
+      "path": "ht.ht03.ht0362"
+    },
+    {
+      "code": "HT0913",
+      "level": "commune",
+      "parent": "HT09",
+      "name": "Bassin Bleu",
+      "nameHt": "Basenble",
+      "path": "ht.ht09.ht0913"
+    },
+    {
+      "code": "HT0833",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Beaumont",
+      "nameHt": "Bomon",
+      "path": "ht.ht08.ht0833"
+    },
+    {
+      "code": "HT0632",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Belladère",
+      "nameHt": "Beladè",
+      "path": "ht.ht06.ht0632"
+    },
+    {
+      "code": "HT0231",
+      "level": "commune",
+      "parent": "HT02",
+      "name": "Belle Anse",
+      "nameHt": "Bèlans",
+      "path": "ht.ht02.ht0231"
+    },
+    {
+      "code": "HT0933",
+      "level": "commune",
+      "parent": "HT09",
+      "name": "Bombardopolis",
+      "nameHt": "Bonbadopolis",
+      "path": "ht.ht09.ht0933"
+    },
+    {
+      "code": "HT0813",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Bonbon",
+      "nameHt": "Trou Bonbon",
+      "path": "ht.ht08.ht0813"
+    },
+    {
+      "code": "HT0351",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Borgne",
+      "nameHt": "Bòn",
+      "path": "ht.ht03.ht0351"
+    },
+    {
+      "code": "HT0623",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Boucan Carré",
+      "nameHt": "Boukan Kare",
+      "path": "ht.ht06.ht0623"
+    },
+    {
+      "code": "HT0142",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Cabaret",
+      "nameHt": "Kabarè",
+      "path": "ht.ht01.ht0142"
+    },
+    {
+      "code": "HT0714",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Camp-Perrin",
+      "nameHt": "Kanperen",
+      "path": "ht.ht07.ht0714"
+    },
+    {
+      "code": "HT0311",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Cap-Haïtien",
+      "nameHt": "Kap Ayisyen",
+      "path": "ht.ht03.ht0311"
+    },
+    {
+      "code": "HT0422",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Capotille",
+      "nameHt": "Kapotiy",
+      "path": "ht.ht04.ht0422"
+    },
+    {
+      "code": "HT0434",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Caracol",
+      "nameHt": "Karakòl",
+      "path": "ht.ht04.ht0434"
+    },
+    {
+      "code": "HT0442",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Carice",
+      "nameHt": "karis",
+      "path": "ht.ht04.ht0442"
+    },
+    {
+      "code": "HT0113",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Carrefour",
+      "nameHt": "Kafou",
+      "path": "ht.ht01.ht0113"
+    },
+    {
+      "code": "HT0733",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Cavaillon",
+      "nameHt": "Kavayon",
+      "path": "ht.ht07.ht0733"
+    },
+    {
+      "code": "HT0213",
+      "level": "commune",
+      "parent": "HT02",
+      "name": "Cayes-Jacmel",
+      "nameHt": "Kay Jakmèl",
+      "path": "ht.ht02.ht0213"
+    },
+    {
+      "code": "HT0614",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Cerca Carvajal",
+      "nameHt": "Sèka Kavajal",
+      "path": "ht.ht06.ht0614"
+    },
+    {
+      "code": "HT0641",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Cerca La Source",
+      "nameHt": "Sèka Lasous",
+      "path": "ht.ht06.ht0641"
+    },
+    {
+      "code": "HT0815",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Chambellan",
+      "nameHt": "Chanbelan",
+      "path": "ht.ht08.ht0815"
+    },
+    {
+      "code": "HT0914",
+      "level": "commune",
+      "parent": "HT09",
+      "name": "Chamsolme",
+      "nameHt": "Chansòlm",
+      "path": "ht.ht09.ht0914"
+    },
+    {
+      "code": "HT0713",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Chantal",
+      "nameHt": "Chantal",
+      "path": "ht.ht07.ht0713"
+    },
+    {
+      "code": "HT0751",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Chardonnières",
+      "nameHt": "Chadonyè",
+      "path": "ht.ht07.ht0751"
+    },
+    {
+      "code": "HT0117",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Cité Soleil",
+      "nameHt": "Site Solèy",
+      "path": "ht.ht01.ht0117"
+    },
+    {
+      "code": "HT0831",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Corail",
+      "nameHt": "Koray",
+      "path": "ht.ht08.ht0831"
+    },
+    {
+      "code": "HT0134",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Cornillon / Grand Bois",
+      "nameHt": "Kòniyon / Gran Bwa",
+      "path": "ht.ht01.ht0134"
+    },
+    {
+      "code": "HT0741",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Côteaux",
+      "nameHt": "Okoto",
+      "path": "ht.ht07.ht0741"
+    },
+    {
+      "code": "HT0222",
+      "level": "commune",
+      "parent": "HT02",
+      "name": "Côtes de Fer",
+      "nameHt": "Kòtdefè",
+      "path": "ht.ht02.ht0222"
+    },
+    {
+      "code": "HT0131",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Croix-Des-Bouquets",
+      "nameHt": "Kwadèboukè",
+      "path": "ht.ht01.ht0131"
+    },
+    {
+      "code": "HT0822",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Dame Marie",
+      "nameHt": "Dam Mari",
+      "path": "ht.ht08.ht0822"
+    },
+    {
+      "code": "HT0112",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Delmas",
+      "nameHt": "Dèlma",
+      "path": "ht.ht01.ht0112"
+    },
+    {
+      "code": "HT0544",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Desdunes",
+      "nameHt": "Dedin",
+      "path": "ht.ht05.ht0544"
+    },
+    {
+      "code": "HT0541",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Dessalines",
+      "nameHt": "Desalin",
+      "path": "ht.ht05.ht0541"
+    },
+    {
+      "code": "HT0342",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Dondon",
+      "nameHt": "Dondon",
+      "path": "ht.ht03.ht0342"
+    },
+    {
+      "code": "HT0512",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Ennery",
+      "nameHt": "Ènri",
+      "path": "ht.ht05.ht0512"
+    },
+    {
+      "code": "HT0412",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Ferrier",
+      "nameHt": "Ferye",
+      "path": "ht.ht04.ht0412"
+    },
+    {
+      "code": "HT0135",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Fonds-Verrettes",
+      "nameHt": "Fonvèrèt",
+      "path": "ht.ht01.ht0135"
+    },
+    {
+      "code": "HT1013",
+      "level": "commune",
+      "parent": "HT10",
+      "name": "Fonds des Nègres",
+      "nameHt": "Fon dènèg",
+      "path": "ht.ht10.ht1013"
+    },
+    {
+      "code": "HT0411",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Fort-Liberté",
+      "nameHt": "Fòlibète",
+      "path": "ht.ht04.ht0411"
+    },
+    {
+      "code": "HT0133",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Ganthier",
+      "nameHt": "Gantye",
+      "path": "ht.ht01.ht0133"
+    },
+    {
+      "code": "HT0511",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Gonaïves",
+      "nameHt": "Gonayiv",
+      "path": "ht.ht05.ht0511"
+    },
+    {
+      "code": "HT1032",
+      "level": "commune",
+      "parent": "HT10",
+      "name": "Grand-Boucan",
+      "nameHt": "Gran Boukan",
+      "path": "ht.ht10.ht1032"
+    },
+    {
+      "code": "HT0123",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Grand-Goâve",
+      "nameHt": "Gran Gwav",
+      "path": "ht.ht01.ht0123"
+    },
+    {
+      "code": "HT0232",
+      "level": "commune",
+      "parent": "HT02",
+      "name": "Grand Gosier",
+      "nameHt": "Gran Gozye",
+      "path": "ht.ht02.ht0232"
+    },
+    {
+      "code": "HT0331",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Grande Riviere Du Nord",
+      "nameHt": "Grann Rivyè dinò",
+      "path": "ht.ht03.ht0331"
+    },
+    {
+      "code": "HT0543",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Grande Saline",
+      "nameHt": "Grand Salin",
+      "path": "ht.ht05.ht0543"
+    },
+    {
+      "code": "HT0116",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Gressier",
+      "nameHt": "Gresye",
+      "path": "ht.ht01.ht0116"
+    },
+    {
+      "code": "HT0521",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Gros Morne",
+      "nameHt": "Gro Mòn",
+      "path": "ht.ht05.ht0521"
+    },
+    {
+      "code": "HT0611",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Hinche",
+      "nameHt": "Ench",
+      "path": "ht.ht06.ht0611"
+    },
+    {
+      "code": "HT0716",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Île à Vache",
+      "nameHt": "Ilavach",
+      "path": "ht.ht07.ht0716"
+    },
+    {
+      "code": "HT0211",
+      "level": "commune",
+      "parent": "HT02",
+      "name": "Jacmel",
+      "nameHt": "Jakmèl",
+      "path": "ht.ht02.ht0211"
+    },
+    {
+      "code": "HT0934",
+      "level": "commune",
+      "parent": "HT09",
+      "name": "Jean Rabel",
+      "nameHt": "Jan Rabèl",
+      "path": "ht.ht09.ht0934"
+    },
+    {
+      "code": "HT0811",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Jérémie",
+      "nameHt": "Jeremi",
+      "path": "ht.ht08.ht0811"
+    },
+    {
+      "code": "HT0115",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Kenscoff",
+      "nameHt": "Kenskòf",
+      "path": "ht.ht01.ht0115"
+    },
+    {
+      "code": "HT1023",
+      "level": "commune",
+      "parent": "HT10",
+      "name": "L'Asile",
+      "nameHt": "Lazil",
+      "path": "ht.ht10.ht1023"
+    },
+    {
+      "code": "HT0513",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "L'Estère",
+      "nameHt": "Lestè",
+      "path": "ht.ht05.ht0513"
+    },
+    {
+      "code": "HT0533",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "La Chapelle",
+      "nameHt": "Lachapèl",
+      "path": "ht.ht05.ht0533"
+    },
+    {
+      "code": "HT0912",
+      "level": "commune",
+      "parent": "HT09",
+      "name": "La Tortue",
+      "nameHt": "Latòti",
+      "path": "ht.ht09.ht0912"
+    },
+    {
+      "code": "HT0214",
+      "level": "commune",
+      "parent": "HT02",
+      "name": "La Vallée",
+      "nameHt": "Lavale",
+      "path": "ht.ht02.ht0214"
+    },
+    {
+      "code": "HT0345",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "La Victoire",
+      "nameHt": "La viktwa",
+      "path": "ht.ht03.ht0345"
+    },
+    {
+      "code": "HT0631",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Lascahobas",
+      "nameHt": "Laskawobas",
+      "path": "ht.ht06.ht0631"
+    },
+    {
+      "code": "HT0121",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Léogâne",
+      "nameHt": "Leyogàn",
+      "path": "ht.ht01.ht0121"
+    },
+    {
+      "code": "HT0752",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Les Anglais",
+      "nameHt": "Anglè yo",
+      "path": "ht.ht07.ht0752"
+    },
+    {
+      "code": "HT0711",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Les Cayes",
+      "nameHt": "Okay",
+      "path": "ht.ht07.ht0711"
+    },
+    {
+      "code": "HT0823",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Les Irois",
+      "nameHt": "Lèziwa",
+      "path": "ht.ht08.ht0823"
+    },
+    {
+      "code": "HT0361",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Limbé",
+      "nameHt": "Lenbe",
+      "path": "ht.ht03.ht0361"
+    },
+    {
+      "code": "HT0313",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Limonade",
+      "nameHt": "Limonad",
+      "path": "ht.ht03.ht0313"
+    },
+    {
+      "code": "HT0612",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Maïssade",
+      "nameHt": "Mayisad",
+      "path": "ht.ht06.ht0612"
+    },
+    {
+      "code": "HT0715",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Maniche",
+      "nameHt": "Manich",
+      "path": "ht.ht07.ht0715"
+    },
+    {
+      "code": "HT0212",
+      "level": "commune",
+      "parent": "HT02",
+      "name": "Marigot",
+      "nameHt": "Marigo",
+      "path": "ht.ht02.ht0212"
+    },
+    {
+      "code": "HT0552",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Marmelade",
+      "nameHt": "Mamelad",
+      "path": "ht.ht05.ht0552"
+    },
+    {
+      "code": "HT0323",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Milot",
+      "nameHt": "Milo",
+      "path": "ht.ht03.ht0323"
+    },
+    {
+      "code": "HT1011",
+      "level": "commune",
+      "parent": "HT10",
+      "name": "Miragoâne",
+      "nameHt": "Miragwàn",
+      "path": "ht.ht10.ht1011"
+    },
+    {
+      "code": "HT0621",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Mirebalais",
+      "nameHt": "Mibalè",
+      "path": "ht.ht06.ht0621"
+    },
+    {
+      "code": "HT0931",
+      "level": "commune",
+      "parent": "HT09",
+      "name": "Môle Saint Nicolas",
+      "nameHt": "Mòl Sen Nikola",
+      "path": "ht.ht09.ht0931"
+    },
+    {
+      "code": "HT0443",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Mombin Crochu",
+      "nameHt": "Monben Krochi",
+      "path": "ht.ht04.ht0443"
+    },
+    {
+      "code": "HT0423",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Mont-Organisé",
+      "nameHt": "Montòganize",
+      "path": "ht.ht04.ht0423"
+    },
+    {
+      "code": "HT0814",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Moron",
+      "nameHt": "Mowon",
+      "path": "ht.ht08.ht0814"
+    },
+    {
+      "code": "HT0421",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Ouanaminthe",
+      "nameHt": "Wanament",
+      "path": "ht.ht04.ht0421"
+    },
+    {
+      "code": "HT1014",
+      "level": "commune",
+      "parent": "HT10",
+      "name": "Paillant",
+      "nameHt": "Payan",
+      "path": "ht.ht10.ht1014"
+    },
+    {
+      "code": "HT0413",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Perches",
+      "nameHt": "Pèch",
+      "path": "ht.ht04.ht0413"
+    },
+    {
+      "code": "HT0834",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Pestel",
+      "nameHt": "Pestèl",
+      "path": "ht.ht08.ht0834"
+    },
+    {
+      "code": "HT0114",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Pétion-Ville",
+      "nameHt": "Petyonvil",
+      "path": "ht.ht01.ht0114"
+    },
+    {
+      "code": "HT0122",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Petit-Goâve",
+      "nameHt": "Tigwav",
+      "path": "ht.ht01.ht0122"
+    },
+    {
+      "code": "HT1022",
+      "level": "commune",
+      "parent": "HT10",
+      "name": "Petit Trou de Nippes",
+      "nameHt": "Ti Trou Nip",
+      "path": "ht.ht10.ht1022"
+    },
+    {
+      "code": "HT0542",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Petite Rivière de l'Artibonite",
+      "nameHt": "Ti Rivyè Latibonit",
+      "path": "ht.ht05.ht0542"
+    },
+    {
+      "code": "HT1012",
+      "level": "commune",
+      "parent": "HT10",
+      "name": "Petite Rivière de Nippes",
+      "nameHt": "Ti Rivyè Nip",
+      "path": "ht.ht10.ht1012"
+    },
+    {
+      "code": "HT0344",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Pignon",
+      "nameHt": "Piyon",
+      "path": "ht.ht03.ht0344"
+    },
+    {
+      "code": "HT0372",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Pilate",
+      "nameHt": "Pilat",
+      "path": "ht.ht03.ht0372"
+    },
+    {
+      "code": "HT0322",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Plaine du Nord",
+      "nameHt": "Plèn dinò",
+      "path": "ht.ht03.ht0322"
+    },
+    {
+      "code": "HT0371",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Plaisance",
+      "nameHt": "Plezans",
+      "path": "ht.ht03.ht0371"
+    },
+    {
+      "code": "HT1025",
+      "level": "commune",
+      "parent": "HT10",
+      "name": "Plaisance du Sud",
+      "nameHt": "Plezans Disid",
+      "path": "ht.ht10.ht1025"
+    },
+    {
+      "code": "HT0152",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Pointe à Raquette",
+      "nameHt": "Pwent a Rakèt",
+      "path": "ht.ht01.ht0152"
+    },
+    {
+      "code": "HT0742",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Port-à-Piment",
+      "nameHt": "Pòtapiman",
+      "path": "ht.ht07.ht0742"
+    },
+    {
+      "code": "HT0111",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Port-au-Prince",
+      "nameHt": "Pòtoprens",
+      "path": "ht.ht01.ht0111"
+    },
+    {
+      "code": "HT0911",
+      "level": "commune",
+      "parent": "HT09",
+      "name": "Port-de-Paix",
+      "nameHt": "Pòdpè",
+      "path": "ht.ht09.ht0911"
+    },
+    {
+      "code": "HT0352",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Port-Margot",
+      "nameHt": "Pòmago",
+      "path": "ht.ht03.ht0352"
+    },
+    {
+      "code": "HT0721",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Port-Salut",
+      "nameHt": "Pò Sali",
+      "path": "ht.ht07.ht0721"
+    },
+    {
+      "code": "HT0312",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Quartier Morin",
+      "nameHt": "Katye Moren",
+      "path": "ht.ht03.ht0312"
+    },
+    {
+      "code": "HT0343",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Ranquitte",
+      "nameHt": "Rankit",
+      "path": "ht.ht03.ht0343"
+    },
+    {
+      "code": "HT0743",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Roche à Bâteau",
+      "nameHt": "Ròcha Bato",
+      "path": "ht.ht07.ht0743"
+    },
+    {
+      "code": "HT0832",
+      "level": "commune",
+      "parent": "HT08",
+      "name": "Roseaux",
+      "nameHt": "Rozo",
+      "path": "ht.ht08.ht0832"
+    },
+    {
+      "code": "HT0921",
+      "level": "commune",
+      "parent": "HT09",
+      "name": "Saint-Louis du Nord",
+      "nameHt": "Sen Lwi dinò",
+      "path": "ht.ht09.ht0921"
+    },
+    {
+      "code": "HT0531",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Saint-Marc",
+      "nameHt": "Sen Mak",
+      "path": "ht.ht05.ht0531"
+    },
+    {
+      "code": "HT0551",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Saint-Michel de l'Attalaye",
+      "nameHt": "Sen Michèl Latalay",
+      "path": "ht.ht05.ht0551"
+    },
+    {
+      "code": "HT0341",
+      "level": "commune",
+      "parent": "HT03",
+      "name": "Saint-Raphaël",
+      "nameHt": "Sen Rafayèl",
+      "path": "ht.ht03.ht0341"
+    },
+    {
+      "code": "HT0722",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Saint Jean du Sud",
+      "nameHt": "Sen Jan disid.",
+      "path": "ht.ht07.ht0722"
+    },
+    {
+      "code": "HT0732",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Saint Louis du Sud",
+      "nameHt": "Sen Lwi disid",
+      "path": "ht.ht07.ht0732"
+    },
+    {
+      "code": "HT0432",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Sainte Suzanne",
+      "nameHt": "Sent sizàn",
+      "path": "ht.ht04.ht0432"
+    },
+    {
+      "code": "HT0622",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Saut d'Eau",
+      "nameHt": "Sodo",
+      "path": "ht.ht06.ht0622"
+    },
+    {
+      "code": "HT0633",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Savanette",
+      "nameHt": "Savanèt",
+      "path": "ht.ht06.ht0633"
+    },
+    {
+      "code": "HT0118",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Tabarre",
+      "nameHt": "Taba",
+      "path": "ht.ht01.ht0118"
+    },
+    {
+      "code": "HT0522",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Terre Neuve",
+      "nameHt": "Tènèv",
+      "path": "ht.ht05.ht0522"
+    },
+    {
+      "code": "HT0433",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Terrier Rouge",
+      "nameHt": "Tèrye rouj",
+      "path": "ht.ht04.ht0433"
+    },
+    {
+      "code": "HT0233",
+      "level": "commune",
+      "parent": "HT02",
+      "name": "Thiotte",
+      "nameHt": "Tiòt",
+      "path": "ht.ht02.ht0233"
+    },
+    {
+      "code": "HT0642",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Thomassique",
+      "nameHt": "Tomasik",
+      "path": "ht.ht06.ht0642"
+    },
+    {
+      "code": "HT0132",
+      "level": "commune",
+      "parent": "HT01",
+      "name": "Thomazeau",
+      "nameHt": "Tomazo",
+      "path": "ht.ht01.ht0132"
+    },
+    {
+      "code": "HT0613",
+      "level": "commune",
+      "parent": "HT06",
+      "name": "Thomonde",
+      "nameHt": "Tomond",
+      "path": "ht.ht06.ht0613"
+    },
+    {
+      "code": "HT0753",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Tiburon",
+      "nameHt": "Tibiwon",
+      "path": "ht.ht07.ht0753"
+    },
+    {
+      "code": "HT0712",
+      "level": "commune",
+      "parent": "HT07",
+      "name": "Torbeck",
+      "nameHt": "Tòbèk",
+      "path": "ht.ht07.ht0712"
+    },
+    {
+      "code": "HT0431",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Trou du Nord",
+      "nameHt": "Twou dinò",
+      "path": "ht.ht04.ht0431"
+    },
+    {
+      "code": "HT0441",
+      "level": "commune",
+      "parent": "HT04",
+      "name": "Vallières",
+      "nameHt": "Valyè",
+      "path": "ht.ht04.ht0441"
+    },
+    {
+      "code": "HT0532",
+      "level": "commune",
+      "parent": "HT05",
+      "name": "Verrettes",
+      "nameHt": "Vèrèt",
+      "path": "ht.ht05.ht0532"
+    },
+    {
+      "code": "HT0131-10",
+      "level": "section_communale",
+      "parent": "HT0131",
+      "name": "10e Section des Orangers",
+      "nameHt": null,
+      "path": "ht.ht01.ht0131.ht0131_10"
+    },
+    {
+      "code": "HT0122-10",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "10e Section des Palmes",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_10"
+    },
+    {
+      "code": "HT0121-10",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "10e Section Fond d'Oie",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_10"
+    },
+    {
+      "code": "HT0731-10",
+      "level": "section_communale",
+      "parent": "HT0731",
+      "name": "10e Section Guirand",
+      "nameHt": null,
+      "path": "ht.ht07.ht0731.ht0731_10"
+    },
+    {
+      "code": "HT0211-10",
+      "level": "section_communale",
+      "parent": "HT0211",
+      "name": "10e Section La Vanneau",
+      "nameHt": null,
+      "path": "ht.ht02.ht0211.ht0211_10"
+    },
+    {
+      "code": "HT0113-10",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "10e Section Thor",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_10"
+    },
+    {
+      "code": "HT0121-11",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "11e Section Gros Morne",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_11"
+    },
+    {
+      "code": "HT0211-11",
+      "level": "section_communale",
+      "parent": "HT0211",
+      "name": "11e Section La Montagne",
+      "nameHt": null,
+      "path": "ht.ht02.ht0211.ht0211_11"
+    },
+    {
+      "code": "HT0122-11",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "11e Section Ravine Sèche",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_11"
+    },
+    {
+      "code": "HT0113-11",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "11e Section Rivière Froide",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_11"
+    },
+    {
+      "code": "HT0121-12",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "12e Section Cormiers",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_12"
+    },
+    {
+      "code": "HT0122-12",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "12e Section des Fourques",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_12"
+    },
+    {
+      "code": "HT0113-12",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "12e Section Malanga",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_12"
+    },
+    {
+      "code": "HT0113-13",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "13e Section Corail Thor",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_13"
+    },
+    {
+      "code": "HT0121-13",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "13e Section Petit Harpon",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_13"
+    },
+    {
+      "code": "HT1013-01",
+      "level": "section_communale",
+      "parent": "HT1013",
+      "name": "1er Section Bouzi",
+      "nameHt": null,
+      "path": "ht.ht10.ht1013.ht1013_01"
+    },
+    {
+      "code": "HT0641-01",
+      "level": "section_communale",
+      "parent": "HT0641",
+      "name": "1re Section Acaj ou Brûle No 1",
+      "nameHt": null,
+      "path": "ht.ht06.ht0641.ht0641_01"
+    },
+    {
+      "code": "HT0814-01",
+      "level": "section_communale",
+      "parent": "HT0814",
+      "name": "1re Section Anote ou 1re Tapion",
+      "nameHt": null,
+      "path": "ht.ht08.ht0814.ht0814_01"
+    },
+    {
+      "code": "HT0812-01",
+      "level": "section_communale",
+      "parent": "HT0812",
+      "name": "1re Section Anse du Clerc",
+      "nameHt": null,
+      "path": "ht.ht08.ht0812.ht0812_01"
+    },
+    {
+      "code": "HT0343-01",
+      "level": "section_communale",
+      "parent": "HT0343",
+      "name": "1re Section Bac à Soude",
+      "nameHt": null,
+      "path": "ht.ht03.ht0343.ht0343_01"
+    },
+    {
+      "code": "HT1024-01",
+      "level": "section_communale",
+      "parent": "HT1024",
+      "name": "1re Section Baconnois-Barreau",
+      "nameHt": null,
+      "path": "ht.ht10.ht1024.ht1024_01"
+    },
+    {
+      "code": "HT1021-01",
+      "level": "section_communale",
+      "parent": "HT1021",
+      "name": "1re Section Baconnois-Grand-Fond",
+      "nameHt": null,
+      "path": "ht.ht10.ht1021.ht1021_01"
+    },
+    {
+      "code": "HT0231-01",
+      "level": "section_communale",
+      "parent": "HT0231",
+      "name": "1re Section Bais d'Orange",
+      "nameHt": null,
+      "path": "ht.ht02.ht0231.ht0231_01"
+    },
+    {
+      "code": "HT0372-01",
+      "level": "section_communale",
+      "parent": "HT0372",
+      "name": "1re Section Ballon",
+      "nameHt": null,
+      "path": "ht.ht03.ht0372.ht0372_01"
+    },
+    {
+      "code": "HT0311-01",
+      "level": "section_communale",
+      "parent": "HT0311",
+      "name": "1re Section Bande du Nord",
+      "nameHt": null,
+      "path": "ht.ht03.ht0311.ht0311_01"
+    },
+    {
+      "code": "HT0721-01",
+      "level": "section_communale",
+      "parent": "HT0721",
+      "name": "1re Section Barbois",
+      "nameHt": null,
+      "path": "ht.ht07.ht0721.ht0721_01"
+    },
+    {
+      "code": "HT0822-01",
+      "level": "section_communale",
+      "parent": "HT0822",
+      "name": "1re Section Bariadelle",
+      "nameHt": null,
+      "path": "ht.ht08.ht0822.ht0822_01"
+    },
+    {
+      "code": "HT0211-01",
+      "level": "section_communale",
+      "parent": "HT0211",
+      "name": "1re Section Bas Cap Rouge",
+      "nameHt": null,
+      "path": "ht.ht02.ht0211.ht0211_01"
+    },
+    {
+      "code": "HT0542-01",
+      "level": "section_communale",
+      "parent": "HT0542",
+      "name": "1re Section Bas Coursin I",
+      "nameHt": null,
+      "path": "ht.ht05.ht0542.ht0542_01"
+    },
+    {
+      "code": "HT0922-01",
+      "level": "section_communale",
+      "parent": "HT0922",
+      "name": "1re Section Bas de Sainte Anne",
+      "nameHt": null,
+      "path": "ht.ht09.ht0922.ht0922_01"
+    },
+    {
+      "code": "HT0412-01",
+      "level": "section_communale",
+      "parent": "HT0412",
+      "name": "1re Section Bas Maribahoux",
+      "nameHt": null,
+      "path": "ht.ht04.ht0412.ht0412_01"
+    },
+    {
+      "code": "HT0312-01",
+      "level": "section_communale",
+      "parent": "HT0312",
+      "name": "1re Section Basse Plaine",
+      "nameHt": null,
+      "path": "ht.ht03.ht0312.ht0312_01"
+    },
+    {
+      "code": "HT0313-01",
+      "level": "section_communale",
+      "parent": "HT0313",
+      "name": "1re Section Basse Plaine",
+      "nameHt": null,
+      "path": "ht.ht03.ht0313.ht0313_01"
+    },
+    {
+      "code": "HT0811-01",
+      "level": "section_communale",
+      "parent": "HT0811",
+      "name": "1re Section Basse Voldrogue",
+      "nameHt": null,
+      "path": "ht.ht08.ht0811.ht0811_01"
+    },
+    {
+      "code": "HT0911-01",
+      "level": "section_communale",
+      "parent": "HT0911",
+      "name": "1re Section Baudin",
+      "nameHt": null,
+      "path": "ht.ht09.ht0911.ht0911_01"
+    },
+    {
+      "code": "HT0743-01",
+      "level": "section_communale",
+      "parent": "HT0743",
+      "name": "1re Section Beaulieu",
+      "nameHt": null,
+      "path": "ht.ht07.ht0743.ht0743_01"
+    },
+    {
+      "code": "HT0833-01",
+      "level": "section_communale",
+      "parent": "HT0833",
+      "name": "1re Section Beaumont",
+      "nameHt": null,
+      "path": "ht.ht08.ht0833.ht0833_01"
+    },
+    {
+      "code": "HT0834-01",
+      "level": "section_communale",
+      "parent": "HT0834",
+      "name": "1re Section Bernagousse",
+      "nameHt": null,
+      "path": "ht.ht08.ht0834.ht0834_01"
+    },
+    {
+      "code": "HT0122-01",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "1re Section Bino",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_01"
+    },
+    {
+      "code": "HT0753-01",
+      "level": "section_communale",
+      "parent": "HT0753",
+      "name": "1re Section Blactote",
+      "nameHt": null,
+      "path": "ht.ht07.ht0753.ht0753_01"
+    },
+    {
+      "code": "HT0733-01",
+      "level": "section_communale",
+      "parent": "HT0733",
+      "name": "1re Section Boileau",
+      "nameHt": null,
+      "path": "ht.ht07.ht0733.ht0733_01"
+    },
+    {
+      "code": "HT0442-01",
+      "level": "section_communale",
+      "parent": "HT0442",
+      "name": "1re Section Bois Camelle",
+      "nameHt": null,
+      "path": "ht.ht04.ht0442.ht0442_01"
+    },
+    {
+      "code": "HT0341-01",
+      "level": "section_communale",
+      "parent": "HT0341",
+      "name": "1re Section Bois Neuf",
+      "nameHt": null,
+      "path": "ht.ht03.ht0341.ht0341_01"
+    },
+    {
+      "code": "HT0332-01",
+      "level": "section_communale",
+      "parent": "HT0332",
+      "name": "1re Section Bois Pin",
+      "nameHt": null,
+      "path": "ht.ht03.ht0332.ht0332_01"
+    },
+    {
+      "code": "HT0234-01",
+      "level": "section_communale",
+      "parent": "HT0234",
+      "name": "1re Section Boucan Guillaume",
+      "nameHt": null,
+      "path": "ht.ht02.ht0234.ht0234_01"
+    },
+    {
+      "code": "HT0521-01",
+      "level": "section_communale",
+      "parent": "HT0521",
+      "name": "1re Section Boucan Richard",
+      "nameHt": null,
+      "path": "ht.ht05.ht0521.ht0521_01"
+    },
+    {
+      "code": "HT0141-01",
+      "level": "section_communale",
+      "parent": "HT0141",
+      "name": "1re Section Boucassin",
+      "nameHt": null,
+      "path": "ht.ht01.ht0141.ht0141_01"
+    },
+    {
+      "code": "HT0142-01",
+      "level": "section_communale",
+      "parent": "HT0142",
+      "name": "1re Section Boucassin",
+      "nameHt": null,
+      "path": "ht.ht01.ht0142.ht0142_01"
+    },
+    {
+      "code": "HT0711-01",
+      "level": "section_communale",
+      "parent": "HT0711",
+      "name": "1re Section Bourdet",
+      "nameHt": null,
+      "path": "ht.ht07.ht0711.ht0711_01"
+    },
+    {
+      "code": "HT0712-01",
+      "level": "section_communale",
+      "parent": "HT0712",
+      "name": "1re Section Boury",
+      "nameHt": null,
+      "path": "ht.ht07.ht0712.ht0712_01"
+    },
+    {
+      "code": "HT0221-01",
+      "level": "section_communale",
+      "parent": "HT0221",
+      "name": "1re Section Bresilienne",
+      "nameHt": null,
+      "path": "ht.ht02.ht0221.ht0221_01"
+    },
+    {
+      "code": "HT0342-01",
+      "level": "section_communale",
+      "parent": "HT0342",
+      "name": "1re Section Brostage",
+      "nameHt": null,
+      "path": "ht.ht03.ht0342.ht0342_01"
+    },
+    {
+      "code": "HT0613-01",
+      "level": "section_communale",
+      "parent": "HT0613",
+      "name": "1re Section Cabral",
+      "nameHt": null,
+      "path": "ht.ht06.ht0613.ht0613_01"
+    },
+    {
+      "code": "HT0321-01",
+      "level": "section_communale",
+      "parent": "HT0321",
+      "name": "1re Section Camp-Louise",
+      "nameHt": null,
+      "path": "ht.ht03.ht0321.ht0321_01"
+    },
+    {
+      "code": "HT0622-01",
+      "level": "section_communale",
+      "parent": "HT0622",
+      "name": "1re Section Canot ou Rivière Canot",
+      "nameHt": null,
+      "path": "ht.ht06.ht0622.ht0622_01"
+    },
+    {
+      "code": "HT0422-01",
+      "level": "section_communale",
+      "parent": "HT0422",
+      "name": "1re Section Capotille",
+      "nameHt": null,
+      "path": "ht.ht04.ht0422.ht0422_01"
+    },
+    {
+      "code": "HT0832-01",
+      "level": "section_communale",
+      "parent": "HT0832",
+      "name": "1re Section Carrefour Charles ou Jacqui",
+      "nameHt": null,
+      "path": "ht.ht08.ht0832.ht0832_01"
+    },
+    {
+      "code": "HT1011-01",
+      "level": "section_communale",
+      "parent": "HT1011",
+      "name": "1re Section Chalon",
+      "nameHt": null,
+      "path": "ht.ht10.ht1011.ht1011_01"
+    },
+    {
+      "code": "HT0434-01",
+      "level": "section_communale",
+      "parent": "HT0434",
+      "name": "1re Section Champin",
+      "nameHt": null,
+      "path": "ht.ht04.ht0434.ht0434_01"
+    },
+    {
+      "code": "HT0914-01",
+      "level": "section_communale",
+      "parent": "HT0914",
+      "name": "1re Section Chansolme",
+      "nameHt": null,
+      "path": "ht.ht09.ht0914.ht0914_01"
+    },
+    {
+      "code": "HT0932-01",
+      "level": "section_communale",
+      "parent": "HT0932",
+      "name": "1re Section Citerne Remy",
+      "nameHt": null,
+      "path": "ht.ht09.ht0932.ht0932_01"
+    },
+    {
+      "code": "HT0232-01",
+      "level": "section_communale",
+      "parent": "HT0232",
+      "name": "1re Section Colline des Chênes ou Bodarie",
+      "nameHt": null,
+      "path": "ht.ht02.ht0232.ht0232_01"
+    },
+    {
+      "code": "HT0741-01",
+      "level": "section_communale",
+      "parent": "HT0741",
+      "name": "1re Section Conde",
+      "nameHt": null,
+      "path": "ht.ht07.ht0741.ht0741_01"
+    },
+    {
+      "code": "HT0212-01",
+      "level": "section_communale",
+      "parent": "HT0212",
+      "name": "1re Section Corail Soult",
+      "nameHt": null,
+      "path": "ht.ht02.ht0212.ht0212_01"
+    },
+    {
+      "code": "HT0552-01",
+      "level": "section_communale",
+      "parent": "HT0552",
+      "name": "1re Section Crête à Pins",
+      "nameHt": null,
+      "path": "ht.ht05.ht0552.ht0552_01"
+    },
+    {
+      "code": "HT0931-01",
+      "level": "section_communale",
+      "parent": "HT0931",
+      "name": "1re Section de Cotes de Fer",
+      "nameHt": null,
+      "path": "ht.ht09.ht0931.ht0931_01"
+    },
+    {
+      "code": "HT0544-01",
+      "level": "section_communale",
+      "parent": "HT0544",
+      "name": "1re Section de Desdunes",
+      "nameHt": null,
+      "path": "ht.ht05.ht0544.ht0544_01"
+    },
+    {
+      "code": "HT0352-01",
+      "level": "section_communale",
+      "parent": "HT0352",
+      "name": "1re Section de Grande Plaine",
+      "nameHt": null,
+      "path": "ht.ht03.ht0352.ht0352_01"
+    },
+    {
+      "code": "HT0345-01",
+      "level": "section_communale",
+      "parent": "HT0345",
+      "name": "1re Section de la Victoire",
+      "nameHt": null,
+      "path": "ht.ht03.ht0345.ht0345_01"
+    },
+    {
+      "code": "HT0633-01",
+      "level": "section_communale",
+      "parent": "HT0633",
+      "name": "1re Section de Savanette (Colombier)",
+      "nameHt": null,
+      "path": "ht.ht06.ht0633.ht0633_01"
+    },
+    {
+      "code": "HT0815-01",
+      "level": "section_communale",
+      "parent": "HT0815",
+      "name": "1re Section Dejean",
+      "nameHt": null,
+      "path": "ht.ht08.ht0815.ht0815_01"
+    },
+    {
+      "code": "HT0531-01",
+      "level": "section_communale",
+      "parent": "HT0531",
+      "name": "1re Section Deluge",
+      "nameHt": null,
+      "path": "ht.ht05.ht0531.ht0531_01"
+    },
+    {
+      "code": "HT0117-02",
+      "level": "section_communale",
+      "parent": "HT0117",
+      "name": "1re Section des Varreux",
+      "nameHt": null,
+      "path": "ht.ht01.ht0117.ht0117_02"
+    },
+    {
+      "code": "HT0131-01",
+      "level": "section_communale",
+      "parent": "HT0131",
+      "name": "1re Section des Varreux",
+      "nameHt": null,
+      "path": "ht.ht01.ht0131.ht0131_01"
+    },
+    {
+      "code": "HT0813-01",
+      "level": "section_communale",
+      "parent": "HT0813",
+      "name": "1re Section Desormeau ou Bonbon",
+      "nameHt": null,
+      "path": "ht.ht08.ht0813.ht0813_01"
+    },
+    {
+      "code": "HT0121-01",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "1re Section Dessources",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_01"
+    },
+    {
+      "code": "HT0522-01",
+      "level": "section_communale",
+      "parent": "HT0522",
+      "name": "1re Section Doland",
+      "nameHt": null,
+      "path": "ht.ht05.ht0522.ht0522_01"
+    },
+    {
+      "code": "HT0411-01",
+      "level": "section_communale",
+      "parent": "HT0411",
+      "name": "1re Section Dumas",
+      "nameHt": null,
+      "path": "ht.ht04.ht0411.ht0411_01"
+    },
+    {
+      "code": "HT0831-01",
+      "level": "section_communale",
+      "parent": "HT0831",
+      "name": "1re Section Duquillon",
+      "nameHt": null,
+      "path": "ht.ht08.ht0831.ht0831_01"
+    },
+    {
+      "code": "HT0433-01",
+      "level": "section_communale",
+      "parent": "HT0433",
+      "name": "1re Section Fond Blanc",
+      "nameHt": null,
+      "path": "ht.ht04.ht0433.ht0433_01"
+    },
+    {
+      "code": "HT1012-01",
+      "level": "section_communale",
+      "parent": "HT1012",
+      "name": "1re Section Fond des Lianes",
+      "nameHt": null,
+      "path": "ht.ht10.ht1012.ht1012_01"
+    },
+    {
+      "code": "HT0135-01",
+      "level": "section_communale",
+      "parent": "HT0135",
+      "name": "1re Section Fonds-Verrettes",
+      "nameHt": null,
+      "path": "ht.ht01.ht0135.ht0135_01"
+    },
+    {
+      "code": "HT0713-01",
+      "level": "section_communale",
+      "parent": "HT0713",
+      "name": "1re Section Fonds Palmiste",
+      "nameHt": null,
+      "path": "ht.ht07.ht0713.ht0713_01"
+    },
+    {
+      "code": "HT0432-01",
+      "level": "section_communale",
+      "parent": "HT0432",
+      "name": "1re Section Foulon",
+      "nameHt": null,
+      "path": "ht.ht04.ht0432.ht0432_01"
+    },
+    {
+      "code": "HT0133-01",
+      "level": "section_communale",
+      "parent": "HT0133",
+      "name": "1re Section Galette Chambon",
+      "nameHt": null,
+      "path": "ht.ht01.ht0133.ht0133_01"
+    },
+    {
+      "code": "HT0431-01",
+      "level": "section_communale",
+      "parent": "HT0431",
+      "name": "1re Section Garcin",
+      "nameHt": null,
+      "path": "ht.ht04.ht0431.ht0431_01"
+    },
+    {
+      "code": "HT0362-01",
+      "level": "section_communale",
+      "parent": "HT0362",
+      "name": "1re Section Garde Champètre (Bas Limbe)",
+      "nameHt": null,
+      "path": "ht.ht03.ht0362.ht0362_01"
+    },
+    {
+      "code": "HT0621-01",
+      "level": "section_communale",
+      "parent": "HT0621",
+      "name": "1re Section Gascogne",
+      "nameHt": null,
+      "path": "ht.ht06.ht0621.ht0621_01"
+    },
+    {
+      "code": "HT1031-01",
+      "level": "section_communale",
+      "parent": "HT1031",
+      "name": "1re Section Gerin ou Mouton",
+      "nameHt": null,
+      "path": "ht.ht10.ht1031.ht1031_01"
+    },
+    {
+      "code": "HT0371-01",
+      "level": "section_communale",
+      "parent": "HT0371",
+      "name": "1re Section Gobert ou Colline Gobert",
+      "nameHt": null,
+      "path": "ht.ht03.ht0371.ht0371_01"
+    },
+    {
+      "code": "HT1032-01",
+      "level": "section_communale",
+      "parent": "HT1032",
+      "name": "1re Section Grand-Boucan",
+      "nameHt": null,
+      "path": "ht.ht10.ht1032.ht1032_01"
+    },
+    {
+      "code": "HT0732-01",
+      "level": "section_communale",
+      "parent": "HT0732",
+      "name": "1re Section Grand Fonds",
+      "nameHt": null,
+      "path": "ht.ht07.ht0732.ht0732_01"
+    },
+    {
+      "code": "HT0331-01",
+      "level": "section_communale",
+      "parent": "HT0331",
+      "name": "1re Section Grand Gilles",
+      "nameHt": null,
+      "path": "ht.ht03.ht0331.ht0331_01"
+    },
+    {
+      "code": "HT0132-01",
+      "level": "section_communale",
+      "parent": "HT0132",
+      "name": "1re Section Grande Plaine",
+      "nameHt": null,
+      "path": "ht.ht01.ht0132.ht0132_01"
+    },
+    {
+      "code": "HT0821-01",
+      "level": "section_communale",
+      "parent": "HT0821",
+      "name": "1re Section Grandoit",
+      "nameHt": null,
+      "path": "ht.ht08.ht0821.ht0821_01"
+    },
+    {
+      "code": "HT0222-01",
+      "level": "section_communale",
+      "parent": "HT0222",
+      "name": "1re Section Gris Gris",
+      "nameHt": null,
+      "path": "ht.ht02.ht0222.ht0222_01"
+    },
+    {
+      "code": "HT0413-01",
+      "level": "section_communale",
+      "parent": "HT0413",
+      "name": "1re Section Haut des Perches",
+      "nameHt": null,
+      "path": "ht.ht04.ht0413.ht0413_01"
+    },
+    {
+      "code": "HT0361-01",
+      "level": "section_communale",
+      "parent": "HT0361",
+      "name": "1re Section Haut Limbe ou Acul Jeannot",
+      "nameHt": null,
+      "path": "ht.ht03.ht0361.ht0361_01"
+    },
+    {
+      "code": "HT0421-01",
+      "level": "section_communale",
+      "parent": "HT0421",
+      "name": "1re Section Haut Maribahoux",
+      "nameHt": null,
+      "path": "ht.ht04.ht0421.ht0421_01"
+    },
+    {
+      "code": "HT0716-01",
+      "level": "section_communale",
+      "parent": "HT0716",
+      "name": "1re Section Île à Vache",
+      "nameHt": null,
+      "path": "ht.ht07.ht0716.ht0716_01"
+    },
+    {
+      "code": "HT0611-01",
+      "level": "section_communale",
+      "parent": "HT0611",
+      "name": "1re Section Juanaria",
+      "nameHt": null,
+      "path": "ht.ht06.ht0611.ht0611_01"
+    },
+    {
+      "code": "HT0523-01",
+      "level": "section_communale",
+      "parent": "HT0523",
+      "name": "1re Section l'Arbre",
+      "nameHt": null,
+      "path": "ht.ht05.ht0523.ht0523_01"
+    },
+    {
+      "code": "HT1023-03",
+      "level": "section_communale",
+      "parent": "HT1023",
+      "name": "1re Section l'Asile ou Nan Paul",
+      "nameHt": null,
+      "path": "ht.ht10.ht1023.ht1023_03"
+    },
+    {
+      "code": "HT0513-01",
+      "level": "section_communale",
+      "parent": "HT0513",
+      "name": "1re Section La Croix Perisse",
+      "nameHt": null,
+      "path": "ht.ht05.ht0513.ht0513_01"
+    },
+    {
+      "code": "HT0913-01",
+      "level": "section_communale",
+      "parent": "HT0913",
+      "name": "1re Section La Plate",
+      "nameHt": null,
+      "path": "ht.ht09.ht0913.ht0913_01"
+    },
+    {
+      "code": "HT0152-02",
+      "level": "section_communale",
+      "parent": "HT0152",
+      "name": "1re Section la Source",
+      "nameHt": null,
+      "path": "ht.ht01.ht0152.ht0152_02"
+    },
+    {
+      "code": "HT0214-01",
+      "level": "section_communale",
+      "parent": "HT0214",
+      "name": "1re Section La Vallee de Jacmel ou Muzac",
+      "nameHt": null,
+      "path": "ht.ht02.ht0214.ht0214_01"
+    },
+    {
+      "code": "HT0934-01",
+      "level": "section_communale",
+      "parent": "HT0934",
+      "name": "1re Section Lacoma",
+      "nameHt": null,
+      "path": "ht.ht09.ht0934.ht0934_01"
+    },
+    {
+      "code": "HT0723-01",
+      "level": "section_communale",
+      "parent": "HT0723",
+      "name": "1re Section Lazarre",
+      "nameHt": null,
+      "path": "ht.ht07.ht0723.ht0723_01"
+    },
+    {
+      "code": "HT0714-01",
+      "level": "section_communale",
+      "parent": "HT0714",
+      "name": "1re Section Levy Mersan",
+      "nameHt": null,
+      "path": "ht.ht07.ht0714.ht0714_01"
+    },
+    {
+      "code": "HT0532-01",
+      "level": "section_communale",
+      "parent": "HT0532",
+      "name": "1re Section Liancourt",
+      "nameHt": null,
+      "path": "ht.ht05.ht0532.ht0532_01"
+    },
+    {
+      "code": "HT0731-01",
+      "level": "section_communale",
+      "parent": "HT0731",
+      "name": "1re Section Macéan",
+      "nameHt": null,
+      "path": "ht.ht07.ht0731.ht0731_01"
+    },
+    {
+      "code": "HT0715-01",
+      "level": "section_communale",
+      "parent": "HT0715",
+      "name": "1re Section Maniche",
+      "nameHt": null,
+      "path": "ht.ht07.ht0715.ht0715_01"
+    },
+    {
+      "code": "HT0351-01",
+      "level": "section_communale",
+      "parent": "HT0351",
+      "name": "1re Section Margot",
+      "nameHt": null,
+      "path": "ht.ht03.ht0351.ht0351_01"
+    },
+    {
+      "code": "HT0533-01",
+      "level": "section_communale",
+      "parent": "HT0533",
+      "name": "1re Section Martineau",
+      "nameHt": null,
+      "path": "ht.ht05.ht0533.ht0533_01"
+    },
+    {
+      "code": "HT0823-01",
+      "level": "section_communale",
+      "parent": "HT0823",
+      "name": "1re Section Matador (Jorgue)",
+      "nameHt": null,
+      "path": "ht.ht08.ht0823.ht0823_01"
+    },
+    {
+      "code": "HT0642-01",
+      "level": "section_communale",
+      "parent": "HT0642",
+      "name": "1re Section Matelgate",
+      "nameHt": null,
+      "path": "ht.ht06.ht0642.ht0642_01"
+    },
+    {
+      "code": "HT0114-01",
+      "level": "section_communale",
+      "parent": "HT0114",
+      "name": "1re Section Montagne Noire",
+      "nameHt": null,
+      "path": "ht.ht01.ht0114.ht0114_01"
+    },
+    {
+      "code": "HT0116-01",
+      "level": "section_communale",
+      "parent": "HT0116",
+      "name": "1re Section Morne à Bateau",
+      "nameHt": null,
+      "path": "ht.ht01.ht0116.ht0116_01"
+    },
+    {
+      "code": "HT0113-01",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "1re Section Morne Chandelle",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_01"
+    },
+    {
+      "code": "HT0322-01",
+      "level": "section_communale",
+      "parent": "HT0322",
+      "name": "1re Section Morne Rouge",
+      "nameHt": null,
+      "path": "ht.ht03.ht0322.ht0322_01"
+    },
+    {
+      "code": "HT0115-01",
+      "level": "section_communale",
+      "parent": "HT0115",
+      "name": "1re Section Nouvelle Touraine",
+      "nameHt": null,
+      "path": "ht.ht01.ht0115.ht0115_01"
+    },
+    {
+      "code": "HT0151-01",
+      "level": "section_communale",
+      "parent": "HT0151",
+      "name": "1re Section Palma",
+      "nameHt": null,
+      "path": "ht.ht01.ht0151.ht0151_01"
+    },
+    {
+      "code": "HT0742-01",
+      "level": "section_communale",
+      "parent": "HT0742",
+      "name": "1re Section Paricot",
+      "nameHt": null,
+      "path": "ht.ht07.ht0742.ht0742_01"
+    },
+    {
+      "code": "HT0323-01",
+      "level": "section_communale",
+      "parent": "HT0323",
+      "name": "1re Section Perches-de-Bonnet",
+      "nameHt": null,
+      "path": "ht.ht03.ht0323.ht0323_01"
+    },
+    {
+      "code": "HT0631-01",
+      "level": "section_communale",
+      "parent": "HT0631",
+      "name": "1re Section Petit Fond",
+      "nameHt": null,
+      "path": "ht.ht06.ht0631.ht0631_01"
+    },
+    {
+      "code": "HT0623-01",
+      "level": "section_communale",
+      "parent": "HT0623",
+      "name": "1re Section Petite Montagne",
+      "nameHt": null,
+      "path": "ht.ht06.ht0623.ht0623_01"
+    },
+    {
+      "code": "HT0134-01",
+      "level": "section_communale",
+      "parent": "HT0134",
+      "name": "1re Section Plaine Céleste",
+      "nameHt": null,
+      "path": "ht.ht01.ht0134.ht0134_01"
+    },
+    {
+      "code": "HT1025-01",
+      "level": "section_communale",
+      "parent": "HT1025",
+      "name": "1re Section Plaisance du Sud (ou ti François)",
+      "nameHt": null,
+      "path": "ht.ht10.ht1025.ht1025_01"
+    },
+    {
+      "code": "HT0551-01",
+      "level": "section_communale",
+      "parent": "HT0551",
+      "name": "1re Section Platana",
+      "nameHt": null,
+      "path": "ht.ht05.ht0551.ht0551_01"
+    },
+    {
+      "code": "HT0933-01",
+      "level": "section_communale",
+      "parent": "HT0933",
+      "name": "1re Section Plate Forme",
+      "nameHt": null,
+      "path": "ht.ht09.ht0933.ht0933_01"
+    },
+    {
+      "code": "HT0912-01",
+      "level": "section_communale",
+      "parent": "HT0912",
+      "name": "1re Section Pointe des Oiseaux",
+      "nameHt": null,
+      "path": "ht.ht09.ht0912.ht0912_01"
+    },
+    {
+      "code": "HT0511-01",
+      "level": "section_communale",
+      "parent": "HT0511",
+      "name": "1re Section Pont Tamarin",
+      "nameHt": null,
+      "path": "ht.ht05.ht0511.ht0511_01"
+    },
+    {
+      "code": "HT0543-01",
+      "level": "section_communale",
+      "parent": "HT0543",
+      "name": "1re Section Poteneau",
+      "nameHt": null,
+      "path": "ht.ht05.ht0543.ht0543_01"
+    },
+    {
+      "code": "HT0751-01",
+      "level": "section_communale",
+      "parent": "HT0751",
+      "name": "1re Section Randel",
+      "nameHt": null,
+      "path": "ht.ht07.ht0751.ht0751_01"
+    },
+    {
+      "code": "HT0614-01",
+      "level": "section_communale",
+      "parent": "HT0614",
+      "name": "1re Section Rang",
+      "nameHt": null,
+      "path": "ht.ht06.ht0614.ht0614_01"
+    },
+    {
+      "code": "HT0213-01",
+      "level": "section_communale",
+      "parent": "HT0213",
+      "name": "1re Section Ravine Normande",
+      "nameHt": null,
+      "path": "ht.ht02.ht0213.ht0213_01"
+    },
+    {
+      "code": "HT1022-01",
+      "level": "section_communale",
+      "parent": "HT1022",
+      "name": "1re Section Raymond",
+      "nameHt": null,
+      "path": "ht.ht10.ht1022.ht1022_01"
+    },
+    {
+      "code": "HT0632-01",
+      "level": "section_communale",
+      "parent": "HT0632",
+      "name": "1re Section Renthe Mathe",
+      "nameHt": null,
+      "path": "ht.ht06.ht0632.ht0632_01"
+    },
+    {
+      "code": "HT0921-01",
+      "level": "section_communale",
+      "parent": "HT0921",
+      "name": "1re Section Rivière des Nègres",
+      "nameHt": null,
+      "path": "ht.ht09.ht0921.ht0921_01"
+    },
+    {
+      "code": "HT1014-01",
+      "level": "section_communale",
+      "parent": "HT1014",
+      "name": "1re Section Salagnac",
+      "nameHt": null,
+      "path": "ht.ht10.ht1014.ht1014_01"
+    },
+    {
+      "code": "HT0443-01",
+      "level": "section_communale",
+      "parent": "HT0443",
+      "name": "1re Section Sans Souci",
+      "nameHt": null,
+      "path": "ht.ht04.ht0443.ht0443_01"
+    },
+    {
+      "code": "HT0512-01",
+      "level": "section_communale",
+      "parent": "HT0512",
+      "name": "1re Section Savane Carree",
+      "nameHt": null,
+      "path": "ht.ht05.ht0512.ht0512_01"
+    },
+    {
+      "code": "HT0612-01",
+      "level": "section_communale",
+      "parent": "HT0612",
+      "name": "1re Section Savane Grande",
+      "nameHt": null,
+      "path": "ht.ht06.ht0612.ht0612_01"
+    },
+    {
+      "code": "HT0423-01",
+      "level": "section_communale",
+      "parent": "HT0423",
+      "name": "1re Section Savanette",
+      "nameHt": null,
+      "path": "ht.ht04.ht0423.ht0423_01"
+    },
+    {
+      "code": "HT0344-01",
+      "level": "section_communale",
+      "parent": "HT0344",
+      "name": "1re Section Savannette",
+      "nameHt": null,
+      "path": "ht.ht03.ht0344.ht0344_01"
+    },
+    {
+      "code": "HT0112-01",
+      "level": "section_communale",
+      "parent": "HT0112",
+      "name": "1re Section St Martin",
+      "nameHt": null,
+      "path": "ht.ht01.ht0112.ht0112_01"
+    },
+    {
+      "code": "HT0722-01",
+      "level": "section_communale",
+      "parent": "HT0722",
+      "name": "1re Section Tapion",
+      "nameHt": null,
+      "path": "ht.ht07.ht0722.ht0722_01"
+    },
+    {
+      "code": "HT0123-01",
+      "level": "section_communale",
+      "parent": "HT0123",
+      "name": "1re Section Tête-à-Boeuf",
+      "nameHt": null,
+      "path": "ht.ht01.ht0123.ht0123_01"
+    },
+    {
+      "code": "HT0233-01",
+      "level": "section_communale",
+      "parent": "HT0233",
+      "name": "1re Section Thiotte",
+      "nameHt": null,
+      "path": "ht.ht02.ht0233.ht0233_01"
+    },
+    {
+      "code": "HT0441-01",
+      "level": "section_communale",
+      "parent": "HT0441",
+      "name": "1re Section Trois Palmistes",
+      "nameHt": null,
+      "path": "ht.ht04.ht0441.ht0441_01"
+    },
+    {
+      "code": "HT0111-01",
+      "level": "section_communale",
+      "parent": "HT0111",
+      "name": "1re Section Turgeau",
+      "nameHt": null,
+      "path": "ht.ht01.ht0111.ht0111_01"
+    },
+    {
+      "code": "HT0752-01",
+      "level": "section_communale",
+      "parent": "HT0752",
+      "name": "1re Section Verone",
+      "nameHt": null,
+      "path": "ht.ht07.ht0752.ht0752_01"
+    },
+    {
+      "code": "HT0541-01",
+      "level": "section_communale",
+      "parent": "HT0541",
+      "name": "1re Section Villars",
+      "nameHt": null,
+      "path": "ht.ht05.ht0541.ht0541_01"
+    },
+    {
+      "code": "HT0641-02",
+      "level": "section_communale",
+      "parent": "HT0641",
+      "name": "2e Section Acaj ou Brûle No 1",
+      "nameHt": null,
+      "path": "ht.ht06.ht0641.ht0641_02"
+    },
+    {
+      "code": "HT0421-02",
+      "level": "section_communale",
+      "parent": "HT0421",
+      "name": "2e Section Acul des Pins",
+      "nameHt": null,
+      "path": "ht.ht04.ht0421.ht0421_02"
+    },
+    {
+      "code": "HT0723-02",
+      "level": "section_communale",
+      "parent": "HT0723",
+      "name": "2e Section Anse à Drick",
+      "nameHt": null,
+      "path": "ht.ht07.ht0723.ht0723_02"
+    },
+    {
+      "code": "HT1025-02",
+      "level": "section_communale",
+      "parent": "HT1025",
+      "name": "2e Section Anse aux Pins",
+      "nameHt": null,
+      "path": "ht.ht10.ht1025.ht1025_02"
+    },
+    {
+      "code": "HT0114-02",
+      "level": "section_communale",
+      "parent": "HT0114",
+      "name": "2e Section Aux Cadets",
+      "nameHt": null,
+      "path": "ht.ht01.ht0114.ht0114_02"
+    },
+    {
+      "code": "HT0732-02",
+      "level": "section_communale",
+      "parent": "HT0732",
+      "name": "2e Section Baie Dumesle",
+      "nameHt": null,
+      "path": "ht.ht07.ht0732.ht0732_02"
+    },
+    {
+      "code": "HT0332-02",
+      "level": "section_communale",
+      "parent": "HT0332",
+      "name": "2e Section Bailly ou Bailla",
+      "nameHt": null,
+      "path": "ht.ht03.ht0332.ht0332_02"
+    },
+    {
+      "code": "HT0742-02",
+      "level": "section_communale",
+      "parent": "HT0742",
+      "name": "2e Section Balais",
+      "nameHt": null,
+      "path": "ht.ht07.ht0742.ht0742_02"
+    },
+    {
+      "code": "HT0133-02",
+      "level": "section_communale",
+      "parent": "HT0133",
+      "name": "2e Section Balan",
+      "nameHt": null,
+      "path": "ht.ht01.ht0133.ht0133_02"
+    },
+    {
+      "code": "HT0812-02",
+      "level": "section_communale",
+      "parent": "HT0812",
+      "name": "2e Section Balisiers",
+      "nameHt": null,
+      "path": "ht.ht08.ht0812.ht0812_02"
+    },
+    {
+      "code": "HT1024-02",
+      "level": "section_communale",
+      "parent": "HT1024",
+      "name": "2e Section Baquet",
+      "nameHt": null,
+      "path": "ht.ht10.ht1024.ht1024_02"
+    },
+    {
+      "code": "HT0542-02",
+      "level": "section_communale",
+      "parent": "HT0542",
+      "name": "2e Section Bas Coursin II",
+      "nameHt": null,
+      "path": "ht.ht05.ht0542.ht0542_02"
+    },
+    {
+      "code": "HT0321-02",
+      "level": "section_communale",
+      "parent": "HT0321",
+      "name": "2e Section Bas de l'Acul (Basse Plaine)",
+      "nameHt": null,
+      "path": "ht.ht03.ht0321.ht0321_02"
+    },
+    {
+      "code": "HT0413-02",
+      "level": "section_communale",
+      "parent": "HT0413",
+      "name": "2e Section Bas des Perches",
+      "nameHt": null,
+      "path": "ht.ht04.ht0413.ht0413_02"
+    },
+    {
+      "code": "HT0352-02",
+      "level": "section_communale",
+      "parent": "HT0352",
+      "name": "2e Section Bas Petit Borgne",
+      "nameHt": null,
+      "path": "ht.ht03.ht0352.ht0352_02"
+    },
+    {
+      "code": "HT0322-02",
+      "level": "section_communale",
+      "parent": "HT0322",
+      "name": "2e Section Basse Plaine",
+      "nameHt": null,
+      "path": "ht.ht03.ht0322.ht0322_02"
+    },
+    {
+      "code": "HT0511-02",
+      "level": "section_communale",
+      "parent": "HT0511",
+      "name": "2e Section Bassin",
+      "nameHt": null,
+      "path": "ht.ht05.ht0511.ht0511_02"
+    },
+    {
+      "code": "HT0342-02",
+      "level": "section_communale",
+      "parent": "HT0342",
+      "name": "2e Section Bassin Caïman",
+      "nameHt": null,
+      "path": "ht.ht03.ht0342.ht0342_02"
+    },
+    {
+      "code": "HT0552-02",
+      "level": "section_communale",
+      "parent": "HT0552",
+      "name": "2e Section Bassin ou Billier",
+      "nameHt": null,
+      "path": "ht.ht05.ht0552.ht0552_02"
+    },
+    {
+      "code": "HT0372-02",
+      "level": "section_communale",
+      "parent": "HT0372",
+      "name": "2e Section Baudin",
+      "nameHt": null,
+      "path": "ht.ht03.ht0372.ht0372_02"
+    },
+    {
+      "code": "HT0411-02",
+      "level": "section_communale",
+      "parent": "HT0411",
+      "name": "2e Section Bayaha",
+      "nameHt": null,
+      "path": "ht.ht04.ht0411.ht0411_02"
+    },
+    {
+      "code": "HT0823-02",
+      "level": "section_communale",
+      "parent": "HT0823",
+      "name": "2e Section Belair",
+      "nameHt": null,
+      "path": "ht.ht08.ht0823.ht0823_02"
+    },
+    {
+      "code": "HT0532-02",
+      "level": "section_communale",
+      "parent": "HT0532",
+      "name": "2e Section Belanger",
+      "nameHt": null,
+      "path": "ht.ht05.ht0532.ht0532_02"
+    },
+    {
+      "code": "HT1011-02",
+      "level": "section_communale",
+      "parent": "HT1011",
+      "name": "2e Section Belle Rivière",
+      "nameHt": null,
+      "path": "ht.ht10.ht1011.ht1011_02"
+    },
+    {
+      "code": "HT0731-02",
+      "level": "section_communale",
+      "parent": "HT0731",
+      "name": "2e Section Bellevue",
+      "nameHt": null,
+      "path": "ht.ht07.ht0731.ht0731_02"
+    },
+    {
+      "code": "HT0712-02",
+      "level": "section_communale",
+      "parent": "HT0712",
+      "name": "2e Section Berault",
+      "nameHt": null,
+      "path": "ht.ht07.ht0712.ht0712_02"
+    },
+    {
+      "code": "HT1014-02",
+      "level": "section_communale",
+      "parent": "HT1014",
+      "name": "2e Section Bezin II",
+      "nameHt": null,
+      "path": "ht.ht10.ht1014.ht1014_02"
+    },
+    {
+      "code": "HT0432-02",
+      "level": "section_communale",
+      "parent": "HT0432",
+      "name": "2e Section Bois Blanc",
+      "nameHt": null,
+      "path": "ht.ht04.ht0432.ht0432_02"
+    },
+    {
+      "code": "HT0234-02",
+      "level": "section_communale",
+      "parent": "HT0234",
+      "name": "2e Section Bois d'Orme",
+      "nameHt": null,
+      "path": "ht.ht02.ht0234.ht0234_02"
+    },
+    {
+      "code": "HT0313-02",
+      "level": "section_communale",
+      "parent": "HT0313",
+      "name": "2e Section Bois de Lance",
+      "nameHt": null,
+      "path": "ht.ht03.ht0313.ht0313_02"
+    },
+    {
+      "code": "HT0343-02",
+      "level": "section_communale",
+      "parent": "HT0343",
+      "name": "2e Section Bois de Lance",
+      "nameHt": null,
+      "path": "ht.ht03.ht0343.ht0343_02"
+    },
+    {
+      "code": "HT0443-02",
+      "level": "section_communale",
+      "parent": "HT0443",
+      "name": "2e Section Bois Laurence",
+      "nameHt": null,
+      "path": "ht.ht04.ht0443.ht0443_02"
+    },
+    {
+      "code": "HT0522-02",
+      "level": "section_communale",
+      "parent": "HT0522",
+      "name": "2e Section Bois Neuf",
+      "nameHt": null,
+      "path": "ht.ht05.ht0522.ht0522_02"
+    },
+    {
+      "code": "HT0531-02",
+      "level": "section_communale",
+      "parent": "HT0531",
+      "name": "2e Section Bois Neuf",
+      "nameHt": null,
+      "path": "ht.ht05.ht0531.ht0531_02"
+    },
+    {
+      "code": "HT0423-02",
+      "level": "section_communale",
+      "parent": "HT0423",
+      "name": "2e Section Bois Poux",
+      "nameHt": null,
+      "path": "ht.ht04.ht0423.ht0423_02"
+    },
+    {
+      "code": "HT0115-02",
+      "level": "section_communale",
+      "parent": "HT0115",
+      "name": "2e Section Bongars",
+      "nameHt": null,
+      "path": "ht.ht01.ht0115.ht0115_02"
+    },
+    {
+      "code": "HT0323-02",
+      "level": "section_communale",
+      "parent": "HT0323",
+      "name": "2e Section Bonnet à l'Evêque",
+      "nameHt": null,
+      "path": "ht.ht03.ht0323.ht0323_02"
+    },
+    {
+      "code": "HT0533-02",
+      "level": "section_communale",
+      "parent": "HT0533",
+      "name": "2e Section Bossous",
+      "nameHt": null,
+      "path": "ht.ht05.ht0533.ht0533_02"
+    },
+    {
+      "code": "HT0815-02",
+      "level": "section_communale",
+      "parent": "HT0815",
+      "name": "2e Section Boucan",
+      "nameHt": null,
+      "path": "ht.ht08.ht0815.ht0815_02"
+    },
+    {
+      "code": "HT0623-02",
+      "level": "section_communale",
+      "parent": "HT0623",
+      "name": "2e Section Boucan Carre",
+      "nameHt": null,
+      "path": "ht.ht06.ht0623.ht0623_02"
+    },
+    {
+      "code": "HT0351-02",
+      "level": "section_communale",
+      "parent": "HT0351",
+      "name": "2e Section Boucan Michel",
+      "nameHt": null,
+      "path": "ht.ht03.ht0351.ht0351_02"
+    },
+    {
+      "code": "HT0142-02",
+      "level": "section_communale",
+      "parent": "HT0142",
+      "name": "2e Section Boucassin",
+      "nameHt": null,
+      "path": "ht.ht01.ht0142.ht0142_02"
+    },
+    {
+      "code": "HT0821-02",
+      "level": "section_communale",
+      "parent": "HT0821",
+      "name": "2e Section Boudon",
+      "nameHt": null,
+      "path": "ht.ht08.ht0821.ht0821_02"
+    },
+    {
+      "code": "HT0551-02",
+      "level": "section_communale",
+      "parent": "HT0551",
+      "name": "2e Section Camathe",
+      "nameHt": null,
+      "path": "ht.ht05.ht0551.ht0551_02"
+    },
+    {
+      "code": "HT0913-02",
+      "level": "section_communale",
+      "parent": "HT0913",
+      "name": "2e Section Carreau Datty",
+      "nameHt": null,
+      "path": "ht.ht09.ht0913.ht0913_02"
+    },
+    {
+      "code": "HT0361-02",
+      "level": "section_communale",
+      "parent": "HT0361",
+      "name": "2e Section Chabotte",
+      "nameHt": null,
+      "path": "ht.ht03.ht0361.ht0361_02"
+    },
+    {
+      "code": "HT0371-02",
+      "level": "section_communale",
+      "parent": "HT0371",
+      "name": "2e Section Champagne",
+      "nameHt": null,
+      "path": "ht.ht03.ht0371.ht0371_02"
+    },
+    {
+      "code": "HT0714-02",
+      "level": "section_communale",
+      "parent": "HT0714",
+      "name": "2e Section Champlois",
+      "nameHt": null,
+      "path": "ht.ht07.ht0714.ht0714_02"
+    },
+    {
+      "code": "HT1023-02",
+      "level": "section_communale",
+      "parent": "HT1023",
+      "name": "2e Section Changeux (Quartier de Changeux)",
+      "nameHt": null,
+      "path": "ht.ht10.ht1023.ht1023_02"
+    },
+    {
+      "code": "HT0833-02",
+      "level": "section_communale",
+      "parent": "HT0833",
+      "name": "2e Section Chardonnette",
+      "nameHt": null,
+      "path": "ht.ht08.ht0833.ht0833_02"
+    },
+    {
+      "code": "HT1012-02",
+      "level": "section_communale",
+      "parent": "HT1012",
+      "name": "2e Section Cholette",
+      "nameHt": null,
+      "path": "ht.ht10.ht1012.ht1012_02"
+    },
+    {
+      "code": "HT0822-02",
+      "level": "section_communale",
+      "parent": "HT0822",
+      "name": "2e Section Dallier",
+      "nameHt": null,
+      "path": "ht.ht08.ht0822.ht0822_02"
+    },
+    {
+      "code": "HT0722-02",
+      "level": "section_communale",
+      "parent": "HT0722",
+      "name": "2e Section Debouchette",
+      "nameHt": null,
+      "path": "ht.ht07.ht0722.ht0722_02"
+    },
+    {
+      "code": "HT0751-02",
+      "level": "section_communale",
+      "parent": "HT0751",
+      "name": "2e Section Dejoie",
+      "nameHt": null,
+      "path": "ht.ht07.ht0751.ht0751_02"
+    },
+    {
+      "code": "HT0122-02",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "2e Section Delatre",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_02"
+    },
+    {
+      "code": "HT0921-02",
+      "level": "section_communale",
+      "parent": "HT0921",
+      "name": "2e Section Derourvay",
+      "nameHt": null,
+      "path": "ht.ht09.ht0921.ht0921_02"
+    },
+    {
+      "code": "HT0933-02",
+      "level": "section_communale",
+      "parent": "HT0933",
+      "name": "2e Section des Forges",
+      "nameHt": null,
+      "path": "ht.ht09.ht0933.ht0933_02"
+    },
+    {
+      "code": "HT0117-01",
+      "level": "section_communale",
+      "parent": "HT0117",
+      "name": "2e Section des Varreux",
+      "nameHt": null,
+      "path": "ht.ht01.ht0117.ht0117_01"
+    },
+    {
+      "code": "HT0131-02",
+      "level": "section_communale",
+      "parent": "HT0131",
+      "name": "2e Section des Varreux",
+      "nameHt": null,
+      "path": "ht.ht01.ht0131.ht0131_02"
+    },
+    {
+      "code": "HT0741-02",
+      "level": "section_communale",
+      "parent": "HT0741",
+      "name": "2e Section Despas",
+      "nameHt": null,
+      "path": "ht.ht07.ht0741.ht0741_02"
+    },
+    {
+      "code": "HT0715-02",
+      "level": "section_communale",
+      "parent": "HT0715",
+      "name": "2e Section Dory",
+      "nameHt": null,
+      "path": "ht.ht07.ht0715.ht0715_02"
+    },
+    {
+      "code": "HT0932-02",
+      "level": "section_communale",
+      "parent": "HT0932",
+      "name": "2e Section Dos d'Ane",
+      "nameHt": null,
+      "path": "ht.ht09.ht0932.ht0932_02"
+    },
+    {
+      "code": "HT0721-02",
+      "level": "section_communale",
+      "parent": "HT0721",
+      "name": "2e Section Dumont",
+      "nameHt": null,
+      "path": "ht.ht07.ht0721.ht0721_02"
+    },
+    {
+      "code": "HT1032-02",
+      "level": "section_communale",
+      "parent": "HT1032",
+      "name": "2e Section Eaux Basses",
+      "nameHt": null,
+      "path": "ht.ht10.ht1032.ht1032_02"
+    },
+    {
+      "code": "HT0441-02",
+      "level": "section_communale",
+      "parent": "HT0441",
+      "name": "2e Section Ecrevisse ou Grosse Roche",
+      "nameHt": null,
+      "path": "ht.ht04.ht0441.ht0441_02"
+    },
+    {
+      "code": "HT0752-02",
+      "level": "section_communale",
+      "parent": "HT0752",
+      "name": "2e Section Edelin",
+      "nameHt": null,
+      "path": "ht.ht07.ht0752.ht0752_02"
+    },
+    {
+      "code": "HT0834-02",
+      "level": "section_communale",
+      "parent": "HT0834",
+      "name": "2e Section Espère",
+      "nameHt": null,
+      "path": "ht.ht08.ht0834.ht0834_02"
+    },
+    {
+      "code": "HT1013-02",
+      "level": "section_communale",
+      "parent": "HT1013",
+      "name": "2e Section Fond-des-Nègres ou Morne Brice",
+      "nameHt": null,
+      "path": "ht.ht10.ht1013.ht1013_02"
+    },
+    {
+      "code": "HT0832-02",
+      "level": "section_communale",
+      "parent": "HT0832",
+      "name": "2e Section Fond Cochon ou Lopineau",
+      "nameHt": null,
+      "path": "ht.ht08.ht0832.ht0832_02"
+    },
+    {
+      "code": "HT0831-02",
+      "level": "section_communale",
+      "parent": "HT0831",
+      "name": "2e Section Fond d'Icaque",
+      "nameHt": null,
+      "path": "ht.ht08.ht0831.ht0831_02"
+    },
+    {
+      "code": "HT0211-02",
+      "level": "section_communale",
+      "parent": "HT0211",
+      "name": "2e Section Fond Melon (Selles)",
+      "nameHt": null,
+      "path": "ht.ht02.ht0211.ht0211_02"
+    },
+    {
+      "code": "HT0213-04",
+      "level": "section_communale",
+      "parent": "HT0213",
+      "name": "2e Section Fond Melon Michineau",
+      "nameHt": null,
+      "path": "ht.ht02.ht0213.ht0213_04"
+    },
+    {
+      "code": "HT0141-02",
+      "level": "section_communale",
+      "parent": "HT0141",
+      "name": "2e Section Fonds Baptiste",
+      "nameHt": null,
+      "path": "ht.ht01.ht0141.ht0141_02"
+    },
+    {
+      "code": "HT0711-02",
+      "level": "section_communale",
+      "parent": "HT0711",
+      "name": "2e Section Fonfrède",
+      "nameHt": null,
+      "path": "ht.ht07.ht0711.ht0711_02"
+    },
+    {
+      "code": "HT0541-02",
+      "level": "section_communale",
+      "parent": "HT0541",
+      "name": "2e Section Fosse Naboth ou Duvallon",
+      "nameHt": null,
+      "path": "ht.ht05.ht0541.ht0541_02"
+    },
+    {
+      "code": "HT0213-02",
+      "level": "section_communale",
+      "parent": "HT0213",
+      "name": "2e Section Gaillard",
+      "nameHt": null,
+      "path": "ht.ht02.ht0213.ht0213_02"
+    },
+    {
+      "code": "HT0434-02",
+      "level": "section_communale",
+      "parent": "HT0434",
+      "name": "2e Section Glaudine ou \"Jacquesil\"",
+      "nameHt": null,
+      "path": "ht.ht04.ht0434.ht0434_02"
+    },
+    {
+      "code": "HT0433-02",
+      "level": "section_communale",
+      "parent": "HT0433",
+      "name": "2e Section Grand Bassin",
+      "nameHt": null,
+      "path": "ht.ht04.ht0433.ht0433_02"
+    },
+    {
+      "code": "HT0152-03",
+      "level": "section_communale",
+      "parent": "HT0152",
+      "name": "2e Section Grand Vide",
+      "nameHt": null,
+      "path": "ht.ht01.ht0152.ht0152_03"
+    },
+    {
+      "code": "HT1021-02",
+      "level": "section_communale",
+      "parent": "HT1021",
+      "name": "2e Section Grande-Rivière-Joly",
+      "nameHt": null,
+      "path": "ht.ht10.ht1021.ht1021_02"
+    },
+    {
+      "code": "HT0132-02",
+      "level": "section_communale",
+      "parent": "HT0132",
+      "name": "2e Section Grande Plaine",
+      "nameHt": null,
+      "path": "ht.ht01.ht0132.ht0132_02"
+    },
+    {
+      "code": "HT0212-02",
+      "level": "section_communale",
+      "parent": "HT0212",
+      "name": "2e Section Grande Rivière Fesles",
+      "nameHt": null,
+      "path": "ht.ht02.ht0212.ht0212_02"
+    },
+    {
+      "code": "HT0934-02",
+      "level": "section_communale",
+      "parent": "HT0934",
+      "name": "2e Section Guinaudee",
+      "nameHt": null,
+      "path": "ht.ht09.ht0934.ht0934_02"
+    },
+    {
+      "code": "HT0311-02",
+      "level": "section_communale",
+      "parent": "HT0311",
+      "name": "2e Section Haut du Cap",
+      "nameHt": null,
+      "path": "ht.ht03.ht0311.ht0311_02"
+    },
+    {
+      "code": "HT0811-02",
+      "level": "section_communale",
+      "parent": "HT0811",
+      "name": "2e Section Haute Voldrogue",
+      "nameHt": null,
+      "path": "ht.ht08.ht0811.ht0811_02"
+    },
+    {
+      "code": "HT0631-02",
+      "level": "section_communale",
+      "parent": "HT0631",
+      "name": "2e Section Juampas",
+      "nameHt": null,
+      "path": "ht.ht06.ht0631.ht0631_02"
+    },
+    {
+      "code": "HT0344-02",
+      "level": "section_communale",
+      "parent": "HT0344",
+      "name": "2e Section la Belle Mère",
+      "nameHt": null,
+      "path": "ht.ht03.ht0344.ht0344_02"
+    },
+    {
+      "code": "HT0633-02",
+      "level": "section_communale",
+      "parent": "HT0633",
+      "name": "2e Section la Haye",
+      "nameHt": null,
+      "path": "ht.ht06.ht0633.ht0633_02"
+    },
+    {
+      "code": "HT0911-02",
+      "level": "section_communale",
+      "parent": "HT0911",
+      "name": "2e Section la Pointe",
+      "nameHt": null,
+      "path": "ht.ht09.ht0911.ht0911_02"
+    },
+    {
+      "code": "HT0622-02",
+      "level": "section_communale",
+      "parent": "HT0622",
+      "name": "2e Section la Selle",
+      "nameHt": null,
+      "path": "ht.ht06.ht0622.ht0622_02"
+    },
+    {
+      "code": "HT0214-02",
+      "level": "section_communale",
+      "parent": "HT0214",
+      "name": "2e Section La Vallee de Bainet ou Ternier",
+      "nameHt": null,
+      "path": "ht.ht02.ht0214.ht0214_02"
+    },
+    {
+      "code": "HT0222-02",
+      "level": "section_communale",
+      "parent": "HT0222",
+      "name": "2e Section Labiche",
+      "nameHt": null,
+      "path": "ht.ht02.ht0222.ht0222_02"
+    },
+    {
+      "code": "HT0422-02",
+      "level": "section_communale",
+      "parent": "HT0422",
+      "name": "2e Section Lamine",
+      "nameHt": null,
+      "path": "ht.ht04.ht0422.ht0422_02"
+    },
+    {
+      "code": "HT0642-02",
+      "level": "section_communale",
+      "parent": "HT0642",
+      "name": "2e Section Lociane",
+      "nameHt": null,
+      "path": "ht.ht06.ht0642.ht0642_02"
+    },
+    {
+      "code": "HT0231-02",
+      "level": "section_communale",
+      "parent": "HT0231",
+      "name": "2e Section Mabriole",
+      "nameHt": null,
+      "path": "ht.ht02.ht0231.ht0231_02"
+    },
+    {
+      "code": "HT0931-02",
+      "level": "section_communale",
+      "parent": "HT0931",
+      "name": "2e Section Mare-Rouge",
+      "nameHt": null,
+      "path": "ht.ht09.ht0931.ht0931_02"
+    },
+    {
+      "code": "HT0912-02",
+      "level": "section_communale",
+      "parent": "HT0912",
+      "name": "2e Section Mare Rouge",
+      "nameHt": null,
+      "path": "ht.ht09.ht0912.ht0912_02"
+    },
+    {
+      "code": "HT0611-02",
+      "level": "section_communale",
+      "parent": "HT0611",
+      "name": "2e Section Marmont",
+      "nameHt": null,
+      "path": "ht.ht06.ht0611.ht0611_02"
+    },
+    {
+      "code": "HT0733-02",
+      "level": "section_communale",
+      "parent": "HT0733",
+      "name": "2e Section Martineau",
+      "nameHt": null,
+      "path": "ht.ht07.ht0733.ht0733_02"
+    },
+    {
+      "code": "HT0341-02",
+      "level": "section_communale",
+      "parent": "HT0341",
+      "name": "2e Section Mathurin",
+      "nameHt": null,
+      "path": "ht.ht03.ht0341.ht0341_02"
+    },
+    {
+      "code": "HT0922-02",
+      "level": "section_communale",
+      "parent": "HT0922",
+      "name": "2e Section Mayance",
+      "nameHt": null,
+      "path": "ht.ht09.ht0922.ht0922_02"
+    },
+    {
+      "code": "HT0713-02",
+      "level": "section_communale",
+      "parent": "HT0713",
+      "name": "2e Section Melonière",
+      "nameHt": null,
+      "path": "ht.ht07.ht0713.ht0713_02"
+    },
+    {
+      "code": "HT0116-02",
+      "level": "section_communale",
+      "parent": "HT0116",
+      "name": "2e Section Morne Chandelle",
+      "nameHt": null,
+      "path": "ht.ht01.ht0116.ht0116_02"
+    },
+    {
+      "code": "HT0111-02",
+      "level": "section_communale",
+      "parent": "HT0111",
+      "name": "2e Section Morne l'Hopital",
+      "nameHt": null,
+      "path": "ht.ht01.ht0111.ht0111_02"
+    },
+    {
+      "code": "HT0312-02",
+      "level": "section_communale",
+      "parent": "HT0312",
+      "name": "2e Section Morne Pele",
+      "nameHt": null,
+      "path": "ht.ht03.ht0312.ht0312_02"
+    },
+    {
+      "code": "HT0753-02",
+      "level": "section_communale",
+      "parent": "HT0753",
+      "name": "2e Section Nan Sevre",
+      "nameHt": null,
+      "path": "ht.ht07.ht0753.ht0753_02"
+    },
+    {
+      "code": "HT0612-02",
+      "level": "section_communale",
+      "parent": "HT0612",
+      "name": "2e Section Narang",
+      "nameHt": null,
+      "path": "ht.ht06.ht0612.ht0612_02"
+    },
+    {
+      "code": "HT0512-02",
+      "level": "section_communale",
+      "parent": "HT0512",
+      "name": "2e Section Passe-Reine ou Bas d'Ennery",
+      "nameHt": null,
+      "path": "ht.ht05.ht0512.ht0512_02"
+    },
+    {
+      "code": "HT0362-02",
+      "level": "section_communale",
+      "parent": "HT0362",
+      "name": "2e Section Petit Howars (la Fange)",
+      "nameHt": null,
+      "path": "ht.ht03.ht0362.ht0362_02"
+    },
+    {
+      "code": "HT0513-02",
+      "level": "section_communale",
+      "parent": "HT0513",
+      "name": "2e Section Petite Desdunes",
+      "nameHt": null,
+      "path": "ht.ht05.ht0513.ht0513_02"
+    },
+    {
+      "code": "HT0121-02",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "2e Section Petite Rivière",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_02"
+    },
+    {
+      "code": "HT0151-02",
+      "level": "section_communale",
+      "parent": "HT0151",
+      "name": "2e Section Petite Source",
+      "nameHt": null,
+      "path": "ht.ht01.ht0151.ht0151_02"
+    },
+    {
+      "code": "HT0134-02",
+      "level": "section_communale",
+      "parent": "HT0134",
+      "name": "2e Section Plaine Céleste",
+      "nameHt": null,
+      "path": "ht.ht01.ht0134.ht0134_02"
+    },
+    {
+      "code": "HT0113-02",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "2e Section Platon Dufrene",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_02"
+    },
+    {
+      "code": "HT0233-02",
+      "level": "section_communale",
+      "parent": "HT0233",
+      "name": "2e Section Pot de Chambre",
+      "nameHt": null,
+      "path": "ht.ht02.ht0233.ht0233_02"
+    },
+    {
+      "code": "HT0743-02",
+      "level": "section_communale",
+      "parent": "HT0743",
+      "name": "2e Section Renaudin",
+      "nameHt": null,
+      "path": "ht.ht07.ht0743.ht0743_02"
+    },
+    {
+      "code": "HT0521-02",
+      "level": "section_communale",
+      "parent": "HT0521",
+      "name": "2e Section Rivière Mancelle",
+      "nameHt": null,
+      "path": "ht.ht05.ht0521.ht0521_02"
+    },
+    {
+      "code": "HT0442-02",
+      "level": "section_communale",
+      "parent": "HT0442",
+      "name": "2e Section Rose Bonite",
+      "nameHt": null,
+      "path": "ht.ht04.ht0442.ht0442_02"
+    },
+    {
+      "code": "HT0431-02",
+      "level": "section_communale",
+      "parent": "HT0431",
+      "name": "2e Section Roucou",
+      "nameHt": null,
+      "path": "ht.ht04.ht0431.ht0431_02"
+    },
+    {
+      "code": "HT0632-02",
+      "level": "section_communale",
+      "parent": "HT0632",
+      "name": "2e Section Roye-Sec",
+      "nameHt": null,
+      "path": "ht.ht06.ht0632.ht0632_02"
+    },
+    {
+      "code": "HT0621-02",
+      "level": "section_communale",
+      "parent": "HT0621",
+      "name": "2e Section Sarazin",
+      "nameHt": null,
+      "path": "ht.ht06.ht0621.ht0621_02"
+    },
+    {
+      "code": "HT0331-02",
+      "level": "section_communale",
+      "parent": "HT0331",
+      "name": "2e Section Solon",
+      "nameHt": null,
+      "path": "ht.ht03.ht0331.ht0331_02"
+    },
+    {
+      "code": "HT0523-02",
+      "level": "section_communale",
+      "parent": "HT0523",
+      "name": "2e Section Sources Chaudes",
+      "nameHt": null,
+      "path": "ht.ht05.ht0523.ht0523_02"
+    },
+    {
+      "code": "HT0814-02",
+      "level": "section_communale",
+      "parent": "HT0814",
+      "name": "2e Section Sources Chaudes",
+      "nameHt": null,
+      "path": "ht.ht08.ht0814.ht0814_02"
+    },
+    {
+      "code": "HT0123-02",
+      "level": "section_communale",
+      "parent": "HT0123",
+      "name": "2e Section Tête-à-Boeuf",
+      "nameHt": null,
+      "path": "ht.ht01.ht0123.ht0123_02"
+    },
+    {
+      "code": "HT1031-02",
+      "level": "section_communale",
+      "parent": "HT1031",
+      "name": "2e Section Tête d'Eau",
+      "nameHt": null,
+      "path": "ht.ht10.ht1031.ht1031_02"
+    },
+    {
+      "code": "HT1022-02",
+      "level": "section_communale",
+      "parent": "HT1022",
+      "name": "2e Section Tiby",
+      "nameHt": null,
+      "path": "ht.ht10.ht1022.ht1022_02"
+    },
+    {
+      "code": "HT0613-02",
+      "level": "section_communale",
+      "parent": "HT0613",
+      "name": "2e Section Tierra Muscady",
+      "nameHt": null,
+      "path": "ht.ht06.ht0613.ht0613_02"
+    },
+    {
+      "code": "HT0221-02",
+      "level": "section_communale",
+      "parent": "HT0221",
+      "name": "2e Section Trou Mahot",
+      "nameHt": null,
+      "path": "ht.ht02.ht0221.ht0221_02"
+    },
+    {
+      "code": "HT0914-02",
+      "level": "section_communale",
+      "parent": "HT0914",
+      "name": "2e Source Beauvoir",
+      "nameHt": null,
+      "path": "ht.ht09.ht0914.ht0914_02"
+    },
+    {
+      "code": "HT0611-03",
+      "level": "section_communale",
+      "parent": "HT0611",
+      "name": "3e Section Aguahedionde (Rive Droite)",
+      "nameHt": null,
+      "path": "ht.ht06.ht0611.ht0611_03"
+    },
+    {
+      "code": "HT1024-03",
+      "level": "section_communale",
+      "parent": "HT1024",
+      "name": "3e Section Arnaud (Morcou)",
+      "nameHt": null,
+      "path": "ht.ht10.ht1024.ht1024_03"
+    },
+    {
+      "code": "HT0911-03",
+      "level": "section_communale",
+      "parent": "HT0911",
+      "name": "3e Section Aubert",
+      "nameHt": null,
+      "path": "ht.ht09.ht0911.ht0911_03"
+    },
+    {
+      "code": "HT0613-03",
+      "level": "section_communale",
+      "parent": "HT0613",
+      "name": "3e Section Baille Tourrible",
+      "nameHt": null,
+      "path": "ht.ht06.ht0613.ht0613_03"
+    },
+    {
+      "code": "HT0551-03",
+      "level": "section_communale",
+      "parent": "HT0551",
+      "name": "3e Section Bas de Sault",
+      "nameHt": null,
+      "path": "ht.ht05.ht0551.ht0551_03"
+    },
+    {
+      "code": "HT0743-03",
+      "level": "section_communale",
+      "parent": "HT0743",
+      "name": "3e Section Beauclos",
+      "nameHt": null,
+      "path": "ht.ht07.ht0743.ht0743_03"
+    },
+    {
+      "code": "HT0118-03",
+      "level": "section_communale",
+      "parent": "HT0118",
+      "name": "3e Section Bellevue",
+      "nameHt": null,
+      "path": "ht.ht01.ht0118.ht0118_03"
+    },
+    {
+      "code": "HT0751-03",
+      "level": "section_communale",
+      "parent": "HT0751",
+      "name": "3e Section Bony",
+      "nameHt": null,
+      "path": "ht.ht07.ht0751.ht0751_03"
+    },
+    {
+      "code": "HT0134-03",
+      "level": "section_communale",
+      "parent": "HT0134",
+      "name": "3e Section Boucan Bois Pin",
+      "nameHt": null,
+      "path": "ht.ht01.ht0134.ht0134_03"
+    },
+    {
+      "code": "HT0341-03",
+      "level": "section_communale",
+      "parent": "HT0341",
+      "name": "3e Section Bouyaha",
+      "nameHt": null,
+      "path": "ht.ht03.ht0341.ht0341_03"
+    },
+    {
+      "code": "HT0222-03",
+      "level": "section_communale",
+      "parent": "HT0222",
+      "name": "3e Section Bras Gauche",
+      "nameHt": null,
+      "path": "ht.ht02.ht0222.ht0222_03"
+    },
+    {
+      "code": "HT0731-03",
+      "level": "section_communale",
+      "parent": "HT0731",
+      "name": "3e Section Brodequin",
+      "nameHt": null,
+      "path": "ht.ht07.ht0731.ht0731_03"
+    },
+    {
+      "code": "HT0231-03",
+      "level": "section_communale",
+      "parent": "HT0231",
+      "name": "3e Section Callumette",
+      "nameHt": null,
+      "path": "ht.ht02.ht0231.ht0231_03"
+    },
+    {
+      "code": "HT0361-03",
+      "level": "section_communale",
+      "parent": "HT0361",
+      "name": "3e Section Camp Coq",
+      "nameHt": null,
+      "path": "ht.ht03.ht0361.ht0361_03"
+    },
+    {
+      "code": "HT0331-03",
+      "level": "section_communale",
+      "parent": "HT0331",
+      "name": "3e Section Caracol",
+      "nameHt": null,
+      "path": "ht.ht03.ht0331.ht0331_03"
+    },
+    {
+      "code": "HT0713-03",
+      "level": "section_communale",
+      "parent": "HT0713",
+      "name": "3e Section Carrefour Canon",
+      "nameHt": null,
+      "path": "ht.ht07.ht0713.ht0713_03"
+    },
+    {
+      "code": "HT0831-03",
+      "level": "section_communale",
+      "parent": "HT0831",
+      "name": "3e Section Champy (Nan Campêche)",
+      "nameHt": null,
+      "path": "ht.ht08.ht0831.ht0831_03"
+    },
+    {
+      "code": "HT0512-03",
+      "level": "section_communale",
+      "parent": "HT0512",
+      "name": "3e Section Chemin Neuf",
+      "nameHt": null,
+      "path": "ht.ht05.ht0512.ht0512_03"
+    },
+    {
+      "code": "HT0211-03",
+      "level": "section_communale",
+      "parent": "HT0211",
+      "name": "3e Section Cochon Gras",
+      "nameHt": null,
+      "path": "ht.ht02.ht0211.ht0211_03"
+    },
+    {
+      "code": "HT0441-03",
+      "level": "section_communale",
+      "parent": "HT0441",
+      "name": "3e Section Corosse",
+      "nameHt": null,
+      "path": "ht.ht04.ht0441.ht0441_03"
+    },
+    {
+      "code": "HT0752-03",
+      "level": "section_communale",
+      "parent": "HT0752",
+      "name": "3e Section Cosse",
+      "nameHt": null,
+      "path": "ht.ht07.ht0752.ht0752_03"
+    },
+    {
+      "code": "HT0432-03",
+      "level": "section_communale",
+      "parent": "HT0432",
+      "name": "3e Section Cotelette",
+      "nameHt": null,
+      "path": "ht.ht04.ht0432.ht0432_03"
+    },
+    {
+      "code": "HT0922-03",
+      "level": "section_communale",
+      "parent": "HT0922",
+      "name": "3e Section Cotes de Fer",
+      "nameHt": null,
+      "path": "ht.ht09.ht0922.ht0922_03"
+    },
+    {
+      "code": "HT0622-03",
+      "level": "section_communale",
+      "parent": "HT0622",
+      "name": "3e Section Coupe Mardi Gras",
+      "nameHt": null,
+      "path": "ht.ht06.ht0622.ht0622_03"
+    },
+    {
+      "code": "HT0343-03",
+      "level": "section_communale",
+      "parent": "HT0343",
+      "name": "3e Section Cracaraille",
+      "nameHt": null,
+      "path": "ht.ht03.ht0343.ht0343_03"
+    },
+    {
+      "code": "HT0723-03",
+      "level": "section_communale",
+      "parent": "HT0723",
+      "name": "3e Section d'Arniquet",
+      "nameHt": null,
+      "path": "ht.ht07.ht0723.ht0723_03"
+    },
+    {
+      "code": "HT0931-03",
+      "level": "section_communale",
+      "parent": "HT0931",
+      "name": "3e Section Dame",
+      "nameHt": null,
+      "path": "ht.ht09.ht0931.ht0931_03"
+    },
+    {
+      "code": "HT0812-03",
+      "level": "section_communale",
+      "parent": "HT0812",
+      "name": "3e Section Danglise",
+      "nameHt": null,
+      "path": "ht.ht08.ht0812.ht0812_03"
+    },
+    {
+      "code": "HT0352-03",
+      "level": "section_communale",
+      "parent": "HT0352",
+      "name": "3e Section de Corail",
+      "nameHt": null,
+      "path": "ht.ht03.ht0352.ht0352_03"
+    },
+    {
+      "code": "HT0623-03",
+      "level": "section_communale",
+      "parent": "HT0623",
+      "name": "3e Section des Bayes",
+      "nameHt": null,
+      "path": "ht.ht06.ht0623.ht0623_03"
+    },
+    {
+      "code": "HT0921-03",
+      "level": "section_communale",
+      "parent": "HT0921",
+      "name": "3e Section des Granges",
+      "nameHt": null,
+      "path": "ht.ht09.ht0921.ht0921_03"
+    },
+    {
+      "code": "HT0141-03",
+      "level": "section_communale",
+      "parent": "HT0141",
+      "name": "3e Section des Vases",
+      "nameHt": null,
+      "path": "ht.ht01.ht0141.ht0141_03"
+    },
+    {
+      "code": "HT0822-03",
+      "level": "section_communale",
+      "parent": "HT0822",
+      "name": "3e Section Desormeau",
+      "nameHt": null,
+      "path": "ht.ht08.ht0822.ht0822_03"
+    },
+    {
+      "code": "HT1011-03",
+      "level": "section_communale",
+      "parent": "HT1011",
+      "name": "3e Section Dessources",
+      "nameHt": null,
+      "path": "ht.ht10.ht1011.ht1011_03"
+    },
+    {
+      "code": "HT0114-03",
+      "level": "section_communale",
+      "parent": "HT0114",
+      "name": "3e Section Etang du Jonc",
+      "nameHt": null,
+      "path": "ht.ht01.ht0114.ht0114_03"
+    },
+    {
+      "code": "HT0133-03",
+      "level": "section_communale",
+      "parent": "HT0133",
+      "name": "3e Section Fond Parisien",
+      "nameHt": null,
+      "path": "ht.ht01.ht0133.ht0133_03"
+    },
+    {
+      "code": "HT1031-03",
+      "level": "section_communale",
+      "parent": "HT1031",
+      "name": "3e Section Fond Tortue",
+      "nameHt": null,
+      "path": "ht.ht10.ht1031.ht1031_03"
+    },
+    {
+      "code": "HT0823-03",
+      "level": "section_communale",
+      "parent": "HT0823",
+      "name": "3e Section Garcasse",
+      "nameHt": null,
+      "path": "ht.ht08.ht0823.ht0823_03"
+    },
+    {
+      "code": "HT0323-03",
+      "level": "section_communale",
+      "parent": "HT0323",
+      "name": "3e Section Genipailler",
+      "nameHt": null,
+      "path": "ht.ht03.ht0323.ht0323_03"
+    },
+    {
+      "code": "HT0531-03",
+      "level": "section_communale",
+      "parent": "HT0531",
+      "name": "3e Section Goyavier",
+      "nameHt": null,
+      "path": "ht.ht05.ht0531.ht0531_03"
+    },
+    {
+      "code": "HT0322-03",
+      "level": "section_communale",
+      "parent": "HT0322",
+      "name": "3e Section Grand Boucan",
+      "nameHt": null,
+      "path": "ht.ht03.ht0322.ht0322_03"
+    },
+    {
+      "code": "HT0621-03",
+      "level": "section_communale",
+      "parent": "HT0621",
+      "name": "3e Section Grand Boucan",
+      "nameHt": null,
+      "path": "ht.ht06.ht0621.ht0621_03"
+    },
+    {
+      "code": "HT0832-03",
+      "level": "section_communale",
+      "parent": "HT0832",
+      "name": "3e Section Grand Vincent",
+      "nameHt": null,
+      "path": "ht.ht08.ht0832.ht0832_03"
+    },
+    {
+      "code": "HT0121-03",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "3e Section Grande Rivère",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_03"
+    },
+    {
+      "code": "HT0151-03",
+      "level": "section_communale",
+      "parent": "HT0151",
+      "name": "3e Section Grande Source",
+      "nameHt": null,
+      "path": "ht.ht01.ht0151.ht0151_03"
+    },
+    {
+      "code": "HT0732-03",
+      "level": "section_communale",
+      "parent": "HT0732",
+      "name": "3e Section Grenodière",
+      "nameHt": null,
+      "path": "ht.ht07.ht0732.ht0732_03"
+    },
+    {
+      "code": "HT0733-03",
+      "level": "section_communale",
+      "parent": "HT0733",
+      "name": "3e Section Gros Marin",
+      "nameHt": null,
+      "path": "ht.ht07.ht0733.ht0733_03"
+    },
+    {
+      "code": "HT0532-03",
+      "level": "section_communale",
+      "parent": "HT0532",
+      "name": "3e Section Guillaume Moge (Quartier de Desarmes)",
+      "nameHt": null,
+      "path": "ht.ht05.ht0532.ht0532_03"
+    },
+    {
+      "code": "HT0612-03",
+      "level": "section_communale",
+      "parent": "HT0612",
+      "name": "3e Section Hatty",
+      "nameHt": null,
+      "path": "ht.ht06.ht0612.ht0612_03"
+    },
+    {
+      "code": "HT0213-03",
+      "level": "section_communale",
+      "parent": "HT0213",
+      "name": "3e Section Haut Cap Rouge",
+      "nameHt": null,
+      "path": "ht.ht02.ht0213.ht0213_03"
+    },
+    {
+      "code": "HT0913-03",
+      "level": "section_communale",
+      "parent": "HT0913",
+      "name": "3e Section Haut des Moustiques",
+      "nameHt": null,
+      "path": "ht.ht09.ht0913.ht0913_03"
+    },
+    {
+      "code": "HT0371-03",
+      "level": "section_communale",
+      "parent": "HT0371",
+      "name": "3e Section Haut Martineau",
+      "nameHt": null,
+      "path": "ht.ht03.ht0371.ht0371_03"
+    },
+    {
+      "code": "HT0811-03",
+      "level": "section_communale",
+      "parent": "HT0811",
+      "name": "3e Section Haute Guinaudee",
+      "nameHt": null,
+      "path": "ht.ht08.ht0811.ht0811_03"
+    },
+    {
+      "code": "HT0821-03",
+      "level": "section_communale",
+      "parent": "HT0821",
+      "name": "3e Section Îlet à Pierre Joseph",
+      "nameHt": null,
+      "path": "ht.ht08.ht0821.ht0821_03"
+    },
+    {
+      "code": "HT0834-03",
+      "level": "section_communale",
+      "parent": "HT0834",
+      "name": "3e Section Jean Bellune",
+      "nameHt": null,
+      "path": "ht.ht08.ht0834.ht0834_03"
+    },
+    {
+      "code": "HT0814-03",
+      "level": "section_communale",
+      "parent": "HT0814",
+      "name": "3e Section l'Assise ou Chameau",
+      "nameHt": null,
+      "path": "ht.ht08.ht0814.ht0814_03"
+    },
+    {
+      "code": "HT0221-03",
+      "level": "section_communale",
+      "parent": "HT0221",
+      "name": "3e Section La Vallee de Bainet",
+      "nameHt": null,
+      "path": "ht.ht02.ht0221.ht0221_03"
+    },
+    {
+      "code": "HT0542-03",
+      "level": "section_communale",
+      "parent": "HT0542",
+      "name": "3e Section Labady",
+      "nameHt": null,
+      "path": "ht.ht05.ht0542.ht0542_03"
+    },
+    {
+      "code": "HT0711-03",
+      "level": "section_communale",
+      "parent": "HT0711",
+      "name": "3e Section Laborde",
+      "nameHt": null,
+      "path": "ht.ht07.ht0711.ht0711_03"
+    },
+    {
+      "code": "HT0522-03",
+      "level": "section_communale",
+      "parent": "HT0522",
+      "name": "3e Section Lagon",
+      "nameHt": null,
+      "path": "ht.ht05.ht0522.ht0522_03"
+    },
+    {
+      "code": "HT0641-03",
+      "level": "section_communale",
+      "parent": "HT0641",
+      "name": "3e Section Lamielle",
+      "nameHt": null,
+      "path": "ht.ht06.ht0641.ht0641_03"
+    },
+    {
+      "code": "HT1022-03",
+      "level": "section_communale",
+      "parent": "HT1022",
+      "name": "3e Section Liève ou Vigny",
+      "nameHt": null,
+      "path": "ht.ht10.ht1022.ht1022_03"
+    },
+    {
+      "code": "HT0753-03",
+      "level": "section_communale",
+      "parent": "HT0753",
+      "name": "3e Section Loby",
+      "nameHt": null,
+      "path": "ht.ht07.ht0753.ht0753_03"
+    },
+    {
+      "code": "HT0411-03",
+      "level": "section_communale",
+      "parent": "HT0411",
+      "name": "3e Section Loiseau",
+      "nameHt": null,
+      "path": "ht.ht04.ht0411.ht0411_03"
+    },
+    {
+      "code": "HT0212-03",
+      "level": "section_communale",
+      "parent": "HT0212",
+      "name": "3e Section Macary",
+      "nameHt": null,
+      "path": "ht.ht02.ht0212.ht0212_03"
+    },
+    {
+      "code": "HT0111-03",
+      "level": "section_communale",
+      "parent": "HT0111",
+      "name": "3e Section Martissant",
+      "nameHt": null,
+      "path": "ht.ht01.ht0111.ht0111_03"
+    },
+    {
+      "code": "HT0342-03",
+      "level": "section_communale",
+      "parent": "HT0342",
+      "name": "3e Section Matador",
+      "nameHt": null,
+      "path": "ht.ht03.ht0342.ht0342_03"
+    },
+    {
+      "code": "HT0715-03",
+      "level": "section_communale",
+      "parent": "HT0715",
+      "name": "3e Section Melon",
+      "nameHt": null,
+      "path": "ht.ht07.ht0715.ht0715_03"
+    },
+    {
+      "code": "HT0332-03",
+      "level": "section_communale",
+      "parent": "HT0332",
+      "name": "3e Section Montagne Noire",
+      "nameHt": null,
+      "path": "ht.ht03.ht0332.ht0332_03"
+    },
+    {
+      "code": "HT0214-03",
+      "level": "section_communale",
+      "parent": "HT0214",
+      "name": "3e Section Morne à Brûler",
+      "nameHt": null,
+      "path": "ht.ht02.ht0214.ht0214_03"
+    },
+    {
+      "code": "HT0321-03",
+      "level": "section_communale",
+      "parent": "HT0321",
+      "name": "3e Section Mornet",
+      "nameHt": null,
+      "path": "ht.ht03.ht0321.ht0321_03"
+    },
+    {
+      "code": "HT0833-03",
+      "level": "section_communale",
+      "parent": "HT0833",
+      "name": "3e Section Mouline",
+      "nameHt": null,
+      "path": "ht.ht08.ht0833.ht0833_03"
+    },
+    {
+      "code": "HT0123-03",
+      "level": "section_communale",
+      "parent": "HT0123",
+      "name": "3e Section Moussambe",
+      "nameHt": null,
+      "path": "ht.ht01.ht0123.ht0123_03"
+    },
+    {
+      "code": "HT0541-03",
+      "level": "section_communale",
+      "parent": "HT0541",
+      "name": "3e Section Oge",
+      "nameHt": null,
+      "path": "ht.ht05.ht0541.ht0541_03"
+    },
+    {
+      "code": "HT1013-03",
+      "level": "section_communale",
+      "parent": "HT1013",
+      "name": "3e Section Pemerle",
+      "nameHt": null,
+      "path": "ht.ht10.ht1013.ht1013_03"
+    },
+    {
+      "code": "HT0311-03",
+      "level": "section_communale",
+      "parent": "HT0311",
+      "name": "3e Section Petit Anse",
+      "nameHt": null,
+      "path": "ht.ht03.ht0311.ht0311_03"
+    },
+    {
+      "code": "HT0131-03",
+      "level": "section_communale",
+      "parent": "HT0131",
+      "name": "3e Section Petit Bois",
+      "nameHt": null,
+      "path": "ht.ht01.ht0131.ht0131_03"
+    },
+    {
+      "code": "HT0116-03",
+      "level": "section_communale",
+      "parent": "HT0116",
+      "name": "3e Section Petit Boucan",
+      "nameHt": null,
+      "path": "ht.ht01.ht0116.ht0116_03"
+    },
+    {
+      "code": "HT0351-03",
+      "level": "section_communale",
+      "parent": "HT0351",
+      "name": "3e Section Petit Bourgde Borgne",
+      "nameHt": null,
+      "path": "ht.ht03.ht0351.ht0351_03"
+    },
+    {
+      "code": "HT0933-03",
+      "level": "section_communale",
+      "parent": "HT0933",
+      "name": "3e Section Plaine d'Orange",
+      "nameHt": null,
+      "path": "ht.ht09.ht0933.ht0933_03"
+    },
+    {
+      "code": "HT0552-03",
+      "level": "section_communale",
+      "parent": "HT0552",
+      "name": "3e Section Platon",
+      "nameHt": null,
+      "path": "ht.ht05.ht0552.ht0552_03"
+    },
+    {
+      "code": "HT0511-03",
+      "level": "section_communale",
+      "parent": "HT0511",
+      "name": "3e Section Pte Rivière de Bayonnais",
+      "nameHt": null,
+      "path": "ht.ht05.ht0511.ht0511_03"
+    },
+    {
+      "code": "HT0741-03",
+      "level": "section_communale",
+      "parent": "HT0741",
+      "name": "3e Section Quentin",
+      "nameHt": null,
+      "path": "ht.ht07.ht0741.ht0741_03"
+    },
+    {
+      "code": "HT0372-03",
+      "level": "section_communale",
+      "parent": "HT0372",
+      "name": "3e Section Ravine Trompette",
+      "nameHt": null,
+      "path": "ht.ht03.ht0372.ht0372_03"
+    },
+    {
+      "code": "HT0932-03",
+      "level": "section_communale",
+      "parent": "HT0932",
+      "name": "3e Section Reserve ou Ti Paradis",
+      "nameHt": null,
+      "path": "ht.ht09.ht0932.ht0932_03"
+    },
+    {
+      "code": "HT0632-03",
+      "level": "section_communale",
+      "parent": "HT0632",
+      "name": "3e Section Riaribes",
+      "nameHt": null,
+      "path": "ht.ht06.ht0632.ht0632_03"
+    },
+    {
+      "code": "HT0521-03",
+      "level": "section_communale",
+      "parent": "HT0521",
+      "name": "3e Section Rivière Blanche",
+      "nameHt": null,
+      "path": "ht.ht05.ht0521.ht0521_03"
+    },
+    {
+      "code": "HT0431-03",
+      "level": "section_communale",
+      "parent": "HT0431",
+      "name": "3e Section Roche Plate",
+      "nameHt": null,
+      "path": "ht.ht04.ht0431.ht0431_03"
+    },
+    {
+      "code": "HT0313-03",
+      "level": "section_communale",
+      "parent": "HT0313",
+      "name": "3e Section Roucou",
+      "nameHt": null,
+      "path": "ht.ht03.ht0313.ht0313_03"
+    },
+    {
+      "code": "HT1021-03",
+      "level": "section_communale",
+      "parent": "HT1021",
+      "name": "3e Section Saut du Baril",
+      "nameHt": null,
+      "path": "ht.ht10.ht1021.ht1021_03"
+    },
+    {
+      "code": "HT0421-03",
+      "level": "section_communale",
+      "parent": "HT0421",
+      "name": "3e Section Savane Longue",
+      "nameHt": null,
+      "path": "ht.ht04.ht0421.ht0421_03"
+    },
+    {
+      "code": "HT1012-03",
+      "level": "section_communale",
+      "parent": "HT1012",
+      "name": "3e Section Silègue",
+      "nameHt": null,
+      "path": "ht.ht10.ht1012.ht1012_03"
+    },
+    {
+      "code": "HT0712-03",
+      "level": "section_communale",
+      "parent": "HT0712",
+      "name": "3e Section Solon",
+      "nameHt": null,
+      "path": "ht.ht07.ht0712.ht0712_03"
+    },
+    {
+      "code": "HT0115-03",
+      "level": "section_communale",
+      "parent": "HT0115",
+      "name": "3e Section Sourcailles",
+      "nameHt": null,
+      "path": "ht.ht01.ht0115.ht0115_03"
+    },
+    {
+      "code": "HT0142-03",
+      "level": "section_communale",
+      "parent": "HT0142",
+      "name": "3e Section Source Matelas",
+      "nameHt": null,
+      "path": "ht.ht01.ht0142.ht0142_03"
+    },
+    {
+      "code": "HT0113-03",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "3e Section Taïfer",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_03"
+    },
+    {
+      "code": "HT0714-03",
+      "level": "section_communale",
+      "parent": "HT0714",
+      "name": "3e Section Tibi Davezac",
+      "nameHt": null,
+      "path": "ht.ht07.ht0714.ht0714_03"
+    },
+    {
+      "code": "HT1023-04",
+      "level": "section_communale",
+      "parent": "HT1023",
+      "name": "3e Section Tournade (Quartier de Changeux)",
+      "nameHt": null,
+      "path": "ht.ht10.ht1023.ht1023_04"
+    },
+    {
+      "code": "HT0722-03",
+      "level": "section_communale",
+      "parent": "HT0722",
+      "name": "3e Section Trichet",
+      "nameHt": null,
+      "path": "ht.ht07.ht0722.ht0722_03"
+    },
+    {
+      "code": "HT0122-03",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "3e Section Trou Chouchou",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_03"
+    },
+    {
+      "code": "HT0132-03",
+      "level": "section_communale",
+      "parent": "HT0132",
+      "name": "3e Section Trou d'Eau",
+      "nameHt": null,
+      "path": "ht.ht01.ht0132.ht0132_03"
+    },
+    {
+      "code": "HT0152-04",
+      "level": "section_communale",
+      "parent": "HT0152",
+      "name": "3e Section Trou Louis",
+      "nameHt": null,
+      "path": "ht.ht01.ht0152.ht0152_04"
+    },
+    {
+      "code": "HT1025-03",
+      "level": "section_communale",
+      "parent": "HT1025",
+      "name": "3e Section Vassal Labiche",
+      "nameHt": null,
+      "path": "ht.ht10.ht1025.ht1025_03"
+    },
+    {
+      "code": "HT0934-03",
+      "level": "section_communale",
+      "parent": "HT0934",
+      "name": "3e Section Vieille Hatte",
+      "nameHt": null,
+      "path": "ht.ht09.ht0934.ht0934_03"
+    },
+    {
+      "code": "HT0611-04",
+      "level": "section_communale",
+      "parent": "HT0611",
+      "name": "4e Section Aguahedionde (Rive Gauche)",
+      "nameHt": null,
+      "path": "ht.ht06.ht0611.ht0611_04"
+    },
+    {
+      "code": "HT0222-04",
+      "level": "section_communale",
+      "parent": "HT0222",
+      "name": "4e Section Amazone",
+      "nameHt": null,
+      "path": "ht.ht02.ht0222.ht0222_04"
+    },
+    {
+      "code": "HT0811-04",
+      "level": "section_communale",
+      "parent": "HT0811",
+      "name": "4e Section Basse Guinaudee",
+      "nameHt": null,
+      "path": "ht.ht08.ht0811.ht0811_04"
+    },
+    {
+      "code": "HT0322-04",
+      "level": "section_communale",
+      "parent": "HT0322",
+      "name": "4e Section Bassin Diamant",
+      "nameHt": null,
+      "path": "ht.ht03.ht0322.ht0322_04"
+    },
+    {
+      "code": "HT0115-04",
+      "level": "section_communale",
+      "parent": "HT0115",
+      "name": "4e Section Belle Fontaine",
+      "nameHt": null,
+      "path": "ht.ht01.ht0115.ht0115_04"
+    },
+    {
+      "code": "HT0118-04",
+      "level": "section_communale",
+      "parent": "HT0118",
+      "name": "4e Section Bellevue",
+      "nameHt": null,
+      "path": "ht.ht01.ht0118.ht0118_04"
+    },
+    {
+      "code": "HT0114-04",
+      "level": "section_communale",
+      "parent": "HT0114",
+      "name": "4e Section Bellevue la Montagne",
+      "nameHt": null,
+      "path": "ht.ht01.ht0114.ht0114_04"
+    },
+    {
+      "code": "HT1012-04",
+      "level": "section_communale",
+      "parent": "HT1012",
+      "name": "4e Section Bezin",
+      "nameHt": null,
+      "path": "ht.ht10.ht1012.ht1012_04"
+    },
+    {
+      "code": "HT0134-04",
+      "level": "section_communale",
+      "parent": "HT0134",
+      "name": "4e Section Boucan Bois Pin",
+      "nameHt": null,
+      "path": "ht.ht01.ht0134.ht0134_04"
+    },
+    {
+      "code": "HT1013-04",
+      "level": "section_communale",
+      "parent": "HT1013",
+      "name": "4e Section Cocoyers-Ducheine",
+      "nameHt": null,
+      "path": "ht.ht10.ht1013.ht1013_04"
+    },
+    {
+      "code": "HT0231-04",
+      "level": "section_communale",
+      "parent": "HT0231",
+      "name": "4e Section Corail Lamothe",
+      "nameHt": null,
+      "path": "ht.ht02.ht0231.ht0231_04"
+    },
+    {
+      "code": "HT0621-04",
+      "level": "section_communale",
+      "parent": "HT0621",
+      "name": "4e Section Crête Brûlee",
+      "nameHt": null,
+      "path": "ht.ht06.ht0621.ht0621_04"
+    },
+    {
+      "code": "HT0753-04",
+      "level": "section_communale",
+      "parent": "HT0753",
+      "name": "4e Section Dalmette",
+      "nameHt": null,
+      "path": "ht.ht07.ht0753.ht0753_04"
+    },
+    {
+      "code": "HT0132-04",
+      "level": "section_communale",
+      "parent": "HT0132",
+      "name": "4e Section des Crochus",
+      "nameHt": null,
+      "path": "ht.ht01.ht0132.ht0132_04"
+    },
+    {
+      "code": "HT0532-04",
+      "level": "section_communale",
+      "parent": "HT0532",
+      "name": "4e Section Desarmes (Quartier de Desarmes)",
+      "nameHt": null,
+      "path": "ht.ht05.ht0532.ht0532_04"
+    },
+    {
+      "code": "HT0731-04",
+      "level": "section_communale",
+      "parent": "HT0731",
+      "name": "4e Section Flamands",
+      "nameHt": null,
+      "path": "ht.ht07.ht0731.ht0731_04"
+    },
+    {
+      "code": "HT0122-04",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "4e Section Fond Arabie",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_04"
+    },
+    {
+      "code": "HT0121-04",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "4e Section Fond de Boudin",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_04"
+    },
+    {
+      "code": "HT0212-04",
+      "level": "section_communale",
+      "parent": "HT0212",
+      "name": "4e Section Fond Jean Noël",
+      "nameHt": null,
+      "path": "ht.ht02.ht0212.ht0212_04"
+    },
+    {
+      "code": "HT0142-04",
+      "level": "section_communale",
+      "parent": "HT0142",
+      "name": "4e Section Fonds des Blancs (Casale)",
+      "nameHt": null,
+      "path": "ht.ht01.ht0142.ht0142_04"
+    },
+    {
+      "code": "HT0331-04",
+      "level": "section_communale",
+      "parent": "HT0331",
+      "name": "4e Section Gambade",
+      "nameHt": null,
+      "path": "ht.ht03.ht0331.ht0331_04"
+    },
+    {
+      "code": "HT0151-04",
+      "level": "section_communale",
+      "parent": "HT0151",
+      "name": "4e Section Grand Lagon",
+      "nameHt": null,
+      "path": "ht.ht01.ht0151.ht0151_04"
+    },
+    {
+      "code": "HT0321-04",
+      "level": "section_communale",
+      "parent": "HT0321",
+      "name": "4e Section Grande Ravine",
+      "nameHt": null,
+      "path": "ht.ht03.ht0321.ht0321_04"
+    },
+    {
+      "code": "HT0221-04",
+      "level": "section_communale",
+      "parent": "HT0221",
+      "name": "4e Section Haut Grandou",
+      "nameHt": null,
+      "path": "ht.ht02.ht0221.ht0221_04"
+    },
+    {
+      "code": "HT0411-04",
+      "level": "section_communale",
+      "parent": "HT0411",
+      "name": "4e Section Haut Madeleine",
+      "nameHt": null,
+      "path": "ht.ht04.ht0411.ht0411_04"
+    },
+    {
+      "code": "HT0352-04",
+      "level": "section_communale",
+      "parent": "HT0352",
+      "name": "4e Section Haut Petit Borgne",
+      "nameHt": null,
+      "path": "ht.ht03.ht0352.ht0352_04"
+    },
+    {
+      "code": "HT0372-04",
+      "level": "section_communale",
+      "parent": "HT0372",
+      "name": "4e Section Joly",
+      "nameHt": null,
+      "path": "ht.ht03.ht0372.ht0372_04"
+    },
+    {
+      "code": "HT0521-04",
+      "level": "section_communale",
+      "parent": "HT0521",
+      "name": "4e Section l'Acul",
+      "nameHt": null,
+      "path": "ht.ht05.ht0521.ht0521_04"
+    },
+    {
+      "code": "HT0932-04",
+      "level": "section_communale",
+      "parent": "HT0932",
+      "name": "4e Section l'Estère Dere",
+      "nameHt": null,
+      "path": "ht.ht09.ht0932.ht0932_04"
+    },
+    {
+      "code": "HT0211-04",
+      "level": "section_communale",
+      "parent": "HT0211",
+      "name": "4e Section La Gosseline",
+      "nameHt": null,
+      "path": "ht.ht02.ht0211.ht0211_04"
+    },
+    {
+      "code": "HT0934-04",
+      "level": "section_communale",
+      "parent": "HT0934",
+      "name": "4e Section la Montagne",
+      "nameHt": null,
+      "path": "ht.ht09.ht0934.ht0934_04"
+    },
+    {
+      "code": "HT1031-04",
+      "level": "section_communale",
+      "parent": "HT1031",
+      "name": "4e Section la Plaine",
+      "nameHt": null,
+      "path": "ht.ht10.ht1031.ht1031_04"
+    },
+    {
+      "code": "HT0812-04",
+      "level": "section_communale",
+      "parent": "HT0812",
+      "name": "4e Section la Seringue",
+      "nameHt": null,
+      "path": "ht.ht08.ht0812.ht0812_04"
+    },
+    {
+      "code": "HT0342-04",
+      "level": "section_communale",
+      "parent": "HT0342",
+      "name": "4e Section Laguille",
+      "nameHt": null,
+      "path": "ht.ht03.ht0342.ht0342_04"
+    },
+    {
+      "code": "HT0551-04",
+      "level": "section_communale",
+      "parent": "HT0551",
+      "name": "4e Section Lalomas",
+      "nameHt": null,
+      "path": "ht.ht05.ht0551.ht0551_04"
+    },
+    {
+      "code": "HT0531-04",
+      "level": "section_communale",
+      "parent": "HT0531",
+      "name": "4e Section Lalouère",
+      "nameHt": null,
+      "path": "ht.ht05.ht0531.ht0531_04"
+    },
+    {
+      "code": "HT0711-04",
+      "level": "section_communale",
+      "parent": "HT0711",
+      "name": "4e Section Laurent",
+      "nameHt": null,
+      "path": "ht.ht07.ht0711.ht0711_04"
+    },
+    {
+      "code": "HT0832-04",
+      "level": "section_communale",
+      "parent": "HT0832",
+      "name": "4e Section les Gommiers",
+      "nameHt": null,
+      "path": "ht.ht08.ht0832.ht0832_04"
+    },
+    {
+      "code": "HT0911-04",
+      "level": "section_communale",
+      "parent": "HT0911",
+      "name": "4e Section Mahotière",
+      "nameHt": null,
+      "path": "ht.ht09.ht0911.ht0911_04"
+    },
+    {
+      "code": "HT0821-04",
+      "level": "section_communale",
+      "parent": "HT0821",
+      "name": "4e Section Mandou",
+      "nameHt": null,
+      "path": "ht.ht08.ht0821.ht0821_04"
+    },
+    {
+      "code": "HT0371-04",
+      "level": "section_communale",
+      "parent": "HT0371",
+      "name": "4e Section Mapou",
+      "nameHt": null,
+      "path": "ht.ht03.ht0371.ht0371_04"
+    },
+    {
+      "code": "HT0733-04",
+      "level": "section_communale",
+      "parent": "HT0733",
+      "name": "4e Section Mare Henri",
+      "nameHt": null,
+      "path": "ht.ht07.ht0733.ht0733_04"
+    },
+    {
+      "code": "HT0133-05",
+      "level": "section_communale",
+      "parent": "HT0133",
+      "name": "4e Section Mare Roseaux",
+      "nameHt": null,
+      "path": "ht.ht01.ht0133.ht0133_05"
+    },
+    {
+      "code": "HT0622-04",
+      "level": "section_communale",
+      "parent": "HT0622",
+      "name": "4e Section Montagne Terrible",
+      "nameHt": null,
+      "path": "ht.ht06.ht0622.ht0622_04"
+    },
+    {
+      "code": "HT0141-04",
+      "level": "section_communale",
+      "parent": "HT0141",
+      "name": "4e Section Montrouis",
+      "nameHt": null,
+      "path": "ht.ht01.ht0141.ht0141_04"
+    },
+    {
+      "code": "HT0712-04",
+      "level": "section_communale",
+      "parent": "HT0712",
+      "name": "4e Section Moreau",
+      "nameHt": null,
+      "path": "ht.ht07.ht0712.ht0712_04"
+    },
+    {
+      "code": "HT1023-01",
+      "level": "section_communale",
+      "parent": "HT1023",
+      "name": "4e Section Morisseau",
+      "nameHt": null,
+      "path": "ht.ht10.ht1023.ht1023_01"
+    },
+    {
+      "code": "HT0123-04",
+      "level": "section_communale",
+      "parent": "HT0123",
+      "name": "4e Section Moussambe",
+      "nameHt": null,
+      "path": "ht.ht01.ht0123.ht0123_04"
+    },
+    {
+      "code": "HT0131-04",
+      "level": "section_communale",
+      "parent": "HT0131",
+      "name": "4e Section Petit Bois",
+      "nameHt": null,
+      "path": "ht.ht01.ht0131.ht0131_04"
+    },
+    {
+      "code": "HT0822-04",
+      "level": "section_communale",
+      "parent": "HT0822",
+      "name": "4e Section Petite Rivière",
+      "nameHt": null,
+      "path": "ht.ht08.ht0822.ht0822_04"
+    },
+    {
+      "code": "HT0152-05",
+      "level": "section_communale",
+      "parent": "HT0152",
+      "name": "4e Section Pointe à Raquette",
+      "nameHt": null,
+      "path": "ht.ht01.ht0152.ht0152_05"
+    },
+    {
+      "code": "HT0541-04",
+      "level": "section_communale",
+      "parent": "HT0541",
+      "name": "4e Section Poste Pierrot",
+      "nameHt": null,
+      "path": "ht.ht05.ht0541.ht0541_04"
+    },
+    {
+      "code": "HT0511-04",
+      "level": "section_communale",
+      "parent": "HT0511",
+      "name": "4e Section Poteaux",
+      "nameHt": null,
+      "path": "ht.ht05.ht0511.ht0511_04"
+    },
+    {
+      "code": "HT0113-04",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "4e Section Procy",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_04"
+    },
+    {
+      "code": "HT0512-04",
+      "level": "section_communale",
+      "parent": "HT0512",
+      "name": "4e Section Puilboreau",
+      "nameHt": null,
+      "path": "ht.ht05.ht0512.ht0512_04"
+    },
+    {
+      "code": "HT0921-04",
+      "level": "section_communale",
+      "parent": "HT0921",
+      "name": "4e Section Rivière de Barre",
+      "nameHt": null,
+      "path": "ht.ht09.ht0921.ht0921_04"
+    },
+    {
+      "code": "HT0341-04",
+      "level": "section_communale",
+      "parent": "HT0341",
+      "name": "4e Section San-Yago",
+      "nameHt": null,
+      "path": "ht.ht03.ht0341.ht0341_04"
+    },
+    {
+      "code": "HT0432-04",
+      "level": "section_communale",
+      "parent": "HT0432",
+      "name": "4e Section Sarazin",
+      "nameHt": null,
+      "path": "ht.ht04.ht0432.ht0432_04"
+    },
+    {
+      "code": "HT0542-04",
+      "level": "section_communale",
+      "parent": "HT0542",
+      "name": "4e Section Savane à Roche",
+      "nameHt": null,
+      "path": "ht.ht05.ht0542.ht0542_04"
+    },
+    {
+      "code": "HT0421-04",
+      "level": "section_communale",
+      "parent": "HT0421",
+      "name": "4e Section Savane au Lait",
+      "nameHt": null,
+      "path": "ht.ht04.ht0421.ht0421_04"
+    },
+    {
+      "code": "HT0361-04",
+      "level": "section_communale",
+      "parent": "HT0361",
+      "name": "4e Section Soufrière",
+      "nameHt": null,
+      "path": "ht.ht03.ht0361.ht0361_04"
+    },
+    {
+      "code": "HT1011-04",
+      "level": "section_communale",
+      "parent": "HT1011",
+      "name": "4e Section St-Michel",
+      "nameHt": null,
+      "path": "ht.ht10.ht1011.ht1011_04"
+    },
+    {
+      "code": "HT0834-04",
+      "level": "section_communale",
+      "parent": "HT0834",
+      "name": "4e Section Tozia",
+      "nameHt": null,
+      "path": "ht.ht08.ht0834.ht0834_04"
+    },
+    {
+      "code": "HT0351-04",
+      "level": "section_communale",
+      "parent": "HT0351",
+      "name": "4e Section Trou d'Enfer",
+      "nameHt": null,
+      "path": "ht.ht03.ht0351.ht0351_04"
+    },
+    {
+      "code": "HT0732-04",
+      "level": "section_communale",
+      "parent": "HT0732",
+      "name": "4e Section Zanglais",
+      "nameHt": null,
+      "path": "ht.ht07.ht0732.ht0732_04"
+    },
+    {
+      "code": "HT0822-05",
+      "level": "section_communale",
+      "parent": "HT0822",
+      "name": "5e Section Baliverne",
+      "nameHt": null,
+      "path": "ht.ht08.ht0822.ht0822_05"
+    },
+    {
+      "code": "HT0221-05",
+      "level": "section_communale",
+      "parent": "HT0221",
+      "name": "5e Section Bas de Grandou",
+      "nameHt": null,
+      "path": "ht.ht02.ht0221.ht0221_05"
+    },
+    {
+      "code": "HT0911-05",
+      "level": "section_communale",
+      "parent": "HT0911",
+      "name": "5e Section Bas des Moustiques",
+      "nameHt": null,
+      "path": "ht.ht09.ht0911.ht0911_05"
+    },
+    {
+      "code": "HT0352-05",
+      "level": "section_communale",
+      "parent": "HT0352",
+      "name": "5e Section Bas Quartier",
+      "nameHt": null,
+      "path": "ht.ht03.ht0352.ht0352_05"
+    },
+    {
+      "code": "HT0532-05",
+      "level": "section_communale",
+      "parent": "HT0532",
+      "name": "5e Section Bastien",
+      "nameHt": null,
+      "path": "ht.ht05.ht0532.ht0532_05"
+    },
+    {
+      "code": "HT0231-05",
+      "level": "section_communale",
+      "parent": "HT0231",
+      "name": "5e Section Bel Air",
+      "nameHt": null,
+      "path": "ht.ht02.ht0231.ht0231_05"
+    },
+    {
+      "code": "HT0114-05",
+      "level": "section_communale",
+      "parent": "HT0114",
+      "name": "5e Section Bellevue Chardonnière",
+      "nameHt": null,
+      "path": "ht.ht01.ht0114.ht0114_05"
+    },
+    {
+      "code": "HT0531-05",
+      "level": "section_communale",
+      "parent": "HT0531",
+      "name": "5e Section Bocozelle",
+      "nameHt": null,
+      "path": "ht.ht05.ht0531.ht0531_05"
+    },
+    {
+      "code": "HT0921-05",
+      "level": "section_communale",
+      "parent": "HT0921",
+      "name": "5e Section Bonneau",
+      "nameHt": null,
+      "path": "ht.ht09.ht0921.ht0921_05"
+    },
+    {
+      "code": "HT0222-05",
+      "level": "section_communale",
+      "parent": "HT0222",
+      "name": "5e Section Boucan Belier",
+      "nameHt": null,
+      "path": "ht.ht02.ht0222.ht0222_05"
+    },
+    {
+      "code": "HT0351-05",
+      "level": "section_communale",
+      "parent": "HT0351",
+      "name": "5e Section Champagne",
+      "nameHt": null,
+      "path": "ht.ht03.ht0351.ht0351_05"
+    },
+    {
+      "code": "HT0321-05",
+      "level": "section_communale",
+      "parent": "HT0321",
+      "name": "5e Section Coupe à David",
+      "nameHt": null,
+      "path": "ht.ht03.ht0321.ht0321_05"
+    },
+    {
+      "code": "HT0113-05",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "5e Section Coupeau",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_05"
+    },
+    {
+      "code": "HT0141-05",
+      "level": "section_communale",
+      "parent": "HT0141",
+      "name": "5e Section Delices",
+      "nameHt": null,
+      "path": "ht.ht01.ht0141.ht0141_05"
+    },
+    {
+      "code": "HT0934-05",
+      "level": "section_communale",
+      "parent": "HT0934",
+      "name": "5e Section Dessources",
+      "nameHt": null,
+      "path": "ht.ht09.ht0934.ht0934_05"
+    },
+    {
+      "code": "HT0372-05",
+      "level": "section_communale",
+      "parent": "HT0372",
+      "name": "5e Section Dubourg",
+      "nameHt": null,
+      "path": "ht.ht03.ht0372.ht0372_05"
+    },
+    {
+      "code": "HT0834-05",
+      "level": "section_communale",
+      "parent": "HT0834",
+      "name": "5e Section Duchity",
+      "nameHt": null,
+      "path": "ht.ht08.ht0834.ht0834_05"
+    },
+    {
+      "code": "HT0541-05",
+      "level": "section_communale",
+      "parent": "HT0541",
+      "name": "5e Section Fiefe ou Petit Cahos",
+      "nameHt": null,
+      "path": "ht.ht05.ht0541.ht0541_05"
+    },
+    {
+      "code": "HT0134-05",
+      "level": "section_communale",
+      "parent": "HT0134",
+      "name": "5e Section Génipailler",
+      "nameHt": null,
+      "path": "ht.ht01.ht0134.ht0134_05"
+    },
+    {
+      "code": "HT0421-05",
+      "level": "section_communale",
+      "parent": "HT0421",
+      "name": "5e Section Gens de Nantes",
+      "nameHt": null,
+      "path": "ht.ht04.ht0421.ht0421_05"
+    },
+    {
+      "code": "HT0115-05",
+      "level": "section_communale",
+      "parent": "HT0115",
+      "name": "5e Section Grand Fond",
+      "nameHt": null,
+      "path": "ht.ht01.ht0115.ht0115_05"
+    },
+    {
+      "code": "HT0123-05",
+      "level": "section_communale",
+      "parent": "HT0123",
+      "name": "5e Section Grande Colline",
+      "nameHt": null,
+      "path": "ht.ht01.ht0123.ht0123_05"
+    },
+    {
+      "code": "HT0152-01",
+      "level": "section_communale",
+      "parent": "HT0152",
+      "name": "5e Section Gros Mangle",
+      "nameHt": null,
+      "path": "ht.ht01.ht0152.ht0152_01"
+    },
+    {
+      "code": "HT0342-05",
+      "level": "section_communale",
+      "parent": "HT0342",
+      "name": "5e Section Haut du Trou",
+      "nameHt": null,
+      "path": "ht.ht03.ht0342.ht0342_05"
+    },
+    {
+      "code": "HT0331-05",
+      "level": "section_communale",
+      "parent": "HT0331",
+      "name": "5e Section Jolitrou",
+      "nameHt": null,
+      "path": "ht.ht03.ht0331.ht0331_05"
+    },
+    {
+      "code": "HT0551-05",
+      "level": "section_communale",
+      "parent": "HT0551",
+      "name": "5e Section l'Ermite",
+      "nameHt": null,
+      "path": "ht.ht05.ht0551.ht0551_05"
+    },
+    {
+      "code": "HT0371-05",
+      "level": "section_communale",
+      "parent": "HT0371",
+      "name": "5e Section la Trouble",
+      "nameHt": null,
+      "path": "ht.ht03.ht0371.ht0371_05"
+    },
+    {
+      "code": "HT0511-05",
+      "level": "section_communale",
+      "parent": "HT0511",
+      "name": "5e Section Labranle",
+      "nameHt": null,
+      "path": "ht.ht05.ht0511.ht0511_05"
+    },
+    {
+      "code": "HT0733-05",
+      "level": "section_communale",
+      "parent": "HT0733",
+      "name": "5e Section Laroque",
+      "nameHt": null,
+      "path": "ht.ht07.ht0733.ht0733_05"
+    },
+    {
+      "code": "HT0211-05",
+      "level": "section_communale",
+      "parent": "HT0211",
+      "name": "5e Section Marbial",
+      "nameHt": null,
+      "path": "ht.ht02.ht0211.ht0211_05"
+    },
+    {
+      "code": "HT0731-05",
+      "level": "section_communale",
+      "parent": "HT0731",
+      "name": "5e Section Mare à Coiffe",
+      "nameHt": null,
+      "path": "ht.ht07.ht0731.ht0731_05"
+    },
+    {
+      "code": "HT0711-05",
+      "level": "section_communale",
+      "parent": "HT0711",
+      "name": "5e Section Mercy",
+      "nameHt": null,
+      "path": "ht.ht07.ht0711.ht0711_05"
+    },
+    {
+      "code": "HT0432-05",
+      "level": "section_communale",
+      "parent": "HT0432",
+      "name": "5e Section Moka Neuf",
+      "nameHt": null,
+      "path": "ht.ht04.ht0432.ht0432_05"
+    },
+    {
+      "code": "HT0121-05",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "5e Section Palmiste à Vin",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_05"
+    },
+    {
+      "code": "HT0133-04",
+      "level": "section_communale",
+      "parent": "HT0133",
+      "name": "5e Section Pays Pourri",
+      "nameHt": null,
+      "path": "ht.ht01.ht0133.ht0133_04"
+    },
+    {
+      "code": "HT0521-05",
+      "level": "section_communale",
+      "parent": "HT0521",
+      "name": "5e Section Pendu",
+      "nameHt": null,
+      "path": "ht.ht05.ht0521.ht0521_05"
+    },
+    {
+      "code": "HT0542-05",
+      "level": "section_communale",
+      "parent": "HT0542",
+      "name": "5e Section Perodin",
+      "nameHt": null,
+      "path": "ht.ht05.ht0542.ht0542_05"
+    },
+    {
+      "code": "HT0131-05",
+      "level": "section_communale",
+      "parent": "HT0131",
+      "name": "5e Section Petit Bois",
+      "nameHt": null,
+      "path": "ht.ht01.ht0131.ht0131_05"
+    },
+    {
+      "code": "HT0151-05",
+      "level": "section_communale",
+      "parent": "HT0151",
+      "name": "5e Section Picmy",
+      "nameHt": null,
+      "path": "ht.ht01.ht0151.ht0151_05"
+    },
+    {
+      "code": "HT0811-05",
+      "level": "section_communale",
+      "parent": "HT0811",
+      "name": "5e Section Ravine à Charles",
+      "nameHt": null,
+      "path": "ht.ht08.ht0811.ht0811_05"
+    },
+    {
+      "code": "HT0361-05",
+      "level": "section_communale",
+      "parent": "HT0361",
+      "name": "5e Section Ravine Desroches",
+      "nameHt": null,
+      "path": "ht.ht03.ht0361.ht0361_05"
+    },
+    {
+      "code": "HT1031-05",
+      "level": "section_communale",
+      "parent": "HT1031",
+      "name": "5e Section Rivière Salee",
+      "nameHt": null,
+      "path": "ht.ht10.ht1031.ht1031_05"
+    },
+    {
+      "code": "HT0212-05",
+      "level": "section_communale",
+      "parent": "HT0212",
+      "name": "5e Section Savane Dubois",
+      "nameHt": null,
+      "path": "ht.ht02.ht0212.ht0212_05"
+    },
+    {
+      "code": "HT0732-05",
+      "level": "section_communale",
+      "parent": "HT0732",
+      "name": "5e Section Sucrerie Henri",
+      "nameHt": null,
+      "path": "ht.ht07.ht0732.ht0732_05"
+    },
+    {
+      "code": "HT0122-05",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "5e Section Trou Canari",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_05"
+    },
+    {
+      "code": "HT0221-06",
+      "level": "section_communale",
+      "parent": "HT0221",
+      "name": "6e Section Bas de Lacroix",
+      "nameHt": null,
+      "path": "ht.ht02.ht0221.ht0221_06"
+    },
+    {
+      "code": "HT0131-06",
+      "level": "section_communale",
+      "parent": "HT0131",
+      "name": "6e Section Belle Fontaine",
+      "nameHt": null,
+      "path": "ht.ht01.ht0131.ht0131_06"
+    },
+    {
+      "code": "HT0711-06",
+      "level": "section_communale",
+      "parent": "HT0711",
+      "name": "6e Section Boulmier",
+      "nameHt": null,
+      "path": "ht.ht07.ht0711.ht0711_06"
+    },
+    {
+      "code": "HT0113-06",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "6e Section Bouvier",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_06"
+    },
+    {
+      "code": "HT0352-06",
+      "level": "section_communale",
+      "parent": "HT0352",
+      "name": "6e Section Bras Gauche",
+      "nameHt": null,
+      "path": "ht.ht03.ht0352.ht0352_06"
+    },
+    {
+      "code": "HT0531-06",
+      "level": "section_communale",
+      "parent": "HT0531",
+      "name": "6e Section Charrette",
+      "nameHt": null,
+      "path": "ht.ht05.ht0531.ht0531_06"
+    },
+    {
+      "code": "HT0331-06",
+      "level": "section_communale",
+      "parent": "HT0331",
+      "name": "6e Section Cormiers",
+      "nameHt": null,
+      "path": "ht.ht03.ht0331.ht0331_06"
+    },
+    {
+      "code": "HT0432-06",
+      "level": "section_communale",
+      "parent": "HT0432",
+      "name": "6e Section Fond Bleu",
+      "nameHt": null,
+      "path": "ht.ht04.ht0432.ht0432_06"
+    },
+    {
+      "code": "HT0123-06",
+      "level": "section_communale",
+      "parent": "HT0123",
+      "name": "6e Section Grande Colline",
+      "nameHt": null,
+      "path": "ht.ht01.ht0123.ht0123_06"
+    },
+    {
+      "code": "HT0934-06",
+      "level": "section_communale",
+      "parent": "HT0934",
+      "name": "6e Section Grande Source",
+      "nameHt": null,
+      "path": "ht.ht09.ht0934.ht0934_06"
+    },
+    {
+      "code": "HT0811-06",
+      "level": "section_communale",
+      "parent": "HT0811",
+      "name": "6e Section Îles Blanches",
+      "nameHt": null,
+      "path": "ht.ht08.ht0811.ht0811_06"
+    },
+    {
+      "code": "HT0361-06",
+      "level": "section_communale",
+      "parent": "HT0361",
+      "name": "6e Section Ilot-à-Corne",
+      "nameHt": null,
+      "path": "ht.ht03.ht0361.ht0361_06"
+    },
+    {
+      "code": "HT0222-06",
+      "level": "section_communale",
+      "parent": "HT0222",
+      "name": "6e Section Jamais Vu",
+      "nameHt": null,
+      "path": "ht.ht02.ht0222.ht0222_06"
+    },
+    {
+      "code": "HT0731-06",
+      "level": "section_communale",
+      "parent": "HT0731",
+      "name": "6e Section La Colline",
+      "nameHt": null,
+      "path": "ht.ht07.ht0731.ht0731_06"
+    },
+    {
+      "code": "HT0911-06",
+      "level": "section_communale",
+      "parent": "HT0911",
+      "name": "6e Section la Corne",
+      "nameHt": null,
+      "path": "ht.ht09.ht0911.ht0911_06"
+    },
+    {
+      "code": "HT0541-06",
+      "level": "section_communale",
+      "parent": "HT0541",
+      "name": "6e Section la Croix ou Grand Cahos",
+      "nameHt": null,
+      "path": "ht.ht05.ht0541.ht0541_06"
+    },
+    {
+      "code": "HT0371-06",
+      "level": "section_communale",
+      "parent": "HT0371",
+      "name": "6e Section la Ville",
+      "nameHt": null,
+      "path": "ht.ht03.ht0371.ht0371_06"
+    },
+    {
+      "code": "HT0551-06",
+      "level": "section_communale",
+      "parent": "HT0551",
+      "name": "6e Section Lacedras",
+      "nameHt": null,
+      "path": "ht.ht05.ht0551.ht0551_06"
+    },
+    {
+      "code": "HT0921-06",
+      "level": "section_communale",
+      "parent": "HT0921",
+      "name": "6e Section Lafague (Chamoise)",
+      "nameHt": null,
+      "path": "ht.ht09.ht0921.ht0921_06"
+    },
+    {
+      "code": "HT0834-06",
+      "level": "section_communale",
+      "parent": "HT0834",
+      "name": "6e Section Les Îles Cayemittes",
+      "nameHt": null,
+      "path": "ht.ht08.ht0834.ht0834_06"
+    },
+    {
+      "code": "HT0141-06",
+      "level": "section_communale",
+      "parent": "HT0141",
+      "name": "6e Section Matheux",
+      "nameHt": null,
+      "path": "ht.ht01.ht0141.ht0141_06"
+    },
+    {
+      "code": "HT0542-06",
+      "level": "section_communale",
+      "parent": "HT0542",
+      "name": "6e Section Medor",
+      "nameHt": null,
+      "path": "ht.ht05.ht0542.ht0542_06"
+    },
+    {
+      "code": "HT0351-06",
+      "level": "section_communale",
+      "parent": "HT0351",
+      "name": "6e Section Molas",
+      "nameHt": null,
+      "path": "ht.ht03.ht0351.ht0351_06"
+    },
+    {
+      "code": "HT0211-06",
+      "level": "section_communale",
+      "parent": "HT0211",
+      "name": "6e Section Montagne La Voûte",
+      "nameHt": null,
+      "path": "ht.ht02.ht0211.ht0211_06"
+    },
+    {
+      "code": "HT0121-06",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "6e Section Orangers",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_06"
+    },
+    {
+      "code": "HT0151-06",
+      "level": "section_communale",
+      "parent": "HT0151",
+      "name": "6e Section Petite Anse",
+      "nameHt": null,
+      "path": "ht.ht01.ht0151.ht0151_06"
+    },
+    {
+      "code": "HT0231-06",
+      "level": "section_communale",
+      "parent": "HT0231",
+      "name": "6e Section Pichon",
+      "nameHt": null,
+      "path": "ht.ht02.ht0231.ht0231_06"
+    },
+    {
+      "code": "HT0372-06",
+      "level": "section_communale",
+      "parent": "HT0372",
+      "name": "6e Section Piment",
+      "nameHt": null,
+      "path": "ht.ht03.ht0372.ht0372_06"
+    },
+    {
+      "code": "HT0521-06",
+      "level": "section_communale",
+      "parent": "HT0521",
+      "name": "6e Section Savane Carree",
+      "nameHt": null,
+      "path": "ht.ht05.ht0521.ht0521_06"
+    },
+    {
+      "code": "HT0732-06",
+      "level": "section_communale",
+      "parent": "HT0732",
+      "name": "6e Section Solon",
+      "nameHt": null,
+      "path": "ht.ht07.ht0732.ht0732_06"
+    },
+    {
+      "code": "HT0321-06",
+      "level": "section_communale",
+      "parent": "HT0321",
+      "name": "6e Section Soufrière",
+      "nameHt": null,
+      "path": "ht.ht03.ht0321.ht0321_06"
+    },
+    {
+      "code": "HT0532-06",
+      "level": "section_communale",
+      "parent": "HT0532",
+      "name": "6e Section Terre Natte",
+      "nameHt": null,
+      "path": "ht.ht05.ht0532.ht0532_06"
+    },
+    {
+      "code": "HT0122-06",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "6e Section Trou Canari",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_06"
+    },
+    {
+      "code": "HT0371-07",
+      "level": "section_communale",
+      "parent": "HT0371",
+      "name": "7e Section Bassin",
+      "nameHt": null,
+      "path": "ht.ht03.ht0371.ht0371_07"
+    },
+    {
+      "code": "HT0131-07",
+      "level": "section_communale",
+      "parent": "HT0131",
+      "name": "7e Section Belle Fontaine",
+      "nameHt": null,
+      "path": "ht.ht01.ht0131.ht0131_07"
+    },
+    {
+      "code": "HT0221-07",
+      "level": "section_communale",
+      "parent": "HT0221",
+      "name": "7e Section Bras Gauche",
+      "nameHt": null,
+      "path": "ht.ht02.ht0221.ht0221_07"
+    },
+    {
+      "code": "HT0732-07",
+      "level": "section_communale",
+      "parent": "HT0732",
+      "name": "7e Section Cherette",
+      "nameHt": null,
+      "path": "ht.ht07.ht0732.ht0732_07"
+    },
+    {
+      "code": "HT0351-07",
+      "level": "section_communale",
+      "parent": "HT0351",
+      "name": "7e Section Cote de Feret Fond Lagrange",
+      "nameHt": null,
+      "path": "ht.ht03.ht0351.ht0351_07"
+    },
+    {
+      "code": "HT0122-07",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "7e Section des Platons",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_07"
+    },
+    {
+      "code": "HT0934-07",
+      "level": "section_communale",
+      "parent": "HT0934",
+      "name": "7e Section Diondion",
+      "nameHt": null,
+      "path": "ht.ht09.ht0934.ht0934_07"
+    },
+    {
+      "code": "HT0731-07",
+      "level": "section_communale",
+      "parent": "HT0731",
+      "name": "7e Section Frangipane",
+      "nameHt": null,
+      "path": "ht.ht07.ht0731.ht0731_07"
+    },
+    {
+      "code": "HT0123-07",
+      "level": "section_communale",
+      "parent": "HT0123",
+      "name": "7e Section Gerard",
+      "nameHt": null,
+      "path": "ht.ht01.ht0123.ht0123_07"
+    },
+    {
+      "code": "HT0211-07",
+      "level": "section_communale",
+      "parent": "HT0211",
+      "name": "7e Section Grande Rivière de Jacmel",
+      "nameHt": null,
+      "path": "ht.ht02.ht0211.ht0211_07"
+    },
+    {
+      "code": "HT0113-07",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "7e Section Lavalle",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_07"
+    },
+    {
+      "code": "HT0231-07",
+      "level": "section_communale",
+      "parent": "HT0231",
+      "name": "7e Section Mapou",
+      "nameHt": null,
+      "path": "ht.ht02.ht0231.ht0231_07"
+    },
+    {
+      "code": "HT0811-07",
+      "level": "section_communale",
+      "parent": "HT0811",
+      "name": "7e Section Marfranc ou Grande Rivière",
+      "nameHt": null,
+      "path": "ht.ht08.ht0811.ht0811_07"
+    },
+    {
+      "code": "HT0551-07",
+      "level": "section_communale",
+      "parent": "HT0551",
+      "name": "7e Section Marmont",
+      "nameHt": null,
+      "path": "ht.ht05.ht0551.ht0551_07"
+    },
+    {
+      "code": "HT0521-07",
+      "level": "section_communale",
+      "parent": "HT0521",
+      "name": "7e Section Moulin",
+      "nameHt": null,
+      "path": "ht.ht05.ht0521.ht0521_07"
+    },
+    {
+      "code": "HT0121-07",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "7e Section Parques",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_07"
+    },
+    {
+      "code": "HT0372-07",
+      "level": "section_communale",
+      "parent": "HT0372",
+      "name": "7e Section Rivière Laporte",
+      "nameHt": null,
+      "path": "ht.ht03.ht0372.ht0372_07"
+    },
+    {
+      "code": "HT0211-08",
+      "level": "section_communale",
+      "parent": "HT0211",
+      "name": "8e Section Bas Coq Chante",
+      "nameHt": null,
+      "path": "ht.ht02.ht0211.ht0211_08"
+    },
+    {
+      "code": "HT0121-08",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "8e Section Beausejour",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_08"
+    },
+    {
+      "code": "HT0131-08",
+      "level": "section_communale",
+      "parent": "HT0131",
+      "name": "8e Section Belle Fontaine",
+      "nameHt": null,
+      "path": "ht.ht01.ht0131.ht0131_08"
+    },
+    {
+      "code": "HT0113-08",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "8e Section Berly",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_08"
+    },
+    {
+      "code": "HT0731-08",
+      "level": "section_communale",
+      "parent": "HT0731",
+      "name": "8e Section Colline à Mongons",
+      "nameHt": null,
+      "path": "ht.ht07.ht0731.ht0731_08"
+    },
+    {
+      "code": "HT0732-08",
+      "level": "section_communale",
+      "parent": "HT0732",
+      "name": "8e Section Corail-Henri",
+      "nameHt": null,
+      "path": "ht.ht07.ht0732.ht0732_08"
+    },
+    {
+      "code": "HT0122-08",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "8e Section des Platons",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_08"
+    },
+    {
+      "code": "HT0811-08",
+      "level": "section_communale",
+      "parent": "HT0811",
+      "name": "8e Section Fond Rouge Dahere",
+      "nameHt": null,
+      "path": "ht.ht08.ht0811.ht0811_08"
+    },
+    {
+      "code": "HT0371-08",
+      "level": "section_communale",
+      "parent": "HT0371",
+      "name": "8e Section Grande Rivière",
+      "nameHt": null,
+      "path": "ht.ht03.ht0371.ht0371_08"
+    },
+    {
+      "code": "HT0551-08",
+      "level": "section_communale",
+      "parent": "HT0551",
+      "name": "8e Section l'Attalaye",
+      "nameHt": null,
+      "path": "ht.ht05.ht0551.ht0551_08"
+    },
+    {
+      "code": "HT0372-08",
+      "level": "section_communale",
+      "parent": "HT0372",
+      "name": "8e Section Margot",
+      "nameHt": null,
+      "path": "ht.ht03.ht0372.ht0372_08"
+    },
+    {
+      "code": "HT0221-08",
+      "level": "section_communale",
+      "parent": "HT0221",
+      "name": "8e Section Oranger",
+      "nameHt": null,
+      "path": "ht.ht02.ht0221.ht0221_08"
+    },
+    {
+      "code": "HT0521-08",
+      "level": "section_communale",
+      "parent": "HT0521",
+      "name": "8e Section Ravine Gros Morne",
+      "nameHt": null,
+      "path": "ht.ht05.ht0521.ht0521_08"
+    },
+    {
+      "code": "HT0221-09",
+      "level": "section_communale",
+      "parent": "HT0221",
+      "name": "9e Section Bas des Gris Gris",
+      "nameHt": null,
+      "path": "ht.ht02.ht0221.ht0221_09"
+    },
+    {
+      "code": "HT0113-09",
+      "level": "section_communale",
+      "parent": "HT0113",
+      "name": "9e Section Bizoton",
+      "nameHt": null,
+      "path": "ht.ht01.ht0113.ht0113_09"
+    },
+    {
+      "code": "HT0121-09",
+      "level": "section_communale",
+      "parent": "HT0121",
+      "name": "9e Section Citronniers",
+      "nameHt": null,
+      "path": "ht.ht01.ht0121.ht0121_09"
+    },
+    {
+      "code": "HT0131-09",
+      "level": "section_communale",
+      "parent": "HT0131",
+      "name": "9e Section des Crochus",
+      "nameHt": null,
+      "path": "ht.ht01.ht0131.ht0131_09"
+    },
+    {
+      "code": "HT0122-09",
+      "level": "section_communale",
+      "parent": "HT0122",
+      "name": "9e Section des Palmes",
+      "nameHt": null,
+      "path": "ht.ht01.ht0122.ht0122_09"
+    },
+    {
+      "code": "HT0731-09",
+      "level": "section_communale",
+      "parent": "HT0731",
+      "name": "9e Section Fond des Blancs",
+      "nameHt": null,
+      "path": "ht.ht07.ht0731.ht0731_09"
+    },
+    {
+      "code": "HT0811-09",
+      "level": "section_communale",
+      "parent": "HT0811",
+      "name": "9e Section Fond Rouge Torbeck",
+      "nameHt": null,
+      "path": "ht.ht08.ht0811.ht0811_09"
+    },
+    {
+      "code": "HT0211-09",
+      "level": "section_communale",
+      "parent": "HT0211",
+      "name": "9e Section Haut Coq Chante",
+      "nameHt": null,
+      "path": "ht.ht02.ht0211.ht0211_09"
+    },
+    {
+      "code": "HT0613-04",
+      "level": "section_communale",
+      "parent": "HT0613",
+      "name": "La Hoye",
+      "nameHt": null,
+      "path": "ht.ht06.ht0613.ht0613_04"
+    }
+  ]
+}

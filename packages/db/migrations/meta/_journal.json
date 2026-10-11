@@ -43,6 +43,13 @@
       "when": 1791680886825,
       "tag": "0005_tough_kingpin",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791681356225,
+      "tag": "0006_tranquil_roughhouse",
+      "breakpoints": true
     }
   ]
 }

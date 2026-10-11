@@ -1,2 +1,3 @@
 export * from "./schema/index.js";
-export { db, withParty, withAuthLookup, closeDb, assertAppRole, type Tx } from "./client.js";
+export { syncZones, loadZoneFiles, type ZoneRecord } from "./zones.js";
+export { db, withParty, withAuthLookup, withReferenceData, closeDb, assertAppRole, type Tx } from "./client.js";

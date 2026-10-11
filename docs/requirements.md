@@ -15,7 +15,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | SOC-02 | Isolation des données par parti sur toutes les tables, fichiers et canaux temps réel | E M N | P2 | Neuf | en cours |
 | SOC-03 | Marque blanche : thème app et site par parti ; app à son nom dans les stores | E M N (stores : N) | P2, P4 | Neuf | à faire |
 | SOC-04 | Domaine personnalisé pour le site public, certificat automatique | N | P4 | Neuf | à faire |
-| SOC-05 | Hiérarchie territoriale national, département, commune, section communale ; chaque responsable ne voit que sa zone | E M N (profondeur selon palier) | P2 | NOU | à faire |
+| SOC-05 | Hiérarchie territoriale national, département, commune, section communale ; chaque responsable ne voit que sa zone | E M N (profondeur selon palier) | P2 | NOU | fait |
 | SOC-06 | Rôles, organes et postes définis librement par le parti | E M N | P2 | Neuf | à faire |
 | SOC-07 | Activation des modules selon le palier, sans redéploiement | E M N | P2 | Neuf | fait |
 | SOC-08 | Abonnement, factures, relances, suspension après impayé (données gardées 90 jours) ; mesure de la consommation et facturation des dépassements | E M N | P3 | Neuf | à faire |
