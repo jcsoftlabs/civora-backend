@@ -1,6 +1,8 @@
 // ADH-01 à ADH-12, SEC-02
+import { sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   date,
   index,
   integer,
@@ -16,15 +18,23 @@ import { encrypted, id, partyId, partyKey, sameParty, timestamps } from "./_help
 import { files } from "./content.js";
 import { zones } from "./territory.js";
 
-/** Identité de connexion, globale : une personne peut appartenir à un seul parti à la fois par défaut. */
-export const users = pgTable("users", {
-  id: id(),
-  phoneE164: text("phone_e164").notNull().unique(),
-  email: text("email"),
-  locale: text("locale").notNull().default("fr"),
-  twoFactorSecret: encrypted("two_factor_secret"),
-  ...timestamps,
-});
+/**
+ * Identité de connexion, globale : un compte adhère à un seul parti (members.user_id unique).
+ * Connexion par code à usage unique envoyé par e-mail (par défaut) ou par SMS si le parti l'a activé :
+ * le coût des SMS est un choix du parti (parties.otp_channels).
+ */
+export const users = pgTable(
+  "users",
+  {
+    id: id(),
+    phoneE164: text("phone_e164").unique(),
+    /** Toujours en minuscules, sans espaces (normalisé par l'API). */
+    email: text("email").unique(),
+    locale: text("locale").notNull().default("fr"),
+    ...timestamps,
+  },
+  (t) => [check("users_contact_required", sql`${t.email} is not null or ${t.phoneE164} is not null`)],
+);
 
 export const memberStatuses = pgTable(
   "member_statuses",

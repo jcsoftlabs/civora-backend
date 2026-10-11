@@ -49,6 +49,14 @@ await withParty(ctx.partyId, async (tx) => {
 - **Mobile** : application commune. Le membre rejoint un parti par QR code, lien d'invitation ou code ; le jeton de session porte `party_id` et l'app charge le thème. En marque blanche (palier National), le `party_id` est fixé à la compilation par le flavor.
 - **API** : `party_id` vient toujours du jeton, jamais d'un paramètre envoyé par le client.
 
+## 2 bis. Authentification (SEC-04, SEC-09)
+
+- **Code à usage unique** envoyé par **e-mail par défaut**. Le SMS est payant : chaque parti l'active lui-même (`parties.otp_channels`) et choisit son fournisseur via l'adaptateur `SmsSender` (`apps/api/src/lib/messaging/sms.ts`). La connexion se fait toujours dans un parti (`partySlug`) : un compte n'adhère qu'à un parti.
+- Code de 6 chiffres, valable 10 minutes, 5 essais, 5 codes par compte et par quart d'heure ; seule une empreinte HMAC (`AUTH_SECRET`) est stockée. La réponse est identique que le compte existe ou non. Débit limité par adresse IP sur chaque étape.
+- **Sessions en base** (`sessions`) : jeton aléatoire de 32 octets, seule l'empreinte SHA-256 est stockée ; révocables une à une ou toutes ensemble. 30 jours pour un membre, 7 jours pour un administrateur. Le jeton est envoyé en `Authorization: Bearer` (application mobile, serveur SvelteKit).
+- **Double authentification** obligatoire pour tout membre qui occupe un poste avec des permissions : application d'authentification (TOTP), secret chiffré avec la clé du parti, code utilisable une seule fois. Tant qu'elle n'est pas validée, la session n'a aucun droit (`mfa_required`) ; un code e-mail ne permet pas de réinscrire une 2FA existante.
+- Recherches avant de connaître le parti : politiques RLS dédiées en lecture seule (`session_lookup` par empreinte de jeton, `party_public_lookup` par slug), via `withAuthLookup()`.
+
 ## 3. Permissions et territoire
 
 - Zones en arbre : pays, département, commune, section communale, plus la diaspora (pays, ville). Colonne `path` de type `ltree` pour tester « zone dans sous-arbre » en une condition.

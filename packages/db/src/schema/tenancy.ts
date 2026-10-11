@@ -39,6 +39,8 @@ export const parties = pgTable(
     /** Mode d'adhésion (ADH-04) : libre, validation, parrainage. */
     admissionMode: text("admission_mode").notNull().default("validation"),
     referralSettings: jsonb("referral_settings"),
+    /** Canaux d'envoi du code de connexion. E-mail par défaut ; le SMS est payant et activé par le parti. */
+    otpChannels: text("otp_channels").array().notNull().default(["email"]),
     ...timestamps,
   },
   // Le logo est un fichier du parti lui-même.

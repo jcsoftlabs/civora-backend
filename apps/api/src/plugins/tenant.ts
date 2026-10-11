@@ -25,6 +25,7 @@ declare module "fastify" {
  */
 export const requireFeature = (feature: Feature | AddOnFeature) => async (req: FastifyRequest, reply: FastifyReply) => {
   if (!req.partyId) return reply.code(401).send({ code: "unauthenticated", requestId: req.id });
+  if (req.auth?.mfaPending) return reply.code(401).send({ code: "mfa_required", requestId: req.id });
   const e = req.partyEntitlements ?? (await req.server.entitlements.get(req.partyId));
   req.partyEntitlements = e;
   if (!e) return reply.code(401).send({ code: "unauthenticated", requestId: req.id });

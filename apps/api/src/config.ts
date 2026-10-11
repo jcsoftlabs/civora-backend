@@ -1,26 +1,41 @@
 import { z } from "zod";
 
 /** Configuration lue une seule fois au démarrage ; l'API refuse de démarrer si une valeur manque. */
-const schema = z.object({
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  API_PORT: z.coerce.number().int().positive().default(4000),
-  API_HOST: z.string().default("0.0.0.0"),
-  LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
-  // SEC-08 : liste blanche explicite, jamais « * ».
-  API_ALLOWED_ORIGINS: z
-    .string()
-    .default("")
-    .transform((s) =>
-      s
-        .split(",")
-        .map((o) => o.trim())
-        .filter(Boolean),
-    )
-    .refine((list) => list.every((o) => o !== "*" && /^https?:\/\/[^/]+$/.test(o)), {
-      message:
-        "API_ALLOWED_ORIGINS : origines complètes (schéma et hôte, sans chemin), séparées par des virgules, jamais *",
-    }),
-});
+const schema = z
+  .object({
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    API_PORT: z.coerce.number().int().positive().default(4000),
+    API_HOST: z.string().default("0.0.0.0"),
+    LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
+    // SEC-08 : liste blanche explicite, jamais « * ».
+    API_ALLOWED_ORIGINS: z
+      .string()
+      .default("")
+      .transform((s) =>
+        s
+          .split(",")
+          .map((o) => o.trim())
+          .filter(Boolean),
+      )
+      .refine((list) => list.every((o) => o !== "*" && /^https?:\/\/[^/]+$/.test(o)), {
+        message:
+          "API_ALLOWED_ORIGINS : origines complètes (schéma et hôte, sans chemin), séparées par des virgules, jamais *",
+      }),
+    /** Protège les empreintes des codes de connexion. 32 caractères au moins ; obligatoire en production. */
+    AUTH_SECRET: z.string().min(32).optional(),
+    RESEND_API_KEY: z.string().optional(),
+    RESEND_FROM: z.string().default("civora <notifications@civora.app>"),
+    /** Fournisseur SMS de la plateforme : « none » en production tant qu'aucun n'est choisi, « log » en local. */
+    SMS_PROVIDER: z.string().default("log"),
+  })
+  .superRefine((c, ctx) => {
+    if (c.NODE_ENV !== "production") return;
+    if (!c.AUTH_SECRET) ctx.addIssue({ code: "custom", path: ["AUTH_SECRET"], message: "obligatoire en production" });
+    if (!c.RESEND_API_KEY)
+      ctx.addIssue({ code: "custom", path: ["RESEND_API_KEY"], message: "obligatoire en production" });
+    if (c.SMS_PROVIDER === "log")
+      ctx.addIssue({ code: "custom", path: ["SMS_PROVIDER"], message: "« log » interdit en production" });
+  });
 
 export type Config = z.infer<typeof schema>;
 

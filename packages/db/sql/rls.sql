@@ -28,6 +28,17 @@ ALTER TABLE parties FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS party_self ON parties;
 CREATE POLICY party_self ON parties USING (id = nullif(current_setting('app.party_id', true), '')::uuid);
 
+-- Recherches d'authentification, avant de connaître le parti (SEC-04). Lecture seule, une ligne précise à la fois :
+-- le serveur fixe la valeur cherchée par SET LOCAL ; sans elle, ces politiques ne laissent rien voir.
+-- Une session par l'empreinte SHA-256 de son jeton (jamais le jeton lui-même).
+DROP POLICY IF EXISTS session_lookup ON sessions;
+CREATE POLICY session_lookup ON sessions FOR SELECT
+  USING (token_hash = nullif(current_setting('app.session_token_hash', true), ''));
+-- Un parti par son identifiant public (slug), pour l'écran de connexion et le site du parti.
+DROP POLICY IF EXISTS party_public_lookup ON parties;
+CREATE POLICY party_public_lookup ON parties FOR SELECT
+  USING (slug = nullif(current_setting('app.party_slug', true), ''));
+
 -- Journal d'audit et journal des points : ajout seulement.
 REVOKE UPDATE, DELETE ON audit_log FROM civora_app;
 REVOKE UPDATE, DELETE ON point_ledger FROM civora_app;

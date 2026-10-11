@@ -216,12 +216,12 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | SEC-01 | Isolation stricte par parti, prouvée par tests automatisés | P2 | fait |
 | SEC-02 | Chiffrement des pièces d'identité au niveau du champ, clé par parti | P2 | fait |
 | SEC-03 | TLS en transit, chiffrement au repos | P2 | en cours |
-| SEC-04 | Double authentification obligatoire pour les administrateurs | P2 | à faire |
+| SEC-04 | Double authentification obligatoire pour les administrateurs | P2 | fait |
 | SEC-05 | Contrôle d'accès par rôle et par zone | P2 | à faire |
 | SEC-06 | Journal d'audit inaltérable | P2 | à faire |
 | SEC-07 | Aucun secret dans le code, rotation des clés | P1 | en cours |
 | SEC-08 | Liste blanche des origines REST et temps réel | P1 | fait |
-| SEC-09 | Limitation du débit, protection OTP et connexion | P2 | à faire |
+| SEC-09 | Limitation du débit, protection OTP et connexion | P2 | fait |
 | SEC-10 | Export complet et suppression définitive à la demande du parti | P3 | à faire |
 | SEC-11 | Accès du personnel aux données d'un parti sur demande écrite, journalisé | P3 | à faire |
 | SEC-12 | Test d'intrusion externe avant lancement, puis annuel | P4 | à faire |

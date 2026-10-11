@@ -29,6 +29,13 @@
       "when": 1791679461982,
       "tag": "0003_absurd_nick_fury",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791679933114,
+      "tag": "0004_stale_lockjaw",
+      "breakpoints": true
     }
   ]
 }

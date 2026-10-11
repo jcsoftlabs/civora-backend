@@ -22,7 +22,7 @@ Jalon : NOU migré sans perte, tests d'isolation réussis entre deux partis fict
 - [x] Schéma `parties`, `subscriptions`, `party_keys` ; helper `withParty()` ; politiques RLS ; test d'isolation générique appliqué à toutes les tables (SOC-02, SEC-01)
 - [x] Plans et activation des modules : `plans.ts`, `requireFeature()`, `hasFeature()` (SOC-07)
 - [x] Chiffrement enveloppe des pièces d'identité (SEC-02, SEC-03)
-- [ ] Authentification : OTP par SMS, sessions, 2FA obligatoire pour les administrateurs, limitation du débit (SEC-04, SEC-09)
+- [x] Authentification : OTP par e-mail (SMS au choix du parti), sessions, 2FA obligatoire pour les administrateurs, limitation du débit (SEC-04, SEC-09)
 - [ ] Journal d'audit append-only (SEC-06)
 
 ### Territoire, organes, permissions

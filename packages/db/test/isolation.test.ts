@@ -34,6 +34,7 @@ let enumFirstLabel = new Map<string, string>();
 /** Ligne fabriquée par table et par parti : les colonnes obligatoires qui pointent vers une autre table la réutilisent. */
 const rowIds = new Map<string, string>();
 let testZoneId = "";
+let testUserId = "";
 
 /** Valeur valide (en texte, castée côté SQL) pour une colonne obligatoire, selon son type. */
 function sampleValue(c: Column): string {
@@ -77,6 +78,7 @@ function referencedValue(table: string, column: string, partyId: string): string
   const fk = foreignKeys.find((f) => f.table === table && f.columns.includes(column) && f.refTable !== "parties");
   if (!fk) return undefined;
   if (fk.refTable === "zones") return testZoneId;
+  if (fk.refTable === "users") return testUserId;
   const id = rowIds.get(`${fk.refTable}:${partyId}`);
   if (!id) throw new Error(`Fabrique : ${table}.${column} dépend de ${fk.refTable}, pas encore créée`);
   return id;
@@ -103,7 +105,7 @@ function rowFor(
 function insertionOrder(): string[] {
   const requiredDeps = (t: string) =>
     foreignKeys
-      .filter((f) => f.table === t && f.refTable !== t && f.refTable !== "parties" && f.refTable !== "zones")
+      .filter((f) => f.table === t && f.refTable !== t && tables.includes(f.refTable))
       .filter((f) => f.columns.some((c) => columns.find((x) => x.table === t && x.column === c)?.required))
       .map((f) => f.refTable);
   const done: string[] = [];
@@ -169,6 +171,9 @@ beforeAll(async () => {
   const [zone] = await owner<{ id: string }[]>`
     insert into zones (level, code, name, path) values ('pays', ${"test-" + A}, 'Zone de test', 'ht.test') returning id`;
   testZoneId = zone?.id ?? "";
+  const [user] = await owner<{ id: string }[]>`
+    insert into users (email) values (${"test-" + A + "@example.test"}) returning id`;
+  testUserId = user?.id ?? "";
 
   // Deux partis et une ligne par table pour chacun, insérés par le propriétaire (hors RLS), parents d'abord.
   tables = insertionOrder();
@@ -193,6 +198,7 @@ afterAll(async () => {
   }
   await owner`delete from parties where id in (${A}, ${B})`;
   await owner`delete from zones where id = ${testZoneId}`;
+  await owner`delete from users where id = ${testUserId}`;
   await owner.end();
   await closeDb();
 });

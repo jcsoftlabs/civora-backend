@@ -8,3 +8,4 @@ export * from "./votes.js";
 export * from "./content.js";
 export * from "./elections.js";
 export * from "./platform.js";
+export * from "./auth.js";
