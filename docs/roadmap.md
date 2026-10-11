@@ -44,7 +44,7 @@ Jalon : tests d'isolation réussis entre deux partis fictifs ; socle utilisable 
 
 ### Interfaces
 - [ ] Back-office : rail de navigation, liste des membres, organes avec panneau latéral (maquettes « Back-office »)
-- [ ] Création d'un espace parti et thème marque blanche web (SOC-01, SOC-03)
+- [x] Création d'un espace parti et thème marque blanche web (SOC-01, SOC-03) : assistant de création et profil public faits ; thème appliqué aux sites des partis avec le back-office
 - [ ] App mobile commune : rejoindre un parti par QR, lien ou code ; thème chargé selon le parti ; accueil membre (maquette « App membre : accueil »)
 - [ ] Hors ligne de base et Android 8 (NFR-01, NFR-02) ; français et créole (NFR-08) ; squelettes (NFR-09)
 
