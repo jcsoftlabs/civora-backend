@@ -39,6 +39,11 @@ export const parties = pgTable(
     /** Mode d'adhésion (ADH-04) : libre, validation, parrainage. */
     admissionMode: text("admission_mode").notNull().default("validation"),
     referralSettings: jsonb("referral_settings"),
+    /** pending : création en attente du code envoyé au fondateur (24 h au plus) ; active : espace ouvert. */
+    status: text("status").notNull().default("active"),
+    activatedAt: timestamp("activated_at", { withTimezone: true }),
+    /** Fiche du fondateur pendant la création, effacée à l'activation. */
+    signupDraft: jsonb("signup_draft"),
     /** Canaux d'envoi du code de connexion. E-mail par défaut ; le SMS est payant et activé par le parti. */
     otpChannels: text("otp_channels").array().notNull().default(["email"]),
     ...timestamps,

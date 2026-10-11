@@ -5,6 +5,8 @@ interface OtpMessage {
   subject: (party: string) => string;
   signupSubject: (party: string) => string;
   signupText: (party: string, code: string) => string;
+  partySubject: (party: string) => string;
+  partyText: (party: string, code: string) => string;
   text: (party: string, code: string) => string;
   sms: (party: string, code: string) => string;
 }
@@ -12,6 +14,10 @@ interface OtpMessage {
 export const OTP_MESSAGES: Record<MessageLocale, OtpMessage> = {
   fr: {
     subject: (party) => `Votre code de connexion ${party}`,
+    partySubject: (party) => `Créez l'espace ${party} sur civora`,
+    partyText: (party, code) =>
+      `Pour confirmer la création de l'espace ${party}, saisissez ce code : ${code}\n\nIl expire dans 10 minutes. ` +
+      `Sans confirmation sous 24 heures, l'adresse choisie est libérée.\n\nSi vous n'avez rien demandé, ignorez ce message.`,
     signupSubject: (party) => `Votre code d'adhésion à ${party}`,
     signupText: (party, code) =>
       `Pour confirmer votre adhésion à ${party}, saisissez ce code : ${code}\n\nIl expire dans 10 minutes. ` +
@@ -23,6 +29,10 @@ export const OTP_MESSAGES: Record<MessageLocale, OtpMessage> = {
   },
   ht: {
     subject: (party) => `Kòd koneksyon ${party} ou`,
+    partySubject: (party) => `Kreye espas ${party} sou civora`,
+    partyText: (party, code) =>
+      `Pou w konfime kreyasyon espas ${party}, antre kòd sa a : ${code}\n\nLi ap ekspire nan 10 minit. ` +
+      `Si w pa konfime nan 24 èdtan, adrès ou chwazi a ap lib ankò.\n\nSi se pa ou ki mande sa, pa okipe mesaj la.`,
     signupSubject: (party) => `Kòd pou w vin manm ${party}`,
     signupText: (party, code) =>
       `Pou w konfime ou vle vin manm ${party}, antre kòd sa a : ${code}\n\nLi ap ekspire nan 10 minit. ` +

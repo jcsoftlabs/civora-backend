@@ -17,6 +17,8 @@ import authRoutes from "./modules/auth/routes.js";
 import territoryRoutes from "./modules/territory/routes.js";
 import organRoutes from "./modules/organs/routes.js";
 import biRoutes from "./modules/bi/stats.js";
+import partyRoutes from "./modules/parties/routes.js";
+import { PartiesService } from "./modules/parties/service.js";
 import fileRoutes from "./modules/files/routes.js";
 import { FilesService } from "./modules/files/service.js";
 import { buildStorage } from "./lib/storage/registry.js";
@@ -125,6 +127,7 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   await app.register(duesRoutes, { dues });
   const filesService = new FilesService(deps.storage ?? buildStorage(config));
   await app.register(fileRoutes, { files: filesService });
+  await app.register(partyRoutes, { parties: new PartiesService(authService, filesService) });
   await app.register(biRoutes);
   await app.register(communicationRoutes, { push: deps.push ?? buildPushSender(config, app.log), files: filesService });
   const providers = deps.paymentProviders ?? buildPaymentProviders(config.NODE_ENV);

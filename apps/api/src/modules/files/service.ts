@@ -28,6 +28,8 @@ export const PURPOSES = {
     maxBytes: (t: string) => (AUDIO.includes(t) ? 100 * MB : 10 * MB),
   },
   document: { folder: "documents", types: [...OFFICE, ...IMAGES], maxBytes: () => 25 * MB },
+  /** Logo du parti (SOC-03) : images matricielles seulement (pas de SVG, qui peut contenir du script). */
+  party_logo: { folder: "branding", types: IMAGES, maxBytes: () => 2 * MB },
 } as const;
 export type Purpose = keyof typeof PURPOSES;
 
@@ -145,7 +147,7 @@ export class FilesService {
         .where(and(eq(files.id, fileId), isNull(files.trashedAt)));
       if (!row || row.uploadStatus !== "ready") throw new ApiError(404, "not_found");
       let allowed = row.uploadedByMemberId === req.memberId;
-      if (!allowed && row.purpose === "publication_media") allowed = true;
+      if (!allowed && (row.purpose === "publication_media" || row.purpose === "party_logo")) allowed = true;
       if (!allowed && row.purpose === "member_photo") {
         const [owner] = await tx
           .select({ id: members.id, path: zones.path })

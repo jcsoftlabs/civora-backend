@@ -35,7 +35,7 @@ const ADMIN_SESSION_MS = 7 * 24 * 3600_000;
 
 export type Channel = "email" | "sms";
 /** Un code de connexion ne sert jamais à adhérer, et inversement. */
-export type OtpPurpose = "login" | "signup";
+export type OtpPurpose = "login" | "signup" | "party_signup";
 
 export interface Grant {
   permission: Permission;
@@ -86,10 +86,12 @@ export class AuthService {
           name: parties.name,
           otpChannels: parties.otpChannels,
           admissionMode: parties.admissionMode,
+          status: parties.status,
         })
         .from(parties),
     );
-    return p ?? null;
+    // Un espace en cours de création n'existe pas encore pour la connexion ni l'adhésion.
+    return p && p.status === "active" ? p : null;
   }
 
   /**
@@ -177,8 +179,18 @@ export class AuthService {
     purpose: OtpPurpose,
   ): Promise<void> {
     const t = OTP_MESSAGES[messageLocale(to.locale)];
-    const subject = purpose === "signup" ? t.signupSubject(partyName) : t.subject(partyName);
-    const text = purpose === "signup" ? t.signupText(partyName, code) : t.text(partyName, code);
+    const subject =
+      purpose === "party_signup"
+        ? t.partySubject(partyName)
+        : purpose === "signup"
+          ? t.signupSubject(partyName)
+          : t.subject(partyName);
+    const text =
+      purpose === "party_signup"
+        ? t.partyText(partyName, code)
+        : purpose === "signup"
+          ? t.signupText(partyName, code)
+          : t.text(partyName, code);
     if (channel === "email" && to.email) await this.d.email.send({ to: to.email, subject, text });
     else if (channel === "sms" && to.phone) await this.d.sms.send(to.phone, t.sms(partyName, code));
   }
