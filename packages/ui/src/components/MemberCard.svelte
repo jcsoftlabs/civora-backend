@@ -6,7 +6,7 @@
   Une seule animation : le reflet passe quand `shineKey` change ; aucune si les animations sont réduites.
 -->
 <script lang="ts">
-  import { partyTheme, secondaryTheme } from "../theme.js";
+  import { luminance, partyTheme, secondaryTheme } from "../theme.js";
   import QrCode from "./QrCode.svelte";
 
   interface Props {
@@ -42,6 +42,8 @@
 
   const theme = $derived(partyTheme(brandColor));
   const second = $derived(secondaryTheme(secondaryColor));
+  /** Seconde couleur très claire (blanc, jaune pâle) : en grand aplat translucide, elle délaverait le fond. */
+  const lightSecond = $derived(!!second && luminance(second["--c-secondary"]) > 0.6);
   const initials = $derived(
     partyName
       .split(/\s+/)
@@ -73,6 +75,7 @@
   class="card"
   class:vertical
   class:has-second={!!second}
+  class:light-second={lightSecond}
   style:--card-deep={theme["--c-primary-deep"]}
   style:--card-main={theme["--c-primary"]}
   style:--card-second={second?.["--c-secondary"] ?? null}
@@ -171,6 +174,9 @@
   .has-second .disc {
     background: var(--card-second);
     opacity: 0.55;
+  }
+  .light-second .disc {
+    opacity: 0.16;
   }
   .vertical .disc {
     right: -45%;

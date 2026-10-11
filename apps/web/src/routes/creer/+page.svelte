@@ -265,10 +265,14 @@
           <fieldset>
             <legend>{t("create.color.secondary")}</legend>
             <div class="swatches">
-              <label class="swatch none">
+              <label class="none">
                 <input type="radio" name="secondary" value={null} bind:group={secondary} />
+                <span>{t("create.color.none")}</span>
+              </label>
+              <label class="swatch white" style:--sw="#FFFFFF">
+                <input type="radio" name="secondary" value="#FFFFFF" bind:group={secondary} />
                 <span class="dot" aria-hidden="true"></span>
-                <span class="sr-only">{t("create.color.none")}</span>
+                <span class="sr-only">{t("create.color.blanc")}</span>
               </label>
               {#each COLORS as c (c.hex)}
                 {#if c.hex !== color}
@@ -500,21 +504,35 @@
   .format label:has(input:focus-visible) {
     box-shadow: var(--focus-ring);
   }
-  .swatch.none .dot {
+  /* « Aucune » : un vrai bouton avec son libellé, pour ne pas être pris pour du blanc. */
+  .none {
     position: relative;
-    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch-min);
+    padding: 0 var(--s-4);
+    border: 1.5px solid var(--c-line);
+    border-radius: var(--r-pill);
     background: var(--c-surface);
-    box-shadow: inset 0 0 0 1.5px var(--c-line);
+    font: 600 var(--fs-13) / 1 var(--font-ui);
+    color: var(--c-ink-2);
+    cursor: pointer;
   }
-  .swatch.none .dot::after {
-    content: "";
+  .none input {
     position: absolute;
-    left: 50%;
-    top: -10%;
-    bottom: -10%;
-    width: 1.5px;
-    background: var(--c-danger);
-    transform: rotate(45deg);
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+  }
+  .none:has(input:checked) {
+    border-color: var(--c-ink);
+    color: var(--c-ink);
+  }
+  .none:has(input:focus-visible) {
+    box-shadow: var(--focus-ring);
+  }
+  .swatch.white .dot {
+    box-shadow: inset 0 0 0 1.5px var(--c-line);
   }
   h1 {
     margin: 0;
