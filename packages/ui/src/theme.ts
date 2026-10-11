@@ -81,3 +81,15 @@ export function themeStyle(theme: PartyTheme): string {
     .map(([k, v]) => `${k}: ${v}`)
     .join("; ");
 }
+
+/** Seconde couleur du parti : utilisée telle quelle (disque de la carte, pastille), avec un texte lisible dessus. */
+export function secondaryTheme(
+  hex: string | null | undefined,
+): { "--c-secondary": string; "--c-on-secondary": string } | null {
+  if (!hex) return null;
+  const color = toHex(parseHex(hex));
+  return {
+    "--c-secondary": color,
+    "--c-on-secondary": contrastRatio(color, WHITE) >= contrastRatio(color, INK) ? WHITE : INK,
+  };
+}

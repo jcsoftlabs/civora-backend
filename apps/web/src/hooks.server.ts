@@ -1,6 +1,7 @@
 import type { Handle } from "@sveltejs/kit";
 import { env } from "$env/dynamic/public";
 import { negotiateLocale } from "$lib/i18n";
+import { partySlugFromHost } from "$lib/party-host";
 
 /**
  * Résolution de la surface, du parti et de la langue à partir de la requête (voir apps/web/CLAUDE.md).
@@ -17,6 +18,8 @@ export const handle: Handle = async ({ event, resolve }) => {
   } else {
     event.locals.surface = event.url.pathname.startsWith("/admin") ? "admin" : "site";
     event.locals.partyHost = host;
+    const slug = partySlugFromHost(event.url.host, root);
+    if (slug) event.locals.partySlug = slug;
   }
 
   event.locals.locale = negotiateLocale(event.cookies.get("lang"), event.request.headers.get("accept-language"));

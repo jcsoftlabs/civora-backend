@@ -24,10 +24,14 @@
     "@sveltejs/vite-plugin-svelte": "^4",
     "@testing-library/svelte": "^5",
     "@testing-library/user-event": "^14",
+    "@types/qrcode": "^1.5",
     "jsdom": "^25",
     "svelte": "^5.57",
     "svelte-check": "^4",
     "vite": "^5.4",
     "vitest": "^2.1"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
   }
 }

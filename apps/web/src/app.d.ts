@@ -6,6 +6,7 @@ declare global {
       surface: "marketing" | "console" | "admin" | "site";
       locale: Locale;
       partyHost?: string;
+      partySlug?: string;
       partyId?: string;
     }
     interface Error {

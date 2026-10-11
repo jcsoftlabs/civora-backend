@@ -33,6 +33,8 @@ export const parties = pgTable(
     name: text("name").notNull(),
     logoFileId: uuid("logo_file_id"),
     brandColor: text("brand_color").notNull().default("#0F6E66"),
+    /** Seconde couleur du parti (deux couleurs fréquentes en Haïti : bleu et rouge, vert et jaune…). Facultative. */
+    brandColorSecondary: text("brand_color_secondary"),
     languages: text("languages").array().notNull().default(["fr", "ht"]),
     tier: tierEnum("tier").notNull().default("essentiel"),
     electionsModuleUntil: timestamp("elections_module_until", { withTimezone: true }),

@@ -57,7 +57,10 @@
         memberName={["Marie Joseph", "Jean-Baptiste Pierre", "Rose-Andrée Saint-Fleur", "Luc Dorvil"][i] ?? ""}
         memberNumber={["000001", "004217", "012988", "000356"][i] ?? ""}
         location={["1re Section Turgeau, Port-au-Prince", "Cap-Haïtien", "Miami, États-Unis", "Jacmel"][i] ?? ""}
-        labels={{ card: "Carte de membre", number: "Membre n°", member: "Membre" }}
+        secondaryColor={[null, "#F2C200", "#1F5FBF", "#C8102E"][i] ?? null}
+        verifyUrl="https://horizon.civora.app/v/AQEexemple"
+        orientation={i % 2 === 1 ? "vertical" : "horizontal"}
+        labels={{ card: "Carte de membre", number: "Membre n°", member: "Membre", qr: "QR de vérification" }}
       />
     {/each}
   </div>

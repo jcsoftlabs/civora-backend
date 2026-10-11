@@ -7,4 +7,5 @@ export { default as DataTable } from "./components/DataTable.svelte";
 export { default as SidePanel } from "./components/SidePanel.svelte";
 export { default as Locked } from "./components/Locked.svelte";
 export { default as MemberCard } from "./components/MemberCard.svelte";
+export { default as QrCode } from "./components/QrCode.svelte";
 export * from "./theme.js";

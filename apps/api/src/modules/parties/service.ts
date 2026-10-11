@@ -67,6 +67,7 @@ export const signupStart = z.object({
     name: z.string().trim().min(2).max(120),
     slug: slugSchema,
     brandColor: brandColor.default("#0F6E66"),
+    brandColorSecondary: brandColor.nullable().optional(),
     /** Langues des contenus du parti ; par défaut français puis créole, dans la limite du palier. */
     languages: z.array(z.enum(LANGS)).min(1).max(4).optional(),
     tier: z.enum(TIERS as [string, ...string[]]).default("essentiel"),
@@ -89,6 +90,7 @@ export const brandingUpdate = z
   .object({
     name: z.string().trim().min(2).max(120),
     brandColor,
+    brandColorSecondary: brandColor.nullable(),
     languages: z.array(z.enum(LANGS)).min(1).max(4),
     logoFileId: z.string().uuid().nullable(),
   })
@@ -172,6 +174,7 @@ export class PartiesService {
           slug: body.party.slug,
           name: body.party.name,
           brandColor: body.party.brandColor.toUpperCase(),
+          brandColorSecondary: body.party.brandColorSecondary?.toUpperCase() ?? null,
           languages: [...languages],
           tier,
           status: "pending",
@@ -321,6 +324,7 @@ export class PartiesService {
           name: parties.name,
           slug: parties.slug,
           brandColor: parties.brandColor,
+          brandColorSecondary: parties.brandColorSecondary,
           languages: parties.languages,
           admissionMode: parties.admissionMode,
           otpChannels: parties.otpChannels,
@@ -357,6 +361,9 @@ export class PartiesService {
         .set({
           ...(body.name ? { name: body.name } : {}),
           ...(body.brandColor ? { brandColor: body.brandColor.toUpperCase() } : {}),
+          ...(body.brandColorSecondary !== undefined
+            ? { brandColorSecondary: body.brandColorSecondary?.toUpperCase() ?? null }
+            : {}),
           ...(body.languages ? { languages: body.languages } : {}),
           ...(body.logoFileId !== undefined ? { logoFileId: body.logoFileId } : {}),
           updatedAt: new Date(),

@@ -193,6 +193,7 @@ describe("identité visuelle (SOC-03)", () => {
       name: "Parti Horizon",
       slug,
       brandColor: "#7A2E5C",
+      brandColorSecondary: null,
       languages: ["fr", "ht"],
       admissionMode: "validation",
       otpChannels: ["email"],
@@ -235,6 +236,13 @@ describe("identité visuelle (SOC-03)", () => {
     });
     const profile = (await get(`/parties/${slug}/public`)).json();
     expect(profile.brandColor).toBe("#2F5D9E");
+    await app.inject({
+      method: "PATCH",
+      url: "/party/branding",
+      headers: { authorization: `Bearer ${founderToken}` },
+      payload: { brandColorSecondary: "#c8102e" },
+    });
+    expect((await get(`/parties/${slug}/public`)).json().brandColorSecondary).toBe("#C8102E");
     expect(profile.logoUrl).toContain("/storage/local/");
     const logo = new URL(profile.logoUrl);
     expect((await app.inject({ url: logo.pathname + logo.search })).rawPayload.equals(png)).toBe(true);

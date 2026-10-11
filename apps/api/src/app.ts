@@ -35,6 +35,7 @@ import type { PushSender } from "./lib/messaging/push.js";
 import type { PaymentProvider } from "./lib/payments/types.js";
 import { DuesService } from "./modules/dues/service.js";
 import { ApplicationsService } from "./modules/members/applications.js";
+import { MemberCardService } from "./modules/members/card.js";
 import { IdentityService } from "./modules/members/identity.js";
 import memberRoutes from "./modules/members/routes.js";
 import { MembersService } from "./modules/members/service.js";
@@ -119,13 +120,14 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   await app.register(auditRoutes);
   await app.register(territoryRoutes);
   await app.register(organRoutes);
+  const filesService = new FilesService(deps.storage ?? buildStorage(config));
   const dues = new DuesService();
   await app.register(memberRoutes, {
     members: new MembersService(authService, new IdentityService(keys), dues),
     applications: new ApplicationsService(deps.email ?? emailSender, dues),
+    cards: new MemberCardService(keys, authService, filesService.storage, config.WEB_PARTY_ORIGIN),
   });
   await app.register(duesRoutes, { dues });
-  const filesService = new FilesService(deps.storage ?? buildStorage(config));
   await app.register(fileRoutes, { files: filesService });
   await app.register(partyRoutes, { parties: new PartiesService(authService, filesService) });
   await app.register(biRoutes);

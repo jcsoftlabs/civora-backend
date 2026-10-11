@@ -34,6 +34,8 @@ const schema = z
     R2_BUCKET: z.string().optional(),
     /** Compte de service Firebase (JSON) pour les notifications push ; absent en local : envois écrits au journal. */
     FCM_SERVICE_ACCOUNT: z.string().optional(),
+    /** Adresse publique des espaces des partis ({slug} remplacé) : lien du QR de la carte de membre (ADH-11). */
+    WEB_PARTY_ORIGIN: z.string().default("https://{slug}.civora.app"),
     /** Adresse publique de l'API : liens de retour et de notification donnés aux fournisseurs de paiement. */
     API_PUBLIC_URL: z.string().url().default("http://localhost:4000"),
   })

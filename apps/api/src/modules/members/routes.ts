@@ -1,6 +1,9 @@
 import type { FastifyInstance } from "fastify";
 import { requireAuth } from "../../plugins/auth.js";
 import type { ApplicationsService } from "./applications.js";
+import type { MemberCardService } from "./card.js";
+import { requireFeature } from "../../plugins/tenant.js";
+import { z } from "zod";
 import { exportMembers, exportRequest } from "./export.js";
 import type { MembersService } from "./service.js";
 import {
@@ -21,7 +24,7 @@ import {
 /** ADH-01 à ADH-04. Les étapes d'adhésion sont publiques et limitées en débit par adresse IP. */
 export default async function memberRoutes(
   app: FastifyInstance,
-  opts: { members: MembersService; applications: ApplicationsService },
+  opts: { members: MembersService; applications: ApplicationsService; cards: MemberCardService },
 ) {
   const svc = opts.members;
   const apps = opts.applications;
@@ -94,6 +97,19 @@ export default async function memberRoutes(
         .header("content-disposition", `attachment; filename="${file.filename}"`)
         .header("cache-control", "no-store")
         .send(file.body);
+    },
+  );
+
+  // ADH-11 : carte de membre et vérification publique de son QR (contrôle à l'entrée).
+  app.get("/members/me/card", { preHandler: [requireAuth, requireFeature("members.card")] }, async (req) =>
+    opts.cards.myCard(req),
+  );
+  app.get(
+    "/parties/:slug/cards/:token",
+    { config: { rateLimit: { max: 120, timeWindow: "1 minute" } } },
+    async (req, reply) => {
+      const p = z.object({ slug: z.string().regex(/^[a-z0-9-]{3,40}$/), token: z.string().max(80) }).parse(req.params);
+      return reply.header("cache-control", "no-store").send(await opts.cards.verify(p.slug, p.token));
     },
   );
 }

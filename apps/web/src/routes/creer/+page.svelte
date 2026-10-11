@@ -40,6 +40,10 @@
   let color = $state("#0F6E66");
   // Suit la couleur choisie ; reste modifiable à la main (code de la charte du parti).
   let hexInput = $derived(color.toUpperCase());
+  /** Seconde couleur (facultative) : null = aucune. */
+  let secondary = $state<string | null>(null);
+  let orientation = $state<"horizontal" | "vertical">("horizontal");
+
   function applyHex() {
     const v = hexInput.trim().replace(/^([0-9a-f]{6})$/i, "#$1");
     if (/^#[0-9a-f]{6}$/i.test(v)) color = v.toUpperCase();
@@ -149,7 +153,14 @@
 
   async function sendCode() {
     const res = await post("/creer/api/start", {
-      party: { name: name.trim(), slug, brandColor: theme["--c-primary"], tier, languages },
+      party: {
+        name: name.trim(),
+        slug,
+        brandColor: theme["--c-primary"],
+        brandColorSecondary: secondary,
+        tier,
+        languages,
+      },
       founder: {
         email: email.trim(),
         firstName: firstName.trim(),
@@ -249,6 +260,27 @@
               />
             </label>
             {#if adjusted}<p class="msg">{t("create.color.adjusted")}</p>{/if}
+          </fieldset>
+
+          <fieldset>
+            <legend>{t("create.color.secondary")}</legend>
+            <div class="swatches">
+              <label class="swatch none">
+                <input type="radio" name="secondary" value={null} bind:group={secondary} />
+                <span class="dot" aria-hidden="true"></span>
+                <span class="sr-only">{t("create.color.none")}</span>
+              </label>
+              {#each COLORS as c (c.hex)}
+                {#if c.hex !== color}
+                  <label class="swatch" style:--sw={c.hex}>
+                    <input type="radio" name="secondary" value={c.hex} bind:group={secondary} />
+                    <span class="dot" aria-hidden="true"></span>
+                    <span class="sr-only">{tk(`create.color.${c.name}`)}</span>
+                  </label>
+                {/if}
+              {/each}
+            </div>
+            <p class="msg">{t("create.color.secondary.hint")}</p>
           </fieldset>
 
           <fieldset>
@@ -357,15 +389,34 @@
     </section>
 
     <aside class="preview" aria-label={t("create.card.label")}>
+      <div class="format" role="radiogroup" aria-label={t("create.card.format")}>
+        <label class:on={orientation === "horizontal"}>
+          <input type="radio" name="orientation" value="horizontal" bind:group={orientation} />{t(
+            "create.card.horizontal",
+          )}
+        </label>
+        <label class:on={orientation === "vertical"}>
+          <input type="radio" name="orientation" value="vertical" bind:group={orientation} />{t("create.card.vertical")}
+        </label>
+      </div>
       <MemberCard
         partyName={name || t("create.name")}
         brandColor={color}
+        secondaryColor={secondary}
         memberName={[firstName, lastName].filter(Boolean).join(" ") || t("create.card.you")}
         memberNumber="000001"
         {location}
-        labels={{ card: t("create.card.label"), number: t("create.card.number"), member: t("create.card.member") }}
-        shineKey={color}
+        {orientation}
+        verifyUrl={`https://${slug || t("create.slug.example")}.${rootDomain}`}
+        labels={{
+          card: t("create.card.label"),
+          number: t("create.card.number"),
+          member: t("create.card.member"),
+          qr: t("create.card.qr"),
+        }}
+        shineKey={`${color}${secondary}${orientation}`}
       />
+      <p class="msg">{t("create.card.qr.hint")}</p>
     </aside>
   </div>
 </main>
@@ -408,9 +459,62 @@
   .preview {
     position: sticky;
     top: var(--s-10);
-    padding-top: var(--s-14);
+    padding-top: var(--s-6);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-6);
+  }
+  .preview .msg {
+    max-width: 320px;
+    text-align: center;
+  }
+  .format {
+    display: inline-flex;
+    padding: 3px;
+    border-radius: var(--r-pill);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+  }
+  .format label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 var(--s-4);
+    border-radius: var(--r-pill);
+    font: 600 var(--fs-13) / 1 var(--font-ui);
+    color: var(--c-ink-2);
+    cursor: pointer;
+  }
+  .format input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+  }
+  .format label.on {
+    background: var(--c-ink);
+    color: var(--c-surface);
+  }
+  .format label:has(input:focus-visible) {
+    box-shadow: var(--focus-ring);
+  }
+  .swatch.none .dot {
+    position: relative;
+    overflow: hidden;
+    background: var(--c-surface);
+    box-shadow: inset 0 0 0 1.5px var(--c-line);
+  }
+  .swatch.none .dot::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -10%;
+    bottom: -10%;
+    width: 1.5px;
+    background: var(--c-danger);
+    transform: rotate(45deg);
   }
   h1 {
     margin: 0;

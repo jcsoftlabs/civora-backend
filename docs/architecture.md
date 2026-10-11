@@ -72,6 +72,12 @@ await withParty(ctx.partyId, async (tx) => {
 - **Anti-élévation de privilèges** (`holdsAll`) : créer, modifier ou attribuer un poste exige de détenir soi-même chacune de ses permissions sur une portée qui couvre la sienne ; retirer des droits exige aussi de détenir les anciens.
 - **Succession (ORG-04)** : les droits appartiennent au poste. Attribuer un successeur clôt le mandat en cours ; les droits sont relus en base à chaque requête, ils passent donc immédiatement. Chaque attribution, fin de mandat et changement de droits est audité (`role.change`, `post.update`).
 
+## 3 ter. Carte de membre (ADH-11)
+
+- Le QR de la carte porte un lien `https://<slug>.civora.app/v/<jeton>`. Jeton : format, version de la clé du parti, identifiant du membre (18 octets) et signature HMAC tronquée à 16 octets, dérivée de la clé du parti (`member-card`). Aucune donnée personnelle dans le QR ; encodage canonique exigé.
+- Vérification publique `GET /parties/:slug/cards/:jeton` : signature, membre présent et validé, cotisations à jour ; renvoie seulement le nom, le numéro, la photo (lien de 2 minutes) et l'état. Toute carte invalide répond `{ valid: false }` sans détail. Une adhésion rejetée ou supprimée invalide aussitôt la carte.
+- Carte du membre `GET /members/me/card` (formules Mouvement et National). Composant `MemberCard` : format carte ou badge, couleur principale et seconde couleur du parti, QR en SVG (correction M). Page de scan `/v/<jeton>` sur l'adresse du parti, avec un tampon VALIDE ou NON VALIDE, jamais mise en cache.
+
 ## 3 bis. Adhésion (ADH-01 à ADH-04)
 
 - Deux étapes publiques : `POST /join/start` envoie un code d'adhésion à l'adresse e-mail (preuve qu'elle appartient à la personne ; réponse identique dans tous les cas), puis `POST /join/complete` vérifie le code et crée la fiche. Un code de connexion ne sert jamais à adhérer (`otp_challenges.purpose`). Un formulaire refusé laisse le code valable pour corriger.

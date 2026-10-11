@@ -1,0 +1,1 @@
+ALTER TABLE "parties" ADD COLUMN "brand_color_secondary" text;
