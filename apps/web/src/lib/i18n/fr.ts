@@ -68,6 +68,7 @@ export const fr = {
   "create.done.open": "Ouvrir mon espace",
   "create.card.label": "Carte de membre",
   "create.card.number": "Membre n°",
+  "create.card.member": "Membre",
   "create.card.you": "Votre nom",
   "create.card.place": "Votre section",
   "lang.fr": "Français",

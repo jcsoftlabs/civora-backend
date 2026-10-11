@@ -338,7 +338,7 @@
         memberName={[firstName, lastName].filter(Boolean).join(" ") || t("create.card.you")}
         memberNumber="000001"
         {location}
-        labels={{ card: t("create.card.label"), number: t("create.card.number") }}
+        labels={{ card: t("create.card.label"), number: t("create.card.number"), member: t("create.card.member") }}
         shineKey={color}
       />
     </aside>

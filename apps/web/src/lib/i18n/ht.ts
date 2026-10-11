@@ -69,6 +69,7 @@ export const ht: Record<MessageKey, string> = {
   "create.done.open": "Louvri espas mwen",
   "create.card.label": "Kat manm",
   "create.card.number": "Manm nimewo",
+  "create.card.member": "Manm",
   "create.card.you": "Non ou",
   "create.card.place": "Seksyon ou",
   "lang.fr": "Français",

@@ -9,6 +9,7 @@
     DataTable,
     Field,
     Locked,
+    MemberCard,
     SidePanel,
     Skeleton,
     Switch,
@@ -46,6 +47,20 @@
 
 <main>
   <h1>Composants</h1>
+
+  <h2>Carte de membre, 4 couleurs de parti</h2>
+  <div class="cards">
+    {#each PARTIES as p, i (p.hex)}
+      <MemberCard
+        partyName={["Parti Horizon", "Mouvement Citadelle", "Rassemblement Lakou", "Union des Mornes"][i] ?? p.name}
+        brandColor={p.hex}
+        memberName={["Marie Joseph", "Jean-Baptiste Pierre", "Rose-Andrée Saint-Fleur", "Luc Dorvil"][i] ?? ""}
+        memberNumber={["000001", "004217", "012988", "000356"][i] ?? ""}
+        location={["1re Section Turgeau, Port-au-Prince", "Cap-Haïtien", "Miami, États-Unis", "Jacmel"][i] ?? ""}
+        labels={{ card: "Carte de membre", number: "Membre n°", member: "Membre" }}
+      />
+    {/each}
+  </div>
 
   <h2>Boutons et pastilles, 4 couleurs de parti</h2>
   <div class="grid">
