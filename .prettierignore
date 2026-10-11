@@ -6,3 +6,6 @@ apps/mobile/
 *.md
 .claude/
 .pgdata/
+results.sarif
+gitleaks-report*
+*.sarif

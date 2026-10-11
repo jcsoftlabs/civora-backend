@@ -9,6 +9,18 @@ permissions:
   contents: read
 
 jobs:
+  # SEC-07 : analyse des secrets dans tout l'historique, dans un job séparé
+  # (ses rapports ne doivent pas se retrouver dans le dossier contrôlé par Prettier).
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   checks:
     runs-on: ubuntu-latest
     services:
@@ -27,12 +39,6 @@ jobs:
       DATABASE_URL_READONLY_BI: postgres://civora_bi:ci@localhost:5432/civora
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # gitleaks analyse tout l'historique
-      - name: Secrets dans le code (SEC-07)
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -40,7 +46,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
-      - run: pnpm format:check
+      - name: Prettier
+        run: |
+          git status --short
+          pnpm format:check
       - run: pnpm typecheck
       - run: pnpm db:migrate
       - name: Mots de passe des rôles applicatifs (CI uniquement)
