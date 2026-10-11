@@ -57,7 +57,7 @@
     }
     timer = setTimeout(async () => {
       const res = await fetch(
-        `${resolve("/admin/organes/recherche")}?type=${type}&q=${encodeURIComponent(q)}${within ? `&within=${encodeURIComponent(within)}` : ""}`,
+        `${resolve("/admin/recherche")}?type=${type}&q=${encodeURIComponent(q)}${within ? `&within=${encodeURIComponent(within)}` : ""}`,
       );
       if (q !== query.trim()) return;
       results = res.ok ? ((await res.json()) as { results: Item[] }).results : [];

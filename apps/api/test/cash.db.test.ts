@@ -224,4 +224,23 @@ describe("reçus et historique", () => {
     ]);
     expect((await call("GET", "/payments", marie.token)).statusCode).toBe(403);
   });
+
+  it("le journal donne le nom du membre et se filtre ; les chiffres du mois suivent la zone", async () => {
+    const cash = (await call("GET", "/payments?provider=cash&status=succeeded", treasurer.token)).json().payments;
+    expect(cash.length).toBeGreaterThan(0);
+    expect(cash.every((p: { provider: string; firstName: string }) => p.provider === "cash" && p.firstName)).toBe(true);
+    const oldest = cash.at(-1).createdAt;
+    expect(
+      (await call("GET", `/payments?before=${encodeURIComponent(oldest)}`, treasurer.token)).json().payments,
+    ).toHaveLength(0);
+
+    const sum = (await call("GET", "/payments/summary", treasurer.token)).json();
+    const htg = sum.currentMonth.find((r: { currency: string }) => r.currency === "HTG");
+    expect(Number(htg.total)).toBeGreaterThan(0);
+    expect(htg.count).toBe(cash.length);
+    expect(sum.members.upToDate + sum.members.late).toBeGreaterThan(0);
+    const nord = (await call("GET", "/payments/summary", nordTreasurer.token)).json();
+    expect(nord.currentMonth).toEqual([]);
+    expect((await call("GET", "/payments/summary", marie.token)).statusCode).toBe(403);
+  });
 });

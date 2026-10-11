@@ -21,6 +21,12 @@
       visible: data.me.permissions.includes("members.read"),
     },
     {
+      href: resolve("/admin/cotisations"),
+      label: t("admin.nav.dues"),
+      icon: "dues",
+      visible: ["payments.read", "dues.manage", "payments.recordCash"].some((p) => data.me.permissions.includes(p)),
+    },
+    {
       href: resolve("/admin/organes"),
       label: t("admin.nav.organs"),
       icon: "organs",
@@ -49,7 +55,12 @@
             title={m.label}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              {#if m.icon === "settings"}
+              {#if m.icon === "dues"}
+                <!-- Cotisations : deux pièces empilées. -->
+                <ellipse cx="10" cy="7" rx="6" ry="2.6" />
+                <path d="M4 7v4c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6V7" />
+                <path d="M8 15.6c.6 1.2 3 2.1 6 2.1 3.3 0 6-1.2 6-2.6v-4c0-1.1-1.6-2-4-2.4" />
+              {:else if m.icon === "settings"}
                 <!-- Réglages : trois curseurs. -->
                 <path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1" />
                 <circle cx="15" cy="7" r="2" />

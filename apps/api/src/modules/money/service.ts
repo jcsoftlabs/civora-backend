@@ -347,7 +347,16 @@ export class PaymentsService {
   }
 
   /** Paiements visibles dans la zone (payments.read), du plus récent au plus ancien. */
-  async list(req: Req, q: { memberId?: string | undefined; limit: number }) {
+  async list(
+    req: Req,
+    q: {
+      memberId?: string | undefined;
+      limit: number;
+      status?: string | undefined;
+      provider?: string | undefined;
+      before?: Date | undefined;
+    },
+  ) {
     const scope = zoneScope(req, "payments.read");
     const self = q.memberId === req.memberId;
     if (!scope.allowed && !self) throw new ApiError(403, "forbidden");
@@ -356,10 +365,15 @@ export class PaymentsService {
         .select({
           id: payments.id,
           memberId: payments.memberId,
+          firstName: members.firstName,
+          lastName: members.lastName,
+          memberNumber: members.memberNumber,
+          kind: payments.kind,
           amount: payments.amount,
           currency: payments.currency,
           provider: payments.provider,
           status: payments.status,
+          createdAt: payments.createdAt,
           confirmedAt: payments.confirmedAt,
           receiptId: receipts.id,
           receiptNumber: receipts.number,
@@ -369,10 +383,67 @@ export class PaymentsService {
         .innerJoin(zones, eq(zones.id, members.zoneId))
         .leftJoin(receipts, and(eq(receipts.partyId, payments.partyId), eq(receipts.paymentId, payments.id)))
         .where(
-          and(self ? undefined : scope.where(zones.path), q.memberId ? eq(payments.memberId, q.memberId) : undefined),
+          and(
+            self ? undefined : scope.where(zones.path),
+            q.memberId ? eq(payments.memberId, q.memberId) : undefined,
+            q.status ? eq(payments.status, q.status as "pending" | "succeeded" | "failed" | "refunded") : undefined,
+            q.provider ? eq(payments.provider, q.provider) : undefined,
+            q.before ? sql`${payments.createdAt} < ${q.before.toISOString()}::timestamptz` : undefined,
+          ),
         )
         .orderBy(desc(payments.createdAt))
         .limit(q.limit),
     );
+  }
+
+  /**
+   * Chiffres clés de la zone (payments.read) : encaissements confirmés du mois et du mois précédent par devise,
+   * nombre de paiements, membres à jour et en retard (délai de grâce de la formule compris).
+   */
+  async summary(req: Req) {
+    const scope = zoneScope(req, "payments.read");
+    if (!scope.allowed) throw new ApiError(403, "forbidden");
+    return withParty(req.partyId, async (tx) => {
+      const inScope = scope.where(zones.path);
+      const months = await tx
+        .select({
+          month: sql<string>`case when ${payments.confirmedAt} >= date_trunc('month', now()) then 'current' else 'previous' end`,
+          currency: payments.currency,
+          total: sql<string>`sum(${payments.amount})::text`,
+          n: sql<number>`count(*)::int`,
+        })
+        .from(payments)
+        .innerJoin(members, and(eq(members.partyId, payments.partyId), eq(members.id, payments.memberId)))
+        .innerJoin(zones, eq(zones.id, members.zoneId))
+        .where(
+          and(
+            inScope,
+            eq(payments.status, "succeeded"),
+            sql`${payments.confirmedAt} >= date_trunc('month', now()) - interval '1 month'`,
+          ),
+        )
+        .groupBy(sql`1`, payments.currency);
+      const [dues] = await tx
+        .select({
+          late: sql<number>`count(*) filter (where x.late)::int`,
+          upToDate: sql<number>`count(*) filter (where not x.late)::int`,
+        })
+        .from(
+          sql`(select m.id, bool_or(o.paid_at is null and o.due_date + pl.grace_days < current_date) as late
+               from members m
+               join zones on zones.id = m.zone_id
+               join dues_obligations o on o.member_id = m.id
+               join dues_plans pl on pl.party_id = o.party_id and pl.id = o.plan_id
+               where m.deleted_at is null and m.application_state = 'approved' and ${inScope}
+               group by m.id) as x`,
+        );
+      const pick = (m: "current" | "previous") =>
+        months.filter((r) => r.month === m).map(({ currency, total, n }) => ({ currency, total, count: n }));
+      return {
+        currentMonth: pick("current"),
+        previousMonth: pick("previous"),
+        members: { late: dues?.late ?? 0, upToDate: dues?.upToDate ?? 0 },
+      };
+    });
   }
 }

@@ -1,6 +1,6 @@
 // FIN-03, FIN-05 : formules de cotisation du parti, souscriptions des membres, échéances.
 import type { FastifyRequest } from "fastify";
-import { and, asc, count, eq, gt, isNull } from "drizzle-orm";
+import { and, asc, count, eq, gt, isNull, sql } from "drizzle-orm";
 import { duesObligations, duesPlans, duesSubscriptions, members, withParty, zones, type Tx } from "@civora/db";
 import { checkQuota, obligationState, schedule, type Periodicity } from "@civora/shared";
 import { audit } from "../../lib/audit.js";
@@ -37,6 +37,8 @@ export class DuesService {
           graceDays: duesPlans.graceDays,
           isDefault: duesPlans.isDefault,
           active: duesPlans.active,
+          subscribers: sql<number>`(select count(*)::int from dues_subscriptions s
+            where s.plan_id = "dues_plans"."id" and (s.ends_on is null or s.ends_on > current_date))`,
         })
         .from(duesPlans)
         .where(manager ? undefined : eq(duesPlans.active, true))

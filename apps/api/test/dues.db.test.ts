@@ -204,6 +204,14 @@ describe("échéances (FIN-05)", () => {
     expect((await call("GET", `/members/${marie.id}/dues`, pvTreasurer.token)).statusCode).toBe(200);
   });
 
+  it("chaque formule indique combien de membres la suivent", async () => {
+    const list = (await call("GET", "/dues/plans", president.token)).json().plans;
+    const n = (
+      await owner`select count(*)::int as n from dues_subscriptions where plan_id = ${plans.standard} and ends_on is null`
+    )[0]!.n;
+    expect(list.find((p: { id: string }) => p.id === plans.standard).subscribers).toBe(n);
+  });
+
   it("un nouveau montant ne touche que les échéances futures non payées", async () => {
     await owner`insert into dues_obligations (party_id, member_id, plan_id, period_start, due_date, amount)
       values (${A}, ${marie.id}, ${plans.standard}, '2099-01-01', '2099-01-01', '500.00')`;

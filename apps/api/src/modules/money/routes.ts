@@ -25,6 +25,7 @@ export default async function moneyRoutes(
   app.post("/payments/cash", { preHandler: [requireAuth, requireFeature("payments.local")] }, async (req, reply) =>
     reply.code(201).send(await svc.recordCash(req, cashPayment.parse(req.body))),
   );
+  app.get("/payments/summary", { preHandler: requireAuth }, async (req) => svc.summary(req));
   app.get("/payments", { preHandler: requireAuth }, async (req) => ({
     payments: await svc.list(req, paymentsQuery.parse(req.query)),
   }));

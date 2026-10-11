@@ -4,7 +4,7 @@ import { currentSession } from "$lib/server/session";
 import type { RequestHandler } from "./$types";
 
 /**
- * Recherches du panneau des organes, côté serveur (jeton en cookie httpOnly) :
+ * Recherches des panneaux du back-office, côté serveur (jeton en cookie httpOnly) :
  * - zones où rattacher un organe (département, commune, section, pays ou ville de la diaspora) ;
  * - membres validés à nommer à un poste, dans la zone de la personne (members.read) et celle de l'organe.
  */

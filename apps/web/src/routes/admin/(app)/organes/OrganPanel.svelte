@@ -7,7 +7,7 @@
   import { enhance } from "$app/forms";
   import { Badge, Button, Field, SidePanel, Switch } from "@civora/ui";
   import { format, translator, type MessageKey } from "$lib/i18n";
-  import Lookup from "./Lookup.svelte";
+  import Lookup from "$lib/components/Lookup.svelte";
   import type { Organ, Post } from "./+page.server";
 
   interface Props {
