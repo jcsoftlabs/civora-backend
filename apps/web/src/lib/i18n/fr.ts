@@ -756,6 +756,9 @@ export const fr = {
   "admin.dash.lock.dashboards": "Tableaux de bord avancés",
   "admin.dash.lock.dashboards.desc": "Comparez les périodes et suivez chaque section dans le temps.",
   "admin.dash.loading": "Chargement des indicateurs",
+  "common.date": "Date",
+  "common.hour": "Heure",
+  "common.minute": "Minutes",
 } as const;
 
 export type MessageKey = keyof typeof fr;

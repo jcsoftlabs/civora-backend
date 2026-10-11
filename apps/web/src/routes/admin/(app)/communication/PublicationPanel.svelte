@@ -4,8 +4,10 @@
   parution programmée ; une publication en ligne peut être retirée.
 -->
 <script lang="ts">
+  import { formatDateTime } from "$lib/datetime";
   import { enhance } from "$app/forms";
   import { Button, Field, SidePanel } from "@civora/ui";
+  import DateTimeField from "$lib/components/DateTimeField.svelte";
   import { format, translator, type MessageKey } from "$lib/i18n";
   import AudienceBuilder from "./AudienceBuilder.svelte";
   import type { Publication } from "./+page.server";
@@ -29,11 +31,6 @@
   let scheduling = $state(false);
   const KINDS = ["announcement", "news", "editorial", "podcast", "album"] as const;
   const online = $derived(!!p?.publishedAt && new Date(p.publishedAt) <= new Date());
-  const tz = (() => {
-    const m = -new Date().getTimezoneOffset();
-    const s = m >= 0 ? "+" : "-";
-    return `${s}${String(Math.floor(Math.abs(m) / 60)).padStart(2, "0")}:${String(Math.abs(m) % 60).padStart(2, "0")}`;
-  })();
   const message = $derived(
     form?.code
       ? { bad: true, text: tk(`error.${form.code}`) }
@@ -100,11 +97,12 @@
     <AudienceBuilder {locale} purpose="publication" {statuses} {organs} initial={p?.audience ?? null} {zoneNames} />
 
     {#if scheduling}
-      <input type="hidden" name="tz" value={tz} />
-      <label class="area">
-        <span>{t("admin.pub.scheduleAt")}</span>
-        <input type="datetime-local" name="at" required />
-      </label>
+      <DateTimeField
+        label={t("admin.pub.scheduleAt")}
+        name="at"
+        required
+        labels={{ date: t("common.date"), hour: t("common.hour"), minute: t("common.minute") }}
+      />
     {/if}
 
     <div class="actions">
@@ -133,8 +131,8 @@
       <input type="hidden" name="id" value={p.id} />
       <p class="muted">
         {online
-          ? format(t("admin.com.status.published"), { date: new Date(p.publishedAt).toLocaleString("fr-FR") })
-          : format(t("admin.com.status.scheduled"), { date: new Date(p.publishedAt).toLocaleString("fr-FR") })}
+          ? format(t("admin.com.status.published"), { date: formatDateTime(p.publishedAt) })
+          : format(t("admin.com.status.scheduled"), { date: formatDateTime(p.publishedAt) })}
       </p>
       <Button type="submit" variant="ghost" size="sm">{t("admin.pub.unpublish")}</Button>
     </form>
@@ -183,8 +181,7 @@
     color: var(--c-surface);
   }
   .kinds label:has(input:focus-visible),
-  textarea:focus-visible,
-  input[type="datetime-local"]:focus-visible {
+  textarea:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
   }
@@ -199,8 +196,7 @@
     font-weight: 400;
     color: var(--c-ink-2);
   }
-  textarea,
-  input[type="datetime-local"] {
+  textarea {
     min-height: 44px;
     padding: var(--s-3);
     border: 1px solid var(--c-line);

@@ -4,6 +4,7 @@
   inscrits. Le panneau latéral sert à créer, modifier et voir les inscrits.
 -->
 <script lang="ts">
+  import { partyFormat } from "$lib/datetime";
   import { page } from "$app/state";
   import { goto } from "$app/navigation";
   import { resolve } from "$app/paths";
@@ -24,10 +25,10 @@
   // eslint-disable-next-line svelte/no-navigation-without-resolve
   const close = () => goto(keep ? `${base}?${keep}` : base, { noScroll: true, keepFocus: true });
 
-  const day = new Intl.DateTimeFormat("fr-FR", { day: "numeric" });
-  const month = new Intl.DateTimeFormat("fr-FR", { month: "short" });
-  const weekday = new Intl.DateTimeFormat("fr-FR", { weekday: "long" });
-  const hour = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  const day = partyFormat({ day: "numeric" });
+  const month = partyFormat({ month: "short" });
+  const weekday = partyFormat({ weekday: "long" });
+  const hour = partyFormat({ hour: "numeric", minute: "2-digit" });
   const f = $derived(form as { ok?: boolean; done?: string; code?: string; id?: string } | null);
 
   // Après la création, le panneau s'ouvre sur l'événement (pour suivre ses inscrits).

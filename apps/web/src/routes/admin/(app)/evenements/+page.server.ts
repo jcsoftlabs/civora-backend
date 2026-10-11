@@ -1,5 +1,6 @@
 import { error, fail } from "@sveltejs/kit";
 import { ApiFailure, api } from "$lib/server/api";
+import { fromPartyLocal } from "$lib/datetime";
 import { currentSession } from "$lib/server/session";
 import type { Actions, PageServerLoad, RequestEvent } from "./$types";
 
@@ -65,11 +66,8 @@ const i18n = (f: FormData, k: string) => {
   const ht = text(f, `${k}Ht`);
   return fr ? { fr, ...(ht ? { ht } : {}) } : null;
 };
-/** Date locale saisie (datetime-local) et décalage du navigateur, en instant ISO. */
-const instant = (f: FormData, k: string) => {
-  const v = text(f, k);
-  return v ? new Date(`${v}:00${text(f, "tz") || "-04:00"}`).toISOString() : undefined;
-};
+/** Heure saisie (heure d'Haïti, 24 h) en instant ISO. */
+const instant = (f: FormData, k: string) => fromPartyLocal(text(f, k));
 
 async function act(event: RequestEvent, call: (f: FormData, token: string, ip: string) => Promise<object | void>) {
   const s = await currentSession(event.cookies, event.locals.partySlug!);

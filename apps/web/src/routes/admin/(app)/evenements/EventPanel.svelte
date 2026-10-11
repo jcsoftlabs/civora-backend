@@ -3,9 +3,12 @@
   (fixés à la création, ils décident qui voit l'événement), lieu, nombre de places. Puis la liste des inscrits.
 -->
 <script lang="ts">
+  import { partyFormat } from "$lib/datetime";
   import { enhance } from "$app/forms";
   import { Button, Field, SidePanel } from "@civora/ui";
   import Lookup from "$lib/components/Lookup.svelte";
+  import DateTimeField from "$lib/components/DateTimeField.svelte";
+  import { toPartyLocal } from "$lib/datetime";
   import { format, translator, type MessageKey } from "$lib/i18n";
   import type { ManagedEvent, Registrant } from "./+page.server";
 
@@ -25,26 +28,8 @@
   let pending = $state(false);
   let kind = $derived(e?.kind ?? "rassemblement");
   const KINDS = ["rassemblement", "reunion", "congres", "formation"] as const;
-  const tz = (() => {
-    const m = -new Date().getTimezoneOffset();
-    const s = m >= 0 ? "+" : "-";
-    return `${s}${String(Math.floor(Math.abs(m) / 60)).padStart(2, "0")}:${String(Math.abs(m) % 60).padStart(2, "0")}`;
-  })();
-  /** Instant ISO en valeur de champ datetime-local, à l'heure du navigateur. */
-  const local = (iso: string | undefined) => {
-    if (!iso) return "";
-    const d = new Date(iso);
-    const p = (n: number) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
-  };
-  // Valeurs des champs date calculées dans le navigateur seulement (le serveur est en UTC).
-  let startsVal = $state("");
-  let endsVal = $state("");
-  $effect(() => {
-    startsVal = local(e?.startsAt);
-    endsVal = local(e?.endsAt);
-  });
-  const dateFmt = $derived(new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" }));
+  const dtLabels = $derived({ date: t("common.date"), hour: t("common.hour"), minute: t("common.minute") });
+  const dateFmt = $derived(partyFormat({ day: "numeric", month: "short" }));
   const message = $derived(
     form?.code
       ? { bad: true, text: tk(`error.${form.code}`) }
@@ -74,7 +59,6 @@
   >
     {#if message}<p class="msg" class:bad={message.bad} role="status">{message.text}</p>{/if}
     {#if e}<input type="hidden" name="id" value={e.id} />{/if}
-    <input type="hidden" name="tz" value={tz} />
 
     {#if !e}
       <fieldset class="kinds">
@@ -90,16 +74,20 @@
 
     <Field label={t("admin.event.title")} name="titleFr" required maxlength={160} value={e?.title.fr ?? ""} />
     <Field label={t("admin.event.titleHt")} name="titleHt" maxlength={160} value={e?.title.ht ?? ""} />
-    <div class="row2">
-      <label class="area">
-        <span>{t("admin.event.starts")}</span>
-        <input type="datetime-local" name="startsAt" required bind:value={startsVal} />
-      </label>
-      <label class="area">
-        <span>{t("admin.event.ends")}</span>
-        <input type="datetime-local" name="endsAt" required bind:value={endsVal} />
-      </label>
-    </div>
+    <DateTimeField
+      label={t("admin.event.starts")}
+      name="startsAt"
+      required
+      value={toPartyLocal(e?.startsAt)}
+      labels={dtLabels}
+    />
+    <DateTimeField
+      label={t("admin.event.ends")}
+      name="endsAt"
+      required
+      value={toPartyLocal(e?.endsAt)}
+      labels={dtLabels}
+    />
     <Field
       label={t("admin.event.address")}
       hint={t("admin.event.address.hint")}
@@ -228,11 +216,6 @@
     background: var(--c-ink);
     color: var(--c-surface);
   }
-  .row2 {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--s-3);
-  }
   .area {
     display: flex;
     flex-direction: column;
@@ -241,8 +224,7 @@
     font-weight: 600;
   }
   textarea,
-  select,
-  input[type="datetime-local"] {
+  select {
     min-height: 44px;
     padding: var(--s-2) var(--s-3);
     border: 1px solid var(--c-line);
@@ -256,8 +238,7 @@
   }
   .kinds label:has(input:focus-visible),
   textarea:focus-visible,
-  select:focus-visible,
-  input[type="datetime-local"]:focus-visible {
+  select:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
   }
@@ -337,10 +318,5 @@
     flex-direction: column;
     gap: 2px;
     font-weight: 600;
-  }
-  @media (max-width: 480px) {
-    .row2 {
-      grid-template-columns: minmax(0, 1fr);
-    }
   }
 </style>

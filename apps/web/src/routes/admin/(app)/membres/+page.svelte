@@ -4,6 +4,7 @@
   l'année en douze carrés. Tout l'état est dans l'adresse : une liste filtrée se partage par son lien.
 -->
 <script lang="ts">
+  import { partyFormat } from "$lib/datetime";
   import { page, navigating } from "$app/state";
   import { resolve } from "$app/paths";
   import { goto } from "$app/navigation";
@@ -81,8 +82,8 @@
     { key: "since", label: t("admin.members.col.since"), align: "end" as const },
   ]);
 
-  const dateFmt = $derived(new Intl.DateTimeFormat("fr-FR", { month: "short", year: "numeric" }));
-  const monthFmt = $derived(new Intl.DateTimeFormat("fr-FR", { month: "long" }));
+  const dateFmt = $derived(partyFormat({ month: "short", year: "numeric" }));
+  const monthFmt = $derived(partyFormat({ month: "long" }));
   const monthName = (i: number) => monthFmt.format(new Date(Date.UTC(2026, i, 15)));
   const label = (s: MemberRow["status"]) => (s ? (data.locale === "ht" && s.ht ? s.ht : s.fr) : null);
   const duesSummary = (d: MemberRow["dues"]) =>

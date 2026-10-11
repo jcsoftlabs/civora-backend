@@ -4,6 +4,7 @@
   Deux onglets : Profil (contact, localisation, classement) et Cotisations (relevé de l'année).
 -->
 <script lang="ts">
+  import { partyFormat } from "$lib/datetime";
   import { enhance } from "$app/forms";
   import { Badge, Button, Field, MemberCard, SidePanel } from "@civora/ui";
   import { format, translator, type MessageKey } from "$lib/i18n";
@@ -44,7 +45,7 @@
   const error = $derived(form?.code ? tk(`error.${form.code}`) : null);
   const name = $derived(`${m.firstName} ${m.lastName}`);
 
-  const dateFmt = $derived(new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }));
+  const dateFmt = $derived(partyFormat({ day: "numeric", month: "long", year: "numeric" }));
   const monthFmt = $derived(new Intl.DateTimeFormat("fr-FR", { month: "long", year: "numeric", timeZone: "UTC" }));
   const date = (d: string | null) => (d ? dateFmt.format(new Date(d)) : t("admin.sheet.none"));
   const place = $derived(

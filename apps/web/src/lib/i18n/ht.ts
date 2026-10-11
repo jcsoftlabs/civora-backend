@@ -739,4 +739,7 @@ export const ht: Record<MessageKey, string> = {
   "admin.dash.lock.dashboards": "Tablo de bò avanse",
   "admin.dash.lock.dashboards.desc": "Konpare peryòd yo epi swiv chak seksyon nan tan.",
   "admin.dash.loading": "N ap chaje endikatè yo",
+  "common.date": "Dat",
+  "common.hour": "Lè",
+  "common.minute": "Minit",
 };

@@ -4,6 +4,7 @@
   Seul moment animé : le tampon qui se pose. Lisible en plein soleil : grands contrastes, texte large.
 -->
 <script lang="ts">
+  import { formatTime } from "$lib/datetime";
   import { Badge } from "@civora/ui";
   import { translator } from "$lib/i18n";
   import type { PageData } from "./$types";
@@ -11,14 +12,8 @@
   let { data }: { data: PageData & { locale: "fr" | "ht" } } = $props();
   const t = $derived(translator(data.locale));
   const r = $derived(data.result);
-  const time = $derived(
-    r.checkedAt
-      ? new Date(r.checkedAt).toLocaleTimeString(data.locale === "ht" ? "fr-HT" : "fr-FR", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      : "",
-  );
+  // Heure du contrôle, à l'heure d'Haïti, avec AM ou PM.
+  const time = $derived(r.checkedAt ? formatTime(r.checkedAt) : "");
 </script>
 
 <svelte:head><title>{t("verify.title")}</title><meta name="robots" content="noindex" /></svelte:head>

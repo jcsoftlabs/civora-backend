@@ -4,6 +4,7 @@
   « Mode simple » masque les droits détaillés des postes. Sans organe : création d'un organe.
 -->
 <script lang="ts">
+  import { partyFormat } from "$lib/datetime";
   import { enhance } from "$app/forms";
   import { Badge, Button, Field, SidePanel, Switch } from "@civora/ui";
   import { format, translator, type MessageKey } from "$lib/i18n";
@@ -33,7 +34,7 @@
   let chosenPerms = $state<string[]>([]);
   const canAssign = $derived(permissions.includes("posts.assign"));
   const KINDS = ["bureau", "coordination", "section", "commission", "antenne"] as const;
-  const dateFmt = $derived(new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }));
+  const dateFmt = $derived(partyFormat({ day: "numeric", month: "long", year: "numeric" }));
   const message = $derived(
     form?.code
       ? { bad: true, text: tk(`error.${form.code}`) }

@@ -3,6 +3,7 @@
   notifications push avec leur bilan d'envoi. Chaque élément dit à qui il s'adresse.
 -->
 <script lang="ts">
+  import { partyFormat } from "$lib/datetime";
   import { page } from "$app/state";
   import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
@@ -38,9 +39,7 @@
   // eslint-disable-next-line svelte/no-navigation-without-resolve
   const go = (changes: Record<string, string | null>) => goto(href(changes), { noScroll: true, keepFocus: true });
 
-  const dateFmt = $derived(
-    new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }),
-  );
+  const dateFmt = $derived(partyFormat({ day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }));
   const label = (l: { fr: string; ht?: string }) => (data.locale === "ht" && l.ht ? l.ht : l.fr);
   /** Résumé lisible d'une audience : « Tout le parti », « 2 zones · Diaspora »… */
   function who(a: StoredAudience | null) {

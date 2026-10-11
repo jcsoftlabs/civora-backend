@@ -2,6 +2,7 @@ import { error, fail } from "@sveltejs/kit";
 import { ApiFailure, api } from "$lib/server/api";
 import { currentSession } from "$lib/server/session";
 import { uploadFile } from "$lib/server/upload";
+import { fromPartyLocal } from "$lib/datetime";
 import { audienceFrom, type StoredAudience } from "./audience";
 import type { Actions, PageServerLoad, RequestEvent } from "./$types";
 
@@ -102,8 +103,8 @@ async function act(event: RequestEvent, call: (f: FormData, token: string, ip: s
   }
 }
 
-/** Date locale saisie (datetime-local, heure d'Haïti) en instant ISO. */
-const when = (v: string, offset: string) => (v ? new Date(`${v}:00${offset}`).toISOString() : undefined);
+/** Heure saisie (heure d'Haïti, 24 h) en instant ISO. */
+const when = (v: string) => (v ? fromPartyLocal(v) : undefined);
 
 export const actions: Actions = {
   /** Enregistre la publication (création ou mise à jour), puis la publie ou la programme si demandé. */
@@ -129,7 +130,7 @@ export const actions: Actions = {
       }
       const intent = text(f, "intent");
       if (intent === "publish" || intent === "schedule") {
-        const at = intent === "schedule" ? when(text(f, "at"), text(f, "tz") || "-04:00") : undefined;
+        const at = intent === "schedule" ? when(text(f, "at")) : undefined;
         await api(`/publications/${id}/publish`, { body: at ? { at } : {}, token, ip });
         return { done: intent === "publish" ? "published" : "scheduled", id };
       }
@@ -143,7 +144,7 @@ export const actions: Actions = {
   /** COM-02 : notification immédiate ou programmée, envoyée par le worker. */
   push: (event) =>
     act(event, async (f, token, ip) => {
-      const at = text(f, "when") === "later" ? when(text(f, "at"), text(f, "tz") || "-04:00") : undefined;
+      const at = text(f, "when") === "later" ? when(text(f, "at")) : undefined;
       await api("/outreach/push", {
         body: {
           title: i18n(f, "title"),

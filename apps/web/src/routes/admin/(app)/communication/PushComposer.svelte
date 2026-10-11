@@ -6,6 +6,7 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import { Button, Field, SidePanel } from "@civora/ui";
+  import DateTimeField from "$lib/components/DateTimeField.svelte";
   import { translator } from "$lib/i18n";
   import AudienceBuilder from "./AudienceBuilder.svelte";
 
@@ -31,11 +32,6 @@
   let whenMode = $state<"now" | "later">("now");
   let lang = $state<"fr" | "ht">("fr");
   // Décalage horaire du navigateur (la date saisie est locale) : « -04:00 » en Haïti l'été.
-  const tz = (() => {
-    const m = -new Date().getTimezoneOffset();
-    const s = m >= 0 ? "+" : "-";
-    return `${s}${String(Math.floor(Math.abs(m) / 60)).padStart(2, "0")}:${String(Math.abs(m) % 60).padStart(2, "0")}`;
-  })();
   const shownTitle = $derived((lang === "ht" && titleHt) || titleFr || t("admin.push.title"));
   const shownBody = $derived((lang === "ht" && bodyHt) || bodyFr || t("admin.push.body"));
   const error = $derived(form?.code ? t(`error.${form.code}` as Parameters<typeof t>[0]) : null);
@@ -81,11 +77,12 @@
           {/each}
         </div>
         {#if whenMode === "later"}
-          <input type="hidden" name="tz" value={tz} />
-          <label class="area">
-            <span>{t("admin.push.at")}</span>
-            <input type="datetime-local" name="at" required />
-          </label>
+          <DateTimeField
+            label={t("admin.push.at")}
+            name="at"
+            required
+            labels={{ date: t("common.date"), hour: t("common.hour"), minute: t("common.minute") }}
+          />
         {/if}
       </fieldset>
 
@@ -146,8 +143,7 @@
     color: var(--c-ink-2);
     font-variant-numeric: tabular-nums;
   }
-  textarea,
-  input[type="datetime-local"] {
+  textarea {
     min-height: 44px;
     padding: var(--s-3);
     border: 1px solid var(--c-line);
@@ -158,7 +154,6 @@
     resize: vertical;
   }
   textarea:focus-visible,
-  input[type="datetime-local"]:focus-visible,
   .seg label:has(input:focus-visible) {
     outline: none;
     box-shadow: var(--focus-ring);

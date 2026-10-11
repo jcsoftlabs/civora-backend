@@ -4,6 +4,7 @@
   comptes de paiement du parti. « Encaisser en espèces » ouvre le panneau de saisie avec reçu.
 -->
 <script lang="ts">
+  import { partyFormat } from "$lib/datetime";
   import { page, navigating } from "$app/state";
   import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
@@ -46,7 +47,7 @@
       currency,
       currencyDisplay: currency === "HTG" ? "code" : "symbol",
     }).format(Number(amount));
-  const dateFmt = $derived(new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", year: "numeric" }));
+  const dateFmt = $derived(partyFormat({ day: "numeric", month: "short", year: "numeric" }));
   /** « 01-31 » devient « 31 janvier ». */
   const dayMonth = (mmdd: string | null) => {
     const [m, d] = (mmdd ?? "").split("-").map(Number);
