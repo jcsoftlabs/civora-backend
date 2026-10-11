@@ -52,7 +52,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | FIN-07 | Effets du retard paramétrables (vote, candidature, contenus) | M N | P3 | Neuf | à faire |
 | FIN-08 | Paiement d'avance, prélèvement automatique pour la diaspora | M N | P3 | Neuf | à faire |
 | FIN-09 | Contributions spéciales demandées à un groupe de membres | N | P4 | Neuf | à faire |
-| FIN-10 | Saisie des paiements en espèces par un trésorier local, avec reçu | E M N | P2 | NOU | à faire |
+| FIN-10 | Saisie des paiements en espèces par un trésorier local, avec reçu | E M N | P2 | NOU | fait |
 | FIN-11 | Campagnes de dons thématiques, ponctuelles ou récurrentes | E M N | P3 | NOU | à faire |
 | FIN-12 | Fonds versés sur les comptes marchands du parti, jamais de la plateforme | E M N | P2 | Neuf | à faire |
 

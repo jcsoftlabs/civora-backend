@@ -114,6 +114,13 @@ await withParty(ctx.partyId, async (tx) => {
 - Calcul des échéances : fonction pure `schedule()` (`packages/shared/src/dues.ts`), en dates civiles d'Haïti. Anniversaire : tous les N mois depuis l'adhésion. Date fixe (MM-JJ) : même date pour tous, la période en cours étant due dès l'adhésion. Fin de mois bornée (31 janvier, 28 février, 31 mars). Génération idempotente jusqu'à 45 jours devant ; le job nocturne `dues.generate` appellera la même fonction.
 - Relevé du membre : chaque échéance est à venir, due, en retard (après le délai de grâce) ou payée ; total restant dû par devise, en centimes exacts.
 
+## 6 ter. Espèces et reçus (FIN-10)
+
+- Saisie par un trésorier qui a `payments.recordCash` dans la zone du membre, contre des échéances précises : le montant doit en être exactement la somme (centimes entiers, `lib/money.ts`), dans la même devise.
+- Une seule transaction : paiement `succeeded` (`provider = cash`, trésorier noté), échéances payées, recette au journal (`ledger_entries`, zone du membre), reçu numéroté `AAAA-NNNNNN` sans trou ni doublon (verrou par parti), audit.
+- Idempotence : le téléphone envoie un `clientRef` ; la même saisie rejouée, même au même instant (verrou sur la clé), renvoie le même reçu. Deux trésoriers sur la même échéance : verrou de ligne, un seul paiement passe.
+- Reçu : e-mail dans la langue du membre, consultable et téléchargeable en PDF par le membre ou un responsable `payments.read` de la zone.
+
 ## 7. Jobs pg-boss
 
 | Job | Fréquence | Rôle |

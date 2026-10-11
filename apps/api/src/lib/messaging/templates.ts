@@ -67,3 +67,36 @@ export const APPLICATION_MESSAGES: Record<MessageLocale, ApplicationMessage> = {
       `Yo pa aksepte demann adezyon ou nan ${party}.\n\n` + `Pou plis enfòmasyon, kontakte responsab seksyon ou.`,
   },
 };
+
+interface ReceiptMessage {
+  subject: (party: string, number: string) => string;
+  text: (p: {
+    party: string;
+    number: string;
+    amount: string;
+    method: string;
+    periods: string;
+    recordedBy: string;
+  }) => string;
+  methods: Record<string, string>;
+}
+
+/** Reçu de paiement (FIN-10). */
+export const RECEIPT_MESSAGES: Record<MessageLocale, ReceiptMessage> = {
+  fr: {
+    subject: (party, number) => `${party} : reçu de paiement n° ${number}`,
+    text: (p) =>
+      `Merci. Votre paiement a bien été enregistré.\n\nReçu n° ${p.number}\nMontant : ${p.amount}\nMode : ${p.method}\n` +
+      `Cotisations réglées : ${p.periods}\nEnregistré par : ${p.recordedBy}\n\n` +
+      `Ce reçu est aussi disponible dans l'application. Conservez-le.\n${p.party}`,
+    methods: { cash: "espèces", moncash: "MonCash", natcash: "NatCash", kashpaw: "KashPaw", stripe: "carte" },
+  },
+  ht: {
+    subject: (party, number) => `${party} : resi peman nimewo ${number}`,
+    text: (p) =>
+      `Mèsi. Yo anrejistre peman ou.\n\nResi nimewo ${p.number}\nKantite : ${p.amount}\nFason ou peye : ${p.method}\n` +
+      `Kotizasyon ou peye : ${p.periods}\nMoun ki anrejistre l : ${p.recordedBy}\n\n` +
+      `Resi sa a disponib tou nan aplikasyon an. Kenbe l.\n${p.party}`,
+    methods: { cash: "lajan kach", moncash: "MonCash", natcash: "NatCash", kashpaw: "KashPaw", stripe: "kat" },
+  },
+};
