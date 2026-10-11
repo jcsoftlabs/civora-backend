@@ -41,7 +41,7 @@ export default async function authRoutes(app: FastifyInstance) {
   });
 
   app.post("/auth/sessions/revoke-all", { preHandler: requireAuth }, async (req) => ({
-    revoked: await app.auth.revokeAll(req.auth!.partyId, req.auth!.memberId),
+    revoked: await app.auth.revokeAll(req.auth!.partyId, req.auth!.memberId, req.auth!.userId),
   }));
 
   app.post("/auth/mfa/setup", { preHandler: requireAuth, config: { allowMfaPending: true } }, async (req) =>

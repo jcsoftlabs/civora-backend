@@ -23,7 +23,7 @@ Jalon : NOU migré sans perte, tests d'isolation réussis entre deux partis fict
 - [x] Plans et activation des modules : `plans.ts`, `requireFeature()`, `hasFeature()` (SOC-07)
 - [x] Chiffrement enveloppe des pièces d'identité (SEC-02, SEC-03)
 - [x] Authentification : OTP par e-mail (SMS au choix du parti), sessions, 2FA obligatoire pour les administrateurs, limitation du débit (SEC-04, SEC-09)
-- [ ] Journal d'audit append-only (SEC-06)
+- [x] Journal d'audit append-only (SEC-06)
 
 ### Territoire, organes, permissions
 - [ ] Référentiel des 10 départements, communes, sections communales ; pays de la diaspora (SOC-05)

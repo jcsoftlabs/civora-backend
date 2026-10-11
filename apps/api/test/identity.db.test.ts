@@ -40,6 +40,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await owner`set session_replication_role = replica`; // audit_log en ajout seul (SEC-06)
   for (const t of ["audit_log", "member_identities", "members", "party_keys"]) {
     await owner.unsafe(`delete from ${t} where party_id in ($1, $2)`, [A, B]);
   }

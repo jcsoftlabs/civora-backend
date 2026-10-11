@@ -1,20 +1,32 @@
 // SEC-06, SEC-11, synchronisation hors ligne, intégrations BI (BI-06, BI-07)
-import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { bigint, jsonb, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 import { id, partyId } from "./_helpers.js";
 
-/** Journal d'audit append-only : UPDATE et DELETE révoqués pour civora_app. */
-export const auditLog = pgTable("audit_log", {
-  id: id(),
-  partyId: partyId(),
-  actorUserId: uuid("actor_user_id"),
-  actorKind: text("actor_kind").notNull(), // member | staff | system
-  action: text("action").notNull(), // export.members | identity.read | role.change | staff.access ...
-  targetType: text("target_type"),
-  targetId: uuid("target_id"),
-  metadata: jsonb("metadata"),
-  ip: text("ip"),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
+/**
+ * Journal d'audit inaltérable (SEC-06). Ajout seulement : un déclencheur refuse toute modification et toute
+ * suppression, même au propriétaire. Chaîne d'empreintes par parti (sql/audit.sql) : chaque ligne porte un numéro
+ * d'ordre et l'empreinte SHA-256 de son contenu et de la ligne précédente ; une ligne modifiée, retirée ou
+ * intercalée casse la chaîne et se voit à la vérification. seq, prev_hash et hash sont calculés par la base.
+ */
+export const auditLog = pgTable(
+  "audit_log",
+  {
+    id: id(),
+    partyId: partyId(),
+    seq: bigint("seq", { mode: "number" }).notNull().default(0),
+    actorUserId: uuid("actor_user_id"),
+    actorKind: text("actor_kind").notNull(), // member | staff | system
+    action: text("action").notNull(), // export.members | identity.read | role.change | staff.access ...
+    targetType: text("target_type"),
+    targetId: uuid("target_id"),
+    metadata: jsonb("metadata"),
+    ip: text("ip"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    prevHash: text("prev_hash").notNull().default(""),
+    hash: text("hash").notNull().default(""),
+  },
+  (t) => [unique("audit_log_party_seq").on(t.partyId, t.seq)],
+);
 
 /** Opérations reçues des téléphones : idempotence de la synchronisation. */
 export const syncOperations = pgTable("sync_operations", {

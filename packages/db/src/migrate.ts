@@ -19,5 +19,6 @@ const owner = postgres(url, {
 await owner.unsafe(readFileSync(new URL("../sql/roles.sql", import.meta.url), "utf8"));
 await migrate(drizzle(owner), { migrationsFolder: new URL("../migrations", import.meta.url).pathname });
 await owner.unsafe(readFileSync(new URL("../sql/rls.sql", import.meta.url), "utf8"));
+await owner.unsafe(readFileSync(new URL("../sql/audit.sql", import.meta.url), "utf8"));
 await owner.end();
 console.log("Migrations et politiques RLS appliquées.");

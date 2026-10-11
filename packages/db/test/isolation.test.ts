@@ -192,6 +192,9 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  // Le journal d'audit refuse toute suppression (SEC-06) : seul un super-utilisateur peut désactiver les
+  // déclencheurs le temps du nettoyage (possible en local et en CI, jamais en production).
+  await owner`set session_replication_role = replica`;
   // Enfants d'abord, dans l'ordre inverse de création.
   for (const table of [...tables].reverse()) {
     await owner.unsafe(`delete from "${table}" where party_id in ($1, $2)`, [A, B]);

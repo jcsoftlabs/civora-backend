@@ -15,6 +15,7 @@ import {
   zones,
 } from "@civora/db";
 import { PERMISSIONS, type Permission } from "@civora/shared";
+import { audit } from "../../lib/audit.js";
 import { deriveKey, open, seal } from "../../lib/crypto.js";
 import type { EmailSender } from "../../lib/messaging/email.js";
 import type { SmsSender } from "../../lib/messaging/sms.js";
@@ -169,7 +170,21 @@ export class AuthService {
         .update(otpChallenges)
         .set(match ? { attempts: c.attempts + 1, consumedAt: new Date(this.now()) } : { attempts: c.attempts + 1 })
         .where(eq(otpChallenges.id, c.id));
-      if (!match) return { ok: false as const };
+      if (!match) {
+        // Dernier essai épuisé : trace d'une tentative de force brute possible.
+        if (c.attempts + 1 >= OTP_MAX_ATTEMPTS) {
+          await audit(tx, {
+            partyId: party.id,
+            actorUserId: c.userId,
+            actorKind: "member",
+            action: "auth.otp.locked",
+            targetType: "otp_challenge",
+            targetId: c.id,
+            ...(input.ip ? { ip: input.ip } : {}),
+          });
+        }
+        return { ok: false as const };
+      }
 
       const [member] = await tx
         .select({ id: members.id })
@@ -198,6 +213,16 @@ export class AuthService {
         userAgent: input.userAgent?.slice(0, 300) ?? null,
       });
       const mfaState = !isAdmin ? "none" : mfa?.confirmedAt ? "required" : "setup_required";
+      await audit(tx, {
+        partyId: party.id,
+        actorUserId: c.userId,
+        actorKind: "member",
+        action: "auth.login",
+        targetType: "member",
+        targetId: member.id,
+        metadata: { channel: c.channel, admin: isAdmin },
+        ...(input.ip ? { ip: input.ip } : {}),
+      });
       return { ok: true as const, token, expiresAt, mfa: mfaState as "none" | "required" | "setup_required" };
     });
 
@@ -271,15 +296,24 @@ export class AuthService {
   }
 
   /** Révoque toutes les sessions d'un membre (téléphone perdu, départ d'un responsable). */
-  async revokeAll(partyId: string, memberId: string): Promise<number> {
-    const rows = await withParty(partyId, (tx) =>
-      tx
+  async revokeAll(partyId: string, memberId: string, actorUserId: string | null = null): Promise<number> {
+    return withParty(partyId, async (tx) => {
+      const rows = await tx
         .update(sessions)
         .set({ revokedAt: new Date(this.now()) })
         .where(and(eq(sessions.memberId, memberId), isNull(sessions.revokedAt)))
-        .returning({ id: sessions.id }),
-    );
-    return rows.length;
+        .returning({ id: sessions.id });
+      await audit(tx, {
+        partyId,
+        actorUserId,
+        actorKind: "member",
+        action: "auth.sessions.revoked",
+        targetType: "member",
+        targetId: memberId,
+        metadata: { count: rows.length },
+      });
+      return rows.length;
+    });
   }
 
   /** Inscription à la 2FA : secret chiffré avec la clé du parti, montré une seule fois. */
@@ -326,6 +360,16 @@ export class AuthService {
         .update(sessions)
         .set({ mfaVerifiedAt: new Date(this.now()) })
         .where(eq(sessions.id, ctx.sessionId));
+      if (!m.confirmedAt) {
+        await audit(tx, {
+          partyId: ctx.partyId,
+          actorUserId: ctx.userId,
+          actorKind: "member",
+          action: "auth.mfa.enabled",
+          targetType: "member",
+          targetId: ctx.memberId,
+        });
+      }
       return true;
     });
     if (!ok) throw new ApiError(401, "mfa_invalid");

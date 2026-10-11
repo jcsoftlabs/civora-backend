@@ -103,7 +103,9 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await app.close();
+  await owner`set session_replication_role = replica`; // audit_log en ajout seul (SEC-06)
   for (const t of [
+    "audit_log",
     "sessions",
     "otp_challenges",
     "member_mfa",
@@ -271,6 +273,9 @@ describe("sessions", () => {
   });
 });
 
+let sharedSecret: Buffer = Buffer.alloc(0);
+const adminSecret = () => sharedSecret;
+
 describe("double authentification des administrateurs", () => {
   let token = "";
   let secret: Buffer = Buffer.alloc(0);
@@ -290,6 +295,7 @@ describe("double authentification des administrateurs", () => {
     expect(uri.protocol).toBe("otpauth:");
     const b32 = uri.searchParams.get("secret") ?? "";
     secret = base32Decode(b32);
+    sharedSecret = secret;
     expect(base32Encode(secret)).toBe(b32);
     const code = totpAt(secret, currentStep(clock));
     expect((await post("/auth/mfa/verify", { code }, { token })).statusCode).toBe(204);
@@ -320,6 +326,40 @@ describe("double authentification des administrateurs", () => {
   it("le secret TOTP est chiffré en base", async () => {
     const [row] = await owner`select secret_encrypted from member_mfa where member_id = ${fx.admin}`;
     expect(Buffer.from(row!.secret_encrypted).includes(secret)).toBe(false);
+  });
+});
+
+describe("journal d'audit (SEC-06)", () => {
+  it("refuse la lecture sans la permission audit.read", async () => {
+    clock += 60 * 60_000;
+    const { token } = await login(memberEmail);
+    expect((await get("/audit", token)).statusCode).toBe(403);
+    expect((await get("/audit/verify", token)).statusCode).toBe(403);
+  });
+
+  it("trace les connexions, la 2FA, le verrouillage et la révocation des sessions, sans données personnelles", async () => {
+    await owner`update posts set permissions = ${["members.read", "audit.read"]} where id = ${fx.post}`;
+    const admin = await login(adminEmail);
+    clock += 30_000;
+    await post("/auth/mfa/verify", { code: totpAt(adminSecret(), currentStep(clock)) }, { token: admin.token });
+    const res = await get("/audit?limit=200", admin.token);
+    expect(res.statusCode).toBe(200);
+    const actions = new Set((res.json().entries as Array<{ action: string }>).map((e) => e.action));
+    for (const a of ["auth.login", "auth.mfa.enabled", "auth.otp.locked", "auth.sessions.revoked"]) {
+      expect(actions).toContain(a);
+    }
+    expect(res.body).not.toContain(memberEmail);
+    expect(res.body).not.toContain(adminEmail);
+  });
+
+  it("vérifie l'intégrité de la chaîne", async () => {
+    clock += 60 * 60_000;
+    const admin = await login(adminEmail);
+    clock += 30_000;
+    await post("/auth/mfa/verify", { code: totpAt(adminSecret(), currentStep(clock)) }, { token: admin.token });
+    const res = await get("/audit/verify", admin.token);
+    expect(res.json()).toMatchObject({ intact: true, brokenAt: null });
+    expect(res.json().checked).toBeGreaterThan(5);
   });
 });
 

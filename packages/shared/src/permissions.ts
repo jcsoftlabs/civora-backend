@@ -42,6 +42,7 @@ export const PERMISSIONS = [
   "bi.read",
   "bi.export",
   "bi.connector",
+  "audit.read", // journal d'audit et vérification de son intégrité (SEC-06)
   // Élections
   "elections.manage",
   "elections.supervise",

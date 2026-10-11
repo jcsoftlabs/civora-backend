@@ -71,6 +71,13 @@ await withParty(ctx.partyId, async (tx) => {
 - Transit (SEC-03) : HTTPS et HSTS côté API ; `DATABASE_SSL=require` dès que la base est jointe par le réseau public. Au repos : chiffrement de l'hébergeur (Postgres managé, R2), à vérifier à la mise en production.
 - Logs : sérialiseurs qui masquent téléphones et identifiants.
 
+## 4 bis. Journal d'audit (SEC-06)
+
+- `audit_log` est en ajout seul pour tous : `REVOKE` pour `civora_app`, et des déclencheurs (`sql/audit.sql`) qui refusent `UPDATE`, `DELETE` et `TRUNCATE` même au propriétaire de la table. Seul un super-utilisateur peut les contourner (`session_replication_role`), ce que la chaîne d'empreintes révèle.
+- Chaîne par parti : à l'insertion, la base attribue `seq` (verrou par parti, sans trou ni doublon), relie la ligne à l'empreinte de la précédente (`prev_hash`) et calcule `hash` (SHA-256 du contenu canonique). Les valeurs fournies par l'appelant sont ignorées.
+- `audit_log_verify(party)` renvoie le premier maillon modifié, retiré ou intercalé ; exposé par `GET /audit/verify` (permission `audit.read`, poste national). `GET /audit` liste le journal sans donnée personnelle.
+- Écrit dans la même transaction que l'action : lecture d'une pièce d'identité, connexion, verrouillage d'un code après 5 essais, activation de la 2FA, révocation des sessions ; puis exports, changements de poste et réglages au fil des modules (`AUDITED`).
+
 ## 5. Votes internes
 
 - `elections` (scrutin) et `election_rules` (corps électoral) ; la liste électorale figée est matérialisée dans `electoral_rolls`.

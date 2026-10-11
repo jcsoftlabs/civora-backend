@@ -12,6 +12,7 @@ import { LazyKeyProvider } from "./lib/lazy-key-provider.js";
 import { LogEmailSender, ResendEmailSender } from "./lib/messaging/email.js";
 import { createSmsSender } from "./lib/messaging/sms.js";
 import { PartyKeys } from "./lib/party-keys.js";
+import auditRoutes from "./modules/audit/routes.js";
 import authRoutes from "./modules/auth/routes.js";
 import { AuthService } from "./modules/auth/service.js";
 import auth from "./plugins/auth.js";
@@ -82,6 +83,7 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
     });
   await app.register(auth, { auth: authService });
   await app.register(authRoutes);
+  await app.register(auditRoutes);
 
   app.get("/health", async () => ({ ok: true }));
 
