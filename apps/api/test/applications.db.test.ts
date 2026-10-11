@@ -285,7 +285,8 @@ describe("liste des membres du back-office", () => {
     const eve = (await list(national, "?q=eve")).items[0] as Item;
     expect(eve.parentName).toBe("Pétion-Ville");
     expect(eve.dues).toHaveLength(12);
-    expect(eve.dues.slice(0, 2)).toEqual(["paid", new Date() > new Date(`${year}-02-01`) ? "late" : "due"]);
+    // Février : délai de grâce de 15 jours par défaut.
+    expect(eve.dues.slice(0, 2)).toEqual(["paid", new Date() > new Date(`${year}-02-16T12:00:00Z`) ? "late" : "due"]);
     expect(eve.dues[11]).toBe("none");
   });
 });

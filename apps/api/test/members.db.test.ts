@@ -268,6 +268,10 @@ describe("fiche membre et statuts (ADH-02, ADH-03)", () => {
     ).toBe(204);
     const fiche = (await inject("GET", `/members/${marieId}`, undefined, pvCoordinator)).json();
     expect(fiche).toMatchObject({ statusLabel: { fr: "Militant", ht: "Militan" }, tags: ["jeunesse"] });
+    // Fiche du back-office : e-mail de contact, date de la demande, référent (ou null).
+    expect(fiche.email).toMatch(/@example\.test$/);
+    expect(fiche.createdAt).toBeTruthy();
+    expect(fiche).toHaveProperty("referent");
     expect((await inject("GET", `/members/${marieId}`, undefined, nordCoordinator)).statusCode).toBe(403);
   });
 

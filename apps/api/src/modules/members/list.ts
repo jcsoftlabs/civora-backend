@@ -29,7 +29,10 @@ export const listQuery = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(25),
 });
 
-/** État de chaque mois de l'année pour les cotisations : réglé, en retard, à venir, ou rien de dû. */
+/**
+ * État de chaque mois de l'année pour les cotisations : réglé, en retard (délai de grâce de la formule dépassé),
+ * à régler (échéance à venir ou dans le délai), ou rien de dû. Même règle que le relevé (obligationState).
+ */
 export type MonthDues = "paid" | "late" | "due" | "none";
 
 const escapeLike = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
@@ -83,9 +86,10 @@ export async function listMembers(req: FastifyRequest, q: z.infer<typeof listQue
           cross join lateral (select case
             when count(*) = 0 then 'none'
             when count(*) filter (where o.paid_at is null) = 0 then 'paid'
-            when bool_or(o.paid_at is null and o.due_date < current_date) then 'late'
+            when bool_or(o.paid_at is null and o.due_date + pl.grace_days < current_date) then 'late'
             else 'due' end as st
             from dues_obligations o
+            join dues_plans pl on pl.party_id = o.party_id and pl.id = o.plan_id
             where o.member_id = "members"."id"
               and o.period_start >= make_date(${year}, m.m, 1)
               and o.period_start < make_date(${year}, m.m, 1) + interval '1 month') x)`,

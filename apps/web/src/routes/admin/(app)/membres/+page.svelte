@@ -9,15 +9,23 @@
   import { goto } from "$app/navigation";
   import { Badge, Button, DataTable } from "@civora/ui";
   import { format, translator, type MessageKey } from "$lib/i18n";
-  import type { PageData } from "./$types";
+  import type { ActionData, PageData } from "./$types";
   import type { MemberRow } from "./+page.server";
+  import MemberSheet from "./MemberSheet.svelte";
 
-  let { data }: { data: PageData & { locale: "fr" | "ht" } } = $props();
+  let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
   const t = $derived(translator(data.locale));
   const tk = (k: string) => t(k as MessageKey);
   const list = $derived(data.list);
   const params = $derived(page.url.searchParams);
-  const loading = $derived(navigating.to?.url.pathname === page.url.pathname);
+  /** Squelettes quand la liste change ; ouvrir ou fermer une fiche (?m=) ne recharge pas visuellement la liste. */
+  const withoutSheet = (u: URL) => {
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
+    const p = new URLSearchParams(u.searchParams);
+    p.delete("m");
+    return `${u.pathname}?${p}`;
+  };
+  const loading = $derived(!!navigating.to && withoutSheet(navigating.to.url) !== withoutSheet(page.url));
 
   /** Adresse de la liste avec certains paramètres changés ; la page revient à 1 sauf si on la donne. */
   function href(changes: Record<string, string | null>) {
@@ -25,6 +33,7 @@
     // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const p = new URLSearchParams(params);
     if (!("page" in changes)) p.delete("page");
+    if (!("m" in changes)) p.delete("m");
     for (const [k, v] of Object.entries(changes)) {
       if (v === null || v === "") p.delete(k);
       else p.set(k, v);
@@ -196,7 +205,15 @@
           <span class="who">
             <span class="avatar" aria-hidden="true">{m.firstName[0]}{m.lastName[0]}</span>
             <span class="names">
-              <span class="name">{m.firstName} {m.lastName}</span>
+              <!-- eslint-disable svelte/no-navigation-without-resolve -->
+              <a
+                class="name"
+                href={href({ m: m.id, page: params.get("page") })}
+                aria-label={format(t("admin.sheet.open"), { name: `${m.firstName} ${m.lastName}` })}
+                data-sveltekit-noscroll
+                data-sveltekit-keepfocus>{m.firstName} {m.lastName}</a
+              >
+              <!-- eslint-enable svelte/no-navigation-without-resolve -->
               <span class="number">{m.number}</span>
             </span>
           </span>
@@ -282,6 +299,21 @@
     </footer>
   </main>
 </div>
+
+{#if data.sheet}
+  {#key data.sheet.member.id}
+    <MemberSheet
+      member={data.sheet.member}
+      dues={data.sheet.dues}
+      party={data.party}
+      statuses={data.statuses}
+      permissions={data.me.permissions}
+      locale={data.locale}
+      form={form ?? null}
+      onclose={() => go({ m: null, page: params.get("page") })}
+    />
+  {/key}
+{/if}
 
 <style>
   .section {
@@ -524,6 +556,17 @@
   .name {
     font-weight: 600;
     white-space: nowrap;
+    color: var(--c-ink);
+    text-decoration: none;
+  }
+  .name:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .name:focus-visible {
+    outline: none;
+    border-radius: 4px;
+    box-shadow: var(--focus-ring);
   }
   .place {
     min-width: 170px;

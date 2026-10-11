@@ -248,6 +248,9 @@ export class MembersService {
         isDiaspora: members.isDiaspora,
         residenceCountry: members.residenceCountry,
         applicationState: members.applicationState,
+        applicationScore: members.applicationScore,
+        email: users.email,
+        createdAt: members.createdAt,
         joinedAt: members.joinedAt,
         category: members.category,
         tags: members.tags,
@@ -263,8 +266,15 @@ export class MembersService {
         memberStatuses,
         and(eq(memberStatuses.partyId, members.partyId), eq(memberStatuses.id, members.statusId)),
       )
+      .leftJoin(users, eq(users.id, members.userId))
       .where(and(eq(members.id, memberId), isNull(members.deletedAt)));
     if (!m) throw new ApiError(404, "not_found");
+    const [referent] = m.referentMemberId
+      ? await tx
+          .select({ number: members.memberNumber, firstName: members.firstName, lastName: members.lastName })
+          .from(members)
+          .where(eq(members.id, m.referentMemberId))
+      : [];
     const location = await tx
       .select({ code: zones.code, level: zones.level, name: zones.name, nameHt: zones.nameHt })
       .from(zones)
@@ -275,7 +285,7 @@ export class MembersService {
       .from(memberIdentities)
       .where(eq(memberIdentities.memberId, memberId));
     const { zonePath, ...rest } = m;
-    return { member: { ...rest, location, identities }, zonePath };
+    return { member: { ...rest, referent: referent ?? null, location, identities }, zonePath };
   }
 
   async getMe(req: Req) {
