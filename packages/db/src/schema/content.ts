@@ -1,37 +1,87 @@
 // FOR-01 à FOR-04, COM-01 à COM-06, DOC-01 à DOC-08
 import { bigint, boolean, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { id, partyId, timestamps } from "./_helpers.js";
+import { id, partyId, partyKey, sameParty, timestamps } from "./_helpers.js";
+import { organs } from "./organs.js";
+import { members } from "./people.js";
+import { zones } from "./territory.js";
 
-export const courses = pgTable("courses", {
-  id: id(),
-  partyId: partyId(),
-  title: jsonb("title").notNull(),
-  passThresholdPercent: integer("pass_threshold_percent").notNull().default(65),
-  maxAttempts: integer("max_attempts"),
-  mandatoryForStatusIds: uuid("mandatory_for_status_ids").array(), // FOR-03
-  ...timestamps,
-});
+/** Fichiers R2, clé party/<party_id>/... (DOC-01 à DOC-08). */
+export const files = pgTable(
+  "files",
+  {
+    id: id(),
+    partyId: partyId(),
+    organId: uuid("organ_id"),
+    zoneId: uuid("zone_id").references(() => zones.id),
+    r2Key: text("r2_key").notNull().unique(), // contient party/<party_id>/ : unique globalement sans rien révéler
+    name: text("name").notNull(),
+    mimeType: text("mime_type").notNull(),
+    sizeBytes: bigint("size_bytes", { mode: "number" }).notNull(),
+    storageClass: text("storage_class").notNull().default("standard"), // standard | infrequent
+    immutable: boolean("immutable").notNull().default(false), // PV électoraux (ELE-12)
+    readPermission: text("read_permission"),
+    writePermission: text("write_permission"),
+    version: integer("version").notNull().default(1),
+    previousVersionId: uuid("previous_version_id"),
+    trashedAt: timestamp("trashed_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [
+    partyKey("files", t),
+    sameParty("files", t.partyId, t.organId, organs),
+    sameParty("files", t.partyId, t.previousVersionId, t),
+  ],
+);
 
-export const lessons = pgTable("lessons", {
-  id: id(),
-  partyId: partyId(),
-  courseId: uuid("course_id").notNull(),
-  position: integer("position").notNull(),
-  title: jsonb("title").notNull(),
-  mediaFileId: uuid("media_file_id"),
-  quiz: jsonb("quiz"),
-  ...timestamps,
-});
+export const courses = pgTable(
+  "courses",
+  {
+    id: id(),
+    partyId: partyId(),
+    title: jsonb("title").notNull(),
+    passThresholdPercent: integer("pass_threshold_percent").notNull().default(65),
+    maxAttempts: integer("max_attempts"),
+    mandatoryForStatusIds: uuid("mandatory_for_status_ids").array(), // FOR-03 ; tableau : pas de clé étrangère possible
+    ...timestamps,
+  },
+  (t) => [partyKey("courses", t)],
+);
 
-export const lessonAttempts = pgTable("lesson_attempts", {
-  id: id(),
-  partyId: partyId(),
-  lessonId: uuid("lesson_id").notNull(),
-  memberId: uuid("member_id").notNull(),
-  scorePercent: integer("score_percent").notNull(),
-  passed: boolean("passed").notNull(),
-  ...timestamps,
-});
+export const lessons = pgTable(
+  "lessons",
+  {
+    id: id(),
+    partyId: partyId(),
+    courseId: uuid("course_id").notNull(),
+    position: integer("position").notNull(),
+    title: jsonb("title").notNull(),
+    mediaFileId: uuid("media_file_id"),
+    quiz: jsonb("quiz"),
+    ...timestamps,
+  },
+  (t) => [
+    partyKey("lessons", t),
+    sameParty("lessons", t.partyId, t.courseId, courses),
+    sameParty("lessons", t.partyId, t.mediaFileId, files),
+  ],
+);
+
+export const lessonAttempts = pgTable(
+  "lesson_attempts",
+  {
+    id: id(),
+    partyId: partyId(),
+    lessonId: uuid("lesson_id").notNull(),
+    memberId: uuid("member_id").notNull(),
+    scorePercent: integer("score_percent").notNull(),
+    passed: boolean("passed").notNull(),
+    ...timestamps,
+  },
+  (t) => [
+    sameParty("lesson_attempts", t.partyId, t.lessonId, lessons),
+    sameParty("lesson_attempts", t.partyId, t.memberId, members),
+  ],
+);
 
 /** Annonces, actualités, podcasts, albums (COM-01). */
 export const publications = pgTable("publications", {
@@ -40,7 +90,7 @@ export const publications = pgTable("publications", {
   kind: text("kind").notNull(), // announcement | news | podcast | album | editorial
   title: jsonb("title").notNull(),
   body: jsonb("body"),
-  mediaFileIds: uuid("media_file_ids").array(),
+  mediaFileIds: uuid("media_file_ids").array(), // tableau : contrôle applicatif
   audience: jsonb("audience"),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   ...timestamps,
@@ -68,39 +118,30 @@ export const savedSegments = pgTable("saved_segments", {
   ...timestamps,
 });
 
-export const conversations = pgTable("conversations", {
-  id: id(),
-  partyId: partyId(),
-  kind: text("kind").notNull(), // support | organ | direct
-  organId: uuid("organ_id"),
-  ...timestamps,
-});
+export const conversations = pgTable(
+  "conversations",
+  {
+    id: id(),
+    partyId: partyId(),
+    kind: text("kind").notNull(), // support | organ | direct
+    organId: uuid("organ_id"),
+    ...timestamps,
+  },
+  (t) => [partyKey("conversations", t), sameParty("conversations", t.partyId, t.organId, organs)],
+);
 
-export const messages = pgTable("messages", {
-  id: id(),
-  partyId: partyId(),
-  conversationId: uuid("conversation_id").notNull(),
-  authorMemberId: uuid("author_member_id"),
-  body: text("body").notNull(),
-  ...timestamps,
-});
-
-/** Fichiers R2, clé party/<party_id>/... (DOC-01 à DOC-08). */
-export const files = pgTable("files", {
-  id: id(),
-  partyId: partyId(),
-  organId: uuid("organ_id"),
-  zoneId: uuid("zone_id"),
-  r2Key: text("r2_key").notNull().unique(),
-  name: text("name").notNull(),
-  mimeType: text("mime_type").notNull(),
-  sizeBytes: bigint("size_bytes", { mode: "number" }).notNull(),
-  storageClass: text("storage_class").notNull().default("standard"), // standard | infrequent
-  immutable: boolean("immutable").notNull().default(false), // PV électoraux (ELE-12)
-  readPermission: text("read_permission"),
-  writePermission: text("write_permission"),
-  version: integer("version").notNull().default(1),
-  previousVersionId: uuid("previous_version_id"),
-  trashedAt: timestamp("trashed_at", { withTimezone: true }),
-  ...timestamps,
-});
+export const messages = pgTable(
+  "messages",
+  {
+    id: id(),
+    partyId: partyId(),
+    conversationId: uuid("conversation_id").notNull(),
+    authorMemberId: uuid("author_member_id"),
+    body: text("body").notNull(),
+    ...timestamps,
+  },
+  (t) => [
+    sameParty("messages", t.partyId, t.conversationId, conversations),
+    sameParty("messages", t.partyId, t.authorMemberId, members),
+  ],
+);

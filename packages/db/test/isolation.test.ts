@@ -20,9 +20,20 @@ interface Column {
   required: boolean;
 }
 
+interface ForeignKey {
+  table: string;
+  columns: string[];
+  refTable: string;
+  refColumns: string[];
+}
+
 let tables: string[] = [];
 let columns: Column[] = [];
+let foreignKeys: ForeignKey[] = [];
 let enumFirstLabel = new Map<string, string>();
+/** Ligne fabriquée par table et par parti : les colonnes obligatoires qui pointent vers une autre table la réutilisent. */
+const rowIds = new Map<string, string>();
+let testZoneId = "";
 
 /** Valeur valide (en texte, castée côté SQL) pour une colonne obligatoire, selon son type. */
 function sampleValue(c: Column): string {
@@ -61,22 +72,53 @@ function sampleValue(c: Column): string {
   }
 }
 
+/** Valeur d'une colonne qui pointe vers une autre table : la ligne du même parti (ou la zone de test). */
+function referencedValue(table: string, column: string, partyId: string): string | undefined {
+  const fk = foreignKeys.find((f) => f.table === table && f.columns.includes(column) && f.refTable !== "parties");
+  if (!fk) return undefined;
+  if (fk.refTable === "zones") return testZoneId;
+  const id = rowIds.get(`${fk.refTable}:${partyId}`);
+  if (!id) throw new Error(`Fabrique : ${table}.${column} dépend de ${fk.refTable}, pas encore créée`);
+  return id;
+}
+
 /** Colonnes et valeurs d'une ligne valide de `table` pour le parti donné. */
-function rowFor(table: string, partyId: string): { cols: string[]; vals: string[]; casts: string[] } {
+function rowFor(
+  table: string,
+  partyId: string,
+  refParty = partyId,
+): { cols: string[]; vals: string[]; casts: string[] } {
   const cols: string[] = [];
   const vals: string[] = [];
   const casts: string[] = [];
   for (const c of columns.filter((x) => x.table === table && (x.required || x.column === "party_id"))) {
     cols.push(c.column);
-    vals.push(c.column === "party_id" ? partyId : sampleValue(c));
+    vals.push(c.column === "party_id" ? partyId : (referencedValue(table, c.column, refParty) ?? sampleValue(c)));
     casts.push(c.isArray ? `"${c.udt.slice(1)}"[]` : `"${c.udt}"`);
   }
   return { cols, vals, casts };
 }
 
+/** Ordre d'insertion : une table vient après celles que ses colonnes obligatoires référencent. */
+function insertionOrder(): string[] {
+  const requiredDeps = (t: string) =>
+    foreignKeys
+      .filter((f) => f.table === t && f.refTable !== t && f.refTable !== "parties" && f.refTable !== "zones")
+      .filter((f) => f.columns.some((c) => columns.find((x) => x.table === t && x.column === c)?.required))
+      .map((f) => f.refTable);
+  const done: string[] = [];
+  const pending = new Set(tables);
+  while (pending.size) {
+    const ready = [...pending].filter((t) => requiredDeps(t).every((d) => done.includes(d)));
+    if (!ready.length) throw new Error(`Dépendances circulaires obligatoires : ${[...pending].join(", ")}`);
+    for (const t of ready) (done.push(t), pending.delete(t));
+  }
+  return done;
+}
+
 /** Même insertion, exprimée pour drizzle (connexion civora_app via withParty). */
-function insertSql(table: string, partyId: string): SQL {
-  const { cols, vals, casts } = rowFor(table, partyId);
+function insertSql(table: string, partyId: string, refParty = partyId): SQL {
+  const { cols, vals, casts } = rowFor(table, partyId, refParty);
   const values = vals.map((v, i) => sql`${v}::${sql.raw(casts[i] ?? "text")}`);
   return sql`insert into ${sql.identifier(table)} (${sql.join(
     cols.map((c) => sql.identifier(c)),
@@ -114,23 +156,43 @@ beforeAll(async () => {
     ).map((r) => [r.typname, r.label]),
   );
 
-  // Deux partis et une ligne par table pour chacun, insérés par le propriétaire (hors RLS).
+  foreignKeys = (
+    await owner<{ table: string; columns: string[]; ref_table: string; ref_columns: string[] }[]>`
+      select c.conrelid::regclass::text as table, c.confrelid::regclass::text as ref_table,
+             array(select a.attname::text from unnest(c.conkey) k
+                   join pg_attribute a on a.attrelid = c.conrelid and a.attnum = k) as columns,
+             array(select a.attname::text from unnest(c.confkey) k
+                   join pg_attribute a on a.attrelid = c.confrelid and a.attnum = k) as ref_columns
+      from pg_constraint c where c.contype = 'f' and c.connamespace = 'public'::regnamespace`
+  ).map((r) => ({ table: r.table, columns: r.columns, refTable: r.ref_table, refColumns: r.ref_columns }));
+
+  const [zone] = await owner<{ id: string }[]>`
+    insert into zones (level, code, name, path) values ('pays', ${"test-" + A}, 'Zone de test', 'ht.test') returning id`;
+  testZoneId = zone?.id ?? "";
+
+  // Deux partis et une ligne par table pour chacun, insérés par le propriétaire (hors RLS), parents d'abord.
+  tables = insertionOrder();
   for (const id of [A, B]) {
     await owner`insert into parties (id, slug, name) values (${id}, ${"test-" + id}, ${"Parti test"})`;
     for (const table of tables) {
       const { cols, vals, casts } = rowFor(table, id);
       const placeholders = casts.map((c, i) => `$${i + 1}::${c}`).join(", ");
-      await owner.unsafe(
-        `insert into "${table}" (${cols.map((c) => `"${c}"`).join(", ")}) values (${placeholders})`,
+      const [row] = await owner.unsafe<{ id: string }[]>(
+        `insert into "${table}" (${cols.map((c) => `"${c}"`).join(", ")}) values (${placeholders}) returning id`,
         vals,
       );
+      if (row) rowIds.set(`${table}:${id}`, row.id);
     }
   }
 });
 
 afterAll(async () => {
-  for (const table of tables) await owner.unsafe(`delete from "${table}" where party_id in ($1, $2)`, [A, B]);
+  // Enfants d'abord, dans l'ordre inverse de création.
+  for (const table of [...tables].reverse()) {
+    await owner.unsafe(`delete from "${table}" where party_id in ($1, $2)`, [A, B]);
+  }
   await owner`delete from parties where id in (${A}, ${B})`;
+  await owner`delete from zones where id = ${testZoneId}`;
   await owner.end();
   await closeDb();
 });
@@ -175,6 +237,55 @@ describe("isolation entre partis", () => {
     }).catch((e: Error) => {
       if (!/rollback/i.test(e.message)) throw e;
     });
+  });
+
+  it("dans withParty(A), une ligne de A ne peut pas pointer vers une ligne de B (clés composites)", async () => {
+    // Chaque table qui référence une autre table du parti : la ligne de A pointe vers les parents de B.
+    const referencing = tables.filter((t) =>
+      foreignKeys.some(
+        (f) =>
+          f.table === t &&
+          f.columns[0] === "party_id" &&
+          f.columns.length === 2 &&
+          columns.find((c) => c.table === t && c.column === f.columns[1])?.required,
+      ),
+    );
+    expect(referencing.length).toBeGreaterThan(20);
+    const accepted: string[] = [];
+    for (const table of referencing) {
+      try {
+        await withParty(A, (tx) => tx.execute(insertSql(table, A, B)));
+        accepted.push(table);
+      } catch (e) {
+        const code = (e as { cause?: { code?: string } }).cause?.code;
+        if (code !== "23503") accepted.push(`${table} (erreur inattendue ${code})`);
+      }
+    }
+    expect(accepted).toEqual([]);
+  });
+
+  it("un membre de B ne peut pas être ajouté à un organe de A", async () => {
+    const organA = rowIds.get(`organs:${A}`);
+    const memberB = rowIds.get(`members:${B}`);
+    await expect(
+      withParty(A, (tx) =>
+        tx.execute(sql`insert into organ_members (party_id, organ_id, member_id) values (${A}, ${organA}, ${memberB})`),
+      ),
+    ).rejects.toMatchObject({ cause: { code: "23503" } });
+  });
+
+  it("un compte n'adhère qu'à un seul parti", async () => {
+    const [user] = await owner<{ id: string }[]>`
+      insert into users (phone_e164) values (${"+509" + Date.now()}) returning id`;
+    try {
+      await owner`update members set user_id = ${user?.id ?? null} where id = ${rowIds.get(`members:${A}`) ?? null}`;
+      await expect(
+        owner`update members set user_id = ${user?.id ?? null} where id = ${rowIds.get(`members:${B}`) ?? null}`,
+      ).rejects.toMatchObject({ code: "23505" });
+    } finally {
+      await owner`update members set user_id = null where user_id = ${user?.id ?? null}`;
+      await owner`delete from users where id = ${user?.id ?? null}`;
+    }
   });
 
   it("dans withParty(A), modifier ou supprimer une ligne de B n'a aucun effet", async () => {

@@ -12,7 +12,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
 | SOC-01 | Création d'un espace parti en libre-service : nom, logo, couleurs, langues, palier | E M N | P2 | Neuf | à faire |
-| SOC-02 | Isolation des données par parti sur toutes les tables, fichiers et canaux temps réel | E M N | P2 | Neuf | à faire |
+| SOC-02 | Isolation des données par parti sur toutes les tables, fichiers et canaux temps réel | E M N | P2 | Neuf | en cours |
 | SOC-03 | Marque blanche : thème app et site par parti ; app à son nom dans les stores | E M N (stores : N) | P2, P4 | Neuf | à faire |
 | SOC-04 | Domaine personnalisé pour le site public, certificat automatique | N | P4 | Neuf | à faire |
 | SOC-05 | Hiérarchie territoriale national, département, commune, section communale ; chaque responsable ne voit que sa zone | E M N (profondeur selon palier) | P2 | NOU | à faire |
@@ -213,7 +213,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Phase | Statut |
 | --- | --- | --- | --- |
-| SEC-01 | Isolation stricte par parti, prouvée par tests automatisés | P2 | à faire |
+| SEC-01 | Isolation stricte par parti, prouvée par tests automatisés | P2 | fait |
 | SEC-02 | Chiffrement des pièces d'identité au niveau du champ, clé par parti | P2 | à faire |
 | SEC-03 | TLS en transit, chiffrement au repos | P2 | à faire |
 | SEC-04 | Double authentification obligatoire pour les administrateurs | P2 | à faire |

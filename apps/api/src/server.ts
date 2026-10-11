@@ -1,13 +1,16 @@
+import { assertAppRole, closeDb } from "@civora/db";
 import { buildApp } from "./app.js";
 import { loadConfig } from "./config.js";
 
 const config = loadConfig();
+await assertAppRole(); // jamais de super-utilisateur : la RLS doit s'appliquer
 const app = await buildApp(config);
 
 for (const signal of ["SIGINT", "SIGTERM"] as const) {
   process.once(signal, async () => {
     app.log.info({ signal }, "arrêt");
     await app.close();
+    await closeDb();
     process.exit(0);
   });
 }

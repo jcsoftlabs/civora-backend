@@ -29,7 +29,11 @@ await withParty(ctx.partyId, async (tx) => {
 });
 ```
 
-`SET LOCAL` ne survit pas à la transaction, ce qui reste sûr avec un pooler. Les politiques RLS (`packages/db/sql/rls.sql`) comparent `party_id` à `current_setting('app.party_id')::uuid`. Une table sans politique fait échouer `check:rls` en CI.
+`SET LOCAL` ne survit pas à la transaction, ce qui reste sûr avec un pooler. Les politiques utilisent `nullif(current_setting('app.party_id', true), '')` : sur une connexion réutilisée, le réglage vaut `''` et non `NULL`.
+
+**PgBouncer.** En production, l'API et le worker passent par PgBouncer en mode transaction (port 6432) avec `DATABASE_PGBOUNCER=true` (requêtes préparées désactivées). Les migrations utilisent toujours la connexion directe : `migrate.ts` refuse une URL PgBouncer. Au démarrage, l'API refuse un rôle super-utilisateur ou `BYPASSRLS` (`assertAppRole`) : le compte `postgres` fourni par l'hébergeur ne doit jamais servir à l'application.
+
+**Références entre tables.** La RLS ne contrôle que le `party_id` de la ligne écrite. Chaque référence interne est donc une clé étrangère composite `(party_id, x_id)` vers `(party_id, id)` (helpers `partyKey` et `sameParty`) : une ligne ne peut pas pointer vers les données d'un autre parti. Les contraintes d'unicité métier incluent `party_id`, pour qu'une collision ne révèle rien d'un autre parti. Un compte (`users`) n'adhère qu'à un seul parti (`members.user_id` unique). Les politiques RLS (`packages/db/sql/rls.sql`) comparent `party_id` à `current_setting('app.party_id')::uuid`. Une table sans politique fait échouer `check:rls` en CI.
 
 **Test d'isolation générique.** `packages/db/test/isolation.test.ts` crée deux partis, insère une ligne par table pour chacun, puis vérifie, table par table, que le contexte A ne voit rien de B. Toute nouvelle table est automatiquement couverte.
 

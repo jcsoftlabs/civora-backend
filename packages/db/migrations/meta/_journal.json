@@ -8,6 +8,20 @@
       "when": 1791677731687,
       "tag": "0000_daffy_monster_badoon",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791678884572,
+      "tag": "0001_illegal_mad_thinker",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791679000756,
+      "tag": "0002_skinny_maggott",
+      "breakpoints": true
     }
   ]
 }

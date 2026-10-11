@@ -1,6 +1,18 @@
 // SOC-01, SOC-03, SOC-04, SOC-07, SOC-08, SEC-02
-import { bigint, boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { encrypted, id, partyId, timestamps } from "./_helpers.js";
+import {
+  bigint,
+  boolean,
+  foreignKey,
+  integer,
+  jsonb,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
+import { encrypted, id, partyId, partyKey, timestamps } from "./_helpers.js";
+import { files } from "./content.js";
 
 export const tierEnum = pgEnum("tier", ["essentiel", "mouvement", "national"]);
 export const subscriptionStatusEnum = pgEnum("subscription_status", [
@@ -12,20 +24,31 @@ export const subscriptionStatusEnum = pgEnum("subscription_status", [
 ]);
 
 /** Un parti client. La politique RLS de cette table compare id à app.party_id. */
-export const parties = pgTable("parties", {
-  id: id(),
-  slug: text("slug").notNull().unique(),
-  name: text("name").notNull(),
-  logoFileId: uuid("logo_file_id"),
-  brandColor: text("brand_color").notNull().default("#0F6E66"),
-  languages: text("languages").array().notNull().default(["fr", "ht"]),
-  tier: tierEnum("tier").notNull().default("essentiel"),
-  electionsModuleUntil: timestamp("elections_module_until", { withTimezone: true }),
-  /** Mode d'adhésion (ADH-04) : libre, validation, parrainage. */
-  admissionMode: text("admission_mode").notNull().default("validation"),
-  referralSettings: jsonb("referral_settings"),
-  ...timestamps,
-});
+export const parties = pgTable(
+  "parties",
+  {
+    id: id(),
+    slug: text("slug").notNull().unique(),
+    name: text("name").notNull(),
+    logoFileId: uuid("logo_file_id"),
+    brandColor: text("brand_color").notNull().default("#0F6E66"),
+    languages: text("languages").array().notNull().default(["fr", "ht"]),
+    tier: tierEnum("tier").notNull().default("essentiel"),
+    electionsModuleUntil: timestamp("elections_module_until", { withTimezone: true }),
+    /** Mode d'adhésion (ADH-04) : libre, validation, parrainage. */
+    admissionMode: text("admission_mode").notNull().default("validation"),
+    referralSettings: jsonb("referral_settings"),
+    ...timestamps,
+  },
+  // Le logo est un fichier du parti lui-même.
+  (t) => [
+    foreignKey({
+      name: "parties_logo_file_id_fk",
+      columns: [t.id, t.logoFileId],
+      foreignColumns: [files.partyId, files.id],
+    }),
+  ],
+);
 
 export const partyDomains = pgTable("party_domains", {
   id: id(),
@@ -46,15 +69,19 @@ export const partyKeys = pgTable("party_keys", {
 });
 
 /** Comptes marchands du parti : les fonds y arrivent directement (FIN-12). */
-export const merchantAccounts = pgTable("merchant_accounts", {
-  id: id(),
-  partyId: partyId(),
-  provider: text("provider").notNull(), // moncash | natcash | kashpaw | stripe
-  credentialsRef: text("credentials_ref").notNull(), // référence dans le gestionnaire de secrets, jamais la valeur
-  currency: text("currency").notNull(),
-  active: boolean("active").notNull().default(true),
-  ...timestamps,
-});
+export const merchantAccounts = pgTable(
+  "merchant_accounts",
+  {
+    id: id(),
+    partyId: partyId(),
+    provider: text("provider").notNull(), // moncash | natcash | kashpaw | stripe
+    credentialsRef: text("credentials_ref").notNull(), // référence dans le gestionnaire de secrets, jamais la valeur
+    currency: text("currency").notNull(),
+    active: boolean("active").notNull().default(true),
+    ...timestamps,
+  },
+  (t) => [partyKey("merchant_accounts", t)],
+);
 
 /** Abonnement à la plateforme (SOC-08). */
 export const subscriptions = pgTable("subscriptions", {

@@ -3,8 +3,19 @@ import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema/index.js";
 
-// Rôle civora_app, soumis à RLS. La connexion s'ouvre à la première requête.
-const client = postgres(process.env.DATABASE_URL ?? "", { max: 20, onnotice: () => {} });
+/**
+ * Rôle civora_app, soumis à RLS. La connexion s'ouvre à la première requête.
+ * Derrière PgBouncer en mode transaction (production), les requêtes préparées nommées sont désactivées :
+ * deux transactions successives peuvent arriver sur deux connexions serveur différentes.
+ * SET LOCAL reste sûr dans ce mode, puisqu'il ne vit que le temps de la transaction.
+ */
+const behindPgBouncer = process.env.DATABASE_PGBOUNCER === "true";
+
+const client = postgres(process.env.DATABASE_URL ?? "", {
+  max: behindPgBouncer ? 10 : 20,
+  prepare: !behindPgBouncer,
+  onnotice: () => {},
+});
 export const db = drizzle(client, { schema });
 
 export type Tx = Parameters<Parameters<PostgresJsDatabase<typeof schema>["transaction"]>[0]>[0];
@@ -27,4 +38,18 @@ export async function withParty<T>(partyId: string, fn: (tx: Tx) => Promise<T>):
 /** Ferme le pool (arrêt du processus, fin des tests). */
 export async function closeDb(): Promise<void> {
   await client.end({ timeout: 5 });
+}
+
+/**
+ * Garde-fou de démarrage : l'application refuse de tourner avec un rôle qui contourne la RLS
+ * (super-utilisateur « postgres » de l'hébergeur, ou rôle BYPASSRLS). Sinon l'isolation entre partis disparaît.
+ */
+export async function assertAppRole(): Promise<void> {
+  const rows = await db.execute<{ role: string; bypass: boolean }>(
+    sql`select current_user as role, (rolsuper or rolbypassrls) as bypass from pg_roles where rolname = current_user`,
+  );
+  const r = rows[0];
+  if (!r || r.bypass) {
+    throw new Error(`Le rôle « ${r?.role ?? "?"} » contourne la RLS : DATABASE_URL doit utiliser civora_app.`);
+  }
 }
