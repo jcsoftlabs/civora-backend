@@ -27,6 +27,77 @@ import type { z } from "zod";
 
 type Req = FastifyRequest;
 
+/**
+ * Solde d'un paiement confirmé, commun aux espèces et au paiement mobile : échéances payées (celles encore dues),
+ * recette au journal, reçu numéroté, audit. Une échéance déjà réglée entre-temps par un autre paiement n'est
+ * pas payée deux fois : l'écart est signalé au journal d'audit pour le trésorier.
+ */
+export async function settle(
+  tx: Tx,
+  p: {
+    partyId: string;
+    paymentId: string;
+    memberZoneId: string;
+    obligationIds: string[];
+    amount: string;
+    currency: string;
+    provider: string;
+    actorUserId: string | null;
+    ip?: string;
+  },
+): Promise<{ receiptId: string; number: string }> {
+  const now = new Date();
+  const settled = p.obligationIds.length
+    ? await tx
+        .update(duesObligations)
+        .set({ paidAt: now, paymentId: p.paymentId, updatedAt: now })
+        .where(and(inArray(duesObligations.id, p.obligationIds), isNull(duesObligations.paidAt)))
+        .returning({ id: duesObligations.id })
+    : [];
+  await tx.insert(ledgerEntries).values({
+    partyId: p.partyId,
+    zoneId: p.memberZoneId,
+    direction: "in",
+    category: "cotisation",
+    amount: p.amount,
+    currency: p.currency,
+    paymentId: p.paymentId,
+    occurredAt: now,
+  });
+  const number = await nextReceiptNumber(tx, p.partyId, now.getUTCFullYear());
+  const [receipt] = await tx
+    .insert(receipts)
+    .values({ partyId: p.partyId, paymentId: p.paymentId, number })
+    .returning({ id: receipts.id });
+  const base = {
+    partyId: p.partyId,
+    actorUserId: p.actorUserId,
+    actorKind: p.actorUserId ? ("member" as const) : ("system" as const),
+    targetType: "payment",
+    targetId: p.paymentId,
+    ...(p.ip ? { ip: p.ip } : {}),
+  };
+  await audit(tx, {
+    ...base,
+    action: p.provider === "cash" ? "payment.cash.record" : "payment.confirmed",
+    metadata: {
+      amount: p.amount,
+      currency: p.currency,
+      provider: p.provider,
+      receipt: number,
+      obligations: settled.length,
+    },
+  });
+  if (settled.length < p.obligationIds.length) {
+    await audit(tx, {
+      ...base,
+      action: "payment.conflict",
+      metadata: { reason: "obligation_already_paid", expected: p.obligationIds.length, settled: settled.length },
+    });
+  }
+  return { receiptId: receipt!.id, number };
+}
+
 /** Numéro de reçu suivant pour l'année : AAAA-NNNNNN, sans trou ni doublon (verrou par parti). */
 async function nextReceiptNumber(tx: Tx, partyId: string, year: number): Promise<string> {
   await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${"receipts:" + partyId}, 0))`);
@@ -150,44 +221,22 @@ export class PaymentsService {
           status: "succeeded",
           recordedByMemberId: req.memberId,
           confirmedAt: now,
+          obligationIds: body.obligationIds,
         })
         .returning({ id: payments.id });
       const paymentId = payment!.id;
-      await tx
-        .update(duesObligations)
-        .set({ paidAt: now, paymentId, updatedAt: now })
-        .where(inArray(duesObligations.id, body.obligationIds));
-      await tx.insert(ledgerEntries).values({
+      const { receiptId, number } = await settle(tx, {
         partyId: req.partyId,
-        zoneId: m.zoneId,
-        direction: "in",
-        category: "cotisation",
+        paymentId,
+        memberZoneId: m.zoneId,
+        obligationIds: body.obligationIds,
         amount: expected,
         currency: body.currency,
-        paymentId,
-        occurredAt: now,
-      });
-      const number = await nextReceiptNumber(tx, req.partyId, now.getUTCFullYear());
-      const [receipt] = await tx
-        .insert(receipts)
-        .values({ partyId: req.partyId, paymentId, number })
-        .returning({ id: receipts.id });
-      await audit(tx, {
-        partyId: req.partyId,
+        provider: "cash",
         actorUserId: req.auth?.userId ?? null,
-        actorKind: "member",
-        action: "payment.cash.record",
-        targetType: "payment",
-        targetId: paymentId,
-        metadata: {
-          memberId: body.memberId,
-          amount: expected,
-          currency: body.currency,
-          receipt: number,
-          obligations: body.obligationIds.length,
-        },
         ip: req.ip,
       });
+      const receipt = { id: receiptId };
       return { paymentId, receiptId: receipt!.id, receiptNumber: number, replay: false };
     });
   }

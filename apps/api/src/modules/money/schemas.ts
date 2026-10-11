@@ -16,3 +16,15 @@ export const paymentsQuery = z.object({
   memberId: z.string().uuid().optional(),
   limit: z.coerce.number().int().min(1).max(200).default(50),
 });
+
+export const checkoutBody = z.object({
+  provider: z.enum(["moncash", "natcash", "kashpaw", "fake"]),
+  obligationIds: z.array(z.string().uuid()).min(1).max(24),
+  clientRef: z.string().uuid(),
+});
+export const webhookParams = z.object({
+  provider: z.enum(["moncash", "natcash", "kashpaw", "fake"]),
+  partyId: z.string().uuid(),
+});
+export const returnParams = z.object({ partyId: z.string().uuid(), id: z.string().uuid() });
+export const returnQuery = z.object({ transactionId: z.string().max(100).optional() });

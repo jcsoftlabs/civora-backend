@@ -19,6 +19,12 @@ import organRoutes from "./modules/organs/routes.js";
 import duesRoutes from "./modules/dues/routes.js";
 import moneyRoutes from "./modules/money/routes.js";
 import { PaymentsService } from "./modules/money/service.js";
+import { OnlinePayments, type LocalProvider } from "./modules/money/online.js";
+import { EnvCredentialStore, type CredentialStore } from "./lib/payments/credentials.js";
+import { FakeProvider } from "./lib/payments/fake.js";
+import { MonCashProvider } from "./lib/payments/moncash.js";
+import { PendingProvider } from "./lib/payments/pending.js";
+import type { PaymentProvider } from "./lib/payments/types.js";
 import { DuesService } from "./modules/dues/service.js";
 import { ApplicationsService } from "./modules/members/applications.js";
 import { IdentityService } from "./modules/members/identity.js";
@@ -38,6 +44,8 @@ export interface AppDeps {
   /** Partagées par l'authentification (2FA) et les pièces d'identité. */
   keys?: PartyKeys;
   email?: EmailSender;
+  paymentProviders?: Partial<Record<LocalProvider, PaymentProvider>>;
+  credentials?: CredentialStore;
 }
 
 export async function buildApp(config: Config, deps: AppDeps = {}) {
@@ -107,7 +115,22 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
     applications: new ApplicationsService(deps.email ?? emailSender, dues),
   });
   await app.register(duesRoutes, { dues });
-  await app.register(moneyRoutes, { payments: new PaymentsService(deps.email ?? emailSender) });
+  const providers: Partial<Record<LocalProvider, PaymentProvider>> = deps.paymentProviders ?? {
+    moncash: new MonCashProvider(),
+    natcash: new PendingProvider("natcash"),
+    kashpaw: new PendingProvider("kashpaw"),
+    // Faux fournisseur : jamais en production.
+    ...(config.NODE_ENV === "production" ? {} : { fake: new FakeProvider() }),
+  };
+  await app.register(moneyRoutes, {
+    payments: new PaymentsService(deps.email ?? emailSender),
+    online: new OnlinePayments({
+      providers,
+      credentials: deps.credentials ?? new EnvCredentialStore(),
+      publicUrl: config.API_PUBLIC_URL,
+      log: app.log,
+    }),
+  });
 
   app.get("/health", async () => ({ ok: true }));
 

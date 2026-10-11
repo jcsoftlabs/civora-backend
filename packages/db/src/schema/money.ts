@@ -74,6 +74,11 @@ export const payments = pgTable(
     currency: text("currency").notNull(),
     status: paymentStatusEnum("status").notNull().default("pending"),
     recordedByMemberId: uuid("recorded_by_member_id"), // espèces saisies par un trésorier (FIN-10)
+    /** Échéances réglées par un paiement en ligne, réservées à la création et soldées à la confirmation. */
+    obligationIds: uuid("obligation_ids").array().notNull().default([]),
+    /** Lien de paiement chez le fournisseur et dernier état connu (vérification périodique, FIN-01). */
+    providerStatus: text("provider_status"),
+    lastCheckedAt: timestamp("last_checked_at", { withTimezone: true }),
     confirmedAt: timestamp("confirmed_at", { withTimezone: true }),
     ...timestamps,
   },

@@ -43,7 +43,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| FIN-01 | MonCash, NatCash, KashPaw en HTG, confirmés par webhook et vérification périodique | E M N | P2 | NOU | à faire |
+| FIN-01 | MonCash, NatCash, KashPaw en HTG, confirmés par webhook et vérification périodique | E M N | P2 | NOU | en cours |
 | FIN-02 | Stripe en devises pour la diaspora | M N | P3 | NOU | à faire |
 | FIN-03 | Formules de cotisation créées par le parti : nom, montant, devise, périodicité | E (2 formules) M N | P2 | Neuf | fait |
 | FIN-04 | Montant différencié par statut, catégorie ou zone | M N | P3 | Neuf | à faire |
@@ -54,7 +54,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | FIN-09 | Contributions spéciales demandées à un groupe de membres | N | P4 | Neuf | à faire |
 | FIN-10 | Saisie des paiements en espèces par un trésorier local, avec reçu | E M N | P2 | NOU | fait |
 | FIN-11 | Campagnes de dons thématiques, ponctuelles ou récurrentes | E M N | P3 | NOU | à faire |
-| FIN-12 | Fonds versés sur les comptes marchands du parti, jamais de la plateforme | E M N | P2 | Neuf | à faire |
+| FIN-12 | Fonds versés sur les comptes marchands du parti, jamais de la plateforme | E M N | P2 | Neuf | fait |
 
 ## FOR : formation
 

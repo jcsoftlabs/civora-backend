@@ -121,6 +121,14 @@ await withParty(ctx.partyId, async (tx) => {
 - Idempotence : le téléphone envoie un `clientRef` ; la même saisie rejouée, même au même instant (verrou sur la clé), renvoie le même reçu. Deux trésoriers sur la même échéance : verrou de ligne, un seul paiement passe.
 - Reçu : e-mail dans la langue du membre, consultable et téléchargeable en PDF par le membre ou un responsable `payments.read` de la zone.
 
+## 6 quater. Paiement mobile (FIN-01, FIN-12)
+
+- Adaptateurs (`apps/api/src/lib/payments`) derrière une même interface : MonCash (API publique « MonCash Button », écrite d'après la documentation, **à valider avec la sandbox**), NatCash et KashPaw (en attente d'un accès développeur, indisponibles d'ici là), faux fournisseur pour le développement et les tests (interdit en production).
+- Comptes marchands du parti (`merchant_accounts`) : déclarés par le national (`settings.party`, audité), identifiants stockés par référence `env:NOM` (gestionnaire de secrets), jamais en base. Sans compte du parti, pas de paiement : aucun compte de la plateforme en secours.
+- Parcours : le membre choisit ses échéances, l'API crée un paiement `pending` (échéances réservées, idempotence par `clientRef`), demande le lien au fournisseur avec les identifiants du parti, puis le membre paie sur son téléphone.
+- **Une notification n'est qu'un signal.** Signature vérifiée si le fournisseur signe, puis l'état est toujours relu chez le fournisseur ; la commande et le montant doivent correspondre exactement, sinon `payment.anomaly` au journal et rien n'est soldé. Solde idempotent sous verrou de ligne (notification et vérification simultanées), via `settle()` commun aux espèces.
+- Vérification périodique `reconcile()` des paiements en attente (job `payments.reconcile` toutes les 5 minutes, à brancher sur le worker ; déclenchable en attendant par `POST /payments/reconcile`). Après 24 heures sans encaissement, le paiement échoue et les échéances redeviennent payables.
+
 ## 7. Jobs pg-boss
 
 | Job | Fréquence | Rôle |

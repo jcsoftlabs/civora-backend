@@ -64,6 +64,13 @@
       "when": 1791683202083,
       "tag": "0008_majestic_ikaris",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791683917433,
+      "tag": "0009_sour_human_cannonball",
+      "breakpoints": true
     }
   ]
 }
