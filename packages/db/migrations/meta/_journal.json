@@ -106,6 +106,13 @@
       "when": 1791726084249,
       "tag": "0014_member_segments",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1791726787992,
+      "tag": "0015_training",
+      "breakpoints": true
     }
   ]
 }

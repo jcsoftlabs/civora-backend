@@ -13,6 +13,7 @@ import { authorize } from "../../plugins/tenant.js";
 const MB = 1024 * 1024;
 const IMAGES = ["image/jpeg", "image/png", "image/webp"];
 const AUDIO = ["audio/mpeg", "audio/mp4", "audio/aac", "audio/x-m4a"];
+const VIDEO = ["video/mp4", "video/webm"];
 const OFFICE = [
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -28,6 +29,12 @@ export const PURPOSES = {
     maxBytes: (t: string) => (AUDIO.includes(t) ? 100 * MB : 10 * MB),
   },
   document: { folder: "documents", types: [...OFFICE, ...IMAGES], maxBytes: () => 25 * MB },
+  /** Médias des leçons de formation (FOR-01) : vidéo, audio, PDF, images. */
+  training_media: {
+    folder: "training",
+    types: [...VIDEO, ...AUDIO, "application/pdf", ...IMAGES],
+    maxBytes: (t: string) => (VIDEO.includes(t) ? 300 * MB : AUDIO.includes(t) ? 100 * MB : 25 * MB),
+  },
   /** Logo du parti (SOC-03) : images matricielles seulement (pas de SVG, qui peut contenir du script). */
   party_logo: { folder: "branding", types: IMAGES, maxBytes: () => 2 * MB },
 } as const;
@@ -56,6 +63,8 @@ export class FilesService {
       throw new ApiError(403, "forbidden");
     }
     if (body.purpose === "document" && !req.grants.some((g) => g.permission === "documents.write"))
+      throw new ApiError(403, "forbidden");
+    if (body.purpose === "training_media" && !req.grants.some((g) => g.permission === "training.manage"))
       throw new ApiError(403, "forbidden");
 
     const id = randomUUID();
@@ -147,7 +156,11 @@ export class FilesService {
         .where(and(eq(files.id, fileId), isNull(files.trashedAt)));
       if (!row || row.uploadStatus !== "ready") throw new ApiError(404, "not_found");
       let allowed = row.uploadedByMemberId === req.memberId;
-      if (!allowed && (row.purpose === "publication_media" || row.purpose === "party_logo")) allowed = true;
+      if (
+        !allowed &&
+        (row.purpose === "publication_media" || row.purpose === "party_logo" || row.purpose === "training_media")
+      )
+        allowed = true;
       if (!allowed && row.purpose === "member_photo") {
         const [owner] = await tx
           .select({ id: members.id, path: zones.path })
@@ -177,8 +190,8 @@ export class FilesService {
     };
   }
 
-  /** URL de lecture des médias d'une publication, pour le fil (tout membre du parti y a droit). */
-  async mediaUrls(tx: Tx, ids: string[]) {
+  /** URL de lecture des médias d'une publication ou d'une leçon (tout membre du parti y a droit). */
+  async mediaUrls(tx: Tx, ids: string[], purpose: "publication_media" | "training_media" = "publication_media") {
     if (!ids.length) return new Map<string, { mimeType: string; url: string }>();
     const rows = await tx
       .select({ id: files.id, key: files.r2Key, name: files.name, mimeType: files.mimeType })
@@ -187,7 +200,7 @@ export class FilesService {
         and(
           inArray(files.id, ids),
           eq(files.uploadStatus, "ready"),
-          eq(files.purpose, "publication_media"),
+          eq(files.purpose, purpose),
           isNull(files.trashedAt),
         ),
       );

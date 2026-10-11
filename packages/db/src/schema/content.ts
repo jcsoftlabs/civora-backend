@@ -45,9 +45,12 @@ export const courses = pgTable(
     id: id(),
     partyId: partyId(),
     title: jsonb("title").notNull(),
+    description: jsonb("description"), // I18nText
     passThresholdPercent: integer("pass_threshold_percent").notNull().default(65),
     maxAttempts: integer("max_attempts"),
     mandatoryForStatusIds: uuid("mandatory_for_status_ids").array(), // FOR-03 ; tableau : pas de clé étrangère possible
+    /** Visible des membres une fois publiée ; null = brouillon. */
+    publishedAt: timestamp("published_at", { withTimezone: true }),
     ...timestamps,
   },
   (t) => [partyKey("courses", t)],
@@ -61,7 +64,10 @@ export const lessons = pgTable(
     courseId: uuid("course_id").notNull(),
     position: integer("position").notNull(),
     title: jsonb("title").notNull(),
+    kind: text("kind").notNull().default("text"), // video | audio | document | text (FOR-01)
+    body: jsonb("body"), // I18nText : texte de la leçon
     mediaFileId: uuid("media_file_id"),
+    /** Questions à choix ; les bonnes réponses ne quittent jamais le serveur. */
     quiz: jsonb("quiz"),
     ...timestamps,
   },
@@ -86,6 +92,27 @@ export const lessonAttempts = pgTable(
   (t) => [
     sameParty("lesson_attempts", t.partyId, t.lessonId, lessons),
     sameParty("lesson_attempts", t.partyId, t.memberId, members),
+  ],
+);
+
+/** Formation terminée (toutes les leçons réussies) et numéro de certificat (FOR-03, FOR-04). */
+export const courseCompletions = pgTable(
+  "course_completions",
+  {
+    id: id(),
+    partyId: partyId(),
+    courseId: uuid("course_id").notNull(),
+    memberId: uuid("member_id").notNull(),
+    completedAt: timestamp("completed_at", { withTimezone: true }).notNull().defaultNow(),
+    /** AAAA-NNNNNN, unique dans le parti. */
+    certificateNumber: text("certificate_number").notNull(),
+    ...timestamps,
+  },
+  (t) => [
+    unique("course_completions_member").on(t.partyId, t.courseId, t.memberId),
+    unique("course_completions_number").on(t.partyId, t.certificateNumber),
+    sameParty("course_completions", t.partyId, t.courseId, courses),
+    sameParty("course_completions", t.partyId, t.memberId, members),
   ],
 );
 

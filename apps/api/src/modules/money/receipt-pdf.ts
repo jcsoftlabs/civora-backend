@@ -43,7 +43,6 @@ const LABELS = {
   },
 } as const;
 
-/** Reçu PDF A5, une page : en-tête du parti, membre, lignes de cotisation, total. */
 /**
  * Date et heure du reçu à l'heure d'Haïti, sur 12 heures avec AM ou PM : « 11 octobre 2026 à 8:41 PM ».
  * L'heure est composée à la main : le format français sur 12 heures d'Intl varie selon la version d'ICU.
@@ -70,6 +69,7 @@ export function issuedAt(iso: string): string {
   return `${Number(p.day)} ${month} ${p.year} à ${time}`;
 }
 
+/** Reçu PDF A5, une page : en-tête du parti, membre, lignes de cotisation, total. */
 export function receiptPdf(r: ReceiptView, lang: MessageLocale): Promise<Buffer> {
   const t = LABELS[lang];
   return new Promise((resolve, reject) => {

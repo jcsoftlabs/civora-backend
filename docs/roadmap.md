@@ -63,7 +63,7 @@ Pas de migration de NOU : le parti garde le système développé sur mesure pour
 
 Jalon : deux partis pilotes actifs et facturés ; création d'un espace parti en moins d'une heure.
 
-- [ ] Formation complète, en premier de P3 (décision du 2026-10-12) : modules séquentiels (vidéo, audio, documents), quiz, seuil de réussite et reprises, obligations par statut, suivi par zone, certificat de complétion livré avec le reste (FOR-01 à FOR-04)
+- [ ] Formation complète, en premier de P3 (décision du 2026-10-12) : modules séquentiels (vidéo, audio, documents), quiz, seuil de réussite et reprises, obligations par statut, suivi par zone, certificat de complétion livré avec le reste (FOR-01 à FOR-04) : API faite (formations, leçons, quiz sans fuite des réponses, tentatives, obligation par statut, suivi par zone, certificat PDF) ; écrans du back-office en cours ; écrans membre avec l'app mobile
 - [ ] Facturation plateforme : abonnements Stripe, factures, relances, suspension, mesure de l'usage et dépassements (SOC-08)
 - [ ] Assistant de démarrage et import : correspondance des colonnes, doublons, invitations, historique des cotisations (SOC-09, ADH-07 à ADH-10)
 - [ ] Parrainage configurable (ADH-05, ENG-01) ; carte de membre QR vérifiable (ADH-11)
