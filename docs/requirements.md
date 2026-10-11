@@ -140,7 +140,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| PIL-01 | Statistiques d'adhésion, cotisation, engagement par zone | E M N | P2 | NOU | à faire |
+| PIL-01 | Statistiques d'adhésion, cotisation, engagement par zone | E M N | P2 | NOU | fait |
 | PIL-02 | Carte de couverture territoriale | M N | P3 | NOU | à faire |
 | PIL-03 | Veille médias et réseaux sociaux | N | P5 | Neuf | à faire |
 | PIL-04 | Recommandations (zones faibles, inactifs, meilleurs recruteurs) | N | P5 | Neuf | à faire |

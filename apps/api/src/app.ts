@@ -16,6 +16,7 @@ import auditRoutes from "./modules/audit/routes.js";
 import authRoutes from "./modules/auth/routes.js";
 import territoryRoutes from "./modules/territory/routes.js";
 import organRoutes from "./modules/organs/routes.js";
+import biRoutes from "./modules/bi/stats.js";
 import communicationRoutes from "./modules/communication/routes.js";
 import duesRoutes from "./modules/dues/routes.js";
 import moneyRoutes from "./modules/money/routes.js";
@@ -117,6 +118,7 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
     applications: new ApplicationsService(deps.email ?? emailSender, dues),
   });
   await app.register(duesRoutes, { dues });
+  await app.register(biRoutes);
   await app.register(communicationRoutes, { push: deps.push ?? buildPushSender(config, app.log) });
   const providers = deps.paymentProviders ?? buildPaymentProviders(config.NODE_ENV);
   await app.register(moneyRoutes, {

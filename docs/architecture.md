@@ -176,6 +176,9 @@ En place : `payments.reconcile` (toutes les 5 minutes) et `dues.generate` (2 h, 
 
 ## 11. BI
 
+**Statistiques par zone (PIL-01, en place)** : `GET /stats/zones?parent=CODE` découpe une zone en sous-zones (départements, communes, sections communales ; pays et villes de la diaspora) avec, pour chacune et pour le total : membres validés, en attente, nouveaux sur 30 jours, diaspora ; membres à jour ou en retard (après le délai de grâce) ; montants encaissés sur 30 jours par devise ; inscriptions aux événements sur 30 jours. Permission `bi.read` sur la zone demandée ; sans zone, la zone du poste de la personne. Agrégats seulement, aucun nom.
+
+
 - Réplique en lecture seule ; schéma `analytics` avec vues pseudonymisées (aucune pièce d'identité, téléphones hachés, aucun lien vote-votant).
 - Palier National : entrepôt nocturne, compte de service Power BI ou Looker Studio, API de données en lecture seule par clé.
 

@@ -40,7 +40,7 @@ Jalon : NOU migré sans perte, tests d'isolation réussis entre deux partis fict
 - [ ] Annonces, actualités, podcasts, albums multi-partis (COM-01) : annonces et actualités faites ; médias des podcasts et albums avec le stockage R2
 - [x] Notifications push ciblées (COM-02) : FCM à configurer (compte de service du projet Firebase)
 - [x] Agenda et événements (ENG-03)
-- [ ] Statistiques par zone (PIL-01)
+- [x] Statistiques par zone (PIL-01)
 
 ### Interfaces
 - [ ] Back-office : rail de navigation, liste des membres, organes avec panneau latéral (maquettes « Back-office »)
