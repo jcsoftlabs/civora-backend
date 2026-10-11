@@ -1,4 +1,5 @@
 // Français, langue de référence : toute clé existe ici d'abord.
+import { consoleFr } from "./console.fr";
 import { marketingFr } from "./marketing.fr";
 export const fr = {
   "app.name": "civora",
@@ -1097,6 +1098,7 @@ export const fr = {
     "Le module Élections est actif : le type ne peut pas changer avant la fin du cycle électoral.",
   "admin.settings.saveKind": "Enregistrer le type",
   "admin.settings.saved.kind": "Type d'organisation enregistré",
+  ...consoleFr,
   ...marketingFr,
 } as const;
 

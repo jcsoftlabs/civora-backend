@@ -134,6 +134,13 @@
       "when": 1791752937224,
       "tag": "0018_organization_kind",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1791753777438,
+      "tag": "0019_console",
+      "breakpoints": true
     }
   ]
 }

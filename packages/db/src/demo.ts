@@ -190,6 +190,9 @@ async function main() {
     values (${SLUG}, 'Parti Horizon', 'national', '#0F6E66', ${["fr", "ht"]}, 'validation', 'active', ${start}, ${start})
     returning id`;
   const P = party!.id;
+  // Abonnement National payé à l'année, en cours.
+  await sql`insert into subscriptions (party_id, tier, status, billing_cycle, current_period_end, created_at)
+    values (${P}, 'national', 'active', 'annual', ${new Date(now.getTime() + 200 * DAY)}, ${start})`;
 
   // Statuts
   const statuses = await sql<{ id: string; rank: number }[]>`

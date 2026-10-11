@@ -39,6 +39,17 @@ export async function withParty<T>(partyId: string, fn: (tx: Tx) => Promise<T>):
   });
 }
 
+/**
+ * Transaction de la console de l'éditeur (SOC-10) : ouvre les tables du personnel (sql/console.sql) et la liste
+ * des organisations (console_parties). Jamais de contenu d'organisation : pour un total, withParty().
+ */
+export async function withConsole<T>(fn: (tx: Tx) => Promise<T>): Promise<T> {
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`select set_config('app.console', 'on', true)`);
+    return fn(tx);
+  });
+}
+
 /** Ferme le pool (arrêt du processus, fin des tests). */
 export async function closeDb(): Promise<void> {
   await client.end({ timeout: 5 });

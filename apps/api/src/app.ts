@@ -7,6 +7,7 @@ import websocket from "@fastify/websocket";
 import type { VerifyClientCallbackAsync } from "ws";
 import type { Config } from "./config.js";
 import { randomBytes } from "node:crypto";
+import type { KeyProvider } from "./lib/crypto.js";
 import { EntitlementsCache, fetchEntitlements } from "./lib/entitlements.js";
 import { LazyKeyProvider } from "./lib/lazy-key-provider.js";
 import { LogEmailSender, ResendEmailSender, type EmailSender } from "./lib/messaging/email.js";
@@ -26,6 +27,9 @@ import { buildStorage } from "./lib/storage/registry.js";
 import type { ObjectStorage } from "./lib/storage/types.js";
 import communicationRoutes from "./modules/communication/routes.js";
 import duesRoutes from "./modules/dues/routes.js";
+import { ConsoleAuth } from "./modules/console/auth.js";
+import consoleRoutes from "./modules/console/routes.js";
+import { ConsoleService } from "./modules/console/service.js";
 import marketingRoutes from "./modules/marketing/routes.js";
 import moneyRoutes from "./modules/money/routes.js";
 import { PaymentsService } from "./modules/money/service.js";
@@ -52,6 +56,8 @@ import tenant from "./plugins/tenant.js";
 /** Construit l'application sans l'écouter : utilisé par server.ts et par les tests (app.inject). */
 export interface AppDeps {
   entitlements?: EntitlementsCache;
+  /** Clé maîtresse (secrets de double authentification de la console) ; par défaut, celle de l'environnement. */
+  masterKeys?: KeyProvider;
   auth?: AuthService;
   /** Partagées par l'authentification (2FA) et les pièces d'identité. */
   keys?: PartyKeys;
@@ -147,7 +153,8 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   });
   await app.register(duesRoutes, { dues });
   await app.register(fileRoutes, { files: filesService });
-  await app.register(partyRoutes, { parties: new PartiesService(authService, filesService) });
+  const partiesService = new PartiesService(authService, filesService);
+  await app.register(partyRoutes, { parties: partiesService });
   await app.register(biRoutes);
   await app.register(trainingRoutes, { files: filesService });
   await app.register(communicationRoutes, { push: deps.push ?? buildPushSender(config, app.log), files: filesService });
@@ -169,6 +176,23 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
       : config.NODE_ENV !== "production"
         ? { to: "ventes@civora.test" }
         : {}),
+  });
+
+  // Console de l'éditeur (SOC-10) : comptes du personnel, totaux de la plateforme, gestion des organisations.
+  await app.register(consoleRoutes, {
+    auth: new ConsoleAuth({
+      secret: config.AUTH_SECRET ? Buffer.from(config.AUTH_SECRET) : randomBytes(32),
+      email: deps.email ?? emailSender,
+      keys: deps.masterKeys ?? new LazyKeyProvider(),
+    }),
+    service: new ConsoleService({
+      email: deps.email ?? emailSender,
+      entitlements: app.entitlements,
+      partyOrigin: (slug) => config.WEB_PARTY_ORIGIN.replace("{slug}", slug),
+    }),
+    parties: partiesService,
+    ...(config.WEB_SERVER_SECRET ? { webSecret: config.WEB_SERVER_SECRET } : {}),
+    production: config.NODE_ENV === "production",
   });
 
   app.get("/health", async () => ({ ok: true }));

@@ -20,7 +20,7 @@ const base = () => env.API_INTERNAL_URL || pub.PUBLIC_API_URL || "http://localho
  */
 export async function api<T>(
   path: string,
-  init: { method?: string; body?: unknown; token?: string; ip?: string } = {},
+  init: { method?: string; body?: unknown; token?: string; consoleToken?: string; ip?: string } = {},
 ): Promise<T> {
   const res = await fetch(`${base()}${path}`, {
     method: init.method ?? (init.body ? "POST" : "GET"),
@@ -28,6 +28,8 @@ export async function api<T>(
       accept: "application/json",
       ...(init.body ? { "content-type": "application/json" } : {}),
       ...(init.token ? { authorization: `Bearer ${init.token}` } : {}),
+      // Console de l'éditeur (SOC-10) : en-tête distinct des sessions d'organisation.
+      ...(init.consoleToken ? { "x-civora-console": init.consoleToken } : {}),
       ...(init.ip && env.WEB_SERVER_SECRET
         ? { "x-civora-web": env.WEB_SERVER_SECRET, "x-civora-client-ip": init.ip }
         : {}),

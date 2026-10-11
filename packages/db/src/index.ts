@@ -4,6 +4,7 @@ export {
   db,
   withParty,
   withAuthLookup,
+  withConsole,
   withReferenceData,
   listPartyIdsForJobs,
   closeDb,

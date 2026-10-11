@@ -49,7 +49,7 @@ await withParty(ctx.partyId, async (tx) => {
 
 ## 2. Résolution du parti
 
-- **Web** : `hooks.server.ts` lit l'hôte. `<slug>.civora.app` ou domaine personnalisé (table `party_domains`) vers `party_id`. La console éditeur vit sur `console.civora.app`.
+- **Web** : `hooks.server.ts` lit l'hôte. `<slug>.civora.app` ou domaine personnalisé (table `party_domains`) vers `party_id`. La console éditeur vit sur `console.civora.app` (chemins `/console`, cookie propre). Elle a ses propres comptes (`platform_staff`), ouverts seulement aux transactions `withConsole()` (sql/console.sql) ; elle liste les organisations par `console_parties()` et n'en lit que des totaux, dans `withParty()`. Ses requêtes à l'API passent l'en-tête `x-civora-console` et, en production, le secret du serveur web.
 - **Mobile** : application commune. Le membre rejoint un parti par QR code, lien d'invitation ou code ; le jeton de session porte `party_id` et l'app charge le thème. En marque blanche (palier National), le `party_id` est fixé à la compilation par le flavor.
 - **API** : `party_id` vient toujours du jeton, jamais d'un paramètre envoyé par le client.
 

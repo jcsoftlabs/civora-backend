@@ -18,7 +18,15 @@ import {
   withParty,
   zones,
 } from "@civora/db";
-import { hasElectionsModule, ORGANIZATION_KINDS, PERMISSIONS, PLANS, POST_TEMPLATES, TIERS } from "@civora/shared";
+import {
+  hasElectionsModule,
+  ORGANIZATION_KINDS,
+  PERMISSIONS,
+  PLANS,
+  POST_TEMPLATES,
+  TIERS,
+  type Tier,
+} from "@civora/shared";
 import { audit } from "../../lib/audit.js";
 import { ApiError } from "../../plugins/errors.js";
 import { authorize } from "../../plugins/tenant.js";
@@ -233,7 +241,7 @@ export class PartiesService {
       });
       if (!c) return { error: new ApiError(401, "otp_invalid") };
       try {
-        return await tx.transaction(async (sp) => ({ ok: await this.activate(sp, party, c.userId, meta) }));
+        return await tx.transaction(async (sp) => ({ ok: (await this.activate(sp, party, c.userId, meta))! }));
       } catch (e) {
         await this.auth.releaseChallenge(tx, body.challengeId);
         // Le fondateur adhère déjà à un autre parti : un compte n'adhère qu'à un seul parti.
@@ -251,6 +259,7 @@ export class PartiesService {
     party: typeof parties.$inferSelect,
     userId: string,
     meta: { ip?: string; userAgent?: string },
+    by: { staff: boolean } = { staff: false },
   ) {
     const draft = party.signupDraft as Draft;
     if (draft.userId !== userId) throw new ApiError(401, "otp_invalid");
@@ -312,14 +321,17 @@ export class PartiesService {
       .where(eq(parties.id, party.id));
     await audit(tx, {
       partyId: party.id,
-      actorUserId: userId,
-      actorKind: "member",
+      actorUserId: by.staff ? null : userId,
+      actorKind: by.staff ? "staff" : "member",
       action: "party.create",
       targetType: "party",
       targetId: party.id,
-      metadata: { slug: party.slug, tier: party.tier },
+      metadata: { slug: party.slug, tier: party.tier, ...(by.staff ? { by: "console" } : {}) },
       ...(meta.ip ? { ip: meta.ip } : {}),
     });
+    // Création ou activation par la console : pas de session pour le personnel ; le fondateur se connecte
+    // lui-même avec son adresse e-mail.
+    if (by.staff) return null;
     const session = await this.auth.openSession(tx, {
       partyId: party.id,
       userId,
@@ -329,6 +341,82 @@ export class PartiesService {
       userAgent: meta.userAgent,
     });
     return { slug: party.slug, token: session.token, expiresAt: session.expiresAt, mfa: session.mfa };
+  }
+
+  /**
+   * SOC-10 : activation par la console d'un espace resté en attente (code jamais saisi). Mêmes effets que la
+   * validation du code : fondateur 000001, bureau national, postes types, essai de 30 jours.
+   */
+  async activatePending(partyId: string, meta: { ip?: string }) {
+    return withParty(partyId, async (tx) => {
+      const [party] = await tx.select().from(parties).where(eq(parties.id, partyId));
+      if (!party) throw new ApiError(404, "not_found");
+      if (party.status !== "pending" || !party.signupDraft) throw new ApiError(409, "party_not_pending");
+      const draft = party.signupDraft as Draft;
+      try {
+        await tx.transaction((sp) => this.activate(sp, party, draft.userId, meta, { staff: true }));
+      } catch (e) {
+        if ((e as { cause?: { code?: string } }).cause?.code === "23505")
+          throw new ApiError(409, "already_member_elsewhere");
+        throw e;
+      }
+      return { slug: party.slug, founderEmail: draft.email, founderName: `${draft.firstName} ${draft.lastName}` };
+    });
+  }
+
+  /**
+   * SOC-10 : création d'un espace par la console, actif tout de suite. Le fondateur reçoit ensuite une
+   * invitation par e-mail et se connecte avec son adresse (code, puis double authentification).
+   */
+  async createByStaff(body: z.infer<typeof signupStart>, meta: { ip?: string }) {
+    const availability = await this.slugAvailability(body.party.slug);
+    if (!availability.available)
+      throw new ApiError(409, availability.reason === "reserved" ? "slug_reserved" : "slug_taken");
+    await this.reclaim(body.party.slug);
+    const tier = body.party.tier as Tier;
+    // Par défaut français puis créole, dans la limite de la formule (une seule langue en Essentiel).
+    const languages = (body.party.languages ?? ["fr", "ht"]).slice(0, PLANS[tier].quotas.siteLanguages);
+    const partyId = randomUUID();
+    const email = normalizeEmail(body.founder.email);
+    await withParty(partyId, async (tx) => {
+      const [zone] = await tx.select({ level: zones.level }).from(zones).where(eq(zones.code, body.founder.zoneCode));
+      if (!zone || !["section_communale", "diaspora_pays", "diaspora_ville"].includes(zone.level))
+        throw new ApiError(400, "zone_too_broad");
+      const [existing] = await tx.select({ id: users.id }).from(users).where(eq(users.email, email));
+      const user =
+        existing ??
+        (await tx.insert(users).values({ email, locale: body.founder.locale }).returning({ id: users.id }))[0]!;
+      const draft: Draft = {
+        firstName: body.founder.firstName,
+        lastName: body.founder.lastName,
+        zoneCode: body.founder.zoneCode,
+        email,
+        userId: user.id,
+      };
+      const [party] = await tx
+        .insert(parties)
+        .values({
+          id: partyId,
+          slug: body.party.slug,
+          name: body.party.name,
+          brandColor: body.party.brandColor.toUpperCase(),
+          brandColorSecondary: body.party.brandColorSecondary?.toUpperCase() ?? null,
+          languages: [...languages],
+          tier,
+          organizationKind: body.party.kind,
+          status: "pending",
+          signupDraft: draft,
+        })
+        .returning();
+      try {
+        await tx.transaction((sp) => this.activate(sp, party!, user.id, meta, { staff: true }));
+      } catch (e) {
+        if ((e as { cause?: { code?: string } }).cause?.code === "23505")
+          throw new ApiError(409, "already_member_elsewhere");
+        throw e;
+      }
+    });
+    return { partyId, slug: body.party.slug };
   }
 
   /**

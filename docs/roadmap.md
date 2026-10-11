@@ -78,7 +78,8 @@ Jalon : deux partis pilotes actifs et facturés ; création d'un espace parti en
 - [ ] Documents et stockage R2 avec quotas, alertes, packs, corbeille (DOC-01 à DOC-08)
 - [ ] Finances : journal, reçus (CPT-01, CPT-04)
 - [ ] BI de base : indicateurs, tableaux de bord, modèle documenté, exports, pseudonymisation (BI-01 à BI-04, BI-08 à BI-10) ; carte de couverture (PIL-02)
-- [ ] Console éditeur (SOC-10) ; export et suppression à la demande (SEC-10) ; accès du personnel tracé (SEC-11)
+- [x] Console éditeur (SOC-10) : console.civora.app, comptes du personnel (code par e-mail puis double authentification), vue d'ensemble de la plateforme, organisations et fiche, activation et création manuelles, suspension, formule, essai, module Élections, équipe, journal de la console ; premier propriétaire par `pnpm db:console-owner`
+- [ ] Export et suppression à la demande (SEC-10) ; accès du personnel au contenu d'une organisation sur demande approuvée (SEC-11)
 - [ ] Exploitation : sauvegardes et restauration testée, supervision, page de statut, objectifs de performance (NFR-03, NFR-04, NFR-06, NFR-07)
 - [ ] Documentation utilisateur
 
