@@ -112,7 +112,8 @@ export const marketingFr = {
   "mk.m.training.shot": "Parcours de formation en modules, avec quiz et aperçu du certificat",
 
   "mk.m.votes.title": "Voter en interne, en toute confiance",
-  "mk.m.votes.lead": "Élisez vos responsables ou faites adopter vos statuts. La liste électorale est figée avant l'ouverture, chaque membre vote une seule fois et personne ne peut savoir pour qui.",
+  "mk.m.votes.lead":
+    "Élisez vos responsables ou faites adopter vos statuts. La liste électorale est figée avant l'ouverture, chaque membre vote une seule fois et personne ne peut savoir pour qui.",
   "mk.m.votes.b1": "Liste électorale figée, consultable et contestable",
   "mk.m.votes.b2": "Majorité simple, deux tours, scrutin de liste, oui ou non",
   "mk.m.votes.b3": "Procès-verbal et journal vérifiable, élu installé dans son poste",

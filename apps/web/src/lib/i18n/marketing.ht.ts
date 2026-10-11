@@ -111,7 +111,8 @@ export const marketingHt = {
   "mk.m.training.shot": "Pakou fòmasyon an modil, ak kesyonè ak apèsi sètifika a",
 
   "mk.m.votes.title": "Vote anndan òganizasyon an, ak konfyans",
-  "mk.m.votes.lead": "Eli responsab ou yo oswa fè lalwa entèn ou pase. Lis elektoral la fikse anvan ouvèti a, chak manm vote yon sèl fwa epi pèsonn pa ka konnen pou ki moun.",
+  "mk.m.votes.lead":
+    "Eli responsab ou yo oswa fè lalwa entèn ou pase. Lis elektoral la fikse anvan ouvèti a, chak manm vote yon sèl fwa epi pèsonn pa ka konnen pou ki moun.",
   "mk.m.votes.b1": "Lis elektoral fikse, tout moun ka wè l epi konteste l",
   "mk.m.votes.b2": "Majorite senp, de tou, vòt pa lis, wi oswa non",
   "mk.m.votes.b3": "Pwosè-vèbal ak jounal ki ka verifye, moun ki eli a pran pòs li",
