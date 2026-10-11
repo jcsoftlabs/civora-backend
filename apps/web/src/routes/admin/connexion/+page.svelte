@@ -3,13 +3,15 @@
   À gauche, le parti à ses couleurs ; à droite, une seule action à la fois.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { enhance } from "$app/forms";
   import { Button, Field, cardBackground } from "@civora/ui";
   import { format, translator, type MessageKey } from "$lib/i18n";
   import type { ActionData, PageData } from "./$types";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const bg = $derived(cardBackground(data.party.brandColor));
   let pending = $state(false);
   let restart = $state(false);

@@ -4,6 +4,7 @@
   « Mode simple » masque les droits détaillés des postes. Sans organe : création d'un organe.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { partyFormat } from "$lib/datetime";
   import { enhance } from "$app/forms";
   import { Badge, Button, Field, SidePanel, Switch } from "@civora/ui";
@@ -22,7 +23,8 @@
     onclose: () => void;
   }
   let { organ, posts, organs, groups, permissions, locale, form, onclose }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
 
   let open = $state(true);

@@ -4,6 +4,7 @@
   chaque frappe et reprend la mise en page du PDF ; un exemplaire PDF se télécharge au modèle enregistré.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { untrack } from "svelte";
   import { enhance } from "$app/forms";
   import { resolve } from "$app/paths";
@@ -15,7 +16,8 @@
   import SignaturePad from "./SignaturePad.svelte";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
 
   interface Signer {
@@ -72,7 +74,7 @@
     ),
   );
   const pick = (fr: string, ht: string, fallback: string) => (lang === "ht" && ht.trim() ? ht : fr.trim() || fallback);
-  const L = (k: string) => translator(lang)(k as MessageKey);
+  const L = (k: string) => translator(lang, orgKind())(k as MessageKey);
   const today = partyFormat({ day: "numeric", month: "long", year: "numeric" }).format(new Date());
 
   function addSigner() {

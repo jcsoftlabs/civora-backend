@@ -3,6 +3,7 @@
   signature est recadrée sur l'encre, exportée en PNG transparent, puis envoyée au stockage comme une image.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { onMount } from "svelte";
   import { Button } from "@civora/ui";
   import { translator } from "$lib/i18n";
@@ -14,7 +15,8 @@
     onuse: (file: File) => void;
   }
   let { locale, oncancel, onuse }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
 
   let canvas = $state<HTMLCanvasElement | null>(null);
   let empty = $state(true);

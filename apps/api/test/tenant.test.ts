@@ -12,6 +12,7 @@ const config = loadConfig({ NODE_ENV: "test", LOG_LEVEL: "silent" });
 
 const entitlements = (patch: Partial<Entitlements> = {}): Entitlements => ({
   tier: "essentiel",
+  kind: "party",
   electionsModuleUntil: null,
   biConnectorOption: false,
   extraStoragePacks: 0,

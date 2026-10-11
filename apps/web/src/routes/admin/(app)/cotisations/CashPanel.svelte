@@ -4,6 +4,7 @@
   `clientRef` est tiré une fois par saisie : un double clic ou un renvoi n'enregistre qu'un paiement.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { enhance } from "$app/forms";
   import { Button, SidePanel } from "@civora/ui";
   import Lookup from "$lib/components/Lookup.svelte";
@@ -20,7 +21,8 @@
     onclose: () => void;
   }
   let { cash, locale, form, receiptBase, onpick, onreset, onclose }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
 
   let open = $state(true);

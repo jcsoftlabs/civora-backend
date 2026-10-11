@@ -1,4 +1,5 @@
 import { error, fail } from "@sveltejs/kit";
+import { isOrganizationKind, type OrganizationKind } from "@civora/shared";
 import { ApiFailure, api } from "$lib/server/api";
 import { currentSession } from "$lib/server/session";
 import { uploadFile } from "$lib/server/upload";
@@ -7,6 +8,7 @@ import type { Actions, PageServerLoad, RequestEvent } from "./$types";
 export interface Settings {
   name: string;
   slug: string;
+  kind: OrganizationKind;
   brandColor: string;
   brandColorSecondary: string | null;
   languages: string[];
@@ -54,6 +56,13 @@ const branding = (body: object, token: string, ip: string) =>
   api("/party/branding", { method: "PATCH", body, token, ip });
 
 export const actions: Actions = {
+  /** Type d'organisation (SOC-11) : change le vocabulaire des écrans ; refusé pendant un cycle électoral. */
+  kind: (event) =>
+    act(event, "kind", (f, token, ip) => {
+      const kind = text(f, "kind");
+      if (!isOrganizationKind(kind)) throw new ApiFailure(400, "invalid_request");
+      return branding({ kind }, token, ip);
+    }),
   identity: (event) =>
     act(event, "identity", (f, token, ip) => {
       const color = text(f, "brandColor");

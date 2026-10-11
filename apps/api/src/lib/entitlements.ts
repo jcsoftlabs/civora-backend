@@ -1,6 +1,6 @@
 import { desc, eq, sql } from "drizzle-orm";
 import { parties, subscriptions, withParty } from "@civora/db";
-import type { Entitlements } from "@civora/shared";
+import { isOrganizationKind, type Entitlements } from "@civora/shared";
 
 export type EntitlementsLoader = (partyId: string) => Promise<Entitlements | null>;
 
@@ -11,7 +11,11 @@ export type EntitlementsLoader = (partyId: string) => Promise<Entitlements | nul
 export const fetchEntitlements: EntitlementsLoader = (partyId) =>
   withParty(partyId, async (tx) => {
     const [party] = await tx
-      .select({ tier: parties.tier, electionsModuleUntil: parties.electionsModuleUntil })
+      .select({
+        tier: parties.tier,
+        kind: parties.organizationKind,
+        electionsModuleUntil: parties.electionsModuleUntil,
+      })
       .from(parties)
       .where(eq(parties.id, partyId));
     if (!party) return null;
@@ -26,6 +30,7 @@ export const fetchEntitlements: EntitlementsLoader = (partyId) =>
       .limit(1);
     return {
       tier: party.tier,
+      kind: isOrganizationKind(party.kind) ? party.kind : "party",
       electionsModuleUntil: party.electionsModuleUntil,
       biConnectorOption: sub?.biConnectorOption ?? false,
       extraStoragePacks: sub?.extraStoragePacks ?? 0,

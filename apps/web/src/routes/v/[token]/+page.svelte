@@ -10,7 +10,7 @@
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData & { locale: "fr" | "ht" } } = $props();
-  const t = $derived(translator(data.locale));
+  const t = $derived(translator(data.locale, data.kind));
   const r = $derived(data.result);
   // Heure du contrôle, à l'heure d'Haïti, avec AM ou PM.
   const time = $derived(r.checkedAt ? formatTime(r.checkedAt) : "");

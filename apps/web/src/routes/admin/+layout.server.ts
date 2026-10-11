@@ -1,10 +1,12 @@
 import { error } from "@sveltejs/kit";
+import type { OrganizationKind } from "@civora/shared";
 import { ApiFailure, api } from "$lib/server/api";
 import type { LayoutServerLoad } from "./$types";
 
 export interface PartyProfile {
   name: string;
   slug: string;
+  kind: OrganizationKind;
   brandColor: string;
   brandColorSecondary: string | null;
   logoUrl: string | null;

@@ -109,6 +109,9 @@ export const marketingHt = {
     "Manm, volontè, kotizasyon ak don, asanble jeneral, fòmasyon ak kominikasyon ak moun k ap bay don yo.",
   "mk.aud.union": "Sendika ak lòd pwofesyonèl",
   "mk.aud.union.text": "Manm pa sektè ak pa vil, kotizasyon, asanble, vòt entèn ak enfòmasyon pou manm yo.",
+  "mk.aud.party.cta": "Kreye espas pati mwen",
+  "mk.aud.npo.cta": "Kreye espas asosyasyon mwen",
+  "mk.aud.union.cta": "Kreye espas sendika mwen",
   "mk.aud.words": "Vokabilè a swiv òganizasyon w : seksyon oswa komite, militan oswa volontè, kongrè oswa asanble.",
 
   "mk.field.title": "Fèt pou Ayiti ak dyaspora li",

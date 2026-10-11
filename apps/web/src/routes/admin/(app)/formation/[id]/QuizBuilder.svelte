@@ -3,6 +3,7 @@
   cochées. Le quiz part en JSON dans le champ caché « quiz » ; l'API le valide et garde les réponses pour elle.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { untrack } from "svelte";
   import { Field } from "@civora/ui";
   import { format, translator } from "$lib/i18n";
@@ -15,7 +16,8 @@
     onvalidity?: (incomplete: boolean) => void;
   }
   let { quiz, locale, onvalidity }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
 
   const newId = () => crypto.randomUUID().slice(0, 8);
   const blankQuestion = (): QuizQuestion => ({

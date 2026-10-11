@@ -5,6 +5,7 @@
   terminés par zone (FOR-03).
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { enhance } from "$app/forms";
   import { page } from "$app/state";
   import { resolve } from "$app/paths";
@@ -17,7 +18,8 @@
   import ModuleEditor from "./ModuleEditor.svelte";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
   const c = $derived(data.course);
   const label = (l: { fr: string; ht?: string }) => (data.locale === "ht" && l.ht ? l.ht : l.fr);

@@ -4,6 +4,7 @@
   Puis les lignes, filtrables par domaine, avec qui a agi, quand (AM / PM, heure d'Haïti) et le détail.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { page } from "$app/state";
   import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
@@ -15,7 +16,8 @@
   import { FAMILIES } from "./families";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const base = resolve("/admin/journal");
   const params = $derived(page.url.searchParams);
   let pending = $state(false);

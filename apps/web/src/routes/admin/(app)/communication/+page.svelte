@@ -3,6 +3,7 @@
   notifications push avec leur bilan d'envoi. Chaque élément dit à qui il s'adresse.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { formatDayTime } from "$lib/datetime";
   import { page } from "$app/state";
   import { goto } from "$app/navigation";
@@ -16,7 +17,8 @@
   import PushComposer from "./PushComposer.svelte";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
   const base = resolve("/admin/communication");
   const can = (p: string) => data.me.permissions.includes(p);

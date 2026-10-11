@@ -5,16 +5,18 @@
   Les langues au-delà de la formule restent visibles, verrouillées, avec la formule qui les ouvre.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { enhance } from "$app/forms";
   import { env } from "$env/dynamic/public";
-  import { PLANS, TIERS } from "@civora/shared";
+  import { ORGANIZATION_KINDS, PLANS, TIERS } from "@civora/shared";
   import { Badge, Button, Field, MemberCard } from "@civora/ui";
   import BrandColors from "$lib/components/BrandColors.svelte";
   import { format, translator, type MessageKey } from "$lib/i18n";
   import type { ActionData, PageData } from "./$types";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
   const st = $derived(data.settings);
 
@@ -24,6 +26,7 @@
   let secondary = $derived<string | null>(st.brandColorSecondary);
   let languages = $derived<string[]>([...st.languages]);
   let admission = $derived<string>(st.admissionMode);
+  let kindDraft = $derived<string>(st.kind);
 
   const LANGS = ["fr", "ht", "en", "es"] as const;
   const MODES = ["libre", "validation", "parrainage"] as const;
@@ -59,7 +62,7 @@
         ? { bad: false, text: tk(`admin.settings.saved.${f.done}`) }
         : null,
   );
-  const SECTIONS = ["identity", "languages", "admission", "statuses"] as const;
+  const SECTIONS = ["identity", "kind", "languages", "admission", "statuses"] as const;
 </script>
 
 <div class="layout">
@@ -138,6 +141,27 @@
         </div>
         <p class="muted">{t("admin.settings.logo.hint")}</p>
       </div>
+    </section>
+
+    <section id="kind" aria-labelledby="kind-title">
+      <h2 id="kind-title">{t("admin.settings.kind")}</h2>
+      <p class="lead">{t("admin.settings.kind.lead")}</p>
+      <form method="POST" action="?/kind" use:enhance={submit("kind")} class="stack">
+        <div class="modes">
+          {#each ORGANIZATION_KINDS as k (k)}
+            <label class="mode" class:on={kindDraft === k}>
+              <input type="radio" name="kind" value={k} bind:group={kindDraft} />
+              <span class="mode-name">{tk(`create.kind.${k}`)}</span>
+              <span class="mode-desc">{tk(`create.kind.${k}.hint`)}</span>
+            </label>
+          {/each}
+        </div>
+        <div class="row end">
+          <Button type="submit" pending={pending === "kind"} disabled={kindDraft === st.kind}>
+            {t("admin.settings.saveKind")}
+          </Button>
+        </div>
+      </form>
     </section>
 
     <section id="languages" aria-labelledby="languages-title">

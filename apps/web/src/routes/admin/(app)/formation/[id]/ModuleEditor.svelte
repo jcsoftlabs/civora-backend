@@ -4,6 +4,7 @@
   tous les chapitres ont été vus.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { enhance } from "$app/forms";
   import { Button, Field, Switch } from "@civora/ui";
   import { translator, type MessageKey } from "$lib/i18n";
@@ -17,7 +18,8 @@
     ondone: () => void;
   }
   let { module: m, locale, oncancel, ondone }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
 
   let withQuiz = $derived(!!m?.quiz?.length);

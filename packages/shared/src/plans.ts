@@ -4,6 +4,8 @@
  * Les prix sont des hypothèses à valider auprès des partis.
  */
 
+import { allowsElections, type OrganizationKind } from "./organizations.js";
+
 export type Tier = "essentiel" | "mouvement" | "national";
 
 export type Feature =
@@ -196,6 +198,8 @@ export const TIERS: readonly Tier[] = ["essentiel", "mouvement", "national"];
  */
 export interface Entitlements {
   tier: Tier;
+  /** Type d'organisation (SOC-11) : le module Élections est réservé aux partis. */
+  kind: OrganizationKind;
   /** Module Élections : option par cycle, actif jusqu'à cette date. */
   electionsModuleUntil: Date | null;
   biConnectorOption: boolean;
@@ -220,7 +224,7 @@ export function hasFeature(tier: Tier, feature: Feature, opts?: { biConnectorOpt
 /** Point d'entrée commun à l'API (requireFeature), au web et au mobile (hasFeature sur les droits du parti). */
 export function can(e: Entitlements, feature: Feature | AddOnFeature, now = new Date()): boolean {
   if (e.suspended) return false;
-  if (feature === "elections") return hasElectionsModule(e.electionsModuleUntil, now);
+  if (feature === "elections") return allowsElections(e.kind) && hasElectionsModule(e.electionsModuleUntil, now);
   return hasFeature(e.tier, feature, { biConnectorOption: e.biConnectorOption });
 }
 

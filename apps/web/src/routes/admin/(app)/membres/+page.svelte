@@ -4,6 +4,7 @@
   l'année en douze carrés. Tout l'état est dans l'adresse : une liste filtrée se partage par son lien.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { partyFormat } from "$lib/datetime";
   import { page, navigating } from "$app/state";
   import { resolve } from "$app/paths";
@@ -18,7 +19,8 @@
   import type { FilterExpr } from "./+page.server";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
   const list = $derived(data.list);
   const params = $derived(page.url.searchParams);

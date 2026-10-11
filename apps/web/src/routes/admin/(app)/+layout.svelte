@@ -3,6 +3,7 @@
   personne connectée avec son anneau, puis le contenu de la section. Sur téléphone, le rail passe en bas.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import type { Snippet } from "svelte";
   import { page } from "$app/state";
   import { resolve } from "$app/paths";
@@ -10,7 +11,8 @@
   import type { LayoutData } from "./$types";
 
   let { data, children }: { data: LayoutData & { locale: "fr" | "ht" }; children: Snippet } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const initials = $derived(`${data.me.member.firstName[0] ?? ""}${data.me.member.lastName[0] ?? ""}`.toUpperCase());
   const hasAccess = $derived(data.me.permissions.length > 0);
   const modules = $derived([

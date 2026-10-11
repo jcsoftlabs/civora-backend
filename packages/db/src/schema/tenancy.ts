@@ -1,7 +1,9 @@
 // SOC-01, SOC-03, SOC-04, SOC-07, SOC-08, SEC-02
+import { sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
+  check,
   foreignKey,
   integer,
   jsonb,
@@ -37,6 +39,8 @@ export const parties = pgTable(
     brandColorSecondary: text("brand_color_secondary"),
     languages: text("languages").array().notNull().default(["fr", "ht"]),
     tier: tierEnum("tier").notNull().default("essentiel"),
+    /** Type d'organisation (SOC-11) : party | association | ngo | union ; règle le vocabulaire et les modules. */
+    organizationKind: text("organization_kind").notNull().default("party"),
     electionsModuleUntil: timestamp("elections_module_until", { withTimezone: true }),
     /** Mode d'adhésion (ADH-04) : libre, validation, parrainage. */
     admissionMode: text("admission_mode").notNull().default("validation"),
@@ -52,6 +56,7 @@ export const parties = pgTable(
   },
   // Le logo est un fichier du parti lui-même.
   (t) => [
+    check("parties_organization_kind", sql`${t.organizationKind} in ('party', 'association', 'ngo', 'union')`),
     foreignKey({
       name: "parties_logo_file_id_fk",
       columns: [t.id, t.logoFileId],

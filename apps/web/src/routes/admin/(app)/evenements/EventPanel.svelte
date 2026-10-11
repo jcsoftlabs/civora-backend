@@ -3,6 +3,7 @@
   (fixés à la création, ils décident qui voit l'événement), lieu, nombre de places. Puis la liste des inscrits.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { partyFormat } from "$lib/datetime";
   import { enhance } from "$app/forms";
   import { Button, Field, SidePanel } from "@civora/ui";
@@ -21,7 +22,8 @@
     onclose: () => void;
   }
   let { event: e, registrants, organs, locale, form, onclose }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
 
   let open = $state(true);

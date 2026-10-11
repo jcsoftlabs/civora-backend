@@ -4,6 +4,7 @@
   comptes de paiement du parti. « Encaisser en espèces » ouvre le panneau de saisie avec reçu.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { partyFormat } from "$lib/datetime";
   import { page, navigating } from "$app/state";
   import { goto } from "$app/navigation";
@@ -16,7 +17,8 @@
   import PlanPanel from "./PlanPanel.svelte";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
   const base = resolve("/admin/cotisations");
   const can = (p: string) => data.me.permissions.includes(p);

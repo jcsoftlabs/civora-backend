@@ -4,6 +4,7 @@
   et les réglages du parti. La couleur reste celle du parti : seul le texte posé dessus est calculé.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { partyTheme } from "@civora/ui";
   import { translator, type MessageKey } from "$lib/i18n";
 
@@ -13,7 +14,8 @@
     locale: "fr" | "ht";
   }
   let { color = $bindable(), secondary = $bindable(), locale }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const tk = (key: string) => t(key as MessageKey);
 
   // Couleurs fondamentales, toutes lisibles telles quelles (contraste 4,5:1 au moins avec leur texte).

@@ -111,6 +111,9 @@ export const marketingFr = {
   "mk.aud.union": "Syndicats et ordres professionnels",
   "mk.aud.union.text":
     "Adhérents par secteur et par ville, cotisations, assemblées, votes internes et information des membres.",
+  "mk.aud.party.cta": "Créer l'espace de mon parti",
+  "mk.aud.npo.cta": "Créer l'espace de mon association",
+  "mk.aud.union.cta": "Créer l'espace de mon syndicat",
   "mk.aud.words":
     "Le vocabulaire suit votre organisation : section ou comité, militant ou bénévole, congrès ou assemblée.",
 

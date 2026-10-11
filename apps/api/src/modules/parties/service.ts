@@ -18,7 +18,7 @@ import {
   withParty,
   zones,
 } from "@civora/db";
-import { PERMISSIONS, PLANS, POST_TEMPLATES, TIERS } from "@civora/shared";
+import { hasElectionsModule, ORGANIZATION_KINDS, PERMISSIONS, PLANS, POST_TEMPLATES, TIERS } from "@civora/shared";
 import { audit } from "../../lib/audit.js";
 import { ApiError } from "../../plugins/errors.js";
 import { authorize } from "../../plugins/tenant.js";
@@ -52,6 +52,21 @@ export const RESERVED_SLUGS = new Set([
   "dev",
   "staging",
   "billing",
+  "pay",
+  "paiement",
+  "payments",
+  "webhooks",
+  "storage",
+  "files",
+  "media",
+  "email",
+  "ftp",
+  "ns1",
+  "ns2",
+  "contact",
+  "ventes",
+  "sales",
+  "mobile",
 ]);
 const SLUG = /^[a-z0-9](?:[a-z0-9-]{1,38}[a-z0-9])$/;
 const PENDING_TTL_MS = 24 * 3600_000;
@@ -71,6 +86,8 @@ export const signupStart = z.object({
     /** Langues des contenus du parti ; par défaut français puis créole, dans la limite du palier. */
     languages: z.array(z.enum(LANGS)).min(1).max(4).optional(),
     tier: z.enum(TIERS as [string, ...string[]]).default("essentiel"),
+    /** Type d'organisation (SOC-11) : règle le vocabulaire et les modules proposés. */
+    kind: z.enum(ORGANIZATION_KINDS).default("party"),
   }),
   founder: z.object({
     email: z.string().email().max(254),
@@ -93,6 +110,7 @@ export const brandingUpdate = z
     brandColorSecondary: brandColor.nullable(),
     languages: z.array(z.enum(LANGS)).min(1).max(4),
     logoFileId: z.string().uuid().nullable(),
+    kind: z.enum(ORGANIZATION_KINDS),
   })
   .partial();
 
@@ -177,6 +195,7 @@ export class PartiesService {
           brandColorSecondary: body.party.brandColorSecondary?.toUpperCase() ?? null,
           languages: [...languages],
           tier,
+          organizationKind: body.party.kind,
           status: "pending",
           signupDraft: draft,
         });
@@ -323,6 +342,7 @@ export class PartiesService {
           id: parties.id,
           name: parties.name,
           slug: parties.slug,
+          kind: parties.organizationKind,
           brandColor: parties.brandColor,
           brandColorSecondary: parties.brandColorSecondary,
           languages: parties.languages,
@@ -358,6 +378,7 @@ export class PartiesService {
         .select({
           name: parties.name,
           slug: parties.slug,
+          kind: parties.organizationKind,
           brandColor: parties.brandColor,
           brandColorSecondary: parties.brandColorSecondary,
           languages: parties.languages,
@@ -413,6 +434,11 @@ export class PartiesService {
     }
     await withParty(req.partyId, async (tx) => {
       if (body.logoFileId) await this.files.readyFile(tx, body.logoFileId, "party_logo");
+      // Le module Élections n'existe que pour un parti : on ne quitte pas ce type pendant un cycle en cours.
+      if (body.kind && body.kind !== "party") {
+        const [p] = await tx.select({ until: parties.electionsModuleUntil }).from(parties);
+        if (p?.until && hasElectionsModule(p.until)) throw new ApiError(409, "elections_module_active");
+      }
       await tx
         .update(parties)
         .set({
@@ -423,6 +449,7 @@ export class PartiesService {
             : {}),
           ...(body.languages ? { languages: body.languages } : {}),
           ...(body.logoFileId !== undefined ? { logoFileId: body.logoFileId } : {}),
+          ...(body.kind ? { organizationKind: body.kind } : {}),
           updatedAt: new Date(),
         })
         .where(eq(parties.id, req.partyId));
@@ -433,9 +460,10 @@ export class PartiesService {
         action: "settings.branding",
         targetType: "party",
         targetId: req.partyId,
-        metadata: { fields: Object.keys(body) },
+        metadata: { fields: Object.keys(body), ...(body.kind ? { kind: body.kind } : {}) },
         ip: req.clientIp,
       });
     });
+    if (body.kind) await req.server.entitlements.invalidate(req.partyId);
   }
 }

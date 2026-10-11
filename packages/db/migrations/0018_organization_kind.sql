@@ -1,0 +1,2 @@
+ALTER TABLE "parties" ADD COLUMN "organization_kind" text DEFAULT 'party' NOT NULL;--> statement-breakpoint
+ALTER TABLE "parties" ADD CONSTRAINT "parties_organization_kind" CHECK ("parties"."organization_kind" in ('party', 'association', 'ngo', 'union'));

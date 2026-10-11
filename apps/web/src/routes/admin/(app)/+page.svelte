@@ -5,6 +5,7 @@
   Agrégats seulement : aucun nom de membre.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { resolve } from "$app/paths";
   import { hasFeature, requiredTier, type Feature } from "@civora/shared";
   import { Locked } from "@civora/ui";
@@ -13,7 +14,8 @@
   import type { ZoneStats } from "./+page.server";
 
   let { data }: { data: PageData & { locale: "fr" | "ht" } } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
   const base = resolve("/admin");
   const pendingHref = `${resolve("/admin/membres")}?state=pending`;

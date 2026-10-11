@@ -157,6 +157,15 @@ describe("création d'un espace (SOC-01)", () => {
     expect((await get("/auth/me", founderToken)).json()).toMatchObject({ mfaPending: true, permissions: [] });
   });
 
+  it("enregistre le type d'organisation choisi à la création (SOC-11)", async () => {
+    const s2 = `asso-${tag}`;
+    const res = await signup(s2, `asso-${tag}@example.test`, { name: "Association des jeunes", kind: "association" });
+    expect(res.statusCode).toBe(202);
+    const [p] = await owner`select organization_kind from parties where slug = ${s2}`;
+    expect(p!.organization_kind).toBe("association");
+    expect((await signup(`club-${tag}`, `club-${tag}@example.test`, { kind: "club" })).statusCode).toBe(400);
+  });
+
   it("respecte le nombre de langues du palier", async () => {
     const res = await signup(`essentiel-${tag}`, `ess-${tag}@example.test`, {
       tier: "essentiel",
@@ -192,6 +201,7 @@ describe("identité visuelle (SOC-03)", () => {
     expect(res.json()).toEqual({
       name: "Parti Horizon",
       slug,
+      kind: "party",
       brandColor: "#7A2E5C",
       brandColorSecondary: null,
       languages: ["fr", "ht"],
@@ -249,6 +259,25 @@ describe("identité visuelle (SOC-03)", () => {
     expect(shown.rawPayload.equals(png)).toBe(true);
     // Le logo s'affiche sur l'adresse du parti (autre site que l'API) : pas de blocage CORP.
     expect(shown.headers["cross-origin-resource-policy"]).toBe("cross-origin");
+  });
+
+  it("type d'organisation (SOC-11) : un parti peut devenir une association, sauf pendant un cycle électoral", async () => {
+    const patch = (payload: object) =>
+      app.inject({
+        method: "PATCH",
+        url: "/party/branding",
+        headers: { authorization: `Bearer ${founderToken}` },
+        payload,
+      });
+    expect((await get("/auth/me", founderToken)).json().party.kind).toBe("party");
+    expect((await patch({ kind: "club" })).statusCode).toBe(400);
+    expect((await patch({ kind: "association" })).statusCode).toBe(204);
+    expect((await get(`/parties/${slug}/public`)).json().kind).toBe("association");
+    expect((await get("/auth/me", founderToken)).json().party.kind).toBe("association");
+    await owner`update parties set elections_module_until = now() + interval '30 days' where slug = ${slug}`;
+    expect((await patch({ kind: "party" })).statusCode).toBe(204);
+    expect((await patch({ kind: "union" })).json()).toMatchObject({ code: "elections_module_active" });
+    await owner`update parties set elections_module_until = null where slug = ${slug}`;
   });
 
   it("refuse un logo SVG et une couleur mal formée", async () => {

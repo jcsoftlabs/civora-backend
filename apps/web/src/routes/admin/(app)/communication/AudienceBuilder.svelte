@@ -3,6 +3,7 @@
   organes. Les choix partent en champs répétés du formulaire ; la portée est recalculée à chaque changement.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { resolve } from "$app/paths";
   import Lookup from "$lib/components/Lookup.svelte";
   import { format, translator } from "$lib/i18n";
@@ -18,7 +19,8 @@
     zoneNames?: Record<string, string>;
   }
   let { locale, purpose, statuses, organs, initial = null, zoneNames = {} }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const label = (l: { fr: string; ht?: string }) => (locale === "ht" && l.ht ? l.ht : l.fr);
 
   let zones = $derived<Array<{ code: string; name: string }>>(

@@ -4,6 +4,7 @@
   « Ajouter un filtre », « Enregistrer ce segment ». Le filtre vit dans l'adresse (`f`) : il se partage par lien.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { enhance } from "$app/forms";
   import { Button, Field } from "@civora/ui";
   import Lookup from "$lib/components/Lookup.svelte";
@@ -19,7 +20,8 @@
     onchange: (expr: FilterExpr) => void;
   }
   let { expr, locale, statuses, organs, form, onchange }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
   const label = (l: { fr: string; ht?: string }) => (locale === "ht" && l.ht ? l.ht : l.fr);
 

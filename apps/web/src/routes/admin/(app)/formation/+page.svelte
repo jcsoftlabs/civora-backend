@@ -3,6 +3,7 @@
   leçons, ses certificats et les statuts pour lesquels elle est obligatoire. Hors formule : option verrouillée.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { enhance } from "$app/forms";
   import { resolve } from "$app/paths";
   import { Badge, Button, Field, Locked } from "@civora/ui";
@@ -10,7 +11,8 @@
   import type { ActionData, PageData } from "./$types";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
   const label = (l: { fr: string; ht?: string }) => (data.locale === "ht" && l.ht ? l.ht : l.fr);
   const statusName = (id: string) => {

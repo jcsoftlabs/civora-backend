@@ -4,6 +4,7 @@
   en créole ; le texte accompagne aussi une vidéo ou un document.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { enhance } from "$app/forms";
   import { videoEmbed } from "@civora/shared";
   import { Button, Field } from "@civora/ui";
@@ -19,7 +20,8 @@
     ondone: () => void;
   }
   let { chapter: c, moduleId, locale, oncancel, ondone }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
 
   type Choice = "text" | "video" | "audio" | "document" | "link";

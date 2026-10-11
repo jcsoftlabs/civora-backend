@@ -1,18 +1,25 @@
 <!--
-  Création d'un espace parti (SOC-01, SOC-03). Trois étapes : le parti, le fondateur, le code reçu par e-mail.
+  Création d'un espace (SOC-01, SOC-03, SOC-11). Trois étapes : l'organisation (parti, association, ONG ou
+  syndicat, dont le vocabulaire suit le type choisi), le fondateur, le code reçu par e-mail.
   À droite, la carte de membre du parti se compose en direct (nom, couleur, fondateur, section) : l'objet signature
   du produit, et le seul moment animé de l'écran (le reflet passe à chaque nouvelle couleur).
 -->
 <script lang="ts">
   import { Badge, Button, Field, MemberCard, partyTheme, themeStyle } from "@civora/ui";
+  import { untrack } from "svelte";
+  import { ORGANIZATION_KINDS, type OrganizationKind } from "@civora/shared";
   import { format, translator, type MessageKey } from "$lib/i18n";
+  import { setOrganizationKind } from "$lib/i18n/org";
   import { resolve } from "$app/paths";
   import BrandColors from "$lib/components/BrandColors.svelte";
   import { env } from "$env/dynamic/public";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData & { locale: "fr" | "ht" } } = $props();
-  const t = $derived(translator(data.locale));
+  const KINDS = ORGANIZATION_KINDS;
+  let kind = $state<OrganizationKind>(untrack(() => data.initialKind) ?? "party");
+  setOrganizationKind(() => kind);
+  const t = $derived(translator(data.locale, kind));
   const tk = (key: string) => t(key as MessageKey);
 
   const LANGS = ["fr", "ht", "en", "es"] as const;
@@ -27,7 +34,7 @@
   let secondary = $state<string | null>(null);
   let orientation = $state<"horizontal" | "vertical">("horizontal");
 
-  let tier = $state<"essentiel" | "mouvement" | "national">("mouvement");
+  let tier = $state<"essentiel" | "mouvement" | "national">(untrack(() => data.initialTier) ?? "mouvement");
   let languages = $state<string[]>(["fr", "ht"]);
   let firstName = $state("");
   let lastName = $state("");
@@ -137,6 +144,7 @@
         brandColor: theme["--c-primary"],
         brandColorSecondary: secondary,
         tier,
+        kind,
         languages,
       },
       founder: {
@@ -192,6 +200,18 @@
 
       {#if step === "party"}
         <div class="stack">
+          <fieldset>
+            <legend>{t("create.kind")}</legend>
+            <div class="kinds">
+              {#each KINDS as k (k)}
+                <label class="kind" class:chosen={kind === k}>
+                  <input type="radio" name="kind" value={k} bind:group={kind} />
+                  <span class="kind-name">{tk(`create.kind.${k}`)}</span>
+                  <span class="kind-desc">{tk(`create.kind.${k}.hint`)}</span>
+                </label>
+              {/each}
+            </div>
+          </fieldset>
           <Field label={t("create.name")} bind:value={name} maxlength={120} autocomplete="organization" />
           <div class="slug">
             <Field
@@ -676,6 +696,46 @@
   @media (max-width: 480px) {
     .row2 {
       grid-template-columns: 1fr;
+    }
+  }
+  .kinds {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-2);
+  }
+  .kind {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--s-3) var(--s-4);
+    border: 1.5px solid var(--c-line);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    cursor: pointer;
+  }
+  .kind input {
+    position: absolute;
+    opacity: 0;
+  }
+  .kind.chosen {
+    border-color: var(--c-ink);
+    box-shadow: inset 0 0 0 1px var(--c-ink);
+  }
+  .kind:has(input:focus-visible) {
+    box-shadow: var(--focus-ring);
+  }
+  .kind-name {
+    font-weight: 600;
+  }
+  .kind-desc {
+    font-size: var(--fs-13);
+    line-height: 1.4;
+    color: var(--c-ink-2);
+  }
+  @media (max-width: 520px) {
+    .kinds {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

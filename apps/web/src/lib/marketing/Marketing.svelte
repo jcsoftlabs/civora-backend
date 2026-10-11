@@ -168,10 +168,11 @@
   <section id="pour-qui" class="audiences wrap" aria-labelledby="aud-title">
     <h2 id="aud-title">{t("mk.aud.title")}</h2>
     <div class="aud-grid">
-      {#each ["party", "npo", "union"] as k (k)}
+      {#each [["party", "party"], ["npo", "association"], ["union", "union"]] as [k, type] (k)}
         <div class="aud">
           <h3>{tk(`mk.aud.${k}`)}</h3>
           <p>{tk(`mk.aud.${k}.text`)}</p>
+          <a class="aud-link" href="{resolve('/creer')}?type={type}">{tk(`mk.aud.${k}.cta`)}</a>
         </div>
       {/each}
     </div>
@@ -646,6 +647,15 @@
     margin-top: var(--s-3);
     line-height: 1.6;
     color: var(--c-ink-2);
+  }
+  .aud-link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    margin-top: var(--s-3);
+    color: var(--c-primary);
+    font-weight: 600;
+    text-underline-offset: 3px;
   }
   .aud-words {
     margin-top: var(--s-10);

@@ -6,6 +6,7 @@
   Les identifiants des fichiers prêts partent dans des champs cachés `name`, dans l'ordre affiché.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { onDestroy, untrack } from "svelte";
   import { UploadError, uploadDirect, type UploadPurpose } from "$lib/upload-client";
   import { format, translator, type MessageKey } from "$lib/i18n";
@@ -45,7 +46,8 @@
     onbusy,
     onchange,
   }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
 
   interface Entry {

@@ -4,6 +4,7 @@
   Deux onglets : Profil (contact, localisation, classement) et Cotisations (relevé de l'année).
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { partyFormat } from "$lib/datetime";
   import { enhance } from "$app/forms";
   import { Badge, Button, Field, MemberCard, SidePanel } from "@civora/ui";
@@ -27,7 +28,8 @@
     onclose: () => void;
   }
   let { member: m, dues: statement, plans, party, statuses, permissions, locale, form, onclose }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
   const label = (l: { fr: string; ht?: string } | null) => (l ? (locale === "ht" && l.ht ? l.ht : l.fr) : "");
 

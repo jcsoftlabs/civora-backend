@@ -1,4 +1,5 @@
 import { error } from "@sveltejs/kit";
+import type { OrganizationKind } from "@civora/shared";
 import { ApiFailure, api } from "$lib/server/api";
 import type { PageServerLoad } from "./$types";
 
@@ -14,13 +15,17 @@ interface Verification {
 export const load: PageServerLoad = async ({ params, locals, setHeaders, getClientAddress }) => {
   if (!locals.partySlug) error(404, { message: "not_found", code: "not_found" });
   setHeaders({ "cache-control": "no-store", "x-robots-tag": "noindex" });
+  // Type d'organisation (SOC-11) : « reconnue par le parti », « par l'association »…
+  const kind = await api<{ kind: OrganizationKind }>(`/parties/${locals.partySlug}/public`, { ip: getClientAddress() })
+    .then((p) => p.kind)
+    .catch(() => "party" as const);
   try {
     const result = await api<Verification>(`/parties/${locals.partySlug}/cards/${encodeURIComponent(params.token)}`, {
       ip: getClientAddress(),
     });
-    return { result };
+    return { result, kind };
   } catch (e) {
-    if (e instanceof ApiFailure) return { result: { valid: false } as Verification };
+    if (e instanceof ApiFailure) return { result: { valid: false } as Verification, kind };
     throw e;
   }
 };

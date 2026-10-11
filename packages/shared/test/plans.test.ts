@@ -4,6 +4,7 @@ import { PLANS, TIERS, can, checkQuota, quotaLimit, requiredTier, type Entitleme
 
 const base: Entitlements = {
   tier: "essentiel",
+  kind: "party",
   electionsModuleUntil: null,
   biConnectorOption: false,
   extraStoragePacks: 0,
@@ -47,6 +48,15 @@ describe("options", () => {
   it("le connecteur BI s'achète en option sous le palier National", () => {
     expect(can(of({ tier: "mouvement" }), "bi.connector")).toBe(false);
     expect(can(of({ tier: "mouvement", biConnectorOption: true }), "bi.connector")).toBe(true);
+  });
+
+  it("le module Élections est réservé aux partis (SOC-11)", () => {
+    const until = new Date("2099-01-01");
+    expect(can(of({ electionsModuleUntil: until }), "elections")).toBe(true);
+    for (const kind of ["association", "ngo", "union"] as const)
+      expect(can(of({ kind, electionsModuleUntil: until }), "elections")).toBe(false);
+    // Les votes internes servent aussi aux assemblées générales.
+    expect(can(of({ kind: "association" }), "votes.internal")).toBe(true);
   });
 
   it("un abonnement suspendu n'ouvre aucune fonctionnalité", () => {

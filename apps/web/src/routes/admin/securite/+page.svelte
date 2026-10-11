@@ -3,13 +3,15 @@
   Ensuite, à chaque connexion : le code à six chiffres de l'application.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { enhance } from "$app/forms";
   import { Button, Field, QrCode } from "@civora/ui";
   import { format, translator, type MessageKey } from "$lib/i18n";
   import type { ActionData, PageData } from "./$types";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const error = $derived(form?.code ? t(`error.${form.code}` as MessageKey) : undefined);
   let pending = $state(false);
 </script>

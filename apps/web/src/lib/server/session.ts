@@ -1,4 +1,5 @@
 import type { Cookies } from "@sveltejs/kit";
+import type { OrganizationKind } from "@civora/shared";
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/public";
 import { ApiFailure, api } from "./api";
@@ -19,7 +20,13 @@ export interface Me {
   permissions: string[];
   /** Formule du parti, pour afficher verrouillées les options hors formule (SOC-07). */
   tier: "essentiel" | "mouvement" | "national" | null;
-  party: { slug: string; name: string; brandColor: string; brandColorSecondary: string | null };
+  party: {
+    slug: string;
+    name: string;
+    kind: OrganizationKind;
+    brandColor: string;
+    brandColorSecondary: string | null;
+  };
   member: { firstName: string; lastName: string; number: string };
 }
 

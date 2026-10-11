@@ -4,6 +4,7 @@
   parution programmée ; une publication en ligne peut être retirée.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { formatDateTime } from "$lib/datetime";
   import { enhance } from "$app/forms";
   import { Button, Field, SidePanel } from "@civora/ui";
@@ -23,7 +24,8 @@
     onclose: () => void;
   }
   let { publication: p, locale, statuses, organs, form, zoneNames, onclose }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
 
   let open = $state(true);

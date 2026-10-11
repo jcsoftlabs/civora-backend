@@ -4,6 +4,7 @@
   langue choisie : chaque membre la reçoit dans la sienne.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { enhance } from "$app/forms";
   import { Button, Field, SidePanel } from "@civora/ui";
   import DateTimeField from "$lib/components/DateTimeField.svelte";
@@ -21,7 +22,8 @@
     onsent: (scheduled: boolean) => void;
   }
   let { locale, party, statuses, organs, form, onclose, onsent }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
 
   let open = $state(true);
   let pending = $state(false);

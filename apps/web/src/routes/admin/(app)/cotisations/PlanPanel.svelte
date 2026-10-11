@@ -4,6 +4,7 @@
   d'échéance restent fixes (elles changeraient le sens des échéances déjà générées).
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { enhance } from "$app/forms";
   import { PERIODICITIES } from "@civora/shared";
   import { Button, Field, SidePanel, Switch } from "@civora/ui";
@@ -17,7 +18,8 @@
     onclose: () => void;
   }
   let { plan, locale, form, onclose }: Props = $props();
-  const t = $derived(translator(locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
 
   let open = $state(true);

@@ -4,6 +4,7 @@
   inscrits. Le panneau latéral sert à créer, modifier et voir les inscrits.
 -->
 <script lang="ts">
+  import { organizationKind } from "$lib/i18n/org";
   import { formatTime, partyFormat } from "$lib/datetime";
   import { page } from "$app/state";
   import { goto } from "$app/navigation";
@@ -14,7 +15,8 @@
   import EventPanel from "./EventPanel.svelte";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
-  const t = $derived(translator(data.locale));
+  const orgKind = organizationKind();
+  const t = $derived(translator(data.locale, orgKind()));
   const tk = (k: string) => t(k as MessageKey);
   const base = resolve("/admin/evenements");
   const params = $derived(page.url.searchParams);

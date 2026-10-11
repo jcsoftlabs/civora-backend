@@ -4,6 +4,7 @@ import { canStructureAt, structureLevels } from "../src/territory.js";
 
 const e = (tier: Entitlements["tier"]): Entitlements => ({
   tier,
+  kind: "party",
   electionsModuleUntil: null,
   biConnectorOption: false,
   extraStoragePacks: 0,

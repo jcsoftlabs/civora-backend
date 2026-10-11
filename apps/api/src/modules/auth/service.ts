@@ -413,6 +413,7 @@ export class AuthService {
         .select({
           slug: parties.slug,
           name: parties.name,
+          kind: parties.organizationKind,
           brandColor: parties.brandColor,
           brandColorSecondary: parties.brandColorSecondary,
         })
