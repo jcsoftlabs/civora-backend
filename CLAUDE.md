@@ -1,6 +1,6 @@
 # civora
 
-Plateforme SaaS par abonnement pour les partis politiques haïtiens : adhésion, cotisations et dons, organes et postes, rassemblements et gamification, votes internes, formation, communication, documents, finances, BI et module électoral. Dérivée du système NOU (premier client). Nom commercial provisoire.
+Plateforme SaaS par abonnement pour les partis politiques haïtiens : adhésion, cotisations et dons, organes et postes, rassemblements et gamification, votes internes, formation, communication, documents, finances, BI et module électoral. Conçue à partir de l'expérience du système NOU, développé séparément et sur mesure pour ce parti : NOU garde son propre système et n'est pas migré vers civora. Nom commercial provisoire.
 
 Auteur et responsable produit : Christopher Jerome.
 
@@ -121,6 +121,6 @@ pnpm dev:worker          # tâches de fond (pg-boss)
 pnpm test
 pnpm db:generate         # générer une migration Drizzle
 pnpm db:migrate
-pnpm db:seed             # deux partis fictifs + NOU de démonstration
+pnpm db:seed             # deux partis fictifs de démonstration
 pnpm check:requirements  # vérifie la cohérence requirements.md / roadmap.md
 ```

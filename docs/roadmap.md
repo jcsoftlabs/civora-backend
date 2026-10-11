@@ -16,7 +16,7 @@ Jalon : audit de sécurité validé (aucun secret détecté, chaque brique recon
 
 ## P2 : Socle SaaS (mois 2 à 4)
 
-Jalon : NOU migré sans perte, tests d'isolation réussis entre deux partis fictifs.
+Jalon : tests d'isolation réussis entre deux partis fictifs ; socle utilisable par un parti pilote (adhésion, cotisations, paiements, communication, écrans).
 
 ### Tenancy et sécurité
 - [x] Schéma `parties`, `subscriptions`, `party_keys` ; helper `withParty()` ; politiques RLS ; test d'isolation générique appliqué à toutes les tables (SOC-02, SEC-01)
@@ -49,7 +49,7 @@ Jalon : NOU migré sans perte, tests d'isolation réussis entre deux partis fict
 - [ ] Hors ligne de base et Android 8 (NFR-01, NFR-02) ; français et créole (NFR-08) ; squelettes (NFR-09)
 
 ### Migration
-- [ ] Script de migration NOU vers civora (membres, cotisations, formations, contenus), contrôle de concordance avant et après
+Pas de migration de NOU : le parti garde le système développé sur mesure pour lui (décision du 2026-10-10). Les nouveaux partis importeront leur fichier existant avec l'assistant d'import (P3 : SOC-09, ADH-07 à ADH-10).
 
 ## P3 : Lancement (mois 5 et 6)
 
