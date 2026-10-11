@@ -6,6 +6,7 @@ import { requireFeature } from "../../plugins/tenant.js";
 import { z } from "zod";
 import { exportMembers, exportRequest } from "./export.js";
 import { listMembers, listQuery } from "./list.js";
+import { bulkBody, bulkUpdate } from "./bulk.js";
 import type { MembersService } from "./service.js";
 import {
   admissionUpdate,
@@ -44,6 +45,17 @@ export default async function memberRoutes(
   });
 
   app.get("/members", { preHandler: requireAuth }, async (req) => listMembers(req, listQuery.parse(req.query)));
+  // Actions groupées : tout ou rien, dans la zone de la personne. Débit limité par session.
+  app.post(
+    "/members/bulk",
+    {
+      preHandler: requireAuth,
+      config: {
+        rateLimit: { max: 60, timeWindow: "1 hour", keyGenerator: (req) => req.auth?.sessionId ?? req.clientIp },
+      },
+    },
+    async (req) => bulkUpdate(req, bulkBody.parse(req.body)),
+  );
   app.get("/members/me", { preHandler: requireAuth }, async (req) => svc.getMe(req));
   app.patch("/members/me", { preHandler: requireAuth }, async (req, reply) => {
     await svc.updateMe(req, meUpdate.parse(req.body));
@@ -73,6 +85,9 @@ export default async function memberRoutes(
   });
 
   // ADH-06 : file des adhésions en attente, décision et notation.
+  app.post("/applications/approve-many", { preHandler: requireAuth }, async (req) =>
+    apps.approveMany(req, z.object({ ids: z.array(z.string().uuid()).min(1).max(100) }).parse(req.body).ids),
+  );
   app.get("/applications", { preHandler: requireAuth }, async (req) => ({ applications: await apps.list(req) }));
   app.post("/applications/:id/approve", { preHandler: requireAuth }, async (req, reply) => {
     await apps.decide(req, idParam.parse(req.params).id, "approved", decisionBody.parse(req.body ?? {}));

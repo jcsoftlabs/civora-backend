@@ -127,6 +127,24 @@ export class ApplicationsService {
     }
   }
 
+  /**
+   * Validation groupée depuis la liste : chaque demande passe par la même décision (zone, journal, e-mail).
+   * Une demande déjà traitée ou hors de la zone est comptée à part, sans bloquer les autres.
+   */
+  async approveMany(req: Req, ids: string[]) {
+    const result = { approved: 0, skipped: 0 };
+    for (const id of new Set(ids)) {
+      try {
+        await this.decide(req, id, "approved", {});
+        result.approved++;
+      } catch (e) {
+        if (e instanceof ApiError && [403, 404, 409].includes(e.statusCode)) result.skipped++;
+        else throw e;
+      }
+    }
+    return result;
+  }
+
   async score(req: Req, memberId: string, score: number) {
     await withParty(req.partyId, async (tx) => {
       const m = await this.pending(tx, req, memberId);

@@ -21,6 +21,9 @@ export const POST: RequestHandler = async ({ request, cookies, locals, getClient
   if (statusId) filters.statusId = statusId;
   const diaspora = String(f.get("diaspora") ?? "");
   if (diaspora === "true" || diaspora === "false") filters.diaspora = diaspora === "true";
+  // Export de la sélection cochée (barre d'actions groupées).
+  const ids = [...new Set(f.getAll("ids").map(String))].filter((id) => /^[0-9a-f-]{36}$/i.test(id)).slice(0, 1000);
+  if (ids.length) filters.ids = ids;
 
   const base = env.API_INTERNAL_URL || pub.PUBLIC_API_URL || "http://localhost:4000";
   const res = await fetch(`${base}/members/export`, {

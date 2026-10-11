@@ -43,7 +43,7 @@ Jalon : tests d'isolation réussis entre deux partis fictifs ; socle utilisable 
 - [x] Statistiques par zone (PIL-01)
 
 ### Interfaces
-- [ ] Back-office : rail de navigation, liste des membres, organes avec panneau latéral (maquettes « Back-office ») : connexion par code e-mail, activation et saisie de la 2FA, rail, liste des membres (vues, onglets, recherche, filtres, cotisations de l'année, export) et fiche membre en panneau latéral (carte de membre, profil, classement, relevé de cotisations, validation ou rejet des adhésions) faits ; restent les actions groupées et les organes
+- [ ] Back-office : rail de navigation, liste des membres, organes avec panneau latéral (maquettes « Back-office ») : connexion par code e-mail, activation et saisie de la 2FA, rail, liste des membres (vues, onglets, recherche, filtres, cotisations de l'année, export) et fiche membre en panneau latéral (carte de membre, profil, classement, relevé de cotisations, validation ou rejet des adhésions) et actions groupées (étiquettes, statut, validation, export de la sélection) faits ; restent l'envoi d'un message à la sélection (avec COM-03) et les organes
 - [x] Création d'un espace parti et thème marque blanche web (SOC-01, SOC-03) : assistant de création et profil public faits ; thème appliqué aux sites des partis avec le back-office
 - [ ] App mobile commune : rejoindre un parti par QR, lien ou code ; thème chargé selon le parti ; accueil membre (maquette « App membre : accueil »)
 - [ ] Hors ligne de base et Android 8 (NFR-01, NFR-02) ; français et créole (NFR-08) ; squelettes (NFR-09)

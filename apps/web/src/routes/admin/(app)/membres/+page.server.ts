@@ -150,6 +150,27 @@ async function act(
 
 const text = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
 
+/** Identifiants cochés, envoyés par le formulaire de la barre d'actions groupées. */
+const selection = (f: FormData) => [...new Set(f.getAll("ids").map(String))].filter((id) => UUID.test(id));
+
+async function bulk(
+  event: RequestEvent,
+  run: (f: FormData, ids: string[], token: string, ip: string) => Promise<object>,
+) {
+  const s = await currentSession(event.cookies, event.locals.partySlug!);
+  if (!s || s.me.mfaPending) return fail(401, { code: "unauthorized" });
+  const f = await event.request.formData();
+  const ids = selection(f);
+  if (!ids.length) return fail(400, { code: "invalid_request" });
+  try {
+    return { bulk: await run(f, ids, s.token, event.getClientAddress()) };
+  } catch (e) {
+    if (e instanceof ApiFailure)
+      return fail(e.status === 429 ? 429 : 400, { code: e.status === 403 ? "forbidden" : e.code });
+    throw e;
+  }
+}
+
 export const actions: Actions = {
   /** Statut, catégorie et étiquettes (members.write dans la zone du membre). */
   update: (event) =>
@@ -189,4 +210,37 @@ export const actions: Actions = {
       (f) => (text(f, "reason") ? { reason: text(f, "reason") } : {}),
       "rejected",
     ),
+
+  /** Ajout ou retrait d'une étiquette sur la sélection (tout ou rien, dans la zone de la personne). */
+  bulkTags: (event) =>
+    bulk(event, async (f, ids, token, ip) => {
+      const tag = text(f, "tag").slice(0, 40);
+      if (!tag) throw new ApiFailure(400, "invalid_request");
+      const kind = text(f, "mode") === "remove" ? "removeTags" : "addTags";
+      const r = await api<{ updated: number }>("/members/bulk", {
+        body: { ids, op: { kind, tags: [tag] } },
+        token,
+        ip,
+      });
+      return { kind: "tags", n: r.updated };
+    }),
+  bulkStatus: (event) =>
+    bulk(event, async (f, ids, token, ip) => {
+      const r = await api<{ updated: number }>("/members/bulk", {
+        body: { ids, op: { kind: "setStatus", statusId: text(f, "statusId") || null } },
+        token,
+        ip,
+      });
+      return { kind: "status", n: r.updated };
+    }),
+  /** ADH-06 : validation groupée ; chaque demande suit le même parcours qu'une validation seule. */
+  bulkApprove: (event) =>
+    bulk(event, async (_f, ids, token, ip) => {
+      const r = await api<{ approved: number; skipped: number }>("/applications/approve-many", {
+        body: { ids: ids.slice(0, 100) },
+        token,
+        ip,
+      });
+      return { kind: "approve", n: r.approved, skipped: r.skipped };
+    }),
 };

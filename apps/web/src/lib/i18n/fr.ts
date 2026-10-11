@@ -260,6 +260,23 @@ export const fr = {
   "error.application_already_decided": "Cette demande a déjà été traitée. Rechargez la fiche.",
   "error.status_not_found": "Ce statut n'existe plus. Choisissez-en un autre.",
   "error.unauthorized": "Votre session a expiré. Reconnectez-vous.",
+  "admin.bulk.label": "Actions sur la sélection",
+  "admin.bulk.selected": "{n} sélectionnés",
+  "admin.bulk.selectedOne": "1 sélectionné",
+  "admin.bulk.selectAll": "Sélectionner tous les membres de la page",
+  "admin.bulk.selectRow": "Sélectionner {name}",
+  "admin.bulk.addTag": "Ajouter une étiquette",
+  "admin.bulk.removeTag": "Retirer une étiquette",
+  "admin.bulk.tag": "Étiquette",
+  "admin.bulk.apply": "Appliquer",
+  "admin.bulk.status": "Changer le statut",
+  "admin.bulk.approve": "Valider les adhésions",
+  "admin.bulk.export": "Exporter la sélection",
+  "admin.bulk.clear": "Tout désélectionner",
+  "admin.bulk.done.tags": "Étiquettes mises à jour pour {n} membres",
+  "admin.bulk.done.status": "Statut changé pour {n} membres",
+  "admin.bulk.done.approve": "{n} adhésions validées",
+  "admin.bulk.done.skipped": "{n} demandes non traitées : déjà décidées ou hors de votre zone",
 } as const;
 
 export type MessageKey = keyof typeof fr;

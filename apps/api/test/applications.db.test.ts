@@ -106,6 +106,7 @@ afterAll(async () => {
   for (const t of [
     "audit_log",
     "sessions",
+    "member_statuses",
     "dues_obligations",
     "dues_plans",
     "referrals",
@@ -288,5 +289,75 @@ describe("liste des membres du back-office", () => {
     // Février : délai de grâce de 15 jours par défaut.
     expect(eve.dues.slice(0, 2)).toEqual(["paid", new Date() > new Date(`${year}-02-16T12:00:00Z`) ? "late" : "due"]);
     expect(eve.dues[11]).toBe("none");
+  });
+});
+
+describe("actions groupées", () => {
+  let pvWriter = "";
+  beforeAll(async () => {
+    pvWriter = await session(["members.write", "members.read"], "HT0114");
+  });
+  const bulk = (token: string, payload: object) => call("POST", "/members/bulk", token, payload);
+  const tagsOf = async (id: string) => (await owner`select tags from members where id = ${id}`)[0]!.tags as string[];
+
+  it("ajoute des étiquettes sans doublon, puis les retire, et le journalise", async () => {
+    const a = await member({ first: "Tag", last: "Un", zone: "HT0114-01", state: "approved" });
+    const b = await member({ first: "Tag", last: "Deux", zone: "HT0114-02", state: "approved" });
+    await owner`update members set tags = ${["jeunesse"]} where id = ${a}`;
+    const res = await bulk(pvWriter, { ids: [a, b, a], op: { kind: "addTags", tags: ["jeunesse", "porte-à-porte"] } });
+    expect(res.json()).toEqual({ updated: 2 });
+    expect(await tagsOf(a)).toEqual(["jeunesse", "porte-à-porte"]);
+    expect(await tagsOf(b)).toEqual(["jeunesse", "porte-à-porte"]);
+    await bulk(pvWriter, { ids: [a, b], op: { kind: "removeTags", tags: ["jeunesse"] } });
+    expect(await tagsOf(a)).toEqual(["porte-à-porte"]);
+    const [log] =
+      await owner`select metadata from audit_log where party_id = ${A} and action = 'member.bulk_update' limit 1`;
+    expect(log?.metadata).toMatchObject({ op: "addTags", count: 2 });
+  });
+
+  it("tout ou rien : un seul membre hors de la zone bloque toute la sélection", async () => {
+    const pv = await member({ first: "Zone", last: "Ok", zone: "HT0114-01", state: "approved" });
+    const res = await bulk(pvWriter, { ids: [pv, ids.nord], op: { kind: "addTags", tags: ["x"] } });
+    expect(res.statusCode).toBe(403);
+    expect(await tagsOf(pv)).toEqual([]);
+    expect((await bulk(pvReader, { ids: [pv], op: { kind: "addTags", tags: ["x"] } })).statusCode).toBe(403);
+  });
+
+  it("change le statut, et refuse un statut inconnu", async () => {
+    const m = await member({ first: "Stat", last: "Ut", zone: "HT0114-01", state: "approved" });
+    const status = (
+      await owner`insert into member_statuses (party_id, label, rank) values (${A}, ${JSON.stringify({ fr: "Militant" })}::text::jsonb, 1) returning id`
+    )[0]!.id;
+    expect((await bulk(pvWriter, { ids: [m], op: { kind: "setStatus", statusId: status } })).statusCode).toBe(200);
+    expect((await owner`select status_id from members where id = ${m}`)[0]!.status_id).toBe(status);
+    const unknown = await bulk(pvWriter, { ids: [m], op: { kind: "setStatus", statusId: randomUUID() } });
+    expect(unknown.json().code).toBe("status_not_found");
+  });
+
+  it("valide plusieurs demandes, en comptant à part celles hors zone ou déjà traitées", async () => {
+    const p1 = await member({ first: "Lot", last: "Un", zone: "HT0114-01" });
+    const p2 = await member({ first: "Lot", last: "Deux", zone: "HT0114-02" });
+    const nord = await member({ first: "Lot", last: "Nord", zone: "HT0311-01" });
+    const res = await call("POST", "/applications/approve-many", pvApprover, { ids: [p1, p2, nord, ids.pv1] });
+    expect(res.json()).toEqual({ approved: 2, skipped: 2 });
+    const states = await owner`select id, application_state from members where id in ${owner([p1, p2, nord])}`;
+    expect(Object.fromEntries(states.map((s) => [s.id, s.application_state]))).toEqual({
+      [p1]: "approved",
+      [p2]: "approved",
+      [nord]: "pending",
+    });
+  });
+
+  it("exporte seulement la sélection, toujours dans la portée", async () => {
+    const res = await call("POST", "/members/export", pvApprover, {
+      format: "csv",
+      filters: { ids: [ids.pv2, ids.nord] },
+    });
+    const names = res.body
+      .trim()
+      .split("\r\n")
+      .slice(1)
+      .map((l) => l.split(";")[2]);
+    expect(names).toEqual(["Paul"]);
   });
 });

@@ -7,6 +7,7 @@
   import { page, navigating } from "$app/state";
   import { resolve } from "$app/paths";
   import { goto } from "$app/navigation";
+  import { enhance } from "$app/forms";
   import { Badge, Button, DataTable } from "@civora/ui";
   import { format, translator, type MessageKey } from "$lib/i18n";
   import type { ActionData, PageData } from "./$types";
@@ -90,6 +91,35 @@
       .join(", ");
 
   const pages = $derived(Math.max(1, Math.ceil(list.total / list.limit)));
+
+  // Sélection pour les actions groupées : vidée dès que la liste change (page, filtre, onglet).
+  let selected = $state<string[]>([]);
+  $effect(() => {
+    void list;
+    selected = [];
+  });
+  const can = (p: string) => data.me.permissions.includes(p);
+  const selectable = $derived(can("members.write") || can("members.export") || can("members.approve"));
+  let tool = $state<null | "add" | "remove" | "status">(null);
+  let bulkPending = $state(false);
+  const bulkSubmit = () => {
+    bulkPending = true;
+    return async ({ update }: { update: () => Promise<void> }) => {
+      await update();
+      bulkPending = false;
+      tool = null;
+    };
+  };
+  const bulkDone = $derived.by(() => {
+    const b = (form as { bulk?: { kind: string; n: number; skipped?: number } } | null)?.bulk;
+    if (!b) return null;
+    const main = format(tk(`admin.bulk.done.${b.kind}`), { n: String(b.n) });
+    return b.skipped ? `${main}. ${format(t("admin.bulk.done.skipped"), { n: String(b.skipped) })}` : main;
+  });
+  const bulkError = $derived.by(() => {
+    const f = form as { code?: string; bulk?: unknown } | null;
+    return f?.code && !data.sheet ? tk(`error.${f.code}`) : null;
+  });
   const from = $derived(list.total ? (list.page - 1) * list.limit + 1 : 0);
   const to = $derived(Math.min(list.total, list.page * list.limit));
 </script>
@@ -199,6 +229,10 @@
       rows={list.items}
       {loading}
       loadingLabel={t("admin.members.loading")}
+      {selectable}
+      bind:selected
+      selectAllLabel={t("admin.bulk.selectAll")}
+      selectRowLabel={(m) => format(t("admin.bulk.selectRow"), { name: `${m.firstName} ${m.lastName}` })}
     >
       {#snippet cell(m, col)}
         {#if col.key === "member"}
@@ -299,6 +333,72 @@
     </footer>
   </main>
 </div>
+
+{#if bulkDone || bulkError}
+  <p class="toast" class:bad={!!bulkError} role="status">{bulkError ?? bulkDone}</p>
+{/if}
+
+{#if selected.length > 0}
+  <section class="bulk" aria-label={t("admin.bulk.label")}>
+    <form method="POST" id="bulk" use:enhance={bulkSubmit}>
+      {#each selected as id (id)}<input type="hidden" name="ids" value={id} />{/each}
+    </form>
+    <p class="count-sel">
+      {selected.length === 1
+        ? t("admin.bulk.selectedOne")
+        : format(t("admin.bulk.selected"), { n: String(selected.length) })}
+    </p>
+
+    {#if tool === "add" || tool === "remove"}
+      <div class="tool">
+        <input type="hidden" form="bulk" name="mode" value={tool} />
+        <label>
+          <span class="sr-only">{t("admin.bulk.tag")}</span>
+          <input form="bulk" name="tag" maxlength="40" required placeholder={t("admin.bulk.tag")} autocomplete="off" />
+        </label>
+        <button type="submit" form="bulk" formaction="?/bulkTags" class="solid" disabled={bulkPending}
+          >{t("admin.bulk.apply")}</button
+        >
+        <button type="button" onclick={() => (tool = null)}>{t("common.cancel")}</button>
+      </div>
+    {:else if tool === "status"}
+      <div class="tool">
+        <label>
+          <span class="sr-only">{t("admin.sheet.status")}</span>
+          <select form="bulk" name="statusId">
+            <option value="">{t("admin.sheet.noStatus")}</option>
+            {#each data.statuses as s (s.id)}<option value={s.id}>{label(s.label)}</option>{/each}
+          </select>
+        </label>
+        <button type="submit" form="bulk" formaction="?/bulkStatus" class="solid" disabled={bulkPending}
+          >{t("admin.bulk.apply")}</button
+        >
+        <button type="button" onclick={() => (tool = null)}>{t("common.cancel")}</button>
+      </div>
+    {:else}
+      <div class="actions">
+        {#if data.state === "pending" && can("members.approve")}
+          <button type="submit" form="bulk" formaction="?/bulkApprove" class="solid" disabled={bulkPending}
+            >{t("admin.bulk.approve")}</button
+          >
+        {/if}
+        {#if can("members.write")}
+          <button type="button" onclick={() => (tool = "add")}>{t("admin.bulk.addTag")}</button>
+          <button type="button" onclick={() => (tool = "remove")}>{t("admin.bulk.removeTag")}</button>
+          <button type="button" onclick={() => (tool = "status")}>{t("admin.bulk.status")}</button>
+        {/if}
+        {#if can("members.export")}
+          <form method="POST" action="/admin/membres/export" class="inline">
+            {#each selected as id (id)}<input type="hidden" name="ids" value={id} />{/each}
+            <input type="hidden" name="format" value="xlsx" />
+            <button type="submit">{t("admin.bulk.export")}</button>
+          </form>
+        {/if}
+      </div>
+    {/if}
+    <button type="button" class="clear-sel" onclick={() => (selected = [])}>{t("admin.bulk.clear")}</button>
+  </section>
+{/if}
 
 {#if data.sheet}
   {#key data.sheet.member.id}
@@ -729,6 +829,150 @@
     }
     .search {
       flex: 1 1 0;
+    }
+  }
+  /* Barre d'actions groupées : sombre, en bas de l'écran, dès qu'une ligne est cochée. */
+  .bulk {
+    position: fixed;
+    left: 50%;
+    bottom: var(--s-6);
+    z-index: 15;
+    transform: translateX(calc(-50% + 36px));
+    width: max-content;
+    max-width: calc(100vw - 104px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3);
+    padding: var(--s-2) var(--s-2) var(--s-2) var(--s-5);
+    border-radius: var(--r-pill);
+    background: var(--c-ink);
+    color: var(--c-surface);
+    box-shadow: var(--shadow-object);
+  }
+  .count-sel {
+    margin: 0;
+    font: 700 var(--fs-15) / 1 var(--font-display);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .actions,
+  .tool {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-1);
+  }
+  .inline {
+    display: contents;
+  }
+  .bulk button {
+    min-height: 40px;
+    padding: 0 var(--s-4);
+    border: 0;
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: var(--c-surface);
+    font: 600 var(--fs-14) / 1 var(--font-ui);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .bulk button:hover {
+    background: color-mix(in srgb, var(--c-surface) 12%, transparent);
+  }
+  .bulk button.solid {
+    background: var(--c-accent-bright);
+    color: var(--c-on-accent);
+  }
+  .bulk button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+  .bulk button:focus-visible,
+  .bulk input:focus-visible,
+  .bulk select:focus-visible {
+    outline: 2px solid var(--c-accent-bright);
+    outline-offset: 2px;
+  }
+  .bulk input,
+  .bulk select {
+    min-height: 40px;
+    min-width: 180px;
+    padding: 0 var(--s-4);
+    border: 0;
+    border-radius: var(--r-pill);
+    background: var(--c-surface);
+    color: var(--c-ink);
+    font: 500 var(--fs-14) / 1 var(--font-ui);
+  }
+  .bulk .clear-sel {
+    color: color-mix(in srgb, var(--c-surface) 72%, transparent);
+  }
+  .toast {
+    position: fixed;
+    left: 50%;
+    top: var(--s-5);
+    z-index: 15;
+    transform: translateX(calc(-50% + 36px));
+    margin: 0;
+    padding: var(--s-3) var(--s-5);
+    border-radius: var(--r-pill);
+    background: var(--c-success-tint);
+    color: var(--c-success-text);
+    font-size: var(--fs-14);
+    box-shadow: var(--shadow-object);
+  }
+  .toast.bad {
+    background: var(--c-danger-tint);
+    color: var(--c-danger-text);
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  @media (max-width: 760px) {
+    .bulk,
+    .toast {
+      transform: translateX(-50%);
+      max-width: calc(100vw - 32px);
+    }
+    /* Téléphone : le nombre et « Tout désélectionner » en haut, les actions sur une ligne qui défile. */
+    .bulk {
+      left: var(--s-4);
+      right: var(--s-4);
+      bottom: 76px;
+      width: auto;
+      max-width: none;
+      transform: none;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--s-1);
+      padding: var(--s-2) var(--s-2) var(--s-2) var(--s-4);
+      border-radius: var(--r-lg);
+    }
+    .actions,
+    .tool {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+    }
+    .count-sel {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: center;
+    }
+    .clear-sel {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .bulk input,
+    .bulk select {
+      min-width: 140px;
     }
   }
 </style>
