@@ -15,6 +15,7 @@ import { PartyKeys } from "./lib/party-keys.js";
 import auditRoutes from "./modules/audit/routes.js";
 import authRoutes from "./modules/auth/routes.js";
 import territoryRoutes from "./modules/territory/routes.js";
+import organRoutes from "./modules/organs/routes.js";
 import { AuthService } from "./modules/auth/service.js";
 import auth from "./plugins/auth.js";
 import { loggerOptions } from "./lib/logger.js";
@@ -86,6 +87,7 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   await app.register(authRoutes);
   await app.register(auditRoutes);
   await app.register(territoryRoutes);
+  await app.register(organRoutes);
 
   app.get("/health", async () => ({ ok: true }));
 

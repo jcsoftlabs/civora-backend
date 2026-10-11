@@ -20,7 +20,9 @@ export default fp(async (app) => {
 
   app.setErrorHandler((err: FastifyError | ApiError | ZodError, req, reply) => {
     if (err instanceof ApiError) {
-      return reply.code(err.statusCode).send({ code: err.code, requestId: req.id });
+      // Détail public facultatif (palier requis pour une option verrouillée).
+      const extra = "requiredTier" in err ? { requiredTier: (err as { requiredTier: unknown }).requiredTier } : {};
+      return reply.code(err.statusCode).send({ code: err.code, ...extra, requestId: req.id });
     }
     if (err instanceof ZodError || ("validation" in err && err.validation)) {
       return reply.code(400).send({ code: "invalid_request", requestId: req.id });

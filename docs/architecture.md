@@ -64,6 +64,9 @@ await withParty(ctx.partyId, async (tx) => {
 - Profondeur selon le palier (`structureLevels`, `packages/shared/src/territory.ts`) pour les organes et les postes : Essentiel = national et communes ; Mouvement ajoute départements et villes de la diaspora ; National ajoute les sections communales. Un membre se localise toujours jusqu'à la section communale.
 - Les droits viennent des postes occupés (`post_holders`) ; chaque poste porte un ensemble de permissions (`permissions.ts`) et une portée territoriale. Un trésorier de section ne voit que sa section.
 - Vérification en deux couches : RLS pour le parti, `authorize(permission, zone)` dans l'API pour le rôle et la zone.
+- Organes et postes (`apps/api/src/modules/organs`) : un organe se rattache à une zone de niveau ouvert par le palier, un sous-organe reste dans la zone de son parent ; un poste prend par défaut la zone de son organe et ne la dépasse jamais (un organe local n'a pas de poste national).
+- **Anti-élévation de privilèges** (`holdsAll`) : créer, modifier ou attribuer un poste exige de détenir soi-même chacune de ses permissions sur une portée qui couvre la sienne ; retirer des droits exige aussi de détenir les anciens.
+- **Succession (ORG-04)** : les droits appartiennent au poste. Attribuer un successeur clôt le mandat en cours ; les droits sont relus en base à chaque requête, ils passent donc immédiatement. Chaque attribution, fin de mandat et changement de droits est audité (`role.change`, `post.update`).
 
 ## 4. Données sensibles
 

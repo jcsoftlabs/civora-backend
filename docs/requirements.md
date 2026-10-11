@@ -16,7 +16,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | SOC-03 | Marque blanche : thème app et site par parti ; app à son nom dans les stores | E M N (stores : N) | P2, P4 | Neuf | à faire |
 | SOC-04 | Domaine personnalisé pour le site public, certificat automatique | N | P4 | Neuf | à faire |
 | SOC-05 | Hiérarchie territoriale national, département, commune, section communale ; chaque responsable ne voit que sa zone | E M N (profondeur selon palier) | P2 | NOU | fait |
-| SOC-06 | Rôles, organes et postes définis librement par le parti | E M N | P2 | Neuf | à faire |
+| SOC-06 | Rôles, organes et postes définis librement par le parti | E M N | P2 | Neuf | fait |
 | SOC-07 | Activation des modules selon le palier, sans redéploiement | E M N | P2 | Neuf | fait |
 | SOC-08 | Abonnement, factures, relances, suspension après impayé (données gardées 90 jours) ; mesure de la consommation et facturation des dépassements | E M N | P3 | Neuf | à faire |
 | SOC-09 | Assistant de démarrage et import du fichier existant | E M N | P3 | Neuf | à faire |
@@ -149,10 +149,10 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| ORG-01 | Création libre des organes avec rattachement territorial | E M N | P2 | Neuf | à faire |
-| ORG-02 | Postes nommés par le parti dans chaque organe | E M N | P2 | Neuf | à faire |
-| ORG-03 | Profondeur hiérarchique libre dans la limite du palier | E M N | P2 | Neuf | à faire |
-| ORG-04 | Droits attachés au poste, transmis au successeur | E M N | P2 | Neuf | à faire |
+| ORG-01 | Création libre des organes avec rattachement territorial | E M N | P2 | Neuf | fait |
+| ORG-02 | Postes nommés par le parti dans chaque organe | E M N | P2 | Neuf | fait |
+| ORG-03 | Profondeur hiérarchique libre dans la limite du palier | E M N | P2 | Neuf | fait |
+| ORG-04 | Droits attachés au poste, transmis au successeur | E M N | P2 | Neuf | fait |
 | ORG-05 | Mandats datés, historique des titulaires | M N | P3 | Neuf | à faire |
 | ORG-06 | Organigramme interne ou public généré | M N | P3 | Neuf | à faire |
 | ORG-07 | Pourvoi d'un poste par nomination ou vote interne | M N | P3 | Neuf | à faire |
@@ -217,7 +217,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | SEC-02 | Chiffrement des pièces d'identité au niveau du champ, clé par parti | P2 | fait |
 | SEC-03 | TLS en transit, chiffrement au repos | P2 | en cours |
 | SEC-04 | Double authentification obligatoire pour les administrateurs | P2 | fait |
-| SEC-05 | Contrôle d'accès par rôle et par zone | P2 | à faire |
+| SEC-05 | Contrôle d'accès par rôle et par zone | P2 | fait |
 | SEC-06 | Journal d'audit inaltérable | P2 | fait |
 | SEC-07 | Aucun secret dans le code, rotation des clés | P1 | en cours |
 | SEC-08 | Liste blanche des origines REST et temps réel | P1 | fait |

@@ -27,7 +27,7 @@ Jalon : NOU migré sans perte, tests d'isolation réussis entre deux partis fict
 
 ### Territoire, organes, permissions
 - [x] Référentiel des 10 départements, communes, sections communales ; pays de la diaspora (SOC-05)
-- [ ] Organes, postes, droits attachés au poste, visibilité par zone (ORG-01 à ORG-04, SOC-06, SEC-05)
+- [x] Organes, postes, droits attachés au poste, visibilité par zone (ORG-01 à ORG-04, SOC-06, SEC-05)
 
 ### Membres et argent
 - [ ] Inscription mobile, fiche membre, statuts configurables, mode d'adhésion (ADH-01 à ADH-04)

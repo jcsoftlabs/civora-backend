@@ -67,3 +67,15 @@ export default fp<{ entitlements: EntitlementsCache }>(async (app, opts) => {
   });
   // P2 (authentification) : lire le jeton de session, renseigner partyId, memberId et grants (postes occupés).
 });
+
+/**
+ * Anti-élévation de privilèges (SEC-05) : la personne détient-elle CHACUNE de ces permissions, sur une portée qui
+ * couvre `zonePath` ? Exigé pour créer, modifier ou attribuer un poste : on ne donne que ce que l'on a.
+ */
+export function holdsAll(
+  req: Pick<FastifyRequest, "grants">,
+  permissions: readonly Permission[],
+  zonePath?: string,
+): boolean {
+  return permissions.every((p) => authorize(req, p, zonePath));
+}
