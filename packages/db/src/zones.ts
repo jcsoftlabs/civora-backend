@@ -30,12 +30,13 @@ export async function syncZones(sql: Sql, zones: ZoneRecord[] = loadZoneFiles())
   }
   await sql.begin(async (tx) => {
     for (const depth of [...byDepth.keys()].sort((a, b) => a - b)) {
-      // json() : sérialisation unique, quel que soit le type déjà connu du paramètre par la connexion.
-      const batch = tx.json(byDepth.get(depth) as unknown as Parameters<typeof tx.json>[0]);
+      // Envoyé comme texte puis converti en SQL (::text::jsonb) : une seule sérialisation, que la connexion
+      // connaisse déjà le type jsonb (double encodage sinon) ou non (le helper json() échoue alors).
+      const batch = JSON.stringify(byDepth.get(depth));
       await tx`
         insert into zones (code, level, name, name_ht, path, parent_id)
         select z.code, z.level::zone_level, z.name, z."nameHt", z.path::ltree, p.id
-        from jsonb_to_recordset(${batch})
+        from jsonb_to_recordset(${batch}::text::jsonb)
           as z(code text, level text, name text, "nameHt" text, path text, parent text)
         left join zones p on p.code = z.parent
         on conflict (code) do update set
