@@ -1,6 +1,6 @@
 # civora
 
-Plateforme SaaS par abonnement pour les partis politiques haïtiens : adhésion, cotisations et dons, organes et postes, rassemblements et gamification, votes internes, formation, communication, documents, finances, BI et module électoral. Conçue à partir de l'expérience du système NOU, développé séparément et sur mesure pour ce parti : NOU garde son propre système et n'est pas migré vers civora. Nom commercial provisoire.
+Plateforme SaaS par abonnement pour les partis politiques haïtiens, ouverte aussi aux associations, ONG et syndicats d'Haïti et de la diaspora (type d'organisation choisi à la création, SOC-11) : adhésion, cotisations et dons, organes et postes, rassemblements et gamification, votes internes, formation, communication, documents, finances, BI et module électoral. Conçue à partir de l'expérience du système NOU, développé séparément et sur mesure pour ce parti : NOU garde son propre système et n'est pas migré vers civora. Nom commercial provisoire.
 
 Auteur et responsable produit : Christopher Jerome.
 

@@ -64,6 +64,8 @@ Pas de migration de NOU : le parti garde le système développé sur mesure pour
 Jalon : deux partis pilotes actifs et facturés ; création d'un espace parti en moins d'une heure.
 
 - [ ] Formation complète, en premier de P3 (décision du 2026-10-12) : formations en modules séquentiels, chapitres (texte, vidéo, audio, document, lien YouTube ou Vimeo), quiz par module, progression bloquante (le module suivant s'ouvre quand le quiz du précédent est réussi, ou ses chapitres vus s'il n'a pas de quiz), seuil de réussite et reprises, obligations par statut, suivi par zone, certificat au modèle du parti (FOR-01 à FOR-04) : API faite (modules, chapitres, quiz sans fuite des réponses, verrouillage, tentatives, suivi par zone, modèle de certificat avec signataires et signatures, PDF avec logo et signatures) ; écrans du back-office faits (parcours par modules, éditeur de chapitre avec aperçu YouTube et Vimeo, constructeur de quiz, modèle de certificat avec signature tracée ou importée et aperçu en direct, exemplaire PDF) ; envoi des médias revu (aperçu, progression, annulation, reprise, albums enrichis au lieu d'être remplacés) ; écrans membre avec l'app mobile
+- [ ] Site commercial avant l'app mobile (décision du 2026-10-11), sur le modèle de qomon.com : promesse et capture du back-office, ce que civora remplace, un bloc par module avec sa capture, terrain haïtien, sécurité, tarifs, FAQ, demande de démo, création d'espace ; parle aux partis et aux associations (SOC-12)
+- [ ] Type d'organisation : parti, association, ONG, syndicat ; vocabulaire et modules adaptés (SOC-11)
 - [ ] Facturation plateforme : abonnements Stripe, factures, relances, suspension, mesure de l'usage et dépassements (SOC-08)
 - [ ] Assistant de démarrage et import : correspondance des colonnes, doublons, invitations, historique des cotisations (SOC-09, ADH-07 à ADH-10)
 - [ ] Parrainage configurable (ADH-05, ENG-01) ; carte de membre QR vérifiable (ADH-11)
@@ -78,7 +80,7 @@ Jalon : deux partis pilotes actifs et facturés ; création d'un espace parti en
 - [ ] BI de base : indicateurs, tableaux de bord, modèle documenté, exports, pseudonymisation (BI-01 à BI-04, BI-08 à BI-10) ; carte de couverture (PIL-02)
 - [ ] Console éditeur (SOC-10) ; export et suppression à la demande (SEC-10) ; accès du personnel tracé (SEC-11)
 - [ ] Exploitation : sauvegardes et restauration testée, supervision, page de statut, objectifs de performance (NFR-03, NFR-04, NFR-06, NFR-07)
-- [ ] Site commercial (maquette « Landing page ») et documentation utilisateur
+- [ ] Documentation utilisateur
 
 ## P4 : National et Élections (mois 7 à 10)
 
