@@ -160,3 +160,27 @@ describe("adresse IP de la personne (SEC-09)", () => {
     expect(() => loadConfig({ NODE_ENV: "production" })).toThrow(/WEB_SERVER_SECRET/);
   });
 });
+
+describe("envoi direct vers le stockage local (développement)", () => {
+  let app: Awaited<ReturnType<typeof buildApp>>;
+  beforeAll(async () => {
+    app = await buildApp(loadConfig({ NODE_ENV: "development", LOG_LEVEL: "silent", API_ALLOWED_ORIGINS: ALLOWED }));
+    await app.ready();
+  });
+  afterAll(() => app.close());
+  const preflight = (url: string, origin: string) =>
+    app.inject({
+      method: "OPTIONS",
+      url,
+      headers: { origin, "access-control-request-method": "PUT", "access-control-request-headers": "content-type" },
+    });
+
+  it("accepte l'adresse d'un parti en localhost, sur les routes du stockage local seulement", async () => {
+    const ok = await preflight("/storage/local/x?exp=1&sig=a", "http://parti-demo.localhost:5173");
+    expect(ok.headers["access-control-allow-origin"]).toBe("http://parti-demo.localhost:5173");
+    const api = await preflight("/members", "http://parti-demo.localhost:5173");
+    expect(api.headers["access-control-allow-origin"]).toBeUndefined();
+    const evil = await preflight("/storage/local/x", "https://parti-demo.localhost.evil.test");
+    expect(evil.headers["access-control-allow-origin"]).toBeUndefined();
+  });
+});

@@ -82,10 +82,23 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
 
   // SEC-08 : REST. Une origine absente (appel serveur à serveur, app mobile) n'obtient pas d'en-têtes CORS.
   await app.register(cors, {
-    origin: (origin, cb) => cb(null, isAllowedOrigin(origin, config.API_ALLOWED_ORIGINS)),
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    maxAge: 600,
+    delegator: (req, cb) => {
+      const origin = req.headers.origin;
+      // Exception étroite, développement seulement : le stockage local (qui tient lieu de R2) reçoit les envois
+      // directs du navigateur depuis l'adresse d'un parti (<slug>.localhost). En production, le navigateur
+      // envoie à R2, dont les règles CORS sont réglées sur le compartiment ; la liste blanche de l'API reste exacte.
+      const devStorage =
+        config.NODE_ENV !== "production" &&
+        req.url?.startsWith("/storage/local/") === true &&
+        typeof origin === "string" &&
+        /^http:\/\/[a-z0-9-]+\.localhost(:\d+)?$/.test(origin);
+      cb(null, {
+        origin: devStorage || isAllowedOrigin(origin, config.API_ALLOWED_ORIGINS),
+        credentials: !devStorage,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+        maxAge: 600,
+      });
+    },
   });
 
   await app.register(clientIp, { webSecret: config.WEB_SERVER_SECRET });

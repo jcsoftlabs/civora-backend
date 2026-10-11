@@ -7,6 +7,21 @@ export const UPLOAD_RULES = {
     types: ["image/png", "image/jpeg", "image/webp", "audio/mpeg", "audio/mp4", "audio/aac", "audio/x-m4a"],
     max: (type: string) => (type.startsWith("audio/") ? 100 : 10) * 1024 * 1024,
   },
+  training_media: {
+    types: [
+      "video/mp4",
+      "video/webm",
+      "audio/mpeg",
+      "audio/mp4",
+      "audio/aac",
+      "audio/x-m4a",
+      "application/pdf",
+      "image/png",
+      "image/jpeg",
+      "image/webp",
+    ],
+    max: (type: string) => (type.startsWith("video/") ? 300 : type.startsWith("audio/") ? 100 : 25) * 1024 * 1024,
+  },
 } as const;
 
 /**
