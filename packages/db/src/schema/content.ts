@@ -1,5 +1,5 @@
 // FOR-01 à FOR-04, COM-01 à COM-06, DOC-01 à DOC-08
-import { bigint, boolean, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { bigint, boolean, integer, jsonb, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 import { id, partyId, partyKey, sameParty, timestamps } from "./_helpers.js";
 import { organs } from "./organs.js";
 import { members } from "./people.js";
@@ -106,8 +106,31 @@ export const outreachCampaigns = pgTable("outreach_campaigns", {
   scheduledAt: timestamp("scheduled_at", { withTimezone: true }),
   sentCount: integer("sent_count").notNull().default(0),
   creditsUsed: integer("credits_used").notNull().default(0),
+  /** scheduled | sending | sent | cancelled : le worker envoie les campagnes dont l'heure est venue. */
+  status: text("status").notNull().default("scheduled"),
+  failedCount: integer("failed_count").notNull().default(0),
+  sentAt: timestamp("sent_at", { withTimezone: true }),
+  createdByMemberId: uuid("created_by_member_id"),
   ...timestamps,
 });
+
+/**
+ * Téléphones inscrits aux notifications push (COM-02). Le jeton FCM identifie l'appareil ; il est remplacé
+ * quand l'application le renouvelle et supprimé quand FCM le déclare invalide.
+ */
+export const pushDevices = pgTable(
+  "push_devices",
+  {
+    id: id(),
+    partyId: partyId(),
+    memberId: uuid("member_id").notNull(),
+    token: text("token").notNull(),
+    platform: text("platform").notNull(), // android | ios | web
+    lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).notNull().defaultNow(),
+    ...timestamps,
+  },
+  (t) => [unique().on(t.partyId, t.token), sameParty("push_devices", t.partyId, t.memberId, members)],
+);
 
 /** Segments enregistrés du back-office (constructeur de filtres). */
 export const savedSegments = pgTable("saved_segments", {

@@ -27,6 +27,8 @@ const schema = z
     RESEND_FROM: z.string().default("civora <notifications@civora.app>"),
     /** Fournisseur SMS de la plateforme : « none » en production tant qu'aucun n'est choisi, « log » en local. */
     SMS_PROVIDER: z.string().default("log"),
+    /** Compte de service Firebase (JSON) pour les notifications push ; absent en local : envois écrits au journal. */
+    FCM_SERVICE_ACCOUNT: z.string().optional(),
     /** Adresse publique de l'API : liens de retour et de notification donnés aux fournisseurs de paiement. */
     API_PUBLIC_URL: z.string().url().default("http://localhost:4000"),
   })

@@ -151,6 +151,13 @@ En place : `payments.reconcile` (toutes les 5 minutes) et `dues.generate` (2 h, 
 | `exports.scheduled` | selon planning | Exports BI programmés |
 | `elections.results` | temps réel | Consolider les PV |
 
+## 7 bis. Communication et agenda (COM-01, COM-02, ENG-03)
+
+- **Ciblage commun** (`apps/api/src/lib/audience.ts`) : zones (et leurs sous-zones), statuts, organes, diaspora ; critères combinés par ET, valeurs d'un critère par OU ; `null` = tout le parti. On ne cible que dans sa portée : chaque zone visée doit être dans sa zone, une audience sans zone exige un poste national.
+- **Publications** (annonces, actualités, éditoriaux ; podcasts et albums dès que le stockage R2 sera branché) : brouillon, publication immédiate ou programmée, retrait. Le fil d'un membre ne montre que ce qui le vise.
+- **Agenda** : un événement est visible de tout le parti, d'une zone (et ses sous-zones) ou des membres d'un organe. Inscription dans la limite des places, sous verrou (pas de surréservation), désistement avant le début, liste des inscrits pour le responsable de la zone.
+- **Notifications push** : l'application enregistre le jeton FCM du téléphone ; une campagne (titre et texte en fr et ht, audience, heure) est envoyée par le job `notifications.fanout` (chaque minute), réservée avant l'envoi (jamais deux fois), dans la langue de chaque membre, aux seuls membres validés. Les jetons déclarés invalides par FCM sont supprimés. Adaptateur FCM HTTP v1 (`FCM_SERVICE_ACCOUNT`) ; en local, les envois sont écrits au journal.
+
 ## 8. Hors ligne et synchronisation
 
 - Chaque saisie hors ligne (scan de présence, PV, fiche porte-à-porte) reçoit un UUID généré sur le téléphone et l'horodatage d'origine.

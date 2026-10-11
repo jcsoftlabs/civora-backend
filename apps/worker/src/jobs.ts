@@ -44,4 +44,11 @@ export const generateDues: JobDefinition = {
     })),
 };
 
-export const JOBS: JobDefinition[] = [reconcilePayments, generateDues];
+/** COM-02 : envoi des campagnes push dont l'heure est venue, chaque minute. */
+export const fanoutNotifications: JobDefinition = {
+  name: "notifications.fanout",
+  cron: "* * * * *",
+  run: (s, log) => forEachParty(log, "notifications.fanout", (partyId) => s.push.dispatchDue(partyId)),
+};
+
+export const JOBS: JobDefinition[] = [reconcilePayments, generateDues, fanoutNotifications];

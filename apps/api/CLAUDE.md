@@ -47,3 +47,4 @@ Les jobs pg-boss vivent dans `apps/worker`, qui importe les services de `apps/ap
 - Webhooks : vérifier la signature, traiter de façon idempotente, répondre vite et déléguer le travail lourd à un job.
 - Erreurs renvoyées au client : code stable + message traduisible, jamais de détail technique ni de donnée personnelle.
 - Chaque module a ses tests ; les tests d'intégration tournent sur un vrai Postgres.
+- **Sous-requêtes SQL** : dans un fragment `sql\`...\``, toujours qualifier les colonnes de la requête externe en clair (`"events"."organ_id"`), jamais `${events.organId}`. Sans jointure, drizzle n'écrit pas le nom de la table, et la colonne se lie alors à la table de la sous-requête si elle a une colonne du même nom (condition toujours vraie). Deux failles de visibilité évitées ainsi en P2.

@@ -37,9 +37,9 @@ Jalon : NOU migré sans perte, tests d'isolation réussis entre deux partis fict
 - [x] Saisie des espèces par un trésorier, reçu (FIN-10)
 
 ### Communication et pilotage
-- [ ] Annonces, actualités, podcasts, albums multi-partis (COM-01)
-- [ ] Notifications push ciblées (COM-02)
-- [ ] Agenda et événements (ENG-03)
+- [ ] Annonces, actualités, podcasts, albums multi-partis (COM-01) : annonces et actualités faites ; médias des podcasts et albums avec le stockage R2
+- [x] Notifications push ciblées (COM-02) : FCM à configurer (compte de service du projet Firebase)
+- [x] Agenda et événements (ENG-03)
 - [ ] Statistiques par zone (PIL-01)
 
 ### Interfaces

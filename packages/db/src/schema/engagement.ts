@@ -21,6 +21,10 @@ export const events = pgTable(
     geofenceMeters: integer("geofence_meters"), // PRE-03
     qrSecretRef: text("qr_secret_ref").notNull(), // secret HMAC pour le QR tournant (PRE-02)
     rotatingQr: boolean("rotating_qr").notNull().default(false),
+    description: jsonb("description"), // I18nText
+    address: text("address"),
+    /** Nombre maximal d'inscrits ; null = sans limite. */
+    capacity: integer("capacity"),
     pointsOverride: integer("points_override"), // GAM-02
     quorum: integer("quorum"), // ENG-04
     ...timestamps,

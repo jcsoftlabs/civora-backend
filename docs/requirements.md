@@ -69,8 +69,8 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| COM-01 | Annonces, actualités, podcasts, albums | E M N | P2 | NOU | à faire |
-| COM-02 | Notifications push ciblées par zone, statut et profil | E M N | P2 | NOU | à faire |
+| COM-01 | Annonces, actualités, podcasts, albums | E M N | P2 | NOU | en cours |
+| COM-02 | Notifications push ciblées par zone, statut et profil | E M N | P2 | NOU | fait |
 | COM-03 | SMS et WhatsApp groupés, facturés sur crédits | E M N | P3 | Neuf | à faire |
 | COM-04 | Accès USSD sans smartphone | M N | P5 | Neuf | à faire |
 | COM-05 | Messages vocaux en créole | M N | P5 | Neuf | à faire |
@@ -82,7 +82,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | --- | --- | --- | --- | --- | --- |
 | ENG-01 | Parrainage par QR code, suivi des filleuls, points selon le barème | M N | P3 | NOU | à faire |
 | ENG-02 | Sondages ciblés, résultats en temps réel | M N | P3 | NOU | à faire |
-| ENG-03 | Agenda et événements avec inscription | E M N | P2 | NOU | à faire |
+| ENG-03 | Agenda et événements avec inscription | E M N | P2 | NOU | fait |
 | ENG-04 | Réunions : convocation, quorum, présence par QR, procès-verbal | N | P4 | Neuf | à faire |
 | ENG-05 | Pétitions et collecte de propositions | N | P4 | Neuf | à faire |
 

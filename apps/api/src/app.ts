@@ -16,12 +16,15 @@ import auditRoutes from "./modules/audit/routes.js";
 import authRoutes from "./modules/auth/routes.js";
 import territoryRoutes from "./modules/territory/routes.js";
 import organRoutes from "./modules/organs/routes.js";
+import communicationRoutes from "./modules/communication/routes.js";
 import duesRoutes from "./modules/dues/routes.js";
 import moneyRoutes from "./modules/money/routes.js";
 import { PaymentsService } from "./modules/money/service.js";
 import { OnlinePayments, type LocalProvider } from "./modules/money/online.js";
 import { EnvCredentialStore, type CredentialStore } from "./lib/payments/credentials.js";
 import { buildPaymentProviders } from "./lib/payments/registry.js";
+import { buildPushSender } from "./lib/messaging/push-registry.js";
+import type { PushSender } from "./lib/messaging/push.js";
 import type { PaymentProvider } from "./lib/payments/types.js";
 import { DuesService } from "./modules/dues/service.js";
 import { ApplicationsService } from "./modules/members/applications.js";
@@ -43,6 +46,7 @@ export interface AppDeps {
   keys?: PartyKeys;
   email?: EmailSender;
   paymentProviders?: Partial<Record<LocalProvider, PaymentProvider>>;
+  push?: PushSender;
   credentials?: CredentialStore;
 }
 
@@ -113,6 +117,7 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
     applications: new ApplicationsService(deps.email ?? emailSender, dues),
   });
   await app.register(duesRoutes, { dues });
+  await app.register(communicationRoutes, { push: deps.push ?? buildPushSender(config, app.log) });
   const providers = deps.paymentProviders ?? buildPaymentProviders(config.NODE_ENV);
   await app.register(moneyRoutes, {
     payments: new PaymentsService(deps.email ?? emailSender),
