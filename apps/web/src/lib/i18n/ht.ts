@@ -1,4 +1,5 @@
 // Kreyòl ayisyen. Tradiksyon pou yon moun ki pale kreyòl natifnatal relè anvan lansman (NFR-08).
+import { votesHt } from "./votes.ht";
 import type { MessageKey } from "./fr";
 import { consoleHt } from "./console.ht";
 import { marketingHt } from "./marketing.ht";
@@ -1077,5 +1078,6 @@ export const ht: Record<MessageKey, string> = {
   "admin.settings.saveKind": "Anrejistre kalite a",
   "admin.settings.saved.kind": "Kalite òganizasyon an anrejistre",
   ...consoleHt,
+  ...votesHt,
   ...marketingHt,
 };

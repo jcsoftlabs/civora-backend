@@ -47,6 +47,12 @@
       visible: data.me.permissions.includes("training.manage"),
     },
     {
+      href: resolve("/admin/votes"),
+      label: t("admin.nav.votes"),
+      icon: "votes",
+      visible: data.me.permissions.includes("votes.manage"),
+    },
+    {
       href: resolve("/admin/communication"),
       label: t("admin.nav.communication"),
       icon: "communication",
@@ -93,6 +99,11 @@
                 <!-- Formation : livre ouvert. -->
                 <path d="M12 6.5c-2-1.6-4.8-2-8-1.6v12.6c3.2-.4 6 0 8 1.6 2-1.6 4.8-2 8-1.6V4.9c-3.2-.4-6 0-8 1.6z" />
                 <path d="M12 6.5v12.6" />
+              {:else if m.icon === "votes"}
+                <!-- Votes : urne et bulletin glissé dans la fente. -->
+                <path d="M4 11.5h16v8.5H4z" />
+                <path d="M8.5 11.5V4h7v7.5" />
+                <path d="M10.5 7.5l1.3 1.3 2.2-2.6M7 14.5h10" />
               {:else if m.icon === "audit"}
                 <!-- Journal : registre scellé. -->
                 <path d="M6 3.5h9l3 3v14H6z" />

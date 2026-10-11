@@ -72,7 +72,7 @@ Jalon : deux partis pilotes actifs et facturés ; création d'un espace parti en
 - [ ] Cotisations avancées : montants différenciés, rappels, effets du retard, paiement d'avance, Stripe diaspora, campagnes de dons (FIN-02, FIN-04, FIN-06 à FIN-08, FIN-11)
 - [ ] Présence aux rassemblements : QR tournant, fenêtre et géorepérage, hors ligne, mode inverse, liste temps réel (PRE-01 à PRE-07)
 - [ ] Gamification : barème, bonus, badges, classements, journal (GAM-01 à GAM-05, GAM-09)
-- [ ] Votes internes : corps électoral par règles, liste figée, candidatures, modes, quorum, PV, installation du gagnant (VOT-01 à VOT-07, VOT-09, VOT-10)
+- [x] Votes internes : corps électoral par règles, liste figée, candidatures, modes, quorum, PV, installation du gagnant (VOT-01 à VOT-07, VOT-09, VOT-10) : API complète (vote secret sans lien entre reçu et bulletin, journal des empreintes, deux tours, liste, oui ou non), back-office (liste, création, fiche avec déroulé, candidats, liste électorale et contestations, résultats, procès-verbal PDF) ; écrans du membre (vote, candidature, contestation) avec l'app mobile
 - [ ] Organes avancés : mandats, organigramme, pourvoi par vote, organes secrets et canaux (ORG-05 à ORG-08)
 - [ ] SMS et WhatsApp sur crédits (COM-03) ; messagerie et support (COM-06) ; sondages (ENG-02)
 - [ ] Documents et stockage R2 avec quotas, alertes, packs, corbeille (DOC-01 à DOC-08)

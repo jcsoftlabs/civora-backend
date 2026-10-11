@@ -106,9 +106,12 @@ await withParty(ctx.partyId, async (tx) => {
 
 ## 5. Votes internes
 
-- `elections` (scrutin) et `election_rules` (corps électoral) ; la liste électorale figée est matérialisée dans `electoral_rolls`.
-- Au vote : dans une même transaction, insertion d'un `ballot_receipts` (membre, scrutin, horodatage) et d'un `ballots` (scrutin, choix, jeton aléatoire), **sans lien** entre les deux. Contrainte d'unicité sur (scrutin, membre) dans les reçus.
-- Les résultats ne sont lisibles qu'après clôture. Le journal vérifiable publie l'empreinte de chaque bulletin.
+- `elections` porte le scrutin et ses règles : nature (poste ou question), zone, mode (majorité simple, deux tours, liste, oui ou non), sièges, quorum, seuil, vote blanc, corps électoral (`rules`) et conditions des candidats (`eligibility`), deux expressions de filtre identiques à celles de la liste des membres. L'étape (brouillon, liste figée, vote ouvert, à dépouiller, dépouillé, certifié) se déduit de l'état et des dates.
+- Le gel calcule la liste une fois et la matérialise dans `electoral_rolls` ; ensuite seule une contestation acceptée (`roll_contests`) la modifie, et seulement avant l'ouverture. Les candidatures en ligne s'ouvrent avec la publication de la liste.
+- Au vote, dans une même transaction : un `ballot_receipts` (membre, tour, heure tronquée à l'heure) et un `ballots` (tour, choix, empreinte), **sans aucune colonne commune** hormis le scrutin. Le bulletin n'a ni votant ni horodatage, son identifiant est aléatoire. Unicité (scrutin, membre, tour) sur les reçus.
+- Le votant reçoit un code de reçu qui n'est conservé nulle part ; le bulletin porte `sha256("civora-ballot:" + scrutin + ":" + tour + ":" + code)`. Après dépouillement, le journal publie les empreintes triées et l'empreinte de l'ensemble, reprise au procès-verbal : chacun vérifie que son bulletin a été compté, sans pouvoir prouver son choix à un tiers.
+- Dépouillement après la clôture seulement, sous verrou consultatif, par une fonction pure (`modules/votes/tally.ts`) ; deux tours : second tour entre les deux premiers (et les ex aequo du deuxième), même liste. Résultats visibles des membres après certification (`votes.certify`, auditée), qui installe l'élu dans le poste lié (`post_holders.source_election_id`) et clôt le mandat en cours.
+- Risque résiduel documenté : un opérateur de la base qui lirait l'ordre physique d'insertion pourrait rapprocher reçus et bulletins d'une même heure. Pistes : insertion différée et mélangée des bulletins par lot (job), ou chiffrement des bulletins jusqu'au dépouillement.
 
 ## 6. Paiements
 

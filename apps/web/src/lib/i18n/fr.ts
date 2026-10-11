@@ -1,4 +1,5 @@
 // Français, langue de référence : toute clé existe ici d'abord.
+import { votesFr } from "./votes.fr";
 import { consoleFr } from "./console.fr";
 import { marketingFr } from "./marketing.fr";
 export const fr = {
@@ -1099,6 +1100,7 @@ export const fr = {
   "admin.settings.saveKind": "Enregistrer le type",
   "admin.settings.saved.kind": "Type d'organisation enregistré",
   ...consoleFr,
+  ...votesFr,
   ...marketingFr,
 } as const;
 

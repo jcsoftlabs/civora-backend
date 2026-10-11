@@ -118,16 +118,16 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| VOT-01 | Création d'un scrutin : poste ou question, dates, candidats ou options | E (1 actif) M N | P3 | Neuf | à faire |
-| VOT-02 | Corps électoral par règles combinables : zone, organe, statut, ancienneté, cotisation à jour | E M N | P3 | Neuf | à faire |
-| VOT-03 | Liste électorale figée, consultable et contestable | M N | P3 | Neuf | à faire |
-| VOT-04 | Candidatures en ligne avec conditions d'éligibilité | M N | P3 | Neuf | à faire |
-| VOT-05 | Un vote par membre, vote secret | E M N | P3 | Neuf | à faire |
-| VOT-06 | Modes : majorité simple, deux tours, liste, oui ou non | M N | P3 | Neuf | à faire |
-| VOT-07 | Quorum et seuil de validité | E M N | P3 | Neuf | à faire |
+| VOT-01 | Création d'un scrutin : poste ou question, dates, candidats ou options | E (1 actif) M N | P3 | Neuf | fait |
+| VOT-02 | Corps électoral par règles combinables : zone, organe, statut, ancienneté, cotisation à jour | E M N | P3 | Neuf | fait |
+| VOT-03 | Liste électorale figée, consultable et contestable | M N | P3 | Neuf | fait |
+| VOT-04 | Candidatures en ligne avec conditions d'éligibilité | M N | P3 | Neuf | fait |
+| VOT-05 | Un vote par membre, vote secret | E M N | P3 | Neuf | fait |
+| VOT-06 | Modes : majorité simple, deux tours, liste, oui ou non | M N | P3 | Neuf | fait |
+| VOT-07 | Quorum et seuil de validité | E M N | P3 | Neuf | fait |
 | VOT-08 | Vote sur place en assemblée par QR code | N | P4 | Neuf | à faire |
-| VOT-09 | Résultats après clôture, procès-verbal, journal vérifiable | E M N | P3 | Neuf | à faire |
-| VOT-10 | Installation automatique du gagnant dans le poste | M N | P3 | Neuf | à faire |
+| VOT-09 | Résultats après clôture, procès-verbal, journal vérifiable | E M N | P3 | Neuf | fait |
+| VOT-10 | Installation automatique du gagnant dans le poste | M N | P3 | Neuf | fait |
 
 ## CPT : finances et conformité
 

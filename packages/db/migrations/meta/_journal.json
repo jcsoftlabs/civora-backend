@@ -141,6 +141,13 @@
       "when": 1791753777438,
       "tag": "0019_console",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1791755955905,
+      "tag": "0020_internal_votes",
+      "breakpoints": true
     }
   ]
 }
