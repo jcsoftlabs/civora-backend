@@ -131,6 +131,11 @@ await withParty(ctx.partyId, async (tx) => {
 
 ## 7. Jobs pg-boss
 
+Processus séparé `apps/worker`. La file pg-boss vit dans le schéma `pgboss`, **créé par les migrations avec le rôle propriétaire**, ainsi que les files listées dans `JOB_QUEUES` (`packages/shared/src/jobs.ts`). Le worker se connecte avec `civora_app` (`migrate: false`) : il lit et écrit des jobs, sans aucun droit de créer une table ou un schéma, et la RLS s'applique à tout ce qu'il fait. La seule lecture transversale est `job_party_ids()`, qui ne renvoie que les identifiants des partis ; chaque job traite ensuite un parti à la fois dans `withParty()`, et l'échec d'un parti n'arrête pas les autres. Les règles métier viennent de `@civora/api/jobs`.
+
+En place : `payments.reconcile` (toutes les 5 minutes) et `dues.generate` (2 h, heure d'Haïti). Les autres jobs du tableau s'ajoutent au fil des modules.
+
+
 | Job | Fréquence | Rôle |
 | --- | --- | --- |
 | `payments.reconcile` | 5 min | Vérifier les paiements en attente |

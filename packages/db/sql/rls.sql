@@ -23,8 +23,10 @@ BEGIN
 END $$;
 
 -- La table parties elle-même : un parti ne voit que sa propre ligne.
+-- Pas de FORCE ici : la fonction job_party_ids() (sql/jobs.sql), qui appartient au propriétaire, doit pouvoir
+-- énumérer les identifiants des partis pour le worker. civora_app reste soumis à la RLS.
 ALTER TABLE parties ENABLE ROW LEVEL SECURITY;
-ALTER TABLE parties FORCE ROW LEVEL SECURITY;
+ALTER TABLE parties NO FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS party_self ON parties;
 CREATE POLICY party_self ON parties USING (id = nullif(current_setting('app.party_id', true), '')::uuid);
 

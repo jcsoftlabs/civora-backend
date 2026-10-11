@@ -33,7 +33,7 @@ Jalon : NOU migré sans perte, tests d'isolation réussis entre deux partis fict
 - [ ] Inscription mobile, fiche membre, statuts configurables, mode d'adhésion (ADH-01 à ADH-04) : API faite ; photo (stockage R2) et écrans mobiles à faire
 - [x] Validation des adhésions, export journalisé (ADH-06, ADH-12)
 - [x] Formules de cotisation, échéances (FIN-03, FIN-05)
-- [ ] MonCash, NatCash, KashPaw : webhooks, job de vérification, idempotence, comptes marchands du parti (FIN-01, FIN-12) : fait avec le faux fournisseur ; MonCash à valider en sandbox, NatCash et KashPaw en attente d'accès, job à brancher sur le worker
+- [ ] MonCash, NatCash, KashPaw : webhooks, job de vérification, idempotence, comptes marchands du parti (FIN-01, FIN-12) : fait avec le faux fournisseur ; job de vérification en place (worker) ; MonCash à valider en sandbox, NatCash et KashPaw en attente d'accès
 - [x] Saisie des espèces par un trésorier, reçu (FIN-10)
 
 ### Communication et pilotage

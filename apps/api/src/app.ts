@@ -21,9 +21,7 @@ import moneyRoutes from "./modules/money/routes.js";
 import { PaymentsService } from "./modules/money/service.js";
 import { OnlinePayments, type LocalProvider } from "./modules/money/online.js";
 import { EnvCredentialStore, type CredentialStore } from "./lib/payments/credentials.js";
-import { FakeProvider } from "./lib/payments/fake.js";
-import { MonCashProvider } from "./lib/payments/moncash.js";
-import { PendingProvider } from "./lib/payments/pending.js";
+import { buildPaymentProviders } from "./lib/payments/registry.js";
 import type { PaymentProvider } from "./lib/payments/types.js";
 import { DuesService } from "./modules/dues/service.js";
 import { ApplicationsService } from "./modules/members/applications.js";
@@ -115,13 +113,7 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
     applications: new ApplicationsService(deps.email ?? emailSender, dues),
   });
   await app.register(duesRoutes, { dues });
-  const providers: Partial<Record<LocalProvider, PaymentProvider>> = deps.paymentProviders ?? {
-    moncash: new MonCashProvider(),
-    natcash: new PendingProvider("natcash"),
-    kashpaw: new PendingProvider("kashpaw"),
-    // Faux fournisseur : jamais en production.
-    ...(config.NODE_ENV === "production" ? {} : { fake: new FakeProvider() }),
-  };
+  const providers = deps.paymentProviders ?? buildPaymentProviders(config.NODE_ENV);
   await app.register(moneyRoutes, {
     payments: new PaymentsService(deps.email ?? emailSender),
     online: new OnlinePayments({

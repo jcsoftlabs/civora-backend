@@ -89,3 +89,12 @@ export async function withReferenceData<T>(fn: (tx: Tx) => Promise<T>): Promise<
     return fn(tx);
   });
 }
+
+/**
+ * Identifiants de tous les partis, pour les tâches de fond (sql/jobs.sql). Rien d'autre n'est lisible sans
+ * contexte de parti : chaque job traite ensuite un parti à la fois dans withParty().
+ */
+export async function listPartyIdsForJobs(): Promise<string[]> {
+  const rows = await db.execute<{ id: string }>(sql`select job_party_ids() as id`);
+  return rows.map((r) => r.id);
+}

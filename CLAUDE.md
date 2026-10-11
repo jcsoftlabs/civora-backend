@@ -65,7 +65,7 @@ Fastify ne va jamais sur Vercel : WebSocket persistants et jobs permanents. Clou
 ```
 apps/
   api/            Fastify : modules métier, webhooks, temps réel
-  worker/         (à créer) processus pg-boss séparé de l'API
+  worker/         processus pg-boss séparé de l'API (jobs planifiés)
   web/            SvelteKit : /admin (parti), /console (éditeur), sites publics par domaine
   mobile/         Flutter
 packages/
@@ -117,6 +117,7 @@ scripts/          outils de contrôle (check-requirements)
 ```
 pnpm install
 pnpm dev                 # api + web
+pnpm dev:worker          # tâches de fond (pg-boss)
 pnpm test
 pnpm db:generate         # générer une migration Drizzle
 pnpm db:migrate

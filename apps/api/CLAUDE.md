@@ -15,7 +15,7 @@ src/
   lib/                   crypto (chiffrement enveloppe), r2, resend, sms, fcm
 ```
 
-Les jobs pg-boss vivent dans `apps/worker` (à créer en P2), qui importe les services de `apps/api`.
+Les jobs pg-boss vivent dans `apps/worker`, qui importe les services de `apps/api` via `@civora/api/jobs` (`src/jobs.ts`).
 
 ## Modules et exigences
 
