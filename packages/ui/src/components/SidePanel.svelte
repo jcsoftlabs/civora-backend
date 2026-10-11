@@ -54,7 +54,7 @@
     <header>
       <h2 id="panel-{uid}-title">{title}</h2>
       <div class="tools">
-        {#if advanced && simpleModeLabel}
+        {#if simpleModeLabel}
           <button type="button" class="simple" aria-pressed={simpleMode} onclick={() => (simpleMode = !simpleMode)}>
             {simpleModeLabel}
           </button>

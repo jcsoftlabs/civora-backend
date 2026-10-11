@@ -20,6 +20,12 @@
       icon: "members",
       visible: data.me.permissions.includes("members.read"),
     },
+    {
+      href: resolve("/admin/organes"),
+      label: t("admin.nav.organs"),
+      icon: "organs",
+      visible: data.me.permissions.includes("organs.manage"),
+    },
   ]);
 </script>
 
@@ -37,10 +43,19 @@
             title={m.label}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="9" cy="8" r="3.2" />
-              <path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5" />
-              <circle cx="17" cy="9" r="2.4" />
-              <path d="M15.6 14.2c2.4-.3 4.3 1.3 4.9 4.3" />
+              {#if m.icon === "organs"}
+                <!-- Organigramme : un bureau, trois sections. -->
+                <rect x="9" y="3.5" width="6" height="4.5" rx="1.2" />
+                <rect x="3" y="15.5" width="5" height="4.5" rx="1.2" />
+                <rect x="9.5" y="15.5" width="5" height="4.5" rx="1.2" />
+                <rect x="16" y="15.5" width="5" height="4.5" rx="1.2" />
+                <path d="M12 8v4M5.5 15.5V12h13v3.5M12 12v3.5" />
+              {:else}
+                <circle cx="9" cy="8" r="3.2" />
+                <path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5" />
+                <circle cx="17" cy="9" r="2.4" />
+                <path d="M15.6 14.2c2.4-.3 4.3 1.3 4.9 4.3" />
+              {/if}
             </svg>
           </a>
           <!-- eslint-enable svelte/no-navigation-without-resolve -->

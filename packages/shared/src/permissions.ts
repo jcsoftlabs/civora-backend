@@ -52,6 +52,25 @@ export const PERMISSIONS = [
 
 export type Permission = (typeof PERMISSIONS)[number];
 
+/** Regroupement pour l'écran des postes (cases à cocher par domaine). Couvre toute la liste, une seule fois. */
+export const PERMISSION_GROUPS: Record<string, Permission[]> = {
+  members: ["members.read", "members.write", "members.approve", "members.export", "members.import", "identity.read"],
+  money: [
+    "dues.manage",
+    "payments.read",
+    "payments.recordCash",
+    "donations.manage",
+    "finance.ledger",
+    "finance.budgets",
+  ],
+  organization: ["organs.manage", "posts.assign", "settings.party", "billing.manage"],
+  engagement: ["events.manage", "attendance.scanOthers", "gamification.manage", "surveys.manage"],
+  votes: ["votes.manage", "votes.certify"],
+  content: ["publications.manage", "outreach.send", "training.manage", "documents.read", "documents.write"],
+  data: ["bi.read", "bi.export", "bi.connector", "audit.read"],
+  elections: ["elections.manage", "elections.supervise", "elections.observe", "elections.legal"],
+};
+
 /** Modèles proposés à la création d'un espace : le parti peut les renommer et les modifier. */
 export const POST_TEMPLATES: Record<string, Permission[]> = {
   "Président ou présidente": [...PERMISSIONS],

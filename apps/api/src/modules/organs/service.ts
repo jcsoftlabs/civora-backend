@@ -95,6 +95,7 @@ export async function listOrgans(req: Req) {
         parentOrganId: organs.parentOrganId,
         zoneCode: zones.code,
         zoneName: zones.name,
+        zoneLevel: zones.level,
         zonePath: zones.path,
         postCount: sql<number>`(select count(*)::int from posts p where p.organ_id = "organs"."id")`,
         memberCount: sql<number>`(select count(*)::int from organ_members m where m.organ_id = "organs"."id")`,
@@ -102,9 +103,45 @@ export async function listOrgans(req: Req) {
       .from(organs)
       .leftJoin(zones, eq(zones.id, organs.zoneId))
       .orderBy(asc(organs.name));
-    return rows
-      .filter((o) => national || (o.zonePath !== null && scopes.some((g) => zoneWithin(o.zonePath!, g.zonePath!))))
-      .map(({ zonePath: _p, ...o }) => o);
+    const visible = rows.filter(
+      (o) => national || (o.zonePath !== null && scopes.some((g) => zoneWithin(o.zonePath!, g.zonePath!))),
+    );
+    // Titulaires en cours de chaque organe : pile d'avatars des responsables sur la grille.
+    const now = new Date();
+    const holders = visible.length
+      ? await tx
+          .select({
+            organId: posts.organId,
+            postTitle: posts.title,
+            memberId: members.id,
+            firstName: members.firstName,
+            lastName: members.lastName,
+          })
+          .from(postHolders)
+          .innerJoin(posts, and(eq(posts.partyId, postHolders.partyId), eq(posts.id, postHolders.postId)))
+          .innerJoin(members, and(eq(members.partyId, postHolders.partyId), eq(members.id, postHolders.memberId)))
+          .where(
+            and(
+              inArray(
+                posts.organId,
+                visible.map((o) => o.id),
+              ),
+              lte(postHolders.startsAt, now),
+              or(isNull(postHolders.endsAt), gt(postHolders.endsAt, now)),
+            ),
+          )
+          .orderBy(asc(postHolders.startsAt))
+      : [];
+    return visible.map(({ zonePath: _p, ...o }) => {
+      const mine = holders.filter((h) => h.organId === o.id);
+      const filled = new Set(mine.map((h) => h.postTitle));
+      return {
+        ...o,
+        holders: mine.slice(0, 5).map(({ organId: _o, ...h }) => h),
+        holderCount: mine.length,
+        vacantPosts: Math.max(0, o.postCount - filled.size),
+      };
+    });
   });
 }
 

@@ -230,6 +230,18 @@ describe("organes et territoire (ORG-01, ORG-03)", () => {
       expect(holders.map((h: { memberId: string }) => h.memberId)).toEqual([treasurerB.id]);
     });
 
+    it("la grille des organes montre les responsables en cours et les postes vacants", async () => {
+      const organ = (await call("GET", "/organs", pvCoordinator.token))
+        .json()
+        .organs.find((o: { id: string }) => o.id === pv);
+      expect(organ.holders.map((h: { memberId: string }) => h.memberId)).toContain(treasurerB.id);
+      expect(organ.holders.map((h: { memberId: string }) => h.memberId)).not.toContain(treasurerA.id);
+      expect(organ.vacantPosts).toBe(
+        organ.postCount - new Set(organ.holders.map((h: { postTitle: string }) => h.postTitle)).size,
+      );
+      expect(organ.zoneLevel).toBe("commune");
+    });
+
     it("refuse d'attribuer un poste à une adhésion non validée", async () => {
       const res = await call("POST", `/posts/${treasurerPost}/holders`, pvCoordinator.token, { memberId: pending.id });
       expect(res.json()).toMatchObject({ code: "member_not_eligible" });
