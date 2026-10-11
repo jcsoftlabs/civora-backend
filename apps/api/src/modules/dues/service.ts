@@ -311,7 +311,24 @@ export class DuesService {
         outstanding[o.currency] = `${total / 100n}.${String(total % 100n).padStart(2, "0")}`;
       }
     }
-    return { upToDate: !obligations.some((o) => o.state === "late"), outstanding, obligations };
+    // Formules suivies en ce moment : affichées dans la fiche, retirables par un trésorier de la zone.
+    const subscriptions = await tx
+      .select({
+        planId: duesSubscriptions.planId,
+        name: duesPlans.name,
+        amount: duesPlans.amount,
+        currency: duesPlans.currency,
+        periodicity: duesPlans.periodicity,
+        startsOn: duesSubscriptions.startsOn,
+      })
+      .from(duesSubscriptions)
+      .innerJoin(
+        duesPlans,
+        and(eq(duesPlans.partyId, duesSubscriptions.partyId), eq(duesPlans.id, duesSubscriptions.planId)),
+      )
+      .where(and(eq(duesSubscriptions.memberId, memberId), isNull(duesSubscriptions.endsOn)))
+      .orderBy(asc(duesSubscriptions.startsOn));
+    return { upToDate: !obligations.some((o) => o.state === "late"), outstanding, obligations, subscriptions };
   }
 
   async myDues(req: Req) {

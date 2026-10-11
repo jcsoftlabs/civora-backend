@@ -12,14 +12,20 @@
   interface Props {
     member: MemberDetail;
     dues: DuesStatement | null;
+    /** Formules actives que la personne peut attribuer (dues.manage) ; vide sinon. */
+    plans: Array<{ id: string; name: { fr: string; ht?: string }; amount: string; currency: string }>;
     party: { name: string; brandColor: string; brandColorSecondary: string | null; logoUrl: string | null };
     statuses: Array<{ id: string; label: { fr: string; ht?: string } }>;
     permissions: string[];
     locale: "fr" | "ht";
-    form: { ok?: boolean; done?: "saved" | "approved" | "rejected"; code?: string } | null;
+    form: {
+      ok?: boolean;
+      done?: "saved" | "approved" | "rejected" | "subscribed" | "unsubscribed";
+      code?: string;
+    } | null;
     onclose: () => void;
   }
-  let { member: m, dues: statement, party, statuses, permissions, locale, form, onclose }: Props = $props();
+  let { member: m, dues: statement, plans, party, statuses, permissions, locale, form, onclose }: Props = $props();
   const t = $derived(translator(locale));
   const tk = (k: string) => t(k as MessageKey);
   const label = (l: { fr: string; ht?: string } | null) => (l ? (locale === "ht" && l.ht ? l.ht : l.fr) : "");
@@ -31,6 +37,9 @@
   // Relevé de cotisations : seulement pour un membre validé, et si le poste le permet.
   const dues = $derived(m.applicationState === "approved" ? statement : null);
   const canWrite = $derived(permissions.includes("members.write"));
+  const canDues = $derived(permissions.includes("dues.manage"));
+  let removing = $state<string | null>(null);
+  const assignable = $derived(plans.filter((p) => !dues?.subscriptions.some((x) => x.planId === p.id)));
   const canApprove = $derived(permissions.includes("members.approve"));
   const error = $derived(form?.code ? tk(`error.${form.code}`) : null);
   const name = $derived(`${m.firstName} ${m.lastName}`);
@@ -59,6 +68,7 @@
       await update({ reset: false });
       pending = false;
       rejecting = false;
+      removing = null;
     };
   };
 </script>
@@ -231,6 +241,54 @@
       </div>
     {:else}
       <div id="panel-dues" role="tabpanel" aria-labelledby="tab-dues">
+        <section class="plans" aria-labelledby="plans-title">
+          <h3 id="plans-title">{t("admin.sheet.plans")}</h3>
+          {#if dues.subscriptions.length === 0}
+            <p class="muted">{t("admin.sheet.plans.none")}</p>
+          {/if}
+          {#each dues.subscriptions as sub (sub.planId)}
+            <div class="plan">
+              <span class="plan-name">
+                <strong>{label(sub.name)}</strong>
+                <span class="muted">
+                  {money(sub.amount, sub.currency)} · {format(t("admin.sheet.plans.since"), {
+                    date: date(`${sub.startsOn}T12:00:00Z`),
+                  })}
+                </span>
+              </span>
+              {#if canDues}
+                {#if removing === sub.planId}
+                  <form method="POST" action="?/unsubscribe" use:enhance={submit}>
+                    <input type="hidden" name="id" value={m.id} />
+                    <input type="hidden" name="planId" value={sub.planId} />
+                    <Button type="submit" size="sm" variant="ink" {pending}
+                      >{t("admin.sheet.plans.removeConfirm")}</Button
+                    >
+                  </form>
+                {:else}
+                  <Button size="sm" variant="ghost" onclick={() => (removing = sub.planId)}>
+                    {t("admin.sheet.plans.remove")}
+                  </Button>
+                {/if}
+              {/if}
+            </div>
+            {#if removing === sub.planId}<p class="muted">{t("admin.sheet.plans.removeHint")}</p>{/if}
+          {/each}
+          {#if canDues && assignable.length}
+            <form method="POST" action="?/subscribe" use:enhance={submit} class="assign">
+              <input type="hidden" name="id" value={m.id} />
+              <label class="select">
+                <span>{t("admin.sheet.plans.choose")}</span>
+                <select name="planId">
+                  {#each assignable as p (p.id)}
+                    <option value={p.id}>{label(p.name)} · {money(p.amount, p.currency)}</option>
+                  {/each}
+                </select>
+              </label>
+              <Button type="submit" size="sm" variant="secondary" {pending}>{t("admin.sheet.plans.assignBtn")}</Button>
+            </form>
+          {/if}
+        </section>
         {#if dues.obligations.length === 0}
           <div class="empty">
             <h3>{t("admin.sheet.dues.empty")}</h3>
@@ -492,6 +550,37 @@
     align-items: center;
     gap: var(--s-3);
     flex: none;
+  }
+  .plans {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    padding-bottom: var(--s-5);
+    margin-bottom: var(--s-5);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .plan {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-md);
+  }
+  .plan-name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .assign {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--s-2);
+  }
+  .assign .select {
+    flex: 1;
   }
   .empty {
     display: flex;

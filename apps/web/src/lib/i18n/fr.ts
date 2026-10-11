@@ -567,6 +567,20 @@ export const fr = {
   "error.currency_mismatch": "Les échéances cochées ne sont pas dans la même devise.",
   "error.obligation_not_found": "Une échéance est introuvable. Rechargez la fiche.",
   "error.idempotency_conflict": "Ce paiement a déjà été envoyé avec d'autres échéances. Recommencez la saisie.",
+  "admin.sheet.plans": "Formules suivies",
+  "admin.sheet.plans.none":
+    "Ce membre ne suit aucune formule. Ses échéances apparaîtront dès que vous lui en attribuez une.",
+  "admin.sheet.plans.since": "depuis le {date}",
+  "admin.sheet.plans.assign": "Attribuer une formule",
+  "admin.sheet.plans.choose": "Formule à attribuer",
+  "admin.sheet.plans.assignBtn": "Attribuer",
+  "admin.sheet.plans.remove": "Retirer",
+  "admin.sheet.plans.removeConfirm": "Confirmer le retrait",
+  "admin.sheet.plans.removeHint":
+    "Les échéances futures non réglées de cette formule seront supprimées. L'historique reste.",
+  "admin.sheet.subscribed": "Formule attribuée",
+  "admin.sheet.unsubscribed": "Formule retirée",
+  "error.plan_not_found": "Cette formule n'existe plus ou est désactivée.",
 } as const;
 
 export type MessageKey = keyof typeof fr;

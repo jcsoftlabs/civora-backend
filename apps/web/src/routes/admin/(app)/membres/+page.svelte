@@ -405,6 +405,7 @@
     <MemberSheet
       member={data.sheet.member}
       dues={data.sheet.dues}
+      plans={data.sheet.plans}
       party={data.party}
       statuses={data.statuses}
       permissions={data.me.permissions}

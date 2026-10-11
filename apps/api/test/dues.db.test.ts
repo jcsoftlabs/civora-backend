@@ -204,6 +204,15 @@ describe("échéances (FIN-05)", () => {
     expect((await call("GET", `/members/${marie.id}/dues`, pvTreasurer.token)).statusCode).toBe(200);
   });
 
+  it("le relevé d'un membre liste les formules qu'il suit", async () => {
+    const st = (await call("GET", `/members/${marie.id}/dues`, pvTreasurer.token)).json();
+    const current = (
+      await owner`select plan_id from dues_subscriptions where member_id = ${marie.id} and ends_on is null`
+    ).map((r) => r.plan_id);
+    expect(st.subscriptions.map((x: { planId: string }) => x.planId).sort()).toEqual(current.sort());
+    expect(st.subscriptions[0]).toMatchObject({ name: expect.any(Object), currency: expect.any(String) });
+  });
+
   it("chaque formule indique combien de membres la suivent", async () => {
     const list = (await call("GET", "/dues/plans", president.token)).json().plans;
     const n = (

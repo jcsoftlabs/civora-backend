@@ -42,6 +42,14 @@ export interface MemberDetail {
   identities: Array<{ id: string; kind: "nin" | "nif" | "passport" | "ssn" }>;
 }
 export interface DuesStatement {
+  subscriptions: Array<{
+    planId: string;
+    name: { fr: string; ht?: string };
+    amount: string;
+    currency: string;
+    periodicity: string;
+    startsOn: string;
+  }>;
   upToDate: boolean;
   outstanding: Record<string, string>;
   obligations: Array<{
@@ -113,11 +121,23 @@ async function sheet(id: string | null, token: string, permissions: string[], ip
   if (!id || !UUID.test(id)) return null;
   try {
     const canDues = permissions.includes("dues.manage") || permissions.includes("payments.read");
-    const [member, dues] = await Promise.all([
+    const [member, dues, plans] = await Promise.all([
       api<MemberDetail>(`/members/${id}`, { token, ip }),
       canDues ? api<DuesStatement>(`/members/${id}/dues`, { token, ip }).catch(() => null) : null,
+      // Formules actives proposées à l'attribution (dues.manage).
+      permissions.includes("dues.manage")
+        ? api<{
+            plans: Array<{
+              id: string;
+              name: { fr: string; ht?: string };
+              amount: string;
+              currency: string;
+              active: boolean;
+            }>;
+          }>("/dues/plans", { token, ip }).then((r) => r.plans.filter((p) => p.active))
+        : [],
     ]);
-    return { member, dues };
+    return { member, dues, plans };
   } catch (e) {
     // Membre introuvable ou hors de la zone : pas de panneau, la liste reste affichée.
     if (e instanceof ApiFailure && (e.status === 404 || e.status === 403)) return null;
@@ -128,10 +148,10 @@ async function sheet(id: string | null, token: string, permissions: string[], ip
 /** Appel d'une action du panneau ; une erreur de l'API revient au formulaire avec son code. */
 async function act(
   event: RequestEvent,
-  method: "POST" | "PATCH",
-  path: (id: string) => string,
-  body: (f: FormData) => object,
-  done: "saved" | "approved" | "rejected",
+  method: "POST" | "PATCH" | "DELETE",
+  path: (id: string, f: FormData) => string,
+  body: (f: FormData) => object | null,
+  done: "saved" | "approved" | "rejected" | "subscribed" | "unsubscribed",
 ) {
   const s = await currentSession(event.cookies, event.locals.partySlug!);
   if (!s || s.me.mfaPending) return fail(401, { code: "forbidden" });
@@ -139,7 +159,13 @@ async function act(
   const id = String(f.get("id") ?? "");
   if (!UUID.test(id)) return fail(400, { code: "invalid_request" });
   try {
-    await api(path(id), { method, body: body(f), token: s.token, ip: event.getClientAddress() });
+    const payload = body(f);
+    await api(path(id, f), {
+      method,
+      ...(payload ? { body: payload } : {}),
+      token: s.token,
+      ip: event.getClientAddress(),
+    });
     return { ok: true, done };
   } catch (e) {
     if (e instanceof ApiFailure)
@@ -191,6 +217,24 @@ export const actions: Actions = {
         ].slice(0, 20),
       }),
       "saved",
+    ),
+  /** FIN-03 : attribution d'une formule à ce membre (dues.manage dans sa zone) ; échéances dès aujourd'hui. */
+  subscribe: (event) =>
+    act(
+      event,
+      "POST",
+      (id) => `/members/${id}/dues-subscriptions`,
+      (f) => ({ planId: text(f, "planId") }),
+      "subscribed",
+    ),
+  /** Fin de la formule : les échéances futures non réglées disparaissent, l'historique reste. */
+  unsubscribe: (event) =>
+    act(
+      event,
+      "DELETE",
+      (id, f) => `/members/${id}/dues-subscriptions/${encodeURIComponent(text(f, "planId"))}`,
+      () => null,
+      "unsubscribed",
     ),
   /** ADH-06 : validation, avec la note facultative. */
   approve: (event) =>
