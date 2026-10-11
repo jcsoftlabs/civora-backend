@@ -1,11 +1,16 @@
-// FOR-01 à FOR-04 : formations séquentielles, quiz notés, formations obligatoires par statut, suivi par zone,
-// certificat numéroté. Les bonnes réponses des quiz ne quittent jamais le serveur.
+// FOR-01 à FOR-04 : formations découpées en modules, chapitres (texte, fichier, YouTube ou Vimeo), quiz par
+// module, progression bloquante, formations obligatoires par statut, suivi par zone, certificat numéroté au
+// modèle du parti. Les bonnes réponses des quiz ne quittent jamais le serveur.
 import type { FastifyRequest } from "fastify";
 import { and, asc, count, desc, eq, inArray, isNotNull, sql } from "drizzle-orm";
 import type { z } from "zod";
+import { videoEmbed } from "@civora/shared";
 import {
+  certificateTemplates,
   courseCompletions,
+  courseModules,
   courses,
+  files,
   lessonAttempts,
   lessons,
   members,
@@ -20,7 +25,20 @@ import { currentMember } from "../../lib/member-context.js";
 import { ApiError } from "../../plugins/errors.js";
 import { authorize } from "../../plugins/tenant.js";
 import type { FilesService } from "../files/service.js";
-import type { attemptBody, courseCreate, courseUpdate, lessonCreate, lessonUpdate, Quiz } from "./schemas.js";
+import {
+  FILE_KINDS,
+  LINK_KINDS,
+  type attemptBody,
+  type CertificateTemplate,
+  type ChapterKind,
+  type chapterCreate,
+  type chapterUpdate,
+  type courseCreate,
+  type courseUpdate,
+  type moduleCreate,
+  type moduleUpdate,
+  type Quiz,
+} from "./schemas.js";
 
 type Req = FastifyRequest;
 type I18n = { fr: string; ht?: string };
@@ -62,6 +80,18 @@ async function nextCertificateNumber(tx: Tx, partyId: string, year: number) {
   return `${prefix}${String(r?.n ?? 1).padStart(6, "0")}`;
 }
 
+const sameSet = (rows: { id: string }[], ids: string[]) =>
+  rows.length === ids.length && new Set(ids).size === ids.length && ids.every((x) => rows.some((r) => r.id === x));
+
+/** Types de fichier admis par nature de chapitre. */
+const KIND_MIME: Record<string, (mime: string) => boolean> = {
+  video: (m) => m.startsWith("video/"),
+  audio: (m) => m.startsWith("audio/"),
+  document: (m) => m === "application/pdf" || m.startsWith("image/"),
+};
+
+type Walked = Awaited<ReturnType<TrainingService["walk"]>>;
+
 export class TrainingService {
   constructor(private readonly files: FilesService) {}
 
@@ -79,6 +109,7 @@ export class TrainingService {
           maxAttempts: courses.maxAttempts,
           mandatoryForStatusIds: courses.mandatoryForStatusIds,
           publishedAt: courses.publishedAt,
+          moduleCount: sql<number>`(select count(*)::int from course_modules m where m.course_id = "courses"."id")`,
           lessonCount: sql<number>`(select count(*)::int from lessons l where l.course_id = "courses"."id")`,
           completions: sql<number>`(select count(*)::int from course_completions c where c.course_id = "courses"."id")`,
         })
@@ -87,12 +118,28 @@ export class TrainingService {
     );
   }
 
+  /** Modules et chapitres d'une formation, dans l'ordre. */
+  private async outline(tx: Tx, courseId: string) {
+    const mods = await tx
+      .select()
+      .from(courseModules)
+      .where(eq(courseModules.courseId, courseId))
+      .orderBy(asc(courseModules.position));
+    const chs = await tx.select().from(lessons).where(eq(lessons.courseId, courseId)).orderBy(asc(lessons.position));
+    return mods.map((m) => ({ ...m, quiz: m.quiz as Quiz | null, chapters: chs.filter((c) => c.moduleId === m.id) }));
+  }
+
   async detail(req: Req, id: string) {
     manage(req);
     return withParty(req.partyId, async (tx) => {
       const [c] = await tx.select().from(courses).where(eq(courses.id, id));
       if (!c) throw new ApiError(404, "not_found");
-      const ls = await tx.select().from(lessons).where(eq(lessons.courseId, id)).orderBy(asc(lessons.position));
+      const mods = await this.outline(tx, id);
+      const urls = await this.files.mediaUrls(
+        tx,
+        mods.flatMap((m) => m.chapters.flatMap((l) => (l.mediaFileId ? [l.mediaFileId] : []))),
+        "training_media",
+      );
       return {
         id: c.id,
         title: c.title,
@@ -101,14 +148,22 @@ export class TrainingService {
         maxAttempts: c.maxAttempts,
         mandatoryForStatusIds: c.mandatoryForStatusIds ?? [],
         publishedAt: c.publishedAt,
-        lessons: ls.map((l) => ({
-          id: l.id,
-          position: l.position,
-          kind: l.kind,
-          title: l.title,
-          body: l.body,
-          mediaFileId: l.mediaFileId,
-          quiz: l.quiz as Quiz | null,
+        modules: mods.map((m) => ({
+          id: m.id,
+          position: m.position,
+          title: m.title,
+          description: m.description,
+          quiz: m.quiz,
+          chapters: m.chapters.map((l) => ({
+            id: l.id,
+            position: l.position,
+            kind: l.kind,
+            title: l.title,
+            body: l.body,
+            mediaFileId: l.mediaFileId,
+            media: l.mediaFileId ? (urls.get(l.mediaFileId) ?? null) : null,
+            embedUrl: l.embedUrl,
+          })),
         })),
       };
     });
@@ -139,8 +194,10 @@ export class TrainingService {
       const [c] = await tx.select({ publishedAt: courses.publishedAt }).from(courses).where(eq(courses.id, id));
       if (!c) throw new ApiError(404, "not_found");
       if (body.published) {
-        const [n] = await tx.select({ n: count() }).from(lessons).where(eq(lessons.courseId, id));
-        if (!n?.n) throw new ApiError(409, "course_without_lessons");
+        // Une formation publiée a au moins un module, et chaque module au moins un chapitre.
+        const mods = await this.outline(tx, id);
+        if (!mods.length) throw new ApiError(409, "course_without_modules");
+        if (mods.some((m) => !m.chapters.length)) throw new ApiError(409, "module_without_chapters");
       }
       await tx
         .update(courses)
@@ -167,77 +224,198 @@ export class TrainingService {
     });
   }
 
-  async addLesson(req: Req, courseId: string, body: z.infer<typeof lessonCreate>) {
+  // Modules
+
+  async addModule(req: Req, courseId: string, body: z.infer<typeof moduleCreate>) {
     manage(req);
     return withParty(req.partyId, async (tx) => {
       const [c] = await tx.select({ id: courses.id }).from(courses).where(eq(courses.id, courseId));
       if (!c) throw new ApiError(404, "not_found");
-      if (body.mediaFileId) await this.files.readyFile(tx, body.mediaFileId, "training_media");
       const [last] = await tx
-        .select({ p: sql<number>`coalesce(max(${lessons.position}), 0)::int` })
-        .from(lessons)
-        .where(eq(lessons.courseId, courseId));
-      const [l] = await tx
-        .insert(lessons)
+        .select({ p: sql<number>`coalesce(max(${courseModules.position}), 0)::int` })
+        .from(courseModules)
+        .where(eq(courseModules.courseId, courseId));
+      const [m] = await tx
+        .insert(courseModules)
         .values({
           partyId: req.partyId,
           courseId,
           position: (last?.p ?? 0) + 1,
-          kind: body.kind,
+          title: body.title,
+          description: body.description ?? null,
+          quiz: body.quiz?.length ? body.quiz : null,
+        })
+        .returning({ id: courseModules.id });
+      return { id: m!.id };
+    });
+  }
+
+  async updateModule(req: Req, id: string, body: z.infer<typeof moduleUpdate>) {
+    manage(req);
+    await withParty(req.partyId, async (tx) => {
+      const upd = await tx
+        .update(courseModules)
+        .set({
+          ...(body.title ? { title: body.title } : {}),
+          ...(body.description !== undefined ? { description: body.description } : {}),
+          ...(body.quiz !== undefined ? { quiz: body.quiz?.length ? body.quiz : null } : {}),
+          updatedAt: new Date(),
+        })
+        .where(eq(courseModules.id, id))
+        .returning({ id: courseModules.id });
+      if (!upd.length) throw new ApiError(404, "not_found");
+    });
+  }
+
+  /** Suppression d'un module que personne n'a commencé (ni chapitre vu, ni quiz tenté), chapitres compris. */
+  async deleteModule(req: Req, id: string) {
+    manage(req);
+    await withParty(req.partyId, async (tx) => {
+      const [a] = await tx
+        .select({ n: count() })
+        .from(lessonAttempts)
+        .where(
+          sql`"lesson_attempts"."module_id" = ${id}
+          or "lesson_attempts"."lesson_id" in (select l.id from lessons l where l.module_id = ${id})`,
+        );
+      if ((a?.n ?? 0) > 0) throw new ApiError(409, "module_has_progress");
+      const chs = await tx
+        .delete(lessons)
+        .where(eq(lessons.moduleId, id))
+        .returning({ mediaFileId: lessons.mediaFileId });
+      const del = await tx.delete(courseModules).where(eq(courseModules.id, id)).returning({ id: courseModules.id });
+      if (!del.length) throw new ApiError(404, "not_found");
+      for (const c of chs) if (c.mediaFileId) await this.trashIfUnused(tx, c.mediaFileId);
+    });
+  }
+
+  async reorderModules(req: Req, courseId: string, ids: string[]) {
+    manage(req);
+    await withParty(req.partyId, async (tx) => {
+      const rows = await tx
+        .select({ id: courseModules.id })
+        .from(courseModules)
+        .where(eq(courseModules.courseId, courseId));
+      if (!sameSet(rows, ids)) throw new ApiError(400, "order_mismatch");
+      for (const [i, mid] of ids.entries())
+        await tx
+          .update(courseModules)
+          .set({ position: i + 1, updatedAt: new Date() })
+          .where(eq(courseModules.id, mid));
+    });
+  }
+
+  // Chapitres
+
+  /**
+   * Contenu d'un chapitre selon sa nature : texte obligatoire, fichier du bon type, ou lien YouTube ou Vimeo
+   * réduit à l'adresse du lecteur. Les champs qui ne servent pas à cette nature sont vidés.
+   */
+  private async chapterContent(
+    tx: Tx,
+    c: { kind: ChapterKind; body: unknown; mediaFileId: string | null; videoUrl: string | null },
+  ) {
+    if (c.kind === "text") {
+      if (!c.body) throw new ApiError(400, "chapter_body_required");
+      return { kind: c.kind, mediaFileId: null, embedUrl: null };
+    }
+    if (FILE_KINDS.includes(c.kind)) {
+      if (!c.mediaFileId) throw new ApiError(400, "chapter_media_required");
+      const f = await this.files.readyFile(tx, c.mediaFileId, "training_media");
+      if (!KIND_MIME[c.kind]!(f.mimeType)) throw new ApiError(400, "chapter_media_kind_mismatch");
+      return { kind: c.kind, mediaFileId: c.mediaFileId, embedUrl: null };
+    }
+    const v = c.videoUrl ? videoEmbed(c.videoUrl) : null;
+    if (!v || v.provider !== c.kind) throw new ApiError(400, "invalid_video_url");
+    return { kind: c.kind, mediaFileId: null, embedUrl: v.embedUrl };
+  }
+
+  /** Un média de formation remplacé ou retiré part à la corbeille s'il ne sert plus à aucun chapitre (DOC-07). */
+  private async trashIfUnused(tx: Tx, fileId: string) {
+    const [n] = await tx.select({ n: count() }).from(lessons).where(eq(lessons.mediaFileId, fileId));
+    if (!n?.n) await tx.update(files).set({ trashedAt: new Date() }).where(eq(files.id, fileId));
+  }
+
+  async addChapter(req: Req, moduleId: string, body: z.infer<typeof chapterCreate>) {
+    manage(req);
+    return withParty(req.partyId, async (tx) => {
+      const [m] = await tx
+        .select({ id: courseModules.id, courseId: courseModules.courseId })
+        .from(courseModules)
+        .where(eq(courseModules.id, moduleId));
+      if (!m) throw new ApiError(404, "not_found");
+      const content = await this.chapterContent(tx, {
+        kind: body.kind,
+        body: body.body ?? null,
+        mediaFileId: body.mediaFileId ?? null,
+        videoUrl: body.videoUrl ?? null,
+      });
+      const [last] = await tx
+        .select({ p: sql<number>`coalesce(max(${lessons.position}), 0)::int` })
+        .from(lessons)
+        .where(eq(lessons.moduleId, moduleId));
+      const [l] = await tx
+        .insert(lessons)
+        .values({
+          partyId: req.partyId,
+          courseId: m.courseId,
+          moduleId,
+          position: (last?.p ?? 0) + 1,
           title: body.title,
           body: body.body ?? null,
-          mediaFileId: body.mediaFileId ?? null,
-          quiz: body.quiz?.length ? body.quiz : null,
+          ...content,
         })
         .returning({ id: lessons.id });
       return { id: l!.id };
     });
   }
 
-  async updateLesson(req: Req, id: string, body: z.infer<typeof lessonUpdate>) {
+  async updateChapter(req: Req, id: string, body: z.infer<typeof chapterUpdate>) {
     manage(req);
     await withParty(req.partyId, async (tx) => {
-      const [l] = await tx.select({ id: lessons.id }).from(lessons).where(eq(lessons.id, id));
-      if (!l) throw new ApiError(404, "not_found");
-      if (body.mediaFileId) await this.files.readyFile(tx, body.mediaFileId, "training_media");
+      const [cur] = await tx.select().from(lessons).where(eq(lessons.id, id));
+      if (!cur) throw new ApiError(404, "not_found");
+      const kind = body.kind ?? (cur.kind as ChapterKind);
+      const nextBody = body.body !== undefined ? body.body : cur.body;
+      // Lien : celui envoyé, sinon le lecteur déjà enregistré (qui se relit comme un lien).
+      const videoUrl = body.videoUrl !== undefined ? body.videoUrl : LINK_KINDS.includes(kind) ? cur.embedUrl : null;
+      const mediaFileId = body.mediaFileId !== undefined ? body.mediaFileId : cur.mediaFileId;
+      const content = await this.chapterContent(tx, { kind, body: nextBody, mediaFileId, videoUrl });
       await tx
         .update(lessons)
         .set({
-          ...(body.kind ? { kind: body.kind } : {}),
           ...(body.title ? { title: body.title } : {}),
-          ...(body.body !== undefined ? { body: body.body } : {}),
-          ...(body.mediaFileId !== undefined ? { mediaFileId: body.mediaFileId } : {}),
-          ...(body.quiz !== undefined ? { quiz: body.quiz?.length ? body.quiz : null } : {}),
+          body: nextBody,
+          ...content,
           updatedAt: new Date(),
         })
         .where(eq(lessons.id, id));
+      if (cur.mediaFileId && cur.mediaFileId !== content.mediaFileId) await this.trashIfUnused(tx, cur.mediaFileId);
     });
   }
 
-  /** Suppression d'une leçon que personne n'a encore suivie ; sinon on la modifie. */
-  async deleteLesson(req: Req, id: string) {
+  /** Suppression d'un chapitre que personne n'a encore vu ; sinon on le modifie. */
+  async deleteChapter(req: Req, id: string) {
     manage(req);
     await withParty(req.partyId, async (tx) => {
       const [a] = await tx.select({ n: count() }).from(lessonAttempts).where(eq(lessonAttempts.lessonId, id));
-      if ((a?.n ?? 0) > 0) throw new ApiError(409, "lesson_has_attempts");
-      const del = await tx.delete(lessons).where(eq(lessons.id, id)).returning({ id: lessons.id });
+      if ((a?.n ?? 0) > 0) throw new ApiError(409, "chapter_has_views");
+      const del = await tx.delete(lessons).where(eq(lessons.id, id)).returning({ mediaFileId: lessons.mediaFileId });
       if (!del.length) throw new ApiError(404, "not_found");
+      if (del[0]!.mediaFileId) await this.trashIfUnused(tx, del[0]!.mediaFileId);
     });
   }
 
-  async reorder(req: Req, courseId: string, lessonIds: string[]) {
+  async reorderChapters(req: Req, moduleId: string, ids: string[]) {
     manage(req);
     await withParty(req.partyId, async (tx) => {
-      const ls = await tx.select({ id: lessons.id }).from(lessons).where(eq(lessons.courseId, courseId));
-      const known = new Set(ls.map((l) => l.id));
-      if (ls.length !== lessonIds.length || !lessonIds.every((x) => known.has(x)))
-        throw new ApiError(400, "lesson_order_mismatch");
-      for (const [i, lid] of lessonIds.entries()) {
+      const rows = await tx.select({ id: lessons.id }).from(lessons).where(eq(lessons.moduleId, moduleId));
+      if (!sameSet(rows, ids)) throw new ApiError(400, "order_mismatch");
+      for (const [i, lid] of ids.entries())
         await tx
           .update(lessons)
           .set({ position: i + 1, updatedAt: new Date() })
           .where(eq(lessons.id, lid));
-      }
     });
   }
 
@@ -284,8 +462,11 @@ export class TrainingService {
             where cc.member_id = mb.id and cc.course_id = ${courseId}))::int as completed,
           count(mb.id) filter (where not exists (select 1 from course_completions cc
               where cc.member_id = mb.id and cc.course_id = ${courseId})
-            and exists (select 1 from lesson_attempts la join lessons l on l.id = la.lesson_id
-              where la.member_id = mb.id and l.course_id = ${courseId}))::int as started
+            and exists (select 1 from lesson_attempts la
+              where la.member_id = mb.id
+                and (la.lesson_id in (select l.id from lessons l where l.course_id = ${courseId})
+                  or la.module_id in (select m.id from course_modules m where m.course_id = ${courseId}))))::int
+            as started
         from targets t
         left join zones z on z.path <@ t.path
         left join members mb on mb.zone_id = z.id and mb.deleted_at is null
@@ -311,18 +492,38 @@ export class TrainingService {
 
   // ---------- Membre ----------
 
-  /** État du membre dans une formation : leçons réussies, tentatives, formation terminée. */
-  private async state(tx: Tx, courseId: string, memberId: string) {
-    const attempts = await tx
-      .select({ lessonId: lessonAttempts.lessonId, passed: lessonAttempts.passed, score: lessonAttempts.scorePercent })
+  /**
+   * Parcours du membre, module par module. Un module est réussi quand son quiz l'est, ou, sans quiz, quand tous
+   * ses chapitres ont été vus. Il s'ouvre quand le précédent est réussi ; son quiz, quand ses chapitres sont vus.
+   */
+  private async walk(tx: Tx, courseId: string, memberId: string) {
+    const mods = await this.outline(tx, courseId);
+    const att = await tx
+      .select({
+        lessonId: lessonAttempts.lessonId,
+        moduleId: lessonAttempts.moduleId,
+        passed: lessonAttempts.passed,
+        score: lessonAttempts.scorePercent,
+      })
       .from(lessonAttempts)
-      .innerJoin(lessons, and(eq(lessons.partyId, lessonAttempts.partyId), eq(lessons.id, lessonAttempts.lessonId)))
-      .where(and(eq(lessons.courseId, courseId), eq(lessonAttempts.memberId, memberId)));
-    const [done] = await tx
-      .select({ number: courseCompletions.certificateNumber, at: courseCompletions.completedAt })
-      .from(courseCompletions)
-      .where(and(eq(courseCompletions.courseId, courseId), eq(courseCompletions.memberId, memberId)));
-    return { attempts, completion: done ?? null };
+      .where(
+        and(
+          eq(lessonAttempts.memberId, memberId),
+          sql`("lesson_attempts"."lesson_id" in (select l.id from lessons l where l.course_id = ${courseId})
+            or "lesson_attempts"."module_id" in (select m.id from course_modules m where m.course_id = ${courseId}))`,
+        ),
+      );
+    const viewed = new Set(att.flatMap((a) => (a.lessonId ? [a.lessonId] : [])));
+    let open = true;
+    return mods.map((m) => {
+      const tries = att.filter((a) => a.moduleId === m.id);
+      const hasQuiz = !!m.quiz?.length;
+      const allViewed = m.chapters.length > 0 && m.chapters.every((c) => viewed.has(c.id));
+      const passed = hasQuiz ? tries.some((t) => t.passed) : allViewed;
+      const locked = !open;
+      if (!passed) open = false;
+      return { ...m, locked, passed, hasQuiz, allViewed, viewed, tries };
+    });
   }
 
   /** Formations publiées, avec la progression du membre et le caractère obligatoire pour son statut. */
@@ -335,25 +536,28 @@ export class TrainingService {
           title: courses.title,
           description: courses.description,
           mandatoryFor: courses.mandatoryForStatusIds,
-          lessonCount: sql<number>`(select count(*)::int from lessons l where l.course_id = "courses"."id")`,
-          passedLessons: sql<number>`(select count(distinct la.lesson_id)::int from lesson_attempts la
-            join lessons l on l.id = la.lesson_id
-            where l.course_id = "courses"."id" and la.member_id = ${me.id} and la.passed)`,
           certificateNumber: sql<string | null>`(select cc.certificate_number from course_completions cc
             where cc.course_id = "courses"."id" and cc.member_id = ${me.id})`,
         })
         .from(courses)
         .where(isNotNull(courses.publishedAt))
         .orderBy(asc(courses.createdAt));
-      return rows.map(({ mandatoryFor, ...c }) => ({
-        ...c,
-        mandatory: !!me.statusId && (mandatoryFor ?? []).includes(me.statusId),
-        completed: c.certificateNumber !== null,
-      }));
+      const out = [];
+      for (const { mandatoryFor, ...c } of rows) {
+        const walked = await this.walk(tx, c.id, me.id);
+        out.push({
+          ...c,
+          moduleCount: walked.length,
+          passedModules: walked.filter((m) => m.passed).length,
+          mandatory: !!me.statusId && (mandatoryFor ?? []).includes(me.statusId),
+          completed: c.certificateNumber !== null,
+        });
+      }
+      return out;
     });
   }
 
-  /** Formation vue par le membre : leçons dans l'ordre, verrouillées tant que la précédente n'est pas réussie. */
+  /** Formation vue par le membre : modules dans l'ordre, contenu des seuls modules ouverts. */
   async myCourse(req: Req, id: string) {
     return withParty(req.partyId, async (tx) => {
       const [c] = await tx
@@ -361,105 +565,59 @@ export class TrainingService {
         .from(courses)
         .where(and(eq(courses.id, id), isNotNull(courses.publishedAt)));
       if (!c) throw new ApiError(404, "not_found");
-      const ls = await tx.select().from(lessons).where(eq(lessons.courseId, id)).orderBy(asc(lessons.position));
-      const st = await this.state(tx, id, req.memberId!);
+      const walked = await this.walk(tx, id, req.memberId!);
       const urls = await this.files.mediaUrls(
         tx,
-        ls.flatMap((l) => (l.mediaFileId ? [l.mediaFileId] : [])),
+        walked.flatMap((m) => (m.locked ? [] : m.chapters.flatMap((l) => (l.mediaFileId ? [l.mediaFileId] : [])))),
         "training_media",
       );
-      let open = true;
-      const items = ls.map((l) => {
-        const mine = st.attempts.filter((a) => a.lessonId === l.id);
-        const passed = mine.some((a) => a.passed);
-        const locked = !open;
-        if (!passed) open = false;
-        return {
-          id: l.id,
-          position: l.position,
-          kind: l.kind,
-          title: l.title,
-          // Contenu seulement pour une leçon ouverte : on ne saute pas une étape.
-          body: locked ? null : l.body,
-          media: !locked && l.mediaFileId ? (urls.get(l.mediaFileId) ?? null) : null,
-          quiz: locked ? null : publicQuiz(l.quiz as Quiz | null),
-          locked,
-          passed,
-          attemptsUsed: mine.length,
-          bestScore: mine.length ? Math.max(...mine.map((a) => a.score)) : null,
-        };
-      });
+      const [done] = await tx
+        .select({ number: courseCompletions.certificateNumber, at: courseCompletions.completedAt })
+        .from(courseCompletions)
+        .where(and(eq(courseCompletions.courseId, id), eq(courseCompletions.memberId, req.memberId!)));
       return {
         id: c.id,
         title: c.title,
         description: c.description,
         passThresholdPercent: c.passThresholdPercent,
         maxAttempts: c.maxAttempts,
-        lessons: items,
-        completion: st.completion,
+        modules: walked.map((m) => ({
+          id: m.id,
+          position: m.position,
+          title: m.title,
+          description: m.description,
+          locked: m.locked,
+          passed: m.passed,
+          // Chapitres : titres toujours visibles, contenu seulement dans un module ouvert.
+          chapters: m.chapters.map((l) => ({
+            id: l.id,
+            position: l.position,
+            kind: l.kind,
+            title: l.title,
+            body: m.locked ? null : l.body,
+            media: !m.locked && l.mediaFileId ? (urls.get(l.mediaFileId) ?? null) : null,
+            embedUrl: m.locked ? null : l.embedUrl,
+            viewed: m.viewed.has(l.id),
+          })),
+          hasQuiz: m.hasQuiz,
+          quizOpen: m.hasQuiz && !m.locked && m.allViewed,
+          quiz: m.hasQuiz && !m.locked && m.allViewed ? publicQuiz(m.quiz) : null,
+          attemptsUsed: m.tries.length,
+          bestScore: m.tries.length ? Math.max(...m.tries.map((t) => t.score)) : null,
+        })),
+        completion: done ?? null,
       };
     });
   }
 
-  /** Leçon ouverte au membre, verrouillée pour la mise à jour de ses tentatives. */
-  private async openLesson(tx: Tx, req: Req, lessonId: string) {
-    const [l] = await tx
-      .select({
-        id: lessons.id,
-        courseId: lessons.courseId,
-        position: lessons.position,
-        quiz: lessons.quiz,
-        threshold: courses.passThresholdPercent,
-        maxAttempts: courses.maxAttempts,
-      })
-      .from(lessons)
-      .innerJoin(courses, and(eq(courses.partyId, lessons.partyId), eq(courses.id, lessons.courseId)))
-      .where(and(eq(lessons.id, lessonId), isNotNull(courses.publishedAt)));
-    if (!l) throw new ApiError(404, "not_found");
-    // Verrou par membre et par leçon : deux envois simultanés ne dépassent pas le nombre de tentatives.
-    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${`lesson:${lessonId}:${req.memberId}`}, 0))`);
-    const before = await tx
-      .select({ id: lessons.id })
-      .from(lessons)
-      .where(and(eq(lessons.courseId, l.courseId), sql`${lessons.position} < ${l.position}`));
-    if (before.length) {
-      const passed = await tx
-        .selectDistinct({ id: lessonAttempts.lessonId })
-        .from(lessonAttempts)
-        .where(
-          and(
-            eq(lessonAttempts.memberId, req.memberId!),
-            eq(lessonAttempts.passed, true),
-            inArray(
-              lessonAttempts.lessonId,
-              before.map((b) => b.id),
-            ),
-          ),
-        );
-      if (passed.length < before.length) throw new ApiError(409, "lesson_locked");
-    }
-    const mine = await tx
-      .select({ passed: lessonAttempts.passed })
-      .from(lessonAttempts)
-      .where(and(eq(lessonAttempts.lessonId, lessonId), eq(lessonAttempts.memberId, req.memberId!)));
-    return { ...l, quiz: l.quiz as Quiz | null, used: mine.length, alreadyPassed: mine.some((m) => m.passed) };
+  /** Verrou par membre et par formation : deux envois simultanés ne dépassent pas le nombre de tentatives. */
+  private async lockMember(tx: Tx, req: Req, courseId: string) {
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${`training:${courseId}:${req.memberId}`}, 0))`);
   }
 
-  /** Fin de formation : toutes les leçons réussies, certificat numéroté (une seule fois). */
-  private async completeIfDone(tx: Tx, req: Req, courseId: string) {
-    const [n] = await tx.select({ n: count() }).from(lessons).where(eq(lessons.courseId, courseId));
-    const [p] = await tx
-      .select({ n: sql<number>`count(distinct ${lessonAttempts.lessonId})::int` })
-      .from(lessonAttempts)
-      .innerJoin(lessons, and(eq(lessons.partyId, lessonAttempts.partyId), eq(lessons.id, lessonAttempts.lessonId)))
-      .where(
-        and(
-          eq(lessons.courseId, courseId),
-          eq(lessonAttempts.memberId, req.memberId!),
-          eq(lessonAttempts.passed, true),
-        ),
-      );
-    if (!n?.n || (p?.n ?? 0) < n.n) return null;
+  /** Fin de formation : tous les modules réussis, certificat numéroté (une seule fois). */
+  private async completeIfDone(tx: Tx, req: Req, courseId: string, walked: Walked) {
+    if (!walked.length || walked.some((m) => !m.passed)) return null;
     const [existing] = await tx
       .select({ number: courseCompletions.certificateNumber })
       .from(courseCompletions)
@@ -473,43 +631,165 @@ export class TrainingService {
     return number;
   }
 
-  /** Leçon sans quiz : lue, donc réussie. */
-  async markRead(req: Req, lessonId: string) {
+  /** Chapitre vu : enregistré une fois ; peut réussir un module sans quiz, voire terminer la formation. */
+  async markViewed(req: Req, chapterId: string) {
     return withParty(req.partyId, async (tx) => {
-      const l = await this.openLesson(tx, req, lessonId);
-      if (l.quiz?.length) throw new ApiError(409, "lesson_has_quiz");
-      if (!l.alreadyPassed) {
-        await tx
-          .insert(lessonAttempts)
-          .values({ partyId: req.partyId, lessonId, memberId: req.memberId!, scorePercent: 100, passed: true });
+      const [l] = await tx
+        .select({ id: lessons.id, courseId: lessons.courseId, moduleId: lessons.moduleId })
+        .from(lessons)
+        .innerJoin(courses, and(eq(courses.partyId, lessons.partyId), eq(courses.id, lessons.courseId)))
+        .where(and(eq(lessons.id, chapterId), isNotNull(courses.publishedAt)));
+      if (!l) throw new ApiError(404, "not_found");
+      await this.lockMember(tx, req, l.courseId);
+      const before = await this.walk(tx, l.courseId, req.memberId!);
+      const m = before.find((x) => x.id === l.moduleId)!;
+      if (m.locked) throw new ApiError(409, "module_locked");
+      if (!m.viewed.has(chapterId)) {
+        await tx.insert(lessonAttempts).values({
+          partyId: req.partyId,
+          lessonId: chapterId,
+          memberId: req.memberId!,
+          scorePercent: 100,
+          passed: true,
+        });
       }
-      return { passed: true, certificateNumber: await this.completeIfDone(tx, req, l.courseId) };
+      const after = await this.walk(tx, l.courseId, req.memberId!);
+      const now = after.find((x) => x.id === l.moduleId)!;
+      return {
+        viewed: true,
+        modulePassed: now.passed,
+        quizOpen: now.hasQuiz && now.allViewed && !now.passed,
+        certificateNumber: await this.completeIfDone(tx, req, l.courseId, after),
+      };
     });
   }
 
-  /** Réponses à un quiz (FOR-02) : note, réussite au seuil de la formation, tentatives restantes. */
-  async attempt(req: Req, lessonId: string, body: z.infer<typeof attemptBody>) {
+  /** Réponses au quiz d'un module (FOR-02) : note, réussite au seuil de la formation, tentatives restantes. */
+  async attempt(req: Req, moduleId: string, body: z.infer<typeof attemptBody>) {
     return withParty(req.partyId, async (tx) => {
-      const l = await this.openLesson(tx, req, lessonId);
-      if (!l.quiz?.length) throw new ApiError(409, "lesson_without_quiz");
-      if (l.alreadyPassed) throw new ApiError(409, "lesson_already_passed");
-      if (l.maxAttempts !== null && l.used >= l.maxAttempts) throw new ApiError(409, "attempts_exhausted");
-      const { scorePercent, wrongQuestionIds } = grade(l.quiz, body.answers);
-      const passed = scorePercent >= l.threshold;
+      const [mod] = await tx
+        .select({
+          id: courseModules.id,
+          courseId: courseModules.courseId,
+          threshold: courses.passThresholdPercent,
+          maxAttempts: courses.maxAttempts,
+        })
+        .from(courseModules)
+        .innerJoin(courses, and(eq(courses.partyId, courseModules.partyId), eq(courses.id, courseModules.courseId)))
+        .where(and(eq(courseModules.id, moduleId), isNotNull(courses.publishedAt)));
+      if (!mod) throw new ApiError(404, "not_found");
+      await this.lockMember(tx, req, mod.courseId);
+      const walked = await this.walk(tx, mod.courseId, req.memberId!);
+      const m = walked.find((x) => x.id === moduleId)!;
+      if (m.locked) throw new ApiError(409, "module_locked");
+      if (!m.hasQuiz) throw new ApiError(409, "module_without_quiz");
+      if (!m.allViewed) throw new ApiError(409, "chapters_not_viewed");
+      if (m.passed) throw new ApiError(409, "module_already_passed");
+      const used = m.tries.length;
+      if (mod.maxAttempts !== null && used >= mod.maxAttempts) throw new ApiError(409, "attempts_exhausted");
+      const { scorePercent, wrongQuestionIds } = grade(m.quiz!, body.answers);
+      const passed = scorePercent >= mod.threshold;
       await tx
         .insert(lessonAttempts)
-        .values({ partyId: req.partyId, lessonId, memberId: req.memberId!, scorePercent, passed });
-      const certificateNumber = passed ? await this.completeIfDone(tx, req, l.courseId) : null;
+        .values({ partyId: req.partyId, moduleId, memberId: req.memberId!, scorePercent, passed });
+      const certificateNumber = passed
+        ? await this.completeIfDone(tx, req, mod.courseId, await this.walk(tx, mod.courseId, req.memberId!))
+        : null;
       return {
         scorePercent,
         passed,
-        threshold: l.threshold,
+        threshold: mod.threshold,
         // Les questions manquées, sans la bonne réponse : la reprise reste un vrai exercice.
         wrongQuestionIds,
-        attemptsLeft: l.maxAttempts === null ? null : Math.max(0, l.maxAttempts - l.used - 1),
+        attemptsLeft: mod.maxAttempts === null ? null : Math.max(0, mod.maxAttempts - used - 1),
         certificateNumber,
       };
     });
+  }
+
+  // ---------- Certificat (FOR-04) ----------
+
+  /** Modèle du parti, ou les réglages par défaut s'il n'en a pas encore enregistré. */
+  private async template(tx: Tx): Promise<CertificateTemplate> {
+    const [t] = await tx.select().from(certificateTemplates);
+    return {
+      title: (t?.title as CertificateTemplate["title"]) ?? null,
+      mention: (t?.mention as CertificateTemplate["mention"]) ?? null,
+      footer: (t?.footer as CertificateTemplate["footer"]) ?? null,
+      accentColor: t?.accentColor ?? null,
+      showLogo: t?.showLogo ?? true,
+      signatories: (t?.signatories as CertificateTemplate["signatories"]) ?? [],
+    };
+  }
+
+  /** Modèle pour l'éditeur, avec l'aperçu des signatures et du logo. */
+  async getTemplate(req: Req) {
+    manage(req);
+    return withParty(req.partyId, async (tx) => {
+      const t = await this.template(tx);
+      const urls = await this.files.mediaUrls(
+        tx,
+        t.signatories.flatMap((s) => (s.signatureFileId ? [s.signatureFileId] : [])),
+        "signature",
+      );
+      return {
+        ...t,
+        signatories: t.signatories.map((s) => ({
+          ...s,
+          signatureUrl: s.signatureFileId ? (urls.get(s.signatureFileId)?.url ?? null) : null,
+        })),
+      };
+    });
+  }
+
+  async saveTemplate(req: Req, body: CertificateTemplate) {
+    manage(req);
+    await withParty(req.partyId, async (tx) => {
+      for (const s of body.signatories)
+        if (s.signatureFileId) await this.files.readyFile(tx, s.signatureFileId, "signature");
+      const before = await this.template(tx);
+      const values = {
+        title: body.title,
+        mention: body.mention,
+        footer: body.footer,
+        accentColor: body.accentColor,
+        showLogo: body.showLogo,
+        signatories: body.signatories,
+        updatedAt: new Date(),
+      };
+      await tx
+        .insert(certificateTemplates)
+        .values({ partyId: req.partyId, ...values })
+        .onConflictDoUpdate({ target: certificateTemplates.partyId, set: values });
+      // Signatures remplacées : à la corbeille, elles ne servent plus.
+      const kept = new Set(body.signatories.map((s) => s.signatureFileId));
+      const dropped = before.signatories.flatMap((s) =>
+        s.signatureFileId && !kept.has(s.signatureFileId) ? [s.signatureFileId] : [],
+      );
+      if (dropped.length)
+        await tx
+          .update(files)
+          .set({ trashedAt: new Date() })
+          .where(and(inArray(files.id, dropped), eq(files.purpose, "signature")));
+      await audit(tx, {
+        ...actor(req),
+        action: "certificate_template.update",
+        targetType: "party",
+        targetId: req.partyId,
+      });
+    });
+  }
+
+  /** Images du certificat (logo du parti, signatures), lues par le serveur pour le PDF. */
+  private async artwork(tx: Tx, t: CertificateTemplate) {
+    const [p] = await tx
+      .select({ name: parties.name, logo: parties.logoFileId, color: parties.brandColor })
+      .from(parties);
+    const logo = t.showLogo && p?.logo ? await this.files.imageBytes(tx, p.logo, "party_logo") : null;
+    const signatures = [];
+    for (const s of t.signatories)
+      signatures.push(s.signatureFileId ? await this.files.imageBytes(tx, s.signatureFileId, "signature") : null);
+    return { partyName: p?.name ?? "", brandColor: p?.color ?? null, logo, signatures };
   }
 
   /** Données du certificat d'un membre (le sien), pour le PDF (FOR-04). */
@@ -537,8 +817,27 @@ export class TrainingService {
         .leftJoin(users, eq(users.id, members.userId))
         .where(and(eq(courseCompletions.courseId, courseId), eq(courseCompletions.memberId, req.memberId!)));
       if (!r) throw new ApiError(404, "not_found");
-      const [p] = await tx.select({ name: parties.name }).from(parties);
-      return { ...r, courseTitle: r.courseTitle as I18n, partyName: p?.name ?? "" };
+      const template = await this.template(tx);
+      return { ...r, courseTitle: r.courseTitle as I18n, template, ...(await this.artwork(tx, template)) };
+    });
+  }
+
+  /** Exemplaire du certificat au modèle enregistré, au nom d'un membre fictif, pour l'éditeur. */
+  async sample(req: Req) {
+    manage(req);
+    return withParty(req.partyId, async (tx) => {
+      const template = await this.template(tx);
+      return {
+        number: `${new Date().getUTCFullYear()}-000000`,
+        completedAt: new Date(),
+        courseTitle: { fr: "Formation des nouveaux membres", ht: "Fòmasyon nouvo manm" },
+        firstName: "Marie",
+        lastName: "Exemple",
+        memberNumber: "000000",
+        locale: null,
+        template,
+        ...(await this.artwork(tx, template)),
+      };
     });
   }
 }

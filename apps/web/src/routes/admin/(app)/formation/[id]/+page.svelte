@@ -1,6 +1,8 @@
 <!--
-  Une formation (FOR-01 à FOR-04). Contenu : leçons dans l'ordre (monter, descendre, modifier, supprimer) et
-  réglages, avec l'aperçu du certificat au nom du parti. Suivi : concernés, en cours, terminés par zone (FOR-03).
+  Une formation (FOR-01 à FOR-04). Contenu : le parcours, module par module ; chaque module a ses chapitres
+  (texte, vidéo, audio, document, YouTube, Vimeo) et, s'il le faut, son quiz. Entre deux modules, le cadenas dit
+  ce qui ouvre le suivant. Réglages et aperçu du certificat au modèle du parti. Suivi : concernés, en cours,
+  terminés par zone (FOR-03).
 -->
 <script lang="ts">
   import { enhance } from "$app/forms";
@@ -9,9 +11,10 @@
   import { hasFeature } from "@civora/shared";
   import { Badge, Button, Field } from "@civora/ui";
   import { formatDateTime } from "$lib/datetime";
-  import { format, translator, type MessageKey } from "$lib/i18n";
+  import { counted, format, translator, type MessageKey } from "$lib/i18n";
   import type { ActionData, PageData } from "./$types";
-  import LessonEditor from "./LessonEditor.svelte";
+  import ChapterEditor from "./ChapterEditor.svelte";
+  import ModuleEditor from "./ModuleEditor.svelte";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
   const t = $derived(translator(data.locale));
@@ -33,7 +36,7 @@
           : f?.done === "saved"
             ? { bad: false, text: t("admin.course.saved") }
             : f?.done
-              ? { bad: false, text: tk(`admin.lesson.${f.done.replace("lesson", "").toLowerCase() || "saved"}`) }
+              ? { bad: false, text: tk(`admin.course.done.${f.done}`) }
               : null,
   );
   const submit = (key: string) => () => {
@@ -43,12 +46,24 @@
       pending = null;
     };
   };
-  /** Nouvel ordre après avoir monté (−1) ou descendu (+1) une leçon. */
-  const moved = (i: number, dir: -1 | 1) => {
-    const ids = c.lessons.map((l) => l.id);
+  /** Nouvel ordre après avoir monté (-1) ou descendu (+1) un élément. */
+  const moved = (list: Array<{ id: string }>, i: number, dir: -1 | 1) => {
+    const ids = list.map((x) => x.id);
+    if (i + dir < 0 || i + dir >= ids.length) return "";
     [ids[i], ids[i + dir]] = [ids[i + dir]!, ids[i]!];
     return ids.join(",");
   };
+  const GLYPH: Record<string, string> = {
+    text: "T",
+    video: "▶",
+    audio: "♪",
+    document: "▤",
+    youtube: "▶",
+    vimeo: "▶",
+  };
+  const chapterCount = $derived(c.modules.reduce((n, m) => n + m.chapters.length, 0));
+  const tpl = $derived(data.template);
+  const certTitle = $derived(tpl?.title ? label(tpl.title) : t("admin.course.certificate.title"));
   const certificates = $derived(data.me.tier ? hasFeature(data.me.tier, "training.certificates") : false);
   const rate = (r: { target: number; completed: number }) =>
     r.target ? Math.round((r.completed / r.target) * 100) : null;
@@ -87,71 +102,163 @@
   {#if data.tab === "content"}
     <div class="layout">
       <section class="lessons" aria-labelledby="lessons-title">
-        <h2 id="lessons-title">{t("admin.course.lessons")}</h2>
-        <p class="muted">{t("admin.course.lessons.lead")}</p>
-        {#if c.lessons.length === 0 && editing !== "new"}<p class="empty">{t("admin.course.lessons.none")}</p>{/if}
-        <ol>
-          {#each c.lessons as l, i (l.id)}
-            <li>
-              {#if editing === l.id}
-                <LessonEditor
-                  lesson={l}
+        <h2 id="lessons-title">{t("admin.course.path")}</h2>
+        <p class="muted">
+          {t("admin.course.path.lead")}
+          {#if c.modules.length}
+            {counted(t, "count.module", c.modules.length)}, {counted(t, "count.chapter", chapterCount)}.
+          {/if}
+        </p>
+        {#if c.modules.length === 0 && editing !== "module:new"}
+          <p class="empty">{t("admin.course.path.none")}</p>
+        {/if}
+        <ol class="path">
+          {#each c.modules as m, mi (m.id)}
+            <li class="module">
+              {#if editing === `module:${m.id}`}
+                <ModuleEditor
+                  module={m}
                   locale={data.locale}
                   oncancel={() => (editing = null)}
                   ondone={() => (editing = null)}
                 />
               {:else}
-                <div class="lesson">
-                  <span class="step" aria-hidden="true">{i + 1}</span>
-                  <span class="body">
-                    <strong>{label(l.title)}</strong>
-                    <span class="muted">
-                      {tk(`admin.lesson.kind.${l.kind}`)}
-                      {#if l.quiz?.length}· {format(t("admin.lesson.quiz.count"), { n: String(l.quiz.length) })}{/if}
-                    </span>
+                <header class="m-head">
+                  <span class="m-num">{format(t("admin.module.number"), { n: String(mi + 1) })}</span>
+                  <span class="m-title">
+                    <strong>{label(m.title)}</strong>
+                    {#if m.description}<span class="muted">{label(m.description)}</span>{/if}
                   </span>
                   <span class="tools">
-                    <form method="POST" action="?/reorder" use:enhance={submit(`up-${l.id}`)}>
-                      <input type="hidden" name="order" value={i > 0 ? moved(i, -1) : ""} />
+                    <form method="POST" action="?/reorderModules" use:enhance={submit(`mup-${m.id}`)}>
+                      <input type="hidden" name="order" value={moved(c.modules, mi, -1)} />
                       <button
                         type="submit"
                         class="icon"
-                        disabled={i === 0}
-                        aria-label={format(t("admin.lesson.up"), { title: label(l.title) })}>↑</button
+                        disabled={mi === 0}
+                        aria-label={format(t("admin.lesson.up"), { title: label(m.title) })}>↑</button
                       >
                     </form>
-                    <form method="POST" action="?/reorder" use:enhance={submit(`down-${l.id}`)}>
-                      <input type="hidden" name="order" value={i < c.lessons.length - 1 ? moved(i, 1) : ""} />
+                    <form method="POST" action="?/reorderModules" use:enhance={submit(`mdown-${m.id}`)}>
+                      <input type="hidden" name="order" value={moved(c.modules, mi, 1)} />
                       <button
                         type="submit"
                         class="icon"
-                        disabled={i === c.lessons.length - 1}
-                        aria-label={format(t("admin.lesson.down"), { title: label(l.title) })}>↓</button
+                        disabled={mi === c.modules.length - 1}
+                        aria-label={format(t("admin.lesson.down"), { title: label(m.title) })}>↓</button
                       >
                     </form>
-                    <Button size="sm" variant="ghost" onclick={() => (editing = l.id)}>{t("admin.lesson.edit")}</Button>
-                    <form method="POST" action="?/deleteLesson" use:enhance={submit(`del-${l.id}`)}>
-                      <input type="hidden" name="id" value={l.id} />
-                      <Button type="submit" size="sm" variant="ghost" pending={pending === `del-${l.id}`}
-                        >{t("admin.lesson.delete")}</Button
+                    <Button size="sm" variant="ghost" onclick={() => (editing = `module:${m.id}`)}
+                      >{t("admin.lesson.edit")}</Button
+                    >
+                    <form method="POST" action="?/deleteModule" use:enhance={submit(`mdel-${m.id}`)}>
+                      <input type="hidden" name="id" value={m.id} />
+                      <Button type="submit" size="sm" variant="ghost" pending={pending === `mdel-${m.id}`}
+                        >{t("admin.module.delete")}</Button
                       >
                     </form>
                   </span>
-                </div>
+                </header>
+              {/if}
+
+              <ol class="chapters">
+                {#each m.chapters as ch, ci (ch.id)}
+                  <li>
+                    {#if editing === `chapter:${ch.id}`}
+                      <ChapterEditor
+                        chapter={ch}
+                        moduleId={m.id}
+                        locale={data.locale}
+                        oncancel={() => (editing = null)}
+                        ondone={() => (editing = null)}
+                      />
+                    {:else}
+                      <div class="chapter">
+                        <span class="glyph {ch.kind}" aria-hidden="true">{GLYPH[ch.kind]}</span>
+                        <span class="body">
+                          <strong>{label(ch.title)}</strong>
+                          <span class="muted">{tk(`admin.chapter.kind.${ch.kind}`)}</span>
+                        </span>
+                        <span class="tools">
+                          <form method="POST" action="?/reorderChapters" use:enhance={submit(`up-${ch.id}`)}>
+                            <input type="hidden" name="moduleId" value={m.id} />
+                            <input type="hidden" name="order" value={moved(m.chapters, ci, -1)} />
+                            <button
+                              type="submit"
+                              class="icon"
+                              disabled={ci === 0}
+                              aria-label={format(t("admin.lesson.up"), { title: label(ch.title) })}>↑</button
+                            >
+                          </form>
+                          <form method="POST" action="?/reorderChapters" use:enhance={submit(`down-${ch.id}`)}>
+                            <input type="hidden" name="moduleId" value={m.id} />
+                            <input type="hidden" name="order" value={moved(m.chapters, ci, 1)} />
+                            <button
+                              type="submit"
+                              class="icon"
+                              disabled={ci === m.chapters.length - 1}
+                              aria-label={format(t("admin.lesson.down"), { title: label(ch.title) })}>↓</button
+                            >
+                          </form>
+                          <Button size="sm" variant="ghost" onclick={() => (editing = `chapter:${ch.id}`)}
+                            >{t("admin.lesson.edit")}</Button
+                          >
+                          <form method="POST" action="?/deleteChapter" use:enhance={submit(`del-${ch.id}`)}>
+                            <input type="hidden" name="id" value={ch.id} />
+                            <Button type="submit" size="sm" variant="ghost" pending={pending === `del-${ch.id}`}
+                              >{t("admin.chapter.delete")}</Button
+                            >
+                          </form>
+                        </span>
+                      </div>
+                    {/if}
+                  </li>
+                {/each}
+              </ol>
+              {#if editing === `chapter:new:${m.id}`}
+                <ChapterEditor
+                  chapter={null}
+                  moduleId={m.id}
+                  locale={data.locale}
+                  oncancel={() => (editing = null)}
+                  ondone={() => (editing = null)}
+                />
+              {:else}
+                <button type="button" class="add" onclick={() => (editing = `chapter:new:${m.id}`)}>
+                  + {t("admin.module.addChapter")}
+                </button>
+              {/if}
+              {#if m.quiz?.length}
+                <p class="gate">
+                  <span class="gate-mark" aria-hidden="true">?</span>
+                  {format(t("admin.module.quiz.summary"), {
+                    q: counted(t, "count.question", m.quiz.length),
+                    p: String(c.passThresholdPercent),
+                  })}
+                </p>
               {/if}
             </li>
+            {#if mi < c.modules.length - 1}
+              <li class="lock">
+                <span class="padlock" aria-hidden="true"></span>
+                {format(t(m.quiz?.length ? "admin.module.lock.quiz" : "admin.module.lock.read"), {
+                  next: String(mi + 2),
+                  prev: String(mi + 1),
+                })}
+              </li>
+            {/if}
           {/each}
         </ol>
-        {#if editing === "new"}
-          <LessonEditor
-            lesson={null}
+        {#if editing === "module:new"}
+          <ModuleEditor
+            module={null}
             locale={data.locale}
             oncancel={() => (editing = null)}
             ondone={() => (editing = null)}
           />
         {:else}
           <div>
-            <Button variant="secondary" onclick={() => (editing = "new")}>{t("admin.course.addLesson")}</Button>
+            <Button variant="secondary" onclick={() => (editing = "module:new")}>{t("admin.course.addModule")}</Button>
           </div>
         {/if}
       </section>
@@ -207,16 +314,29 @@
           <Button type="submit" pending={pending === "settings"}>{t("admin.course.save")}</Button>
         </form>
 
-        <!-- Aperçu du certificat : double filet, au nom du parti, comme le PDF délivré. -->
-        <figure class="cert" aria-label={t("admin.course.certificate")}>
+        <!-- Aperçu du certificat au modèle du parti : double filet à sa couleur, signataires, comme le PDF. -->
+        <figure
+          class="cert"
+          aria-label={t("admin.course.certificate")}
+          style:--cert-accent={tpl?.accentColor ?? "var(--c-primary)"}
+        >
           <p class="cert-party">{data.party.name}</p>
-          <p class="cert-title">{t("admin.course.certificate.title")}</p>
-          <p class="cert-small">{t("admin.course.certificate.awarded")}</p>
+          <p class="cert-title">{certTitle}</p>
+          <p class="cert-small">{tpl?.mention ? label(tpl.mention) : t("admin.course.certificate.awarded")}</p>
           <p class="cert-name">{t("admin.course.certificate.member")}</p>
           <p class="cert-course">{label(c.title)}</p>
+          {#if tpl?.signatories.length}
+            <p class="cert-signers">
+              {#each tpl.signatories as sg, si (si)}<span>{sg.name}</span>{/each}
+            </p>
+          {/if}
           <p class="cert-seal" aria-hidden="true">{new Date().getFullYear()}</p>
         </figure>
-        {#if !certificates}<p class="muted">{t("admin.course.certificate.locked")}</p>{/if}
+        {#if certificates}
+          <a class="cert-link" href={resolve("/admin/formation/certificat")}>{t("admin.course.certificate.edit")}</a>
+        {:else}
+          <p class="muted">{t("admin.course.certificate.locked")}</p>
+        {/if}
       </aside>
     </div>
   {:else if data.progress}
@@ -375,33 +495,145 @@
     flex-direction: column;
     gap: var(--s-3);
   }
-  .lessons ol {
+  .path {
     margin: 0;
     padding: 0;
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: var(--s-2);
   }
-  .lesson {
+  .module {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+    padding: var(--s-4);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-lg);
+    background: var(--c-surface);
+  }
+  .m-head {
     display: flex;
     align-items: center;
     gap: var(--s-3);
-    padding: var(--s-3) var(--s-4);
-    border: 1px solid var(--c-line);
-    border-radius: var(--r-md);
-    background: var(--c-surface);
   }
-  .step {
+  .m-num {
     flex: none;
-    width: 34px;
-    height: 34px;
-    display: grid;
-    place-items: center;
+    padding: var(--s-1) var(--s-3);
     border-radius: var(--r-pill);
     background: var(--c-primary);
     color: var(--c-on-primary);
-    font: 800 var(--fs-14) / 1 var(--font-display);
+    font: 700 var(--fs-13) / 1.2 var(--font-display);
+  }
+  .m-title {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: var(--fs-16);
+  }
+  .chapters {
+    margin: 0;
+    padding: 0 0 0 var(--s-5);
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+    border-left: 2px solid var(--c-line-soft);
+    margin-left: var(--s-3);
+  }
+  .chapter {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    padding: var(--s-2) var(--s-3);
+    border-radius: var(--r-md);
+    background: var(--c-paper);
+  }
+  .glyph {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--r-sm);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    font: 700 var(--fs-13) / 1 var(--font-display);
+  }
+  .glyph.youtube,
+  .glyph.vimeo,
+  .glyph.video {
+    background: var(--c-ink);
+    border-color: var(--c-ink);
+    color: var(--c-surface);
+  }
+  .add {
+    align-self: flex-start;
+    min-height: 40px;
+    margin-left: calc(var(--s-3) + var(--s-5));
+    padding: 0 var(--s-3);
+    border: 1px dashed var(--c-ink-3);
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: var(--c-ink);
+    font: 600 var(--fs-13) / 1 var(--font-ui);
+    cursor: pointer;
+  }
+  /* Quiz de fin de module : la porte qu'il faut passer. */
+  .gate {
+    margin: var(--s-1) 0 0;
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-2) var(--s-3);
+    border-radius: var(--r-md);
+    background: var(--c-accent-tint);
+    font-size: var(--fs-13);
+    font-weight: 600;
+  }
+  .gate-mark {
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--c-accent-bright);
+    color: var(--c-on-accent);
+    font: 800 var(--fs-13) / 1 var(--font-display);
+  }
+  /* Entre deux modules : un filet pointillé et un cadenas qui dit ce qui ouvre la suite. */
+  .lock {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-left: var(--s-6);
+    padding: var(--s-3) 0 var(--s-3) var(--s-5);
+    border-left: 2px dashed var(--c-ink-3);
+    font-size: var(--fs-13);
+    color: var(--c-ink-2);
+  }
+  .padlock {
+    position: relative;
+    flex: none;
+    width: 16px;
+    height: 12px;
+    margin-top: 6px;
+    border-radius: 3px;
+    background: var(--c-ink);
+  }
+  .padlock::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: -8px;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--c-ink);
+    border-bottom: 0;
+    border-radius: 6px 6px 0 0;
+    box-sizing: border-box;
   }
   .body {
     flex: 1;
@@ -495,8 +727,8 @@
     margin: 0;
     padding: var(--s-6) var(--s-5);
     background: var(--c-surface);
-    border: 2px solid var(--c-ink);
-    outline: 1px solid var(--c-ink);
+    border: 2px solid var(--cert-accent);
+    outline: 1px solid var(--cert-accent);
     outline-offset: -8px;
     text-align: center;
     box-shadow: var(--shadow-object);
@@ -513,6 +745,7 @@
   }
   .cert-title {
     margin-top: var(--s-2) !important;
+    color: var(--cert-accent);
     font: 800 var(--fs-19) / 1.1 var(--font-display);
   }
   .cert-small {
@@ -529,6 +762,24 @@
     margin-top: var(--s-2) !important;
     font-size: var(--fs-13);
     font-weight: 600;
+  }
+  .cert-signers {
+    margin-top: var(--s-4) !important;
+    display: flex;
+    justify-content: center;
+    gap: var(--s-4);
+    font-size: var(--fs-12);
+  }
+  .cert-signers span {
+    min-width: 70px;
+    padding-top: 4px;
+    border-top: 1px solid var(--c-ink);
+  }
+  .cert-link {
+    font-size: var(--fs-14);
+    font-weight: 600;
+    color: var(--c-primary);
+    text-underline-offset: 3px;
   }
   .cert-seal {
     position: absolute;
@@ -635,6 +886,8 @@
   .back:focus-visible,
   .tabs a:focus-visible,
   .icon:focus-visible,
+  .add:focus-visible,
+  .cert-link:focus-visible,
   textarea:focus-visible,
   tbody th a:focus-visible {
     outline: none;
@@ -652,8 +905,13 @@
     main {
       padding: var(--s-5) var(--s-4) var(--s-8);
     }
-    .lesson {
+    .m-head,
+    .chapter {
       flex-wrap: wrap;
+    }
+    .chapters {
+      padding-left: var(--s-3);
+      margin-left: 0;
     }
   }
 </style>

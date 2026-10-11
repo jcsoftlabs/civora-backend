@@ -1,8 +1,8 @@
 // COM-01 : annonces, actualités, éditoriaux, podcasts et albums, ciblés par zone, statut, organe ou diaspora.
 import type { FastifyRequest } from "fastify";
-import { and, desc, eq, gt, isNotNull, isNull, lt, lte, sql } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNotNull, isNull, lt, lte, sql } from "drizzle-orm";
 import { z } from "zod";
-import { publications, withParty, type Tx } from "@civora/db";
+import { files, publications, withParty, type Tx } from "@civora/db";
 import { audienceInput, memberInAudience, resolveAudience, type Audience } from "../../lib/audience.js";
 import { audit } from "../../lib/audit.js";
 import { currentMember } from "../../lib/member-context.js";
@@ -76,7 +76,10 @@ export class PublicationsService {
   }
 
   private async load(tx: Parameters<Parameters<typeof withParty>[1]>[0], req: Req, id: string) {
-    const [p] = await tx.select(columns).from(publications).where(eq(publications.id, id));
+    const [p] = await tx
+      .select({ ...columns, mediaFileIds: publications.mediaFileIds })
+      .from(publications)
+      .where(eq(publications.id, id));
     if (!p) throw new ApiError(404, "not_found");
     if (!canManage(req, p.audience as Audience | null)) throw new ApiError(403, "forbidden");
     return p;
@@ -84,9 +87,18 @@ export class PublicationsService {
 
   async update(req: Req, id: string, body: z.infer<typeof publicationUpdate>) {
     await withParty(req.partyId, async (tx) => {
-      await this.load(tx, req, id);
+      const before = await this.load(tx, req, id);
       const audience = body.audience !== undefined ? await resolveAudience(tx, req, PERM, body.audience) : undefined;
       if (body.mediaFileIds) await this.checkMedia(tx, body.mediaFileIds);
+      // Médias retirés de la publication : à la corbeille (vidée après 30 jours, DOC-07).
+      const removed = body.mediaFileIds
+        ? (before.mediaFileIds ?? []).filter((m) => !body.mediaFileIds!.includes(m))
+        : [];
+      if (removed.length)
+        await tx
+          .update(files)
+          .set({ trashedAt: new Date() })
+          .where(and(inArray(files.id, removed), eq(files.purpose, "publication_media")));
       await tx
         .update(publications)
         .set({
@@ -131,27 +143,37 @@ export class PublicationsService {
     });
   }
 
-  /** Publications que la personne peut gérer (brouillons, programmées, publiées). */
+  /** Publications que la personne peut gérer (brouillons, programmées, publiées), avec leurs médias. */
   async manageList(req: Req, status?: "draft" | "scheduled" | "published") {
     if (!req.grants.some((g) => g.permission === PERM)) throw new ApiError(403, "forbidden");
     const now = new Date();
-    const rows = await withParty(req.partyId, (tx) =>
-      tx
-        .select(columns)
-        .from(publications)
-        .where(
-          status === "draft"
-            ? isNull(publications.publishedAt)
-            : status === "scheduled"
-              ? gt(publications.publishedAt, now)
-              : status === "published"
-                ? lte(publications.publishedAt, now)
-                : undefined,
-        )
-        .orderBy(desc(publications.createdAt))
-        .limit(200),
-    );
-    return rows.filter((p) => canManage(req, p.audience as Audience | null));
+    return withParty(req.partyId, async (tx) => {
+      const rows = (
+        await tx
+          .select({ ...columns, mediaFileIds: publications.mediaFileIds })
+          .from(publications)
+          .where(
+            status === "draft"
+              ? isNull(publications.publishedAt)
+              : status === "scheduled"
+                ? gt(publications.publishedAt, now)
+                : status === "published"
+                  ? lte(publications.publishedAt, now)
+                  : undefined,
+          )
+          .orderBy(desc(publications.createdAt))
+          .limit(200)
+      ).filter((p) => canManage(req, p.audience as Audience | null));
+      // Médias déjà joints : l'éditeur les montre pour qu'on enrichisse un album au lieu de le remplacer.
+      const urls = await this.files.mediaUrls(
+        tx,
+        rows.flatMap((r) => r.mediaFileIds ?? []),
+      );
+      return rows.map(({ mediaFileIds, ...r }) => ({
+        ...r,
+        media: (mediaFileIds ?? []).flatMap((id) => (urls.has(id) ? [{ id, ...urls.get(id)! }] : [])),
+      }));
+    });
   }
 
   /** Fil du membre : publications parues qui le ciblent, de la plus récente à la plus ancienne. */

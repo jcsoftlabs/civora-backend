@@ -28,3 +28,8 @@ export function translator(locale: Locale) {
 export function format(text: string, values: Record<string, string>): string {
   return text.replace(/\{(\w+)\}/g, (m, k: string) => values[k] ?? m);
 }
+
+/** Nombre accordé : « 1 module », « 3 modules » (la clé `.one` sert pour un seul élément). */
+export function counted(t: (key: MessageKey) => string, key: string, n: number): string {
+  return format(t((n === 1 ? `${key}.one` : key) as MessageKey), { n: String(n) });
+}

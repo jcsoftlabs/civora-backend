@@ -18,7 +18,7 @@ export const POST: RequestHandler = async ({ request, url, cookies, locals, getC
     mimeType?: string;
     sizeBytes?: number;
   };
-  if (b.purpose !== "training_media" && b.purpose !== "publication_media")
+  if (b.purpose !== "training_media" && b.purpose !== "publication_media" && b.purpose !== "signature")
     return json({ code: "invalid_request" }, { status: 400 });
   const rule = UPLOAD_RULES[b.purpose];
   if (!b.mimeType || !(rule.types as readonly string[]).includes(b.mimeType))

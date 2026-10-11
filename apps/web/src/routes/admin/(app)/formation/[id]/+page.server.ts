@@ -1,4 +1,5 @@
 import { error, fail } from "@sveltejs/kit";
+import { hasFeature } from "@civora/shared";
 import { ApiFailure, api } from "$lib/server/api";
 import { currentSession } from "$lib/server/session";
 import type { Actions, PageServerLoad, RequestEvent } from "./$types";
@@ -9,14 +10,24 @@ export interface QuizQuestion {
   choices: Array<{ id: string; text: { fr: string; ht?: string } }>;
   correct: string[];
 }
-export interface Lesson {
+export type ChapterKind = "text" | "video" | "audio" | "document" | "youtube" | "vimeo";
+export interface Chapter {
   id: string;
   position: number;
-  kind: "video" | "audio" | "document" | "text";
+  kind: ChapterKind;
   title: { fr: string; ht?: string };
   body: { fr: string; ht?: string } | null;
   mediaFileId: string | null;
+  media: { url: string; mimeType: string; name: string } | null;
+  embedUrl: string | null;
+}
+export interface CourseModule {
+  id: string;
+  position: number;
+  title: { fr: string; ht?: string };
+  description: { fr: string; ht?: string } | null;
   quiz: QuizQuestion[] | null;
+  chapters: Chapter[];
 }
 export interface Course {
   id: string;
@@ -26,7 +37,13 @@ export interface Course {
   maxAttempts: number | null;
   mandatoryForStatusIds: string[];
   publishedAt: string | null;
-  lessons: Lesson[];
+  modules: CourseModule[];
+}
+export interface TemplatePreview {
+  title: { fr: string; ht?: string } | null;
+  mention: { fr: string; ht?: string } | null;
+  accentColor: string | null;
+  signatories: Array<{ name: string }>;
 }
 export interface ProgressRow {
   code: string;
@@ -37,7 +54,7 @@ export interface ProgressRow {
   started: number;
 }
 
-/** Une formation : réglages, leçons et quiz (Contenu), progression par zone (Suivi, FOR-03). */
+/** Une formation : réglages, modules, chapitres et quiz (Contenu), progression par zone (Suivi, FOR-03). */
 export const load: PageServerLoad = async ({ params, url, cookies, locals, getClientAddress }) => {
   const s = (await currentSession(cookies, locals.partySlug!))!;
   if (!s.me.permissions.includes("training.manage")) error(403, { message: "forbidden", code: "forbidden" });
@@ -46,7 +63,8 @@ export const load: PageServerLoad = async ({ params, url, cookies, locals, getCl
   const tab = url.searchParams.get("vue") === "suivi" ? "progress" : "content";
   try {
     const zone = url.searchParams.get("zone");
-    const [course, statuses, progress] = await Promise.all([
+    const certificates = s.me.tier ? hasFeature(s.me.tier, "training.certificates") : false;
+    const [course, statuses, progress, template] = await Promise.all([
       call<Course>(`/courses/${params.id}`),
       call<{ statuses: Array<{ id: string; label: { fr: string; ht?: string } }> }>("/member-statuses").then(
         (r) => r.statuses,
@@ -56,8 +74,9 @@ export const load: PageServerLoad = async ({ params, url, cookies, locals, getCl
             `/courses/${params.id}/progress${zone && /^[A-Z0-9-]{2,20}$/.test(zone) ? `?zone=${zone}` : ""}`,
           ).catch(() => null)
         : null,
+      certificates ? call<TemplatePreview>("/certificate-template").catch(() => null) : null,
     ]);
-    return { course, statuses, progress, tab };
+    return { course, statuses, progress, tab, template };
   } catch (e) {
     if (e instanceof ApiFailure && e.status === 404) error(404, { message: "not_found", code: "not_found" });
     if (e instanceof ApiFailure && e.status === 402) error(403, { message: "forbidden", code: "forbidden" });
@@ -90,28 +109,32 @@ async function act(
   }
 }
 
-/** Corps d'une leçon depuis le formulaire ; le quiz arrive en JSON depuis le constructeur. */
-function lessonBody(f: FormData, creating: boolean) {
-  let quiz: unknown = null;
+/** Quiz d'un module : arrive en JSON depuis le constructeur ; liste vide = pas de quiz. */
+function quizFrom(f: FormData) {
   try {
-    quiz = JSON.parse(text(f, "quiz") || "[]");
+    const quiz = JSON.parse(text(f, "quiz") || "[]") as unknown;
+    return Array.isArray(quiz) && quiz.length ? quiz : null;
   } catch {
     throw new ApiFailure(400, "quiz_invalid");
   }
+}
+
+/** Corps d'un chapitre selon sa nature : texte, fichier envoyé, ou lien YouTube ou Vimeo. */
+function chapterBody(f: FormData, creating: boolean) {
+  const kind = text(f, "kind");
   const body = i18n(f, "body");
   const media = text(f, "mediaFileId");
+  const link = text(f, "videoUrl");
   return {
-    kind: text(f, "kind"),
+    kind,
     title: i18n(f, "title"),
     ...(creating ? (body ? { body } : {}) : { body }),
-    ...(media ? { mediaFileId: media } : creating ? {} : { mediaFileId: null }),
-    ...(creating
-      ? Array.isArray(quiz) && quiz.length
-        ? { quiz }
-        : {}
-      : { quiz: Array.isArray(quiz) && quiz.length ? quiz : null }),
+    ...(["video", "audio", "document"].includes(kind) && media ? { mediaFileId: media } : {}),
+    ...(["youtube", "vimeo"].includes(kind) && link ? { videoUrl: link } : {}),
   };
 }
+const idOf = (f: FormData) => encodeURIComponent(text(f, "id"));
+const order = (f: FormData) => ({ ids: text(f, "order").split(",").filter(Boolean) });
 
 export const actions: Actions = {
   settings: (event) =>
@@ -138,23 +161,45 @@ export const actions: Actions = {
     act(event, "unpublished", (_f, token, ip) =>
       api(`/courses/${event.params.id}`, { method: "PATCH", body: { published: false }, token, ip }),
     ),
-  addLesson: (event) =>
-    act(event, "lessonCreated", (f, token, ip) =>
-      api(`/courses/${event.params.id}/lessons`, { body: lessonBody(f, true), token, ip }),
+  addModule: (event) =>
+    act(event, "moduleCreated", (f, token, ip) => {
+      const quiz = quizFrom(f);
+      return api(`/courses/${event.params.id}/modules`, {
+        body: { title: i18n(f, "title"), description: i18n(f, "description") ?? undefined, ...(quiz ? { quiz } : {}) },
+        token,
+        ip,
+      });
+    }),
+  updateModule: (event) =>
+    act(event, "moduleSaved", (f, token, ip) =>
+      api(`/modules/${idOf(f)}`, {
+        method: "PATCH",
+        body: { title: i18n(f, "title"), description: i18n(f, "description"), quiz: quizFrom(f) },
+        token,
+        ip,
+      }),
     ),
-  updateLesson: (event) =>
-    act(event, "lessonSaved", (f, token, ip) =>
-      api(`/lessons/${encodeURIComponent(text(f, "id"))}`, { method: "PATCH", body: lessonBody(f, false), token, ip }),
-    ),
-  deleteLesson: (event) =>
-    act(event, "lessonDeleted", (f, token, ip) =>
-      api(`/lessons/${encodeURIComponent(text(f, "id"))}`, { method: "DELETE", token, ip }),
-    ),
-  reorder: (event) =>
+  deleteModule: (event) =>
+    act(event, "moduleDeleted", (f, token, ip) => api(`/modules/${idOf(f)}`, { method: "DELETE", token, ip })),
+  reorderModules: (event) =>
     act(event, "reordered", (f, token, ip) =>
-      api(`/courses/${event.params.id}/lessons/order`, {
+      api(`/courses/${event.params.id}/modules/order`, { method: "PUT", body: order(f), token, ip }),
+    ),
+  addChapter: (event) =>
+    act(event, "chapterCreated", (f, token, ip) =>
+      api(`/modules/${encodeURIComponent(text(f, "moduleId"))}/chapters`, { body: chapterBody(f, true), token, ip }),
+    ),
+  updateChapter: (event) =>
+    act(event, "chapterSaved", (f, token, ip) =>
+      api(`/chapters/${idOf(f)}`, { method: "PATCH", body: chapterBody(f, false), token, ip }),
+    ),
+  deleteChapter: (event) =>
+    act(event, "chapterDeleted", (f, token, ip) => api(`/chapters/${idOf(f)}`, { method: "DELETE", token, ip })),
+  reorderChapters: (event) =>
+    act(event, "reordered", (f, token, ip) =>
+      api(`/modules/${encodeURIComponent(text(f, "moduleId"))}/chapters/order`, {
         method: "PUT",
-        body: { lessonIds: text(f, "order").split(",").filter(Boolean) },
+        body: order(f),
         token,
         ip,
       }),

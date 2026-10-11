@@ -37,6 +37,8 @@ export const PURPOSES = {
   },
   /** Logo du parti (SOC-03) : images matricielles seulement (pas de SVG, qui peut contenir du script). */
   party_logo: { folder: "branding", types: IMAGES, maxBytes: () => 2 * MB },
+  /** Signature d'un certificat (FOR-04), envoyée ou tracée à l'écran : PNG ou JPEG, que le PDF sait intégrer. */
+  signature: { folder: "signatures", types: ["image/png", "image/jpeg"], maxBytes: () => 1 * MB },
 } as const;
 export type Purpose = keyof typeof PURPOSES;
 
@@ -64,7 +66,10 @@ export class FilesService {
     }
     if (body.purpose === "document" && !req.grants.some((g) => g.permission === "documents.write"))
       throw new ApiError(403, "forbidden");
-    if (body.purpose === "training_media" && !req.grants.some((g) => g.permission === "training.manage"))
+    if (
+      (body.purpose === "training_media" || body.purpose === "signature") &&
+      !req.grants.some((g) => g.permission === "training.manage")
+    )
       throw new ApiError(403, "forbidden");
 
     const id = randomUUID();
@@ -122,6 +127,7 @@ export class FilesService {
       .select({
         id: files.id,
         purpose: files.purpose,
+        mimeType: files.mimeType,
         status: files.uploadStatus,
         by: files.uploadedByMemberId,
         trashedAt: files.trashedAt,
@@ -170,6 +176,7 @@ export class FilesService {
         allowed = !!owner && (owner.id === req.memberId || authorize(req, "members.read", owner.path));
       }
       if (!allowed && row.purpose === "document") allowed = authorize(req, "documents.read");
+      if (!allowed && row.purpose === "signature") allowed = authorize(req, "training.manage");
       if (!allowed) throw new ApiError(403, "forbidden");
       if (row.purpose === "document") {
         await audit(tx, {
@@ -191,8 +198,12 @@ export class FilesService {
   }
 
   /** URL de lecture des médias d'une publication ou d'une leçon (tout membre du parti y a droit). */
-  async mediaUrls(tx: Tx, ids: string[], purpose: "publication_media" | "training_media" = "publication_media") {
-    if (!ids.length) return new Map<string, { mimeType: string; url: string }>();
+  async mediaUrls(
+    tx: Tx,
+    ids: string[],
+    purpose: "publication_media" | "training_media" | "signature" = "publication_media",
+  ) {
+    if (!ids.length) return new Map<string, { mimeType: string; url: string; name: string }>();
     const rows = await tx
       .select({ id: files.id, key: files.r2Key, name: files.name, mimeType: files.mimeType })
       .from(files)
@@ -204,9 +215,26 @@ export class FilesService {
           isNull(files.trashedAt),
         ),
       );
-    const out = new Map<string, { mimeType: string; url: string }>();
+    const out = new Map<string, { mimeType: string; url: string; name: string }>();
     for (const r of rows)
-      out.set(r.id, { mimeType: r.mimeType, url: await this.storage.presignDownload(r.key, 60 * 60, r.name) });
+      out.set(r.id, {
+        mimeType: r.mimeType,
+        name: r.name,
+        url: await this.storage.presignDownload(r.key, 60 * 60, r.name),
+      });
     return out;
+  }
+
+  /** Contenu d'une image prête (logo, signature) pour l'intégrer côté serveur ; null si absente ou illisible. */
+  async imageBytes(tx: Tx, fileId: string, purpose: "party_logo" | "signature") {
+    const [f] = await tx
+      .select({ key: files.r2Key, mimeType: files.mimeType })
+      .from(files)
+      .where(
+        and(eq(files.id, fileId), eq(files.purpose, purpose), eq(files.uploadStatus, "ready"), isNull(files.trashedAt)),
+      );
+    if (!f) return null;
+    const obj = await this.storage.read(f.key).catch(() => null);
+    return obj ? { body: obj.body, mimeType: f.mimeType } : null;
   }
 }

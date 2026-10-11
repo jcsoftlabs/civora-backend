@@ -1,6 +1,9 @@
 // Envoi direct d'un fichier depuis le navigateur vers le stockage (R2, ou le stockage local en développement),
-// avec la progression : utile pour une vidéo sur une connexion lente. Le serveur web signe et vérifie seulement.
+// avec la progression et l'annulation : utile pour une vidéo sur une connexion lente. Le serveur web signe et
+// vérifie seulement.
 import { resolve } from "$app/paths";
+
+export type UploadPurpose = "training_media" | "publication_media" | "signature";
 
 export class UploadError extends Error {
   constructor(readonly code: string) {
@@ -10,13 +13,19 @@ export class UploadError extends Error {
 
 export async function uploadDirect(
   file: File,
-  purpose: "training_media" | "publication_media",
-  onProgress?: (fraction: number) => void,
+  purpose: UploadPurpose,
+  opts: { onProgress?: (fraction: number) => void; signal?: AbortSignal } = {},
 ): Promise<string> {
+  const { onProgress, signal } = opts;
+  const aborted = () => new UploadError("upload_cancelled");
+  if (signal?.aborted) throw aborted();
   const ticketRes = await fetch(resolve("/admin/fichiers"), {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ purpose, name: file.name, mimeType: file.type, sizeBytes: file.size }),
+    ...(signal ? { signal } : {}),
+  }).catch((e: unknown) => {
+    throw signal?.aborted ? aborted() : e;
   });
   const ticket = (await ticketRes.json().catch(() => ({}))) as {
     fileId?: string;
@@ -32,6 +41,8 @@ export async function uploadDirect(
     xhr.upload.onprogress = (e) => e.lengthComputable && onProgress?.(e.loaded / e.total);
     xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? done() : fail(new UploadError("upload_failed")));
     xhr.onerror = () => fail(new UploadError("upload_failed"));
+    xhr.onabort = () => fail(aborted());
+    signal?.addEventListener("abort", () => xhr.abort(), { once: true });
     xhr.send(file);
   });
 

@@ -1,5 +1,6 @@
 // FOR-01 à FOR-04, COM-01 à COM-06, DOC-01 à DOC-08
-import { bigint, boolean, integer, jsonb, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { bigint, boolean, check, integer, jsonb, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 import { id, partyId, partyKey, sameParty, timestamps } from "./_helpers.js";
 import { organs } from "./organs.js";
 import { members } from "./people.js";
@@ -56,34 +57,62 @@ export const courses = pgTable(
   (t) => [partyKey("courses", t)],
 );
 
-export const lessons = pgTable(
-  "lessons",
+/**
+ * Module d'une formation (FOR-01) : une suite de chapitres, éventuellement fermée par un quiz. Les modules se
+ * suivent : un module s'ouvre quand le précédent est réussi (quiz réussi, ou tous les chapitres vus sans quiz).
+ */
+export const courseModules = pgTable(
+  "course_modules",
   {
     id: id(),
     partyId: partyId(),
     courseId: uuid("course_id").notNull(),
     position: integer("position").notNull(),
     title: jsonb("title").notNull(),
-    kind: text("kind").notNull().default("text"), // video | audio | document | text (FOR-01)
-    body: jsonb("body"), // I18nText : texte de la leçon
-    mediaFileId: uuid("media_file_id"),
+    description: jsonb("description"),
     /** Questions à choix ; les bonnes réponses ne quittent jamais le serveur. */
     quiz: jsonb("quiz"),
+    ...timestamps,
+  },
+  (t) => [partyKey("course_modules", t), sameParty("course_modules", t.partyId, t.courseId, courses)],
+);
+
+/** Chapitre d'un module : texte, vidéo ou audio envoyé, document, ou lien YouTube ou Vimeo. */
+export const lessons = pgTable(
+  "lessons",
+  {
+    id: id(),
+    partyId: partyId(),
+    courseId: uuid("course_id").notNull(),
+    moduleId: uuid("module_id").notNull(),
+    position: integer("position").notNull(),
+    title: jsonb("title").notNull(),
+    kind: text("kind").notNull().default("text"), // text | video | audio | document | youtube | vimeo
+    body: jsonb("body"), // I18nText : texte du chapitre
+    mediaFileId: uuid("media_file_id"),
+    /** Lien YouTube ou Vimeo, normalisé en adresse de lecteur intégrable. */
+    embedUrl: text("embed_url"),
     ...timestamps,
   },
   (t) => [
     partyKey("lessons", t),
     sameParty("lessons", t.partyId, t.courseId, courses),
+    sameParty("lessons", t.partyId, t.moduleId, courseModules),
     sameParty("lessons", t.partyId, t.mediaFileId, files),
   ],
 );
 
+/**
+ * Progression : chapitre vu (lesson_id, réussi d'office) ou tentative au quiz d'un module (module_id, note).
+ * Une ligne porte l'un ou l'autre, jamais les deux.
+ */
 export const lessonAttempts = pgTable(
   "lesson_attempts",
   {
     id: id(),
     partyId: partyId(),
-    lessonId: uuid("lesson_id").notNull(),
+    lessonId: uuid("lesson_id"),
+    moduleId: uuid("module_id"),
     memberId: uuid("member_id").notNull(),
     scorePercent: integer("score_percent").notNull(),
     passed: boolean("passed").notNull(),
@@ -91,7 +120,9 @@ export const lessonAttempts = pgTable(
   },
   (t) => [
     sameParty("lesson_attempts", t.partyId, t.lessonId, lessons),
+    sameParty("lesson_attempts", t.partyId, t.moduleId, courseModules),
     sameParty("lesson_attempts", t.partyId, t.memberId, members),
+    check("lesson_attempts_target", sql`(${t.lessonId} is null) <> (${t.moduleId} is null)`),
   ],
 );
 
@@ -114,6 +145,27 @@ export const courseCompletions = pgTable(
     sameParty("course_completions", t.partyId, t.courseId, courses),
     sameParty("course_completions", t.partyId, t.memberId, members),
   ],
+);
+
+/**
+ * Modèle de certificat du parti (FOR-04) : textes, couleur, logo, signataires (nom, fonction, image de
+ * signature envoyée ou tracée à l'écran). Une ligne par parti.
+ */
+export const certificateTemplates = pgTable(
+  "certificate_templates",
+  {
+    id: id(),
+    partyId: partyId(),
+    title: jsonb("title"), // I18nText ; défaut « Certificat de formation »
+    mention: jsonb("mention"), // « Ce certificat est décerné à »
+    footer: jsonb("footer"),
+    accentColor: text("accent_color"),
+    showLogo: boolean("show_logo").notNull().default(true),
+    /** [{ name, role: I18nText, signatureFileId }], trois au plus. */
+    signatories: jsonb("signatories").notNull().default([]),
+    ...timestamps,
+  },
+  (t) => [unique("certificate_templates_party").on(t.partyId)],
 );
 
 /** Annonces, actualités, podcasts, albums (COM-01). */

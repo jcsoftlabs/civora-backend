@@ -58,6 +58,18 @@ export class R2Storage implements ObjectStorage {
     return { size: Number(res.headers.get("content-length") ?? 0), contentType: res.headers.get("content-type") };
   }
 
+  async read(key: string): Promise<{ body: Buffer; contentType: string } | null> {
+    const res = await this.fetchImpl(
+      presignUrl(this.creds, { method: "GET", host: this.host, path: this.path(key), expiresSeconds: 60 }),
+    );
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`R2 : lecture refusée (${res.status})`);
+    return {
+      body: Buffer.from(await res.arrayBuffer()),
+      contentType: res.headers.get("content-type") ?? "application/octet-stream",
+    };
+  }
+
   async delete(key: string): Promise<void> {
     const res = await this.fetchImpl(
       presignUrl(this.creds, { method: "DELETE", host: this.host, path: this.path(key), expiresSeconds: 60 }),

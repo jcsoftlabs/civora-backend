@@ -3,3 +3,4 @@ export * from "./permissions.js";
 export * from "./territory.js";
 export * from "./dues.js";
 export * from "./jobs.js";
+export * from "./video.js";

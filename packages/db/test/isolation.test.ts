@@ -84,6 +84,11 @@ function referencedValue(table: string, column: string, partyId: string): string
   return id;
 }
 
+/** Colonnes facultatives qu'une contrainte CHECK rend nécessaires (l'une des deux doit être remplie). */
+const CHECK_REQUIRED: Record<string, string[]> = { lesson_attempts: ["lesson_id"] };
+const filled = (table: string, column: string, required: boolean) =>
+  required || CHECK_REQUIRED[table]?.includes(column) === true;
+
 /** Colonnes et valeurs d'une ligne valide de `table` pour le parti donné. */
 function rowFor(
   table: string,
@@ -93,7 +98,9 @@ function rowFor(
   const cols: string[] = [];
   const vals: string[] = [];
   const casts: string[] = [];
-  for (const c of columns.filter((x) => x.table === table && (x.required || x.column === "party_id"))) {
+  for (const c of columns.filter(
+    (x) => x.table === table && (filled(table, x.column, x.required) || x.column === "party_id"),
+  )) {
     cols.push(c.column);
     vals.push(c.column === "party_id" ? partyId : (referencedValue(table, c.column, refParty) ?? sampleValue(c)));
     casts.push(c.isArray ? `"${c.udt.slice(1)}"[]` : `"${c.udt}"`);
@@ -106,7 +113,12 @@ function insertionOrder(): string[] {
   const requiredDeps = (t: string) =>
     foreignKeys
       .filter((f) => f.table === t && f.refTable !== t && tables.includes(f.refTable))
-      .filter((f) => f.columns.some((c) => columns.find((x) => x.table === t && x.column === c)?.required))
+      .filter((f) =>
+        f.columns.some((c) => {
+          const col = columns.find((x) => x.table === t && x.column === c);
+          return col !== undefined && filled(t, c, col.required);
+        }),
+      )
       .map((f) => f.refTable);
   const done: string[] = [];
   const pending = new Set(tables);

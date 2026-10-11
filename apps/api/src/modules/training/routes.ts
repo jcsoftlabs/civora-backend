@@ -6,12 +6,15 @@ import type { FilesService } from "../files/service.js";
 import { certificatePdf } from "./certificate-pdf.js";
 import {
   attemptBody,
+  certificateTemplate,
+  chapterCreate,
+  chapterUpdate,
   courseCreate,
   courseUpdate,
+  idOrder,
   idParam,
-  lessonCreate,
-  lessonOrder,
-  lessonUpdate,
+  moduleCreate,
+  moduleUpdate,
   progressQuery,
 } from "./schemas.js";
 import { TrainingService } from "./service.js";
@@ -32,19 +35,34 @@ export default async function trainingRoutes(app: FastifyInstance, opts: { files
     await svc.update(req, id(req.params), courseUpdate.parse(req.body));
     return reply.code(204).send();
   });
-  app.post("/courses/:id/lessons", guard, async (req, reply) =>
-    reply.code(201).send(await svc.addLesson(req, id(req.params), lessonCreate.parse(req.body))),
+  app.post("/courses/:id/modules", guard, async (req, reply) =>
+    reply.code(201).send(await svc.addModule(req, id(req.params), moduleCreate.parse(req.body))),
   );
-  app.put("/courses/:id/lessons/order", guard, async (req, reply) => {
-    await svc.reorder(req, id(req.params), lessonOrder.parse(req.body).lessonIds);
+  app.put("/courses/:id/modules/order", guard, async (req, reply) => {
+    await svc.reorderModules(req, id(req.params), idOrder.parse(req.body).ids);
     return reply.code(204).send();
   });
-  app.patch("/lessons/:id", guard, async (req, reply) => {
-    await svc.updateLesson(req, id(req.params), lessonUpdate.parse(req.body));
+  app.patch("/modules/:id", guard, async (req, reply) => {
+    await svc.updateModule(req, id(req.params), moduleUpdate.parse(req.body));
     return reply.code(204).send();
   });
-  app.delete("/lessons/:id", guard, async (req, reply) => {
-    await svc.deleteLesson(req, id(req.params));
+  app.delete("/modules/:id", guard, async (req, reply) => {
+    await svc.deleteModule(req, id(req.params));
+    return reply.code(204).send();
+  });
+  app.post("/modules/:id/chapters", guard, async (req, reply) =>
+    reply.code(201).send(await svc.addChapter(req, id(req.params), chapterCreate.parse(req.body))),
+  );
+  app.put("/modules/:id/chapters/order", guard, async (req, reply) => {
+    await svc.reorderChapters(req, id(req.params), idOrder.parse(req.body).ids);
+    return reply.code(204).send();
+  });
+  app.patch("/chapters/:id", guard, async (req, reply) => {
+    await svc.updateChapter(req, id(req.params), chapterUpdate.parse(req.body));
+    return reply.code(204).send();
+  });
+  app.delete("/chapters/:id", guard, async (req, reply) => {
+    await svc.deleteChapter(req, id(req.params));
     return reply.code(204).send();
   });
   app.get("/courses/:id/progress", guard, async (req) =>
@@ -54,9 +72,9 @@ export default async function trainingRoutes(app: FastifyInstance, opts: { files
   // Membre
   app.get("/training", guard, async (req) => ({ courses: await svc.myCourses(req) }));
   app.get("/training/:id", guard, async (req) => svc.myCourse(req, id(req.params)));
-  app.post("/training/lessons/:id/read", guard, async (req) => svc.markRead(req, id(req.params)));
+  app.post("/training/chapters/:id/view", guard, async (req) => svc.markViewed(req, id(req.params)));
   app.post(
-    "/training/lessons/:id/attempt",
+    "/training/modules/:id/attempt",
     {
       ...guard,
       config: {
@@ -65,20 +83,28 @@ export default async function trainingRoutes(app: FastifyInstance, opts: { files
     },
     async (req) => svc.attempt(req, id(req.params), attemptBody.parse(req.body)),
   );
-  app.get(
-    "/training/:id/certificate",
-    { preHandler: [requireAuth, requireFeature("training"), requireFeature("training.certificates")] },
-    async (req, reply) => {
-      const c = await svc.certificate(req, id(req.params));
-      const body = await certificatePdf(
-        c,
-        messageLocale(req.headers["accept-language"]?.startsWith("ht") ? "ht" : "fr"),
-      );
-      return reply
-        .header("content-type", "application/pdf")
-        .header("content-disposition", `attachment; filename="certificat-${c.number}.pdf"`)
-        .header("cache-control", "no-store")
-        .send(body);
-    },
+  // Modèle de certificat du parti (FOR-04)
+  const certGuard = { preHandler: [requireAuth, requireFeature("training"), requireFeature("training.certificates")] };
+  const locale = (h: string | undefined) => messageLocale(h?.startsWith("ht") ? "ht" : "fr");
+  app.get("/certificate-template", certGuard, async (req) => svc.getTemplate(req));
+  app.put("/certificate-template", certGuard, async (req, reply) => {
+    await svc.saveTemplate(req, certificateTemplate.parse(req.body));
+    return reply.code(204).send();
+  });
+  app.get("/certificate-template/sample", certGuard, async (req, reply) =>
+    reply
+      .header("content-type", "application/pdf")
+      .header("content-disposition", 'inline; filename="certificat-exemple.pdf"')
+      .header("cache-control", "no-store")
+      .send(await certificatePdf(await svc.sample(req), locale(req.headers["accept-language"]))),
   );
+  app.get("/training/:id/certificate", certGuard, async (req, reply) => {
+    const c = await svc.certificate(req, id(req.params));
+    const body = await certificatePdf(c, locale(req.headers["accept-language"]));
+    return reply
+      .header("content-type", "application/pdf")
+      .header("content-disposition", `attachment; filename="certificat-${c.number}.pdf"`)
+      .header("cache-control", "no-store")
+      .send(body);
+  });
 }

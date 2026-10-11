@@ -6,7 +6,7 @@
   import { enhance } from "$app/forms";
   import { resolve } from "$app/paths";
   import { Badge, Button, Field, Locked } from "@civora/ui";
-  import { format, translator, type MessageKey } from "$lib/i18n";
+  import { counted, format, translator, type MessageKey } from "$lib/i18n";
   import type { ActionData, PageData } from "./$types";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
@@ -28,7 +28,10 @@
       <h1>{t("admin.training.title")}</h1>
     </div>
     {#if !data.locked}
-      <Button onclick={() => (creating = !creating)} aria-expanded={creating}>{t("admin.training.create")}</Button>
+      <div class="head-actions">
+        <a class="outline" href={resolve("/admin/formation/certificat")}>{t("admin.course.certificate.edit")}</a>
+        <Button onclick={() => (creating = !creating)} aria-expanded={creating}>{t("admin.training.create")}</Button>
+      </div>
     {/if}
   </header>
 
@@ -90,7 +93,7 @@
                 </span>
               {/if}
               <span class="foot">
-                <span>{format(t("admin.training.lessons"), { n: String(c.lessonCount) })}</span>
+                <span>{counted(t, "count.module", c.moduleCount)}, {counted(t, "count.chapter", c.lessonCount)}</span>
                 <span class="seal" class:none={c.completions === 0}>
                   {format(t("admin.training.completions"), { n: String(c.completions) })}
                 </span>
@@ -231,5 +234,25 @@
     main {
       padding: var(--s-5) var(--s-4) var(--s-8);
     }
+  }
+  .head-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .outline {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 var(--s-4);
+    border: 1px solid var(--c-ink);
+    border-radius: var(--r-pill);
+    color: var(--c-ink);
+    font: 600 var(--fs-14) / 1 var(--font-ui);
+    text-decoration: none;
+  }
+  .outline:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 </style>

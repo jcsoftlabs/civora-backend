@@ -13,6 +13,7 @@ export interface Publication {
   audience: StoredAudience | null;
   publishedAt: string | null;
   createdAt: string;
+  media: Array<{ id: string; url: string; mimeType: string; name: string }>;
 }
 export interface Campaign {
   id: string;
@@ -117,7 +118,8 @@ export const actions: Actions = {
         title: i18n(f, "title"),
         ...(i18n(f, "body") ? { body: i18n(f, "body") } : {}),
         audience: audienceFrom(f),
-        ...(media.length ? { mediaFileIds: media } : {}),
+        // Le champ « mediaManaged » dit que l'éditeur de médias était là : une liste vide retire alors tout.
+        ...(media.length || f.has("mediaManaged") ? { mediaFileIds: media } : {}),
       };
       let id = text(f, "id");
       if (id) {

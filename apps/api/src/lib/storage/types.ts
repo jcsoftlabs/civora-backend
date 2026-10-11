@@ -19,5 +19,7 @@ export interface ObjectStorage {
   presignUpload(key: string, contentType: string, expiresSeconds: number): Promise<UploadTicket>;
   presignDownload(key: string, expiresSeconds: number, downloadName?: string): Promise<string>;
   head(key: string): Promise<StoredObject | null>;
+  /** Contenu d'un petit fichier (logo, signature) lu par le serveur, par exemple pour un PDF. */
+  read(key: string): Promise<{ body: Buffer; contentType: string } | null>;
   delete(key: string): Promise<void>;
 }

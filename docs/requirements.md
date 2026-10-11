@@ -60,10 +60,10 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| FOR-01 | Modules séquentiels avec vidéo, audio, documents et quiz | M N | P3 | NOU | en cours |
+| FOR-01 | Modules séquentiels avec vidéo, audio, documents, liens YouTube ou Vimeo et quiz par module ; module suivant verrouillé tant que le précédent n'est pas réussi | M N | P3 | NOU | en cours |
 | FOR-02 | Seuil de réussite et nombre de reprises paramétrables | M N | P3 | NOU | en cours |
 | FOR-03 | Formation obligatoire par statut, suivi de complétion par zone | M N | P3 | Neuf | en cours |
-| FOR-04 | Certificat de complétion téléchargeable | N | P3 | Neuf | en cours |
+| FOR-04 | Certificat de complétion téléchargeable, au modèle du parti (textes, couleur, logo, signataires et signatures) | N | P3 | Neuf | en cours |
 
 ## COM : communication
 

@@ -11,6 +11,7 @@ export interface CourseSummary {
   maxAttempts: number | null;
   mandatoryForStatusIds: string[] | null;
   publishedAt: string | null;
+  moduleCount: number;
   lessonCount: number;
   completions: number;
 }

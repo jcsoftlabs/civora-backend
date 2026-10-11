@@ -7,6 +7,7 @@ export const UPLOAD_RULES = {
     types: ["image/png", "image/jpeg", "image/webp", "audio/mpeg", "audio/mp4", "audio/aac", "audio/x-m4a"],
     max: (type: string) => (type.startsWith("audio/") ? 100 : 10) * 1024 * 1024,
   },
+  signature: { types: ["image/png", "image/jpeg"], max: () => 1024 * 1024 },
   training_media: {
     types: [
       "video/mp4",

@@ -254,6 +254,34 @@ describe("médias des publications (COM-01)", () => {
     expect(item.media).toHaveLength(1);
     expect(item.media[0]).toMatchObject({ id: img.fileId, mimeType: "image/png" });
     expect((await fetchUrl(item.media[0].url)).rawPayload.equals(PNG)).toBe(true);
+
+    // Enrichir l'album : l'éditeur reçoit les médias existants, en ajoute un, puis en retire un.
+    const listed = (await call("GET", "/publications", publisher.token)).json();
+    const mine = listed.publications.find((x: { id: string }) => x.id === pub.id);
+    expect(mine.media).toEqual([expect.objectContaining({ id: img.fileId, name: "rassemblement.png" })]);
+    const second = (
+      await ask(publisher.token, {
+        purpose: "publication_media",
+        name: "foule.png",
+        mimeType: "image/png",
+        sizeBytes: PNG.length,
+      })
+    ).json();
+    await upload(second.upload.url, PNG, "image/png");
+    await call("POST", `/files/${second.fileId}/complete`, publisher.token);
+    const patch = (ids: string[]) =>
+      app.inject({
+        method: "PATCH",
+        url: `/publications/${pub.id}`,
+        headers: { authorization: `Bearer ${publisher.token}` },
+        payload: { mediaFileIds: ids },
+      });
+    expect((await patch([img.fileId, second.fileId])).statusCode).toBe(204);
+    const feed = (await call("GET", "/feed", paul.token)).json().items.find((i: { id: string }) => i.id === pub.id);
+    expect(feed.media.map((m: { id: string }) => m.id)).toEqual([img.fileId, second.fileId]);
+    expect((await patch([second.fileId])).statusCode).toBe(204);
+    const [old] = await owner`select trashed_at from files where id = ${img.fileId}`;
+    expect(old!.trashed_at).not.toBeNull();
   });
 
   it("accepte un podcast audio jusqu'à 100 Mo", async () => {
