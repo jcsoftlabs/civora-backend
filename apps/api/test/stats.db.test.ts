@@ -45,8 +45,11 @@ async function analyst(permissions: string[], scope: string | null) {
   return token;
 }
 const get = (url: string, token: string) => app.inject({ url, headers: { authorization: `Bearer ${token}` } });
-const child = (body: { children: Array<{ code: string }> }, code: string) =>
-  body.children.find((c) => c.code === code) as Record<string, any>;
+interface ZoneRow {
+  code: string;
+  members: { approved: number; pending: number; diaspora: number };
+}
+const child = (body: { children: ZoneRow[] }, code: string) => body.children.find((c) => c.code === code)!;
 
 let national = "";
 let pvAnalyst = "";
