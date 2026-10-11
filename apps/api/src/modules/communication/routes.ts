@@ -4,6 +4,7 @@ import { requireAuth } from "../../plugins/auth.js";
 import { EventsService, eventCreate, eventsQuery } from "../events/service.js";
 import { PushService, deviceBody, pushCampaign } from "./push.js";
 import type { PushSender } from "../../lib/messaging/push.js";
+import { audienceInput } from "../../lib/audience.js";
 import type { FilesService } from "../files/service.js";
 import {
   PublicationsService,
@@ -70,6 +71,13 @@ export default async function communicationRoutes(
   app.delete("/devices/:token", auth, async (req, reply) => {
     await push.removeDevice(req, z.object({ token: z.string().min(1).max(4096) }).parse(req.params).token);
     return reply.code(204).send();
+  });
+  // Portée d'une audience avant de publier ou d'envoyer (nombre de membres visés et joignables).
+  app.post("/audience/estimate", auth, async (req) => {
+    const b = z
+      .object({ audience: audienceInput.default(null), for: z.enum(["push", "publication"]).default("push") })
+      .parse(req.body ?? {});
+    return push.estimate(req, b.audience, b.for === "push" ? "outreach.send" : "publications.manage");
   });
   app.get("/outreach", auth, async (req) => ({ campaigns: await push.list(req) }));
   app.post("/outreach/push", auth, async (req, reply) =>

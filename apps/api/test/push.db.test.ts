@@ -109,6 +109,19 @@ describe("appareils", () => {
   });
 });
 
+describe("portée d'une audience", () => {
+  it("compte les membres validés visés et ceux qui ont un téléphone, dans la portée de la personne", async () => {
+    const pv = await call("POST", "/audience/estimate", people.chef.token, { audience: { zoneCodes: ["HT0114"] } });
+    // national, chef, marie, anne ; la demande en attente n'est pas comptée.
+    expect(pv.json()).toEqual({ members: 4, reachable: 4 });
+    const dia = await call("POST", "/audience/estimate", people.national.token, { audience: { diaspora: true } });
+    expect(dia.json()).toEqual({ members: 1, reachable: 1 });
+    expect((await call("POST", "/audience/estimate", people.chef.token, { audience: null })).json()).toMatchObject({
+      code: "audience_outside_scope",
+    });
+  });
+});
+
 describe("campagnes push (COM-02)", () => {
   const msg = {
     title: { fr: "Rassemblement samedi", ht: "Rasanbleman samdi" },

@@ -27,6 +27,12 @@
       visible: ["payments.read", "dues.manage", "payments.recordCash"].some((p) => data.me.permissions.includes(p)),
     },
     {
+      href: resolve("/admin/communication"),
+      label: t("admin.nav.communication"),
+      icon: "communication",
+      visible: ["publications.manage", "outreach.send"].some((p) => data.me.permissions.includes(p)),
+    },
+    {
       href: resolve("/admin/organes"),
       label: t("admin.nav.organs"),
       icon: "organs",
@@ -55,7 +61,11 @@
             title={m.label}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              {#if m.icon === "dues"}
+              {#if m.icon === "communication"}
+                <!-- Communication : mégaphone. -->
+                <path d="M4 10v4h3l6 4V6L7 10z" />
+                <path d="M16.5 9.5a3.5 3.5 0 0 1 0 5M7 14l1.5 5h2.5l-1.3-4.3" />
+              {:else if m.icon === "dues"}
                 <!-- Cotisations : deux pièces empilées. -->
                 <ellipse cx="10" cy="7" rx="6" ry="2.6" />
                 <path d="M4 7v4c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6V7" />

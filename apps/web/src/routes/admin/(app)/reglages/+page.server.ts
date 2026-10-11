@@ -1,6 +1,7 @@
 import { error, fail } from "@sveltejs/kit";
 import { ApiFailure, api } from "$lib/server/api";
 import { currentSession } from "$lib/server/session";
+import { uploadFile } from "$lib/server/upload";
 import type { Actions, PageServerLoad, RequestEvent } from "./$types";
 
 export interface Settings {
@@ -30,8 +31,6 @@ export const load: PageServerLoad = async ({ cookies, locals, getClientAddress }
 
 const text = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
 const HEX = /^#[0-9a-f]{6}$/i;
-const LOGO_TYPES = ["image/png", "image/jpeg", "image/webp"];
-const LOGO_MAX = 2 * 1024 * 1024;
 
 async function act(
   event: RequestEvent,
@@ -70,30 +69,9 @@ export const actions: Actions = {
   logo: (event) =>
     act(event, "logo", async (f, token, ip) => {
       const file = f.get("logo");
-      if (!(file instanceof File) || file.size === 0) throw new ApiFailure(400, "invalid_request");
-      if (!LOGO_TYPES.includes(file.type)) throw new ApiFailure(400, "file_type_not_allowed");
-      if (file.size > LOGO_MAX) throw new ApiFailure(413, "file_too_large");
-      const ticket = await api<{
-        fileId: string;
-        upload: { url: string; method: string; headers: Record<string, string> };
-      }>("/files/uploads", {
-        body: {
-          purpose: "party_logo",
-          name: file.name.slice(0, 120) || "logo",
-          mimeType: file.type,
-          sizeBytes: file.size,
-        },
-        token,
-        ip,
-      });
-      const put = await fetch(ticket.upload.url, {
-        method: ticket.upload.method,
-        headers: ticket.upload.headers,
-        body: Buffer.from(await file.arrayBuffer()),
-      });
-      if (!put.ok) throw new ApiFailure(502, "upload_failed");
-      await api(`/files/${ticket.fileId}/complete`, { method: "POST", body: {}, token, ip });
-      await branding({ logoFileId: ticket.fileId }, token, ip);
+      if (!(file instanceof File)) throw new ApiFailure(400, "invalid_request");
+      const fileId = await uploadFile(file, "party_logo", { token, ip });
+      await branding({ logoFileId: fileId }, token, ip);
     }),
 
   removeLogo: (event) => act(event, "logoRemoved", (_f, token, ip) => branding({ logoFileId: null }, token, ip)),

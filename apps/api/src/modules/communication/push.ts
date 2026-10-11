@@ -81,6 +81,32 @@ export class PushService {
     });
   }
 
+  /**
+   * Portée d'une audience avant envoi : membres validés visés, et combien ont un téléphone enregistré
+   * (ceux qui recevront la notification). Même contrôle de portée que la création.
+   */
+  async estimate(req: Req, input: z.infer<typeof audienceInput>, permission: "outreach.send" | "publications.manage") {
+    return withParty(req.partyId, async (tx) => {
+      const audience = await resolveAudience(tx, req, permission, input);
+      const [r] = await tx
+        .select({
+          members: sql<number>`count(*)::int`,
+          reachable: sql<number>`count(*) filter (where exists (
+            select 1 from push_devices d where d.member_id = "members"."id"))::int`,
+        })
+        .from(members)
+        .innerJoin(zones, eq(zones.id, members.zoneId))
+        .where(
+          and(
+            isNull(members.deletedAt),
+            eq(members.applicationState, "approved"),
+            memberInAudience(sql`${JSON.stringify(audience ?? {})}::text::jsonb`, memberColumns(members, zones.path)),
+          ),
+        );
+      return { members: r?.members ?? 0, reachable: r?.reachable ?? 0 };
+    });
+  }
+
   async list(req: Req) {
     if (!req.grants.some((g) => g.permission === PERM)) throw new ApiError(403, "forbidden");
     const rows = await withParty(req.partyId, (tx) =>
