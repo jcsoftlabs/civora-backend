@@ -16,6 +16,8 @@ import auditRoutes from "./modules/audit/routes.js";
 import authRoutes from "./modules/auth/routes.js";
 import territoryRoutes from "./modules/territory/routes.js";
 import organRoutes from "./modules/organs/routes.js";
+import duesRoutes from "./modules/dues/routes.js";
+import { DuesService } from "./modules/dues/service.js";
 import { ApplicationsService } from "./modules/members/applications.js";
 import { IdentityService } from "./modules/members/identity.js";
 import memberRoutes from "./modules/members/routes.js";
@@ -97,10 +99,12 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   await app.register(auditRoutes);
   await app.register(territoryRoutes);
   await app.register(organRoutes);
+  const dues = new DuesService();
   await app.register(memberRoutes, {
-    members: new MembersService(authService, new IdentityService(keys)),
-    applications: new ApplicationsService(deps.email ?? emailSender),
+    members: new MembersService(authService, new IdentityService(keys), dues),
+    applications: new ApplicationsService(deps.email ?? emailSender, dues),
   });
+  await app.register(duesRoutes, { dues });
 
   app.get("/health", async () => ({ ok: true }));
 

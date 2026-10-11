@@ -7,12 +7,16 @@ import type { EmailSender } from "../../lib/messaging/email.js";
 import { APPLICATION_MESSAGES, messageLocale } from "../../lib/messaging/templates.js";
 import { zoneScope } from "../../lib/zone-scope.js";
 import { ApiError } from "../../plugins/errors.js";
+import type { DuesService } from "../dues/service.js";
 import { authorize } from "../../plugins/tenant.js";
 
 type Req = FastifyRequest;
 
 export class ApplicationsService {
-  constructor(private readonly email: EmailSender) {}
+  constructor(
+    private readonly email: EmailSender,
+    private readonly dues: DuesService,
+  ) {}
 
   /** File des adhésions en attente dans la zone de la personne (members.approve), les plus anciennes d'abord. */
   async list(req: Req, limit = 50) {
@@ -85,6 +89,7 @@ export class ApplicationsService {
           .update(referrals)
           .set({ validatedAt: now, updatedAt: now })
           .where(eq(referrals.referredMemberId, memberId));
+        await this.dues.onMemberApproved(tx, req.partyId, memberId, now); // formules par défaut (FIN-03)
       }
       await audit(tx, {
         partyId: req.partyId,

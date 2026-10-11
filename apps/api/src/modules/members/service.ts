@@ -16,6 +16,7 @@ import { audit } from "../../lib/audit.js";
 import { ApiError } from "../../plugins/errors.js";
 import { authorize } from "../../plugins/tenant.js";
 import { normalizeEmail, type AuthService } from "../auth/service.js";
+import type { DuesService } from "../dues/service.js";
 import type { IdentityService } from "./identity.js";
 import type {
   admissionUpdate,
@@ -72,6 +73,7 @@ export class MembersService {
   constructor(
     private readonly auth: AuthService,
     private readonly identity: IdentityService,
+    private readonly dues: DuesService,
   ) {}
 
   /** Écran d'adhésion d'un parti : nom, mode d'adhésion, langues. Public. */
@@ -210,6 +212,7 @@ export class MembersService {
         .insert(referrals)
         .values({ partyId: party.id, sponsorMemberId: sponsor.id, referredMemberId: member.id });
     if (input.identity) await this.identity.store(tx, party.id, member.id, input.identity.kind, input.identity.value);
+    if (approved) await this.dues.onMemberApproved(tx, party.id, member.id, new Date()); // adhésion libre
     await audit(tx, {
       partyId: party.id,
       actorUserId: userId,

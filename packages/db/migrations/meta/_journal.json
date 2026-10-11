@@ -57,6 +57,13 @@
       "when": 1791682130869,
       "tag": "0007_cynical_albert_cleary",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791683202083,
+      "tag": "0008_majestic_ikaris",
+      "breakpoints": true
     }
   ]
 }

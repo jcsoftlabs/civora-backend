@@ -107,6 +107,13 @@ await withParty(ctx.partyId, async (tx) => {
 3. Webhook : vérification de signature, mise à jour idempotente, écriture comptable, points de gamification, reçu par e-mail.
 4. Job `payments.reconcile` toutes les 5 minutes pour les paiements restés `pending`.
 
+## 6 bis. Cotisations (FIN-03, FIN-05)
+
+- Formules du parti (`dues_plans`) : nom en français et en créole, montant `numeric(12,2)` saisi en chaîne décimale (jamais de flottant), devise, périodicité, règle d'échéance, délai de grâce. Nombre de formules actives limité par le palier (2 en Essentiel). Le rythme et la règle ne changent pas après création ; un nouveau montant ne touche que les échéances futures non payées.
+- Souscriptions (`dues_subscriptions`) : une formule « par défaut » s'applique d'office à tout membre accepté (adhésion libre ou validée), à sa date d'adhésion ; sinon un trésorier de la zone l'attribue. La fin d'une souscription retire les échéances futures non payées et garde l'historique.
+- Calcul des échéances : fonction pure `schedule()` (`packages/shared/src/dues.ts`), en dates civiles d'Haïti. Anniversaire : tous les N mois depuis l'adhésion. Date fixe (MM-JJ) : même date pour tous, la période en cours étant due dès l'adhésion. Fin de mois bornée (31 janvier, 28 février, 31 mars). Génération idempotente jusqu'à 45 jours devant ; le job nocturne `dues.generate` appellera la même fonction.
+- Relevé du membre : chaque échéance est à venir, due, en retard (après le délai de grâce) ou payée ; total restant dû par devise, en centimes exacts.
+
 ## 7. Jobs pg-boss
 
 | Job | Fréquence | Rôle |

@@ -45,9 +45,9 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | --- | --- | --- | --- | --- | --- |
 | FIN-01 | MonCash, NatCash, KashPaw en HTG, confirmés par webhook et vérification périodique | E M N | P2 | NOU | à faire |
 | FIN-02 | Stripe en devises pour la diaspora | M N | P3 | NOU | à faire |
-| FIN-03 | Formules de cotisation créées par le parti : nom, montant, devise, périodicité | E (2 formules) M N | P2 | Neuf | à faire |
+| FIN-03 | Formules de cotisation créées par le parti : nom, montant, devise, périodicité | E (2 formules) M N | P2 | Neuf | fait |
 | FIN-04 | Montant différencié par statut, catégorie ou zone | M N | P3 | Neuf | à faire |
-| FIN-05 | Échéance fixe ou date anniversaire de l'adhésion | E M N | P2 | Neuf | à faire |
+| FIN-05 | Échéance fixe ou date anniversaire de l'adhésion | E M N | P2 | Neuf | fait |
 | FIN-06 | Délai de grâce, rappels automatiques, statut à jour ou en retard | E M N | P3 | Neuf | à faire |
 | FIN-07 | Effets du retard paramétrables (vote, candidature, contenus) | M N | P3 | Neuf | à faire |
 | FIN-08 | Paiement d'avance, prélèvement automatique pour la diaspora | M N | P3 | Neuf | à faire |

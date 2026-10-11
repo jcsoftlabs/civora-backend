@@ -35,6 +35,8 @@ export const duesPlans = pgTable(
     graceDays: integer("grace_days").notNull().default(15),
     eligibility: jsonb("eligibility"), // statut, catégorie, zone (FIN-04)
     lateEffects: jsonb("late_effects"), // perte du vote, candidature, contenus (FIN-07)
+    /** Formule appliquée d'office à tout membre accepté ; sinon attribuée par un trésorier. */
+    isDefault: boolean("is_default").notNull().default(false),
     active: boolean("active").notNull().default(true),
     ...timestamps,
   },
@@ -83,6 +85,28 @@ export const payments = pgTable(
     sameParty("payments", t.partyId, t.campaignId, donationCampaigns),
     sameParty("payments", t.partyId, t.merchantAccountId, merchantAccounts),
     sameParty("payments", t.partyId, t.recordedByMemberId, members),
+  ],
+);
+
+/**
+ * Formules suivies par chaque membre (FIN-03). Les échéances sont générées à partir de ces souscriptions :
+ * un parti qui propose une formule « standard » et une formule « diaspora » ne fait pas payer les deux.
+ */
+export const duesSubscriptions = pgTable(
+  "dues_subscriptions",
+  {
+    id: id(),
+    partyId: partyId(),
+    memberId: uuid("member_id").notNull(),
+    planId: uuid("plan_id").notNull(),
+    startsOn: date("starts_on").notNull(),
+    endsOn: date("ends_on"),
+    ...timestamps,
+  },
+  (t) => [
+    unique().on(t.partyId, t.memberId, t.planId),
+    sameParty("dues_subscriptions", t.partyId, t.memberId, members),
+    sameParty("dues_subscriptions", t.partyId, t.planId, duesPlans),
   ],
 );
 
