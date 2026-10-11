@@ -45,7 +45,7 @@ Jalon : tests d'isolation réussis entre deux partis fictifs ; socle utilisable 
 ### Interfaces
 - [ ] Back-office : rail de navigation, liste des membres, organes avec panneau latéral (maquettes « Back-office ») : connexion par code e-mail, activation et saisie de la 2FA, rail, liste des membres (vues, onglets, recherche, filtres, cotisations de l'année, export) et fiche membre en panneau latéral (carte de membre, profil, classement, relevé de cotisations, validation ou rejet des adhésions) et actions groupées (étiquettes, statut, validation, export de la sélection) faits ; organes (grille, carte ouverte inversée, panneau latéral : identité et zone, postes et droits, nomination, fin de mandat, mode simple) faits ; reste l'envoi d'un message à la sélection (avec COM-03)
 - [ ] Écrans du back-office pour les exigences P2 dont l'API est faite (statut « fait » = API ; les écrans sont suivis ici) :
-  - [ ] Réglages du parti : identité visuelle, langues, mode d'adhésion, statuts de membre (SOC-01, SOC-03, ADH-03, ADH-04)
+  - [x] Réglages du parti : identité visuelle (nom, couleurs, logo, aperçu de la carte), langues avec le quota de la formule et les langues verrouillées (SOC-07), mode d'adhésion, statuts de membre (SOC-01, SOC-03, ADH-03, ADH-04)
   - [ ] Cotisations et argent : formules et échéances, saisie en espèces avec reçu, comptes marchands, paiements (FIN-03, FIN-05, FIN-10, FIN-12)
   - [ ] Publications et notifications push ciblées (COM-01, COM-02)
   - [ ] Agenda et événements, inscrits (ENG-03)

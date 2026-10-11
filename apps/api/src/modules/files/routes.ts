@@ -48,10 +48,14 @@ export default async function fileRoutes(app: FastifyInstance, opts: { files: Fi
         if (!local.verify("GET", key, exp, sig)) throw new ApiError(403, "signature_invalid");
         const obj = await local.read(key);
         if (!obj) throw new ApiError(404, "not_found");
-        return reply
-          .header("content-type", obj.contentType)
-          .header("cache-control", "private, no-store")
-          .send(obj.body);
+        return (
+          reply
+            .header("content-type", obj.contentType)
+            .header("cache-control", "private, no-store")
+            // Comme R2 : l'URL signée suffit, le fichier s'affiche depuis l'adresse du parti (autre site).
+            .header("cross-origin-resource-policy", "cross-origin")
+            .send(obj.body)
+        );
       });
     });
   }

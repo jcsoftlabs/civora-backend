@@ -26,6 +26,12 @@
       icon: "organs",
       visible: data.me.permissions.includes("organs.manage"),
     },
+    {
+      href: resolve("/admin/reglages"),
+      label: t("admin.nav.settings"),
+      icon: "settings",
+      visible: data.me.permissions.includes("settings.party"),
+    },
   ]);
 </script>
 
@@ -43,7 +49,13 @@
             title={m.label}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              {#if m.icon === "organs"}
+              {#if m.icon === "settings"}
+                <!-- Réglages : trois curseurs. -->
+                <path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1" />
+                <circle cx="15" cy="7" r="2" />
+                <circle cx="9" cy="12" r="2" />
+                <circle cx="17" cy="17" r="2" />
+              {:else if m.icon === "organs"}
                 <!-- Organigramme : un bureau, trois sections. -->
                 <rect x="9" y="3.5" width="6" height="4.5" rx="1.2" />
                 <rect x="3" y="15.5" width="5" height="4.5" rx="1.2" />

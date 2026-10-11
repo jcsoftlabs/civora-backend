@@ -7,6 +7,7 @@
   import { Badge, Button, Field, MemberCard, partyTheme, themeStyle } from "@civora/ui";
   import { format, translator, type MessageKey } from "$lib/i18n";
   import { resolve } from "$app/paths";
+  import BrandColors from "$lib/components/BrandColors.svelte";
   import { env } from "$env/dynamic/public";
   import type { PageData } from "./$types";
 
@@ -14,22 +15,6 @@
   const t = $derived(translator(data.locale));
   const tk = (key: string) => t(key as MessageKey);
 
-  // Couleurs fondamentales, toutes lisibles telles quelles (contraste 4,5:1 au moins avec leur texte).
-  // Le parti peut aussi choisir n'importe quelle couleur, ou saisir le code exact de sa charte graphique.
-  const COLORS = [
-    { hex: "#C8102E", name: "rouge" },
-    { hex: "#E8590C", name: "orange" },
-    { hex: "#F2C200", name: "jaune" },
-    { hex: "#1C8339", name: "vert" },
-    { hex: "#0F6E66", name: "petrole" },
-    { hex: "#1F8FD1", name: "bleuciel" },
-    { hex: "#1F5FBF", name: "bleu" },
-    { hex: "#6D28D9", name: "violet" },
-    { hex: "#D6336C", name: "rose" },
-    { hex: "#7A4A2A", name: "marron" },
-    { hex: "#5F6368", name: "gris" },
-    { hex: "#1C1B19", name: "noir" },
-  ];
   const LANGS = ["fr", "ht", "en", "es"] as const;
 
   let step = $state<"party" | "founder" | "code" | "done">("party");
@@ -38,16 +23,10 @@
   let slugTouched = $state(false);
   let slugState = $state<"idle" | "checking" | "available" | "taken" | "reserved" | "invalid">("idle");
   let color = $state("#0F6E66");
-  // Suit la couleur choisie ; reste modifiable à la main (code de la charte du parti).
-  let hexInput = $derived(color.toUpperCase());
   /** Seconde couleur (facultative) : null = aucune. */
   let secondary = $state<string | null>(null);
   let orientation = $state<"horizontal" | "vertical">("horizontal");
 
-  function applyHex() {
-    const v = hexInput.trim().replace(/^([0-9a-f]{6})$/i, "#$1");
-    if (/^#[0-9a-f]{6}$/i.test(v)) color = v.toUpperCase();
-  }
   let tier = $state<"essentiel" | "mouvement" | "national">("mouvement");
   let languages = $state<string[]>(["fr", "ht"]);
   let firstName = $state("");
@@ -65,7 +44,6 @@
   const tierInfo = $derived(data.tiers.find((x) => x.id === tier)!);
   const maxLanguages = $derived(tierInfo.languages);
   const theme = $derived(partyTheme(color));
-  const adjusted = $derived(theme["--c-primary"] !== color.toUpperCase());
   const location = $derived(zone ? [zone.name, zone.context].filter(Boolean).join(", ") : t("create.card.place"));
 
   /** Adresse proposée à partir du nom : sans accents, en minuscules, mots reliés par des tirets. */
@@ -234,58 +212,7 @@
             {/if}
           </div>
 
-          <fieldset>
-            <legend>{t("create.color")}</legend>
-            <div class="swatches">
-              {#each COLORS as c (c.hex)}
-                <label class="swatch" style:--sw={c.hex}>
-                  <input type="radio" name="color" value={c.hex} bind:group={color} />
-                  <span class="dot" aria-hidden="true"></span>
-                  <span class="sr-only">{tk(`create.color.${c.name}`)}</span>
-                </label>
-              {/each}
-              <label class="swatch custom">
-                <input type="color" bind:value={color} aria-label={t("create.color.custom")} />
-              </label>
-            </div>
-            <label class="hex">
-              <span>{t("create.color.hex")}</span>
-              <input
-                bind:value={hexInput}
-                onchange={applyHex}
-                onkeydown={(e) => e.key === "Enter" && applyHex()}
-                maxlength={7}
-                spellcheck={false}
-                autocapitalize="characters"
-              />
-            </label>
-            {#if adjusted}<p class="msg">{t("create.color.adjusted")}</p>{/if}
-          </fieldset>
-
-          <fieldset>
-            <legend>{t("create.color.secondary")}</legend>
-            <div class="swatches">
-              <label class="none">
-                <input type="radio" name="secondary" value={null} bind:group={secondary} />
-                <span>{t("create.color.none")}</span>
-              </label>
-              <label class="swatch white" style:--sw="#FFFFFF">
-                <input type="radio" name="secondary" value="#FFFFFF" bind:group={secondary} />
-                <span class="dot" aria-hidden="true"></span>
-                <span class="sr-only">{t("create.color.blanc")}</span>
-              </label>
-              {#each COLORS as c (c.hex)}
-                {#if c.hex !== color}
-                  <label class="swatch" style:--sw={c.hex}>
-                    <input type="radio" name="secondary" value={c.hex} bind:group={secondary} />
-                    <span class="dot" aria-hidden="true"></span>
-                    <span class="sr-only">{tk(`create.color.${c.name}`)}</span>
-                  </label>
-                {/if}
-              {/each}
-            </div>
-            <p class="msg">{t("create.color.secondary.hint")}</p>
-          </fieldset>
+          <BrandColors bind:color bind:secondary locale={data.locale} />
 
           <fieldset>
             <legend>{t("create.tier")}</legend>
@@ -504,36 +431,6 @@
   .format label:has(input:focus-visible) {
     box-shadow: var(--focus-ring);
   }
-  /* « Aucune » : un vrai bouton avec son libellé, pour ne pas être pris pour du blanc. */
-  .none {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--touch-min);
-    padding: 0 var(--s-4);
-    border: 1.5px solid var(--c-line);
-    border-radius: var(--r-pill);
-    background: var(--c-surface);
-    font: 600 var(--fs-13) / 1 var(--font-ui);
-    color: var(--c-ink-2);
-    cursor: pointer;
-  }
-  .none input {
-    position: absolute;
-    opacity: 0;
-    inset: 0;
-    cursor: pointer;
-  }
-  .none:has(input:checked) {
-    border-color: var(--c-ink);
-    color: var(--c-ink);
-  }
-  .none:has(input:focus-visible) {
-    box-shadow: var(--focus-ring);
-  }
-  .swatch.white .dot {
-    box-shadow: inset 0 0 0 1.5px var(--c-line);
-  }
   h1 {
     margin: 0;
     font-size: clamp(var(--fs-32), 5vw, var(--fs-52));
@@ -620,72 +517,6 @@
     font: 600 var(--fs-14) / 1.3 var(--font-ui);
     color: var(--c-ink);
     word-break: break-all;
-  }
-  .swatches {
-    display: flex;
-    gap: var(--s-2);
-    flex-wrap: wrap;
-  }
-  .swatch {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: var(--touch-min);
-    height: var(--touch-min);
-    cursor: pointer;
-  }
-  .swatch input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    inset: 0;
-    cursor: pointer;
-  }
-  .dot {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--r-pill);
-    background: var(--sw);
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
-  }
-  .swatch input:checked + .dot {
-    box-shadow:
-      0 0 0 2px var(--c-surface),
-      0 0 0 4px var(--c-ink);
-  }
-  .swatch input:focus-visible + .dot {
-    box-shadow: var(--focus-ring);
-  }
-  .hex {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s-3);
-    font: 500 var(--fs-13) / 1 var(--font-ui);
-    color: var(--c-ink-2);
-  }
-  .hex input {
-    width: 7.5em;
-    min-height: 36px;
-    padding: 0 var(--s-3);
-    border: 1.5px solid var(--c-line);
-    border-radius: var(--r-sm);
-    background: var(--c-surface);
-    color: var(--c-ink);
-    font: 600 var(--fs-14) / 1 var(--font-ui);
-    font-variant-numeric: tabular-nums;
-  }
-  .hex input:focus-visible {
-    outline: none;
-    border-color: var(--c-primary);
-    box-shadow: var(--focus-ring);
-  }
-  .custom input {
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    border: 1.5px dashed var(--c-ink-3);
-    border-radius: var(--r-pill);
-    background: none;
-    cursor: pointer;
   }
   .tiers {
     display: grid;
@@ -826,14 +657,6 @@
     align-items: flex-start;
     max-width: 560px;
     padding-top: var(--s-10);
-  }
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
   }
   @media (max-width: 880px) {
     .layout {

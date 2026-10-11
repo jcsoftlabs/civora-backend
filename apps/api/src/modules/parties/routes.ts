@@ -27,6 +27,7 @@ export default async function partyRoutes(app: FastifyInstance, opts: { parties:
   app.get("/parties/:slug/public", async (req) =>
     svc.publicProfile(z.object({ slug: slugSchema }).parse(req.params).slug),
   );
+  app.get("/party/settings", { preHandler: requireAuth }, async (req) => svc.settings(req));
   app.patch("/party/branding", { preHandler: requireAuth }, async (req, reply) => {
     await svc.updateBranding(req, brandingUpdate.parse(req.body));
     return reply.code(204).send();

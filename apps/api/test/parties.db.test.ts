@@ -245,7 +245,10 @@ describe("identité visuelle (SOC-03)", () => {
     expect((await get(`/parties/${slug}/public`)).json().brandColorSecondary).toBe("#C8102E");
     expect(profile.logoUrl).toContain("/storage/local/");
     const logo = new URL(profile.logoUrl);
-    expect((await app.inject({ url: logo.pathname + logo.search })).rawPayload.equals(png)).toBe(true);
+    const shown = await app.inject({ url: logo.pathname + logo.search });
+    expect(shown.rawPayload.equals(png)).toBe(true);
+    // Le logo s'affiche sur l'adresse du parti (autre site que l'API) : pas de blocage CORP.
+    expect(shown.headers["cross-origin-resource-policy"]).toBe("cross-origin");
   });
 
   it("refuse un logo SVG et une couleur mal formée", async () => {
@@ -268,5 +271,18 @@ describe("identité visuelle (SOC-03)", () => {
         })
       ).statusCode,
     ).toBe(400);
+  });
+
+  it("donne les réglages au back-office : formule, quota de langues, statuts avec leur effectif", async () => {
+    const res = await get("/party/settings", founderToken);
+    expect(res.statusCode).toBe(200);
+    const st = res.json();
+    expect(st).toMatchObject({ slug, admissionMode: "validation", languages: ["fr", "ht"] });
+    expect(st.siteLanguagesQuota).toBeGreaterThanOrEqual(2);
+    expect(st.tier).toBeTruthy();
+    expect(st.logoUrl).toContain("/storage/local/");
+    // Le fondateur porte le statut créé avec l'espace.
+    expect(st.statuses.reduce((n: number, x: { members: number }) => n + x.members, 0)).toBe(1);
+    expect((await get("/party/settings")).statusCode).toBe(401);
   });
 });

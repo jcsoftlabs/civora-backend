@@ -1,7 +1,7 @@
 // SOC-01, SOC-03 : création d'un espace parti en libre-service, identité visuelle (marque blanche).
 import { randomUUID } from "node:crypto";
 import type { FastifyRequest } from "fastify";
-import { eq } from "drizzle-orm";
+import { asc, count, eq, isNull, and } from "drizzle-orm";
 import { z } from "zod";
 import {
   files,
@@ -343,6 +343,63 @@ export class PartiesService {
     }
     const { id: _id, status: _s, logoFileId: _l, ...rest } = p;
     return { ...rest, logoUrl };
+  }
+
+  /**
+   * Réglages du parti pour le back-office (settings.party) : identité, langues et quota de la formule,
+   * mode d'adhésion, canaux de code, statuts de membre avec leur effectif.
+   */
+  async settings(req: FastifyRequest) {
+    if (!authorize(req, "settings.party")) throw new ApiError(403, "forbidden");
+    const e = req.partyEntitlements ?? (await req.server.entitlements.get(req.partyId));
+    if (!e) throw new ApiError(401, "unauthenticated");
+    return withParty(req.partyId, async (tx) => {
+      const [p] = await tx
+        .select({
+          name: parties.name,
+          slug: parties.slug,
+          brandColor: parties.brandColor,
+          brandColorSecondary: parties.brandColorSecondary,
+          languages: parties.languages,
+          admissionMode: parties.admissionMode,
+          otpChannels: parties.otpChannels,
+          logoFileId: parties.logoFileId,
+        })
+        .from(parties);
+      let logoUrl: string | null = null;
+      if (p!.logoFileId) {
+        const [logo] = await tx
+          .select({ key: files.r2Key, name: files.name })
+          .from(files)
+          .where(eq(files.id, p!.logoFileId));
+        if (logo) logoUrl = await this.files.storage.presignDownload(logo.key, 3600, logo.name);
+      }
+      const statuses = await tx
+        .select({
+          id: memberStatuses.id,
+          label: memberStatuses.label,
+          rank: memberStatuses.rank,
+          members: count(members.id),
+        })
+        .from(memberStatuses)
+        .leftJoin(
+          members,
+          and(
+            eq(members.partyId, memberStatuses.partyId),
+            eq(members.statusId, memberStatuses.id),
+            isNull(members.deletedAt),
+          ),
+        )
+        .groupBy(memberStatuses.id)
+        .orderBy(asc(memberStatuses.rank));
+      return {
+        ...p!,
+        logoUrl,
+        tier: e.tier,
+        siteLanguagesQuota: PLANS[e.tier].quotas.siteLanguages,
+        statuses,
+      };
+    });
   }
 
   /** Identité visuelle et langues, modifiables par le national (settings.party, audité). */
