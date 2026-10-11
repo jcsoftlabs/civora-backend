@@ -15,14 +15,14 @@ const mfaBody = z.object({ code: z.string().regex(/^\d{6}$/) });
 export default async function authRoutes(app: FastifyInstance) {
   app.post("/auth/otp/request", { config: { rateLimit: { max: 5, timeWindow: "15 minutes" } } }, async (req, reply) => {
     const body = requestBody.parse(req.body);
-    const res = await app.auth.requestOtp({ ...body, ip: req.ip });
+    const res = await app.auth.requestOtp({ ...body, ip: req.clientIp });
     return reply.code(202).send(res);
   });
 
   app.post("/auth/otp/verify", { config: { rateLimit: { max: 10, timeWindow: "15 minutes" } } }, async (req) => {
     const body = verifyBody.parse(req.body);
     const ua = req.headers["user-agent"];
-    return app.auth.verifyOtp({ ...body, ip: req.ip, ...(ua ? { userAgent: ua } : {}) });
+    return app.auth.verifyOtp({ ...body, ip: req.clientIp, ...(ua ? { userAgent: ua } : {}) });
   });
 
   app.get("/auth/me", { preHandler: requireAuth, config: { allowMfaPending: true } }, async (req) => {
@@ -32,6 +32,7 @@ export default async function authRoutes(app: FastifyInstance) {
       memberId: a.memberId,
       mfaPending: a.mfaPending,
       permissions: [...new Set(a.grants.map((g) => g.permission))],
+      ...(await app.auth.whoami(a)),
     };
   });
 
@@ -45,7 +46,7 @@ export default async function authRoutes(app: FastifyInstance) {
   }));
 
   app.post("/auth/mfa/setup", { preHandler: requireAuth, config: { allowMfaPending: true } }, async (req) =>
-    app.auth.setupMfa(req.auth!, "compte"),
+    app.auth.setupMfa(req.auth!),
   );
 
   app.post(
@@ -54,7 +55,7 @@ export default async function authRoutes(app: FastifyInstance) {
       preHandler: requireAuth,
       config: {
         allowMfaPending: true,
-        rateLimit: { max: 5, timeWindow: "5 minutes", keyGenerator: (req) => req.auth?.sessionId ?? req.ip },
+        rateLimit: { max: 5, timeWindow: "5 minutes", keyGenerator: (req) => req.auth?.sessionId ?? req.clientIp },
       },
     },
     async (req, reply) => {

@@ -36,11 +36,18 @@ const schema = z
     FCM_SERVICE_ACCOUNT: z.string().optional(),
     /** Adresse publique des espaces des partis ({slug} remplacé) : lien du QR de la carte de membre (ADH-11). */
     WEB_PARTY_ORIGIN: z.string().default("https://{slug}.civora.app"),
+    /** Proxys de l'hébergeur devant l'API (Railway : 1). 0 en local : l'adresse de la connexion. */
+    TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).optional(),
+    /** Secret partagé avec le serveur web pour transmettre l'adresse IP de la personne (32 caractères au moins). */
+    WEB_SERVER_SECRET: z.string().min(32).optional(),
     /** Adresse publique de l'API : liens de retour et de notification donnés aux fournisseurs de paiement. */
     API_PUBLIC_URL: z.string().url().default("http://localhost:4000"),
   })
+  .transform((c) => ({ ...c, TRUST_PROXY_HOPS: c.TRUST_PROXY_HOPS ?? (c.NODE_ENV === "production" ? 1 : 0) }))
   .superRefine((c, ctx) => {
     if (c.NODE_ENV !== "production") return;
+    if (!c.WEB_SERVER_SECRET)
+      ctx.addIssue({ code: "custom", path: ["WEB_SERVER_SECRET"], message: "obligatoire en production" });
     if (!c.AUTH_SECRET) ctx.addIssue({ code: "custom", path: ["AUTH_SECRET"], message: "obligatoire en production" });
     if (!c.RESEND_API_KEY)
       ctx.addIssue({ code: "custom", path: ["RESEND_API_KEY"], message: "obligatoire en production" });

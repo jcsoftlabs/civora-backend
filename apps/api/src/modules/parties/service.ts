@@ -377,7 +377,7 @@ export class PartiesService {
         targetType: "party",
         targetId: req.partyId,
         metadata: { fields: Object.keys(body) },
-        ip: req.ip,
+        ip: req.clientIp,
       });
     });
   }

@@ -14,13 +14,23 @@ export class ApiFailure extends Error {
 
 const base = () => env.API_INTERNAL_URL || pub.PUBLIC_API_URL || "http://localhost:4000";
 
-export async function api<T>(path: string, init: { method?: string; body?: unknown; token?: string } = {}): Promise<T> {
+/**
+ * `ip` : adresse de la personne (event.getClientAddress()). Transmise avec le secret partagé WEB_SERVER_SECRET,
+ * elle sert à l'API pour la limitation du débit et le journal ; sans elle, tout le site partagerait une adresse.
+ */
+export async function api<T>(
+  path: string,
+  init: { method?: string; body?: unknown; token?: string; ip?: string } = {},
+): Promise<T> {
   const res = await fetch(`${base()}${path}`, {
     method: init.method ?? (init.body ? "POST" : "GET"),
     headers: {
       accept: "application/json",
       ...(init.body ? { "content-type": "application/json" } : {}),
       ...(init.token ? { authorization: `Bearer ${init.token}` } : {}),
+      ...(init.ip && env.WEB_SERVER_SECRET
+        ? { "x-civora-web": env.WEB_SERVER_SECRET, "x-civora-client-ip": init.ip }
+        : {}),
     },
     ...(init.body ? { body: JSON.stringify(init.body) } : {}),
   });

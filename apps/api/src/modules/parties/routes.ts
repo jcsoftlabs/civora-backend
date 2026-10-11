@@ -10,7 +10,7 @@ export default async function partyRoutes(app: FastifyInstance, opts: { parties:
     svc.slugAvailability(z.object({ slug: z.string().max(60) }).parse(req.query).slug),
   );
   app.post("/parties/signup/start", { config: { rateLimit: { max: 5, timeWindow: "1 hour" } } }, async (req, reply) =>
-    reply.code(202).send(await svc.start(signupStart.parse(req.body), req.ip)),
+    reply.code(202).send(await svc.start(signupStart.parse(req.body), req.clientIp)),
   );
   app.post(
     "/parties/signup/complete",
@@ -19,7 +19,9 @@ export default async function partyRoutes(app: FastifyInstance, opts: { parties:
       const ua = req.headers["user-agent"];
       return reply
         .code(201)
-        .send(await svc.complete(signupComplete.parse(req.body), { ip: req.ip, ...(ua ? { userAgent: ua } : {}) }));
+        .send(
+          await svc.complete(signupComplete.parse(req.body), { ip: req.clientIp, ...(ua ? { userAgent: ua } : {}) }),
+        );
     },
   );
   app.get("/parties/:slug/public", async (req) =>

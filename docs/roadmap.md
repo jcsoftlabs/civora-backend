@@ -22,7 +22,7 @@ Jalon : tests d'isolation réussis entre deux partis fictifs ; socle utilisable 
 - [x] Schéma `parties`, `subscriptions`, `party_keys` ; helper `withParty()` ; politiques RLS ; test d'isolation générique appliqué à toutes les tables (SOC-02, SEC-01)
 - [x] Plans et activation des modules : `plans.ts`, `requireFeature()`, `hasFeature()` (SOC-07)
 - [x] Chiffrement enveloppe des pièces d'identité (SEC-02, SEC-03)
-- [x] Authentification : OTP par e-mail (SMS au choix du parti), sessions, 2FA obligatoire pour les administrateurs, limitation du débit (SEC-04, SEC-09)
+- [x] Authentification : OTP par e-mail (SMS au choix du parti), sessions, 2FA obligatoire pour les administrateurs, limitation du débit (SEC-04, SEC-09) ; adresse IP réelle transmise par le serveur web avec un secret partagé (WEB_SERVER_SECRET), proxys de confiance limités (TRUST_PROXY_HOPS)
 - [x] Journal d'audit append-only (SEC-06)
 
 ### Territoire, organes, permissions
@@ -43,7 +43,7 @@ Jalon : tests d'isolation réussis entre deux partis fictifs ; socle utilisable 
 - [x] Statistiques par zone (PIL-01)
 
 ### Interfaces
-- [ ] Back-office : rail de navigation, liste des membres, organes avec panneau latéral (maquettes « Back-office »)
+- [ ] Back-office : rail de navigation, liste des membres, organes avec panneau latéral (maquettes « Back-office ») : connexion par code e-mail, activation et saisie de la 2FA, rail, liste des membres (vues, onglets, recherche, filtres, cotisations de l'année, export) faits ; reste la fiche membre en panneau latéral, les actions groupées et les organes
 - [x] Création d'un espace parti et thème marque blanche web (SOC-01, SOC-03) : assistant de création et profil public faits ; thème appliqué aux sites des partis avec le back-office
 - [ ] App mobile commune : rejoindre un parti par QR, lien ou code ; thème chargé selon le parti ; accueil membre (maquette « App membre : accueil »)
 - [ ] Hors ligne de base et Android 8 (NFR-01, NFR-02) ; français et créole (NFR-08) ; squelettes (NFR-09)

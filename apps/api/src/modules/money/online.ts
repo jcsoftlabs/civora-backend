@@ -121,7 +121,7 @@ export class OnlinePayments {
         targetType: "payment",
         targetId: p!.id,
         metadata: { provider: body.provider, amount, currency },
-        ip: req.ip,
+        ip: req.clientIp,
       });
       return { replay: false as const, paymentId: p!.id, amount, currency, credentialsRef: merchant.credentialsRef };
     });

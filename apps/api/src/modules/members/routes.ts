@@ -5,6 +5,7 @@ import type { MemberCardService } from "./card.js";
 import { requireFeature } from "../../plugins/tenant.js";
 import { z } from "zod";
 import { exportMembers, exportRequest } from "./export.js";
+import { listMembers, listQuery } from "./list.js";
 import type { MembersService } from "./service.js";
 import {
   admissionUpdate,
@@ -31,15 +32,18 @@ export default async function memberRoutes(
 
   app.get("/join/:slug", async (req) => svc.joinInfo(slugParam.parse(req.params).slug));
   app.post("/join/start", { config: { rateLimit: { max: 5, timeWindow: "15 minutes" } } }, async (req, reply) =>
-    reply.code(202).send(await svc.joinStart(joinStart.parse(req.body), req.ip)),
+    reply.code(202).send(await svc.joinStart(joinStart.parse(req.body), req.clientIp)),
   );
   app.post("/join/complete", { config: { rateLimit: { max: 10, timeWindow: "15 minutes" } } }, async (req, reply) => {
     const ua = req.headers["user-agent"];
     return reply
       .code(201)
-      .send(await svc.joinComplete(joinComplete.parse(req.body), { ip: req.ip, ...(ua ? { userAgent: ua } : {}) }));
+      .send(
+        await svc.joinComplete(joinComplete.parse(req.body), { ip: req.clientIp, ...(ua ? { userAgent: ua } : {}) }),
+      );
   });
 
+  app.get("/members", { preHandler: requireAuth }, async (req) => listMembers(req, listQuery.parse(req.query)));
   app.get("/members/me", { preHandler: requireAuth }, async (req) => svc.getMe(req));
   app.patch("/members/me", { preHandler: requireAuth }, async (req, reply) => {
     await svc.updateMe(req, meUpdate.parse(req.body));
@@ -88,7 +92,9 @@ export default async function memberRoutes(
     "/members/export",
     {
       preHandler: requireAuth,
-      config: { rateLimit: { max: 10, timeWindow: "1 hour", keyGenerator: (req) => req.auth?.sessionId ?? req.ip } },
+      config: {
+        rateLimit: { max: 10, timeWindow: "1 hour", keyGenerator: (req) => req.auth?.sessionId ?? req.clientIp },
+      },
     },
     async (req, reply) => {
       const file = await exportMembers(req, exportRequest.parse(req.body));

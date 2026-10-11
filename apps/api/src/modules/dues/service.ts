@@ -18,7 +18,7 @@ const actor = (req: Req) => ({
   partyId: req.partyId,
   actorUserId: req.auth?.userId ?? null,
   actorKind: "member" as const,
-  ip: req.ip,
+  ip: req.clientIp,
 });
 
 export class DuesService {

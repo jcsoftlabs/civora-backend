@@ -100,7 +100,7 @@ export class ApplicationsService {
         targetId: memberId,
         // Le motif est interne : il reste au journal, il n'est pas envoyé au candidat.
         metadata: { score: body.score ?? null, reason: body.reason ?? null },
-        ip: req.ip,
+        ip: req.clientIp,
       });
       const [party] = await tx.select({ name: parties.name }).from(parties);
       return { ...m, partyName: party?.name ?? "" };
@@ -140,7 +140,7 @@ export class ApplicationsService {
         targetType: "member",
         targetId: memberId,
         metadata: { score },
-        ip: req.ip,
+        ip: req.clientIp,
       });
     });
   }

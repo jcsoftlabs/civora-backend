@@ -2,28 +2,30 @@ import { json } from "@sveltejs/kit";
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/public";
 import { ApiFailure, api } from "$lib/server/api";
+import { HANDOFF_COOKIE, handoffDomain } from "$lib/server/session";
 import { sameOrigin } from "../../guard";
 import type { RequestHandler } from "./$types";
 
 /**
- * Confirmation : l'espace s'ouvre et la session du fondateur est posée en cookie httpOnly, valable pour les
- * sous-domaines des partis (<slug>.civora.app). Le serveur vérifie à chaque requête que la session appartient
- * bien au parti de l'adresse visitée.
+ * Confirmation : l'espace s'ouvre et la session du fondateur passe en cookie de relais httpOnly (dix minutes,
+ * domaine racine). À la première visite de <slug>.civora.app, le serveur vérifie que la session est bien celle
+ * de ce parti et la range dans le cookie propre à cette adresse (voir lib/server/session.ts).
  */
-export const POST: RequestHandler = async ({ request, url, cookies }) => {
+export const POST: RequestHandler = async ({ request, url, cookies, getClientAddress }) => {
   sameOrigin(request, url);
   try {
     const res = await api<{ slug: string; token: string; expiresAt: string; mfa: string }>("/parties/signup/complete", {
       body: await request.json(),
+      ip: getClientAddress(),
     });
     const root = env.PUBLIC_ROOT_DOMAIN || "localhost";
-    cookies.set("civora_session", res.token, {
+    cookies.set(HANDOFF_COOKIE, res.token, {
       path: "/",
       httpOnly: true,
       sameSite: "lax",
       secure: !dev,
-      expires: new Date(res.expiresAt),
-      ...(dev ? {} : { domain: `.${root}` }),
+      maxAge: 600,
+      ...handoffDomain(),
     });
     const openUrl = dev
       ? `http://${res.slug}.localhost:${url.port || "5173"}/admin`

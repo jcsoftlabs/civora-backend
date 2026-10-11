@@ -110,7 +110,7 @@ export class EventsService {
         targetType: "event",
         targetId: e!.id,
         metadata: { kind: body.kind, zone: body.zoneCode ?? null },
-        ip: req.ip,
+        ip: req.clientIp,
       });
       return { id: e!.id };
     });

@@ -43,6 +43,7 @@ import { AuthService } from "./modules/auth/service.js";
 import auth from "./plugins/auth.js";
 import { loggerOptions } from "./lib/logger.js";
 import { isAllowedOrigin } from "./lib/origins.js";
+import clientIp from "./plugins/client-ip.js";
 import errors from "./plugins/errors.js";
 import tenant from "./plugins/tenant.js";
 
@@ -63,7 +64,8 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   const app = Fastify({
     logger: loggerOptions(config.LOG_LEVEL),
     genReqId: () => randomUUID(),
-    trustProxy: config.NODE_ENV === "production",
+    // Nombre de proxys de l'hébergeur devant l'API : seule l'adresse qu'ils ajoutent est retenue.
+    trustProxy: (_address: string, hop: number) => hop < config.TRUST_PROXY_HOPS,
     bodyLimit: 1024 * 1024, // 1 Mo ; les fichiers passent par des URL R2 signées
   });
 
@@ -85,7 +87,8 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
     maxAge: 600,
   });
 
-  await app.register(rateLimit, { max: 300, timeWindow: "1 minute" }); // SEC-09
+  await app.register(clientIp, { webSecret: config.WEB_SERVER_SECRET });
+  await app.register(rateLimit, { max: 300, timeWindow: "1 minute", keyGenerator: (req) => req.clientIp }); // SEC-09
 
   // SEC-08 : temps réel. La poignée de main est refusée si l'origine du navigateur n'est pas dans la liste.
   // L'app mobile n'envoie pas d'en-tête Origin : elle est contrôlée par son jeton (voir realtime/, P2).

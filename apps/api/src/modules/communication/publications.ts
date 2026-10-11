@@ -119,7 +119,7 @@ export class PublicationsService {
           at: when.toISOString(),
           audience: (p.audience as Audience | null)?.zoneCodes ?? "all",
         },
-        ip: req.ip,
+        ip: req.clientIp,
       });
     });
   }

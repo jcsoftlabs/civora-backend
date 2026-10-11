@@ -234,7 +234,7 @@ export class PaymentsService {
         currency: body.currency,
         provider: "cash",
         actorUserId: req.auth?.userId ?? null,
-        ip: req.ip,
+        ip: req.clientIp,
       });
       const receipt = { id: receiptId };
       return { paymentId, receiptId: receipt!.id, receiptNumber: number, replay: false };

@@ -75,7 +75,7 @@ export class PushService {
           audience: audience?.zoneCodes ?? "all",
           scheduledAt: (body.scheduledAt ?? new Date()).toISOString(),
         },
-        ip: req.ip,
+        ip: req.clientIp,
       });
       return { id: c!.id };
     });

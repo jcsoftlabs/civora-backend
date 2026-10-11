@@ -15,7 +15,7 @@ export default async function fileRoutes(app: FastifyInstance, opts: { files: Fi
     "/files/uploads",
     {
       ...auth,
-      config: { rateLimit: { max: 60, timeWindow: "1 hour", keyGenerator: (r) => r.auth?.sessionId ?? r.ip } },
+      config: { rateLimit: { max: 60, timeWindow: "1 hour", keyGenerator: (r) => r.auth?.sessionId ?? r.clientIp } },
     },
     async (req, reply) => reply.code(201).send(await svc.requestUpload(req, uploadRequest.parse(req.body))),
   );

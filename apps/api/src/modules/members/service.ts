@@ -34,7 +34,7 @@ const actor = (req: Req) => ({
   partyId: req.partyId,
   actorUserId: req.auth?.userId ?? null,
   actorKind: "member" as const,
-  ip: req.ip,
+  ip: req.clientIp,
 });
 
 /** Zones où un membre peut se localiser (ADH-02) : section communale en Haïti, pays ou ville de la diaspora. */
@@ -351,7 +351,7 @@ export class MembersService {
       return this.identity.read(
         tx,
         req.partyId,
-        { grants: req.grants, userId: req.auth?.userId ?? null, ip: req.ip },
+        { grants: req.grants, userId: req.auth?.userId ?? null, ip: req.clientIp },
         identityId,
       );
     });

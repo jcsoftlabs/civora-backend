@@ -403,26 +403,72 @@ export class AuthService {
     });
   }
 
+  /**
+   * Qui est connecté : parti (pour le thème et le contrôle de l'adresse visitée), membre, état de la 2FA.
+   * `mfa` vaut setup_required tant que l'application d'authentification n'est pas confirmée.
+   */
+  async whoami(ctx: AuthContext) {
+    return withParty(ctx.partyId, async (tx) => {
+      const [party] = await tx
+        .select({
+          slug: parties.slug,
+          name: parties.name,
+          brandColor: parties.brandColor,
+          brandColorSecondary: parties.brandColorSecondary,
+        })
+        .from(parties);
+      const [member] = await tx
+        .select({ firstName: members.firstName, lastName: members.lastName, number: members.memberNumber })
+        .from(members)
+        .where(eq(members.id, ctx.memberId));
+      const [mfa] = await tx
+        .select({ confirmedAt: memberMfa.confirmedAt })
+        .from(memberMfa)
+        .where(eq(memberMfa.memberId, ctx.memberId));
+      const state: "none" | "required" | "setup_required" = !ctx.mfaPending
+        ? "none"
+        : mfa?.confirmedAt
+          ? "required"
+          : "setup_required";
+      return { party: party!, member: member!, mfa: state };
+    });
+  }
+
   /** Inscription à la 2FA : secret chiffré avec la clé du parti, montré une seule fois. */
-  async setupMfa(ctx: AuthContext, accountLabel: string): Promise<{ otpauthUri: string }> {
+  async setupMfa(ctx: AuthContext, accountLabel?: string): Promise<{ otpauthUri: string }> {
     return withParty(ctx.partyId, async (tx) => {
       const [existing] = await tx
-        .select({ confirmedAt: memberMfa.confirmedAt })
+        .select({
+          confirmedAt: memberMfa.confirmedAt,
+          secretEncrypted: memberMfa.secretEncrypted,
+          keyVersion: memberMfa.keyVersion,
+        })
         .from(memberMfa)
         .where(eq(memberMfa.memberId, ctx.memberId));
       if (existing?.confirmedAt) throw new ApiError(409, "mfa_already_enabled");
       const [party] = await tx.select({ name: parties.name }).from(parties);
-      const secret = generateTotpSecret();
-      const key = await this.d.keys.active(tx, ctx.partyId);
-      const secretEncrypted = seal(deriveKey(key.dek, "totp"), secret, this.mfaAad(ctx, key.version));
-      await tx
-        .insert(memberMfa)
-        .values({ partyId: ctx.partyId, memberId: ctx.memberId, secretEncrypted, keyVersion: key.version })
-        .onConflictDoUpdate({
-          target: [memberMfa.partyId, memberMfa.memberId],
-          set: { secretEncrypted, keyVersion: key.version, lastUsedStep: null, updatedAt: new Date(this.now()) },
-        });
-      return { otpauthUri: otpauthUri(secret, `civora ${party?.name ?? ""}`.trim(), accountLabel) };
+      let secret: Buffer;
+      if (existing) {
+        // Inscription commencée et pas encore confirmée : même secret, pour que le QR déjà scanné reste valable
+        // si la page est rechargée.
+        const key = await this.d.keys.byVersion(tx, ctx.partyId, existing.keyVersion);
+        secret = open(deriveKey(key.dek, "totp"), existing.secretEncrypted, this.mfaAad(ctx, existing.keyVersion));
+      } else {
+        secret = generateTotpSecret();
+        const key = await this.d.keys.active(tx, ctx.partyId);
+        const secretEncrypted = seal(deriveKey(key.dek, "totp"), secret, this.mfaAad(ctx, key.version));
+        await tx
+          .insert(memberMfa)
+          .values({ partyId: ctx.partyId, memberId: ctx.memberId, secretEncrypted, keyVersion: key.version });
+      }
+      // Libellé dans l'application d'authentification : l'adresse e-mail de la personne, sinon son numéro.
+      const [who] = await tx
+        .select({ email: users.email, number: members.memberNumber })
+        .from(members)
+        .leftJoin(users, eq(users.id, members.userId))
+        .where(eq(members.id, ctx.memberId));
+      const label = accountLabel ?? who?.email ?? who?.number ?? "compte";
+      return { otpauthUri: otpauthUri(secret, `civora ${party?.name ?? ""}`.trim(), label) };
     });
   }
 

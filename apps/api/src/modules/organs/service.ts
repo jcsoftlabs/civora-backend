@@ -78,7 +78,7 @@ const actor = (req: Req) => ({
   partyId: req.partyId,
   actorUserId: req.auth?.userId ?? null,
   actorKind: "member" as const,
-  ip: req.ip,
+  ip: req.clientIp,
 });
 
 /** Organes visibles : tous pour un poste national, sinon ceux des zones où la personne gère les organes. */

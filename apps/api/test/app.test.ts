@@ -130,3 +130,33 @@ describe("journaux", () => {
     expect(all).toContain("[masqué]");
   });
 });
+
+describe("adresse IP de la personne (SEC-09)", () => {
+  const SECRET = "s".repeat(40);
+  let app: Awaited<ReturnType<typeof buildApp>>;
+  beforeAll(async () => {
+    app = await buildApp(
+      loadConfig({ NODE_ENV: "test", LOG_LEVEL: "silent", WEB_SERVER_SECRET: SECRET, TRUST_PROXY_HOPS: "1" }),
+    );
+    app.get("/ip", async (req) => ({ ip: req.clientIp }));
+    await app.ready();
+  });
+  afterAll(() => app.close());
+  const ip = async (headers: Record<string, string>) =>
+    (await app.inject({ url: "/ip", remoteAddress: "10.0.0.9", headers })).json().ip;
+
+  it("retient l'adresse ajoutée par le proxy, pas celle que le client prétend", async () => {
+    expect(await ip({ "x-forwarded-for": "6.6.6.6, 203.0.113.7" })).toBe("203.0.113.7");
+  });
+  it("accepte l'adresse transmise par le serveur web avec le secret partagé", async () => {
+    expect(await ip({ "x-civora-web": SECRET, "x-civora-client-ip": "198.51.100.4" })).toBe("198.51.100.4");
+  });
+  it("ignore l'en-tête sans le bon secret ou avec une adresse invalide", async () => {
+    expect(await ip({ "x-civora-web": "x".repeat(40), "x-civora-client-ip": "198.51.100.4" })).toBe("10.0.0.9");
+    expect(await ip({ "x-civora-client-ip": "198.51.100.4" })).toBe("10.0.0.9");
+    expect(await ip({ "x-civora-web": SECRET, "x-civora-client-ip": "pas une ip" })).toBe("10.0.0.9");
+  });
+  it("exige le secret partagé en production", () => {
+    expect(() => loadConfig({ NODE_ENV: "production" })).toThrow(/WEB_SERVER_SECRET/);
+  });
+});

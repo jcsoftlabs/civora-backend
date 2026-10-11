@@ -15,6 +15,8 @@ declare module "fastify" {
     grants: Array<{ permission: Permission; zonePath: string | null }>;
     /** Droits du parti, chargés à la demande par requireFeature(). */
     partyEntitlements: Entitlements | null;
+    /** Adresse IP réelle de la personne (plugins/client-ip.ts) : limitation du débit et journal d'audit. */
+    clientIp: string;
   }
 }
 

@@ -166,7 +166,7 @@ export class FilesService {
           action: "document.read",
           targetType: "file",
           targetId: fileId,
-          ip: req.ip,
+          ip: req.clientIp,
         });
       }
       return row;

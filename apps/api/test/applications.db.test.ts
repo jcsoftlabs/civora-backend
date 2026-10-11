@@ -71,6 +71,7 @@ const call = (method: "GET" | "POST" | "PUT", url: string, token: string, payloa
 let national = "";
 let pvApprover = "";
 let nobody = "";
+let pvReader = "";
 const ids = { pv1: "", pv2: "", nord: "", diaspora: "", injected: "" };
 
 beforeAll(async () => {
@@ -80,6 +81,7 @@ beforeAll(async () => {
   national = await session([...PERMISSIONS], null);
   pvApprover = await session(["members.approve", "members.export"], "HT0114");
   nobody = await session([], null);
+  pvReader = await session(["members.read"], "HT0114");
   ids.pv1 = await member({ first: "Anne", last: "Pierre", zone: "HT0114-01", locale: "ht" });
   ids.pv2 = await member({ first: "Paul", last: "Jean", zone: "HT0114-02" });
   ids.nord = await member({ first: "Luc", last: "Cap", zone: "HT0311-01" });
@@ -104,6 +106,8 @@ afterAll(async () => {
   for (const t of [
     "audit_log",
     "sessions",
+    "dues_obligations",
+    "dues_plans",
     "referrals",
     "member_identities",
     "post_holders",
@@ -227,5 +231,61 @@ describe("export des membres (ADH-12)", () => {
     expect(text).toContain('"count"');
     expect(text).not.toContain("Anne");
     expect(text).not.toContain("example.test");
+  });
+});
+
+describe("liste des membres du back-office", () => {
+  type Item = { id: string; firstName: string; lastName: string; parentName: string | null; dues: string[] };
+  const list = async (token: string, query = "") => (await call("GET", `/members${query}`, token)).json();
+  const names = (r: { items: Item[] }) => r.items.map((i) => i.firstName);
+
+  it("exige members.read et reste dans la zone de la personne", async () => {
+    expect((await call("GET", "/members", nobody)).statusCode).toBe(403);
+    const pv = await list(pvReader);
+    expect(names(pv)).toEqual(expect.arrayContaining(["Anne", "Paul", "Eve"]));
+    expect(names(pv)).not.toContain("Luc");
+    expect(names(pv)).not.toContain("Rose");
+    // Un filtre sur une autre zone ne donne rien de plus.
+    expect((await list(pvReader, "?zoneCode=HT03")).items).toHaveLength(0);
+  });
+
+  it("cherche par nom, prénom ou numéro, sans interpréter les jokers SQL", async () => {
+    expect(names(await list(national, "?q=pierre"))).toEqual(["Anne"]);
+    expect(names(await list(national, "?q=anne%20pierre"))).toEqual(["Anne"]);
+    const [m] = await owner`select member_number from members where id = ${ids.nord}`;
+    expect(names(await list(national, `?q=${m!.member_number}`))).toEqual(["Luc"]);
+    expect((await list(national, "?q=%25")).items).toHaveLength(0);
+  });
+
+  it("compte chaque onglet d'adhésion et pagine", async () => {
+    const all = await list(national, "?limit=2");
+    expect(all.items).toHaveLength(2);
+    expect(all.total).toBe(all.counts.pending + all.counts.approved + all.counts.rejected);
+    const approved = await list(national, "?state=approved&diaspora=true");
+    expect(names(approved)).toEqual(["Rose"]);
+    expect(approved.total).toBe(1);
+    const page2 = await list(national, "?limit=2&page=2");
+    expect(page2.items.map((i: Item) => i.id)).not.toContain(all.items[0].id);
+  });
+
+  it("donne la commune et les cotisations de l'année, mois par mois", async () => {
+    const year = new Date().getUTCFullYear();
+    const plan = (
+      await owner`insert into dues_plans (party_id, name, amount, currency, periodicity)
+      values (${A}, ${JSON.stringify({ fr: "Mensuelle" })}::text::jsonb, 100, 'HTG', 'monthly') returning id`
+    )[0]!.id;
+    for (const [month, paid] of [
+      [1, true],
+      [2, false],
+    ] as const) {
+      const start = `${year}-${String(month).padStart(2, "0")}-01`;
+      await owner`insert into dues_obligations (party_id, member_id, plan_id, period_start, due_date, amount, paid_at)
+        values (${A}, ${ids.injected}, ${plan}, ${start}, ${start}, 100, ${paid ? new Date().toISOString() : null})`;
+    }
+    const eve = (await list(national, "?q=eve")).items[0] as Item;
+    expect(eve.parentName).toBe("Pétion-Ville");
+    expect(eve.dues).toHaveLength(12);
+    expect(eve.dues.slice(0, 2)).toEqual(["paid", new Date() > new Date(`${year}-02-01`) ? "late" : "due"]);
+    expect(eve.dues[11]).toBe("none");
   });
 });

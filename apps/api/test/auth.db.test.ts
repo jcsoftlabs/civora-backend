@@ -286,7 +286,10 @@ describe("double authentification des administrateurs", () => {
     const res = await login(adminEmail);
     token = res.token;
     expect(res.mfa).toBe("setup_required");
-    expect((await get("/auth/me", token)).json()).toMatchObject({ mfaPending: true, permissions: [] });
+    const me = (await get("/auth/me", token)).json();
+    expect(me).toMatchObject({ mfaPending: true, permissions: [], mfa: "setup_required" });
+    expect(me.party.slug).toBeTruthy();
+    expect(me.member.firstName).toBeTruthy();
     expect((await get("/zone-admin", token)).json()).toMatchObject({ code: "mfa_required" });
   });
 
@@ -294,6 +297,9 @@ describe("double authentification des administrateurs", () => {
     const setup = await post("/auth/mfa/setup", {}, { token });
     const uri = new URL(setup.json().otpauthUri as string);
     expect(uri.protocol).toBe("otpauth:");
+    expect(decodeURIComponent(uri.pathname)).toContain(adminEmail);
+    // Recharger la page d'activation redonne le même secret tant qu'il n'est pas confirmé.
+    expect((await post("/auth/mfa/setup", {}, { token })).json().otpauthUri).toBe(setup.json().otpauthUri);
     const b32 = uri.searchParams.get("secret") ?? "";
     secret = base32Decode(b32);
     sharedSecret = secret;
@@ -301,7 +307,7 @@ describe("double authentification des administrateurs", () => {
     const code = totpAt(secret, currentStep(clock));
     expect((await post("/auth/mfa/verify", { code }, { token })).statusCode).toBe(204);
     const me = (await get("/auth/me", token)).json();
-    expect(me).toMatchObject({ mfaPending: false });
+    expect(me).toMatchObject({ mfaPending: false, mfa: "none" });
     expect(me.permissions.sort()).toEqual(["members.approve", "members.read"]);
     expect((await get("/zone-admin", token)).statusCode).toBe(200);
   });
@@ -309,6 +315,7 @@ describe("double authentification des administrateurs", () => {
   it("un code TOTP ne sert qu'une fois", async () => {
     const next = await login(adminEmail);
     expect(next.mfa).toBe("required");
+    expect((await get("/auth/me", next.token)).json().mfa).toBe("required");
     const code = totpAt(secret, currentStep(clock));
     const res = await post("/auth/mfa/verify", { code }, { token: next.token });
     expect(res.statusCode).toBe(401);

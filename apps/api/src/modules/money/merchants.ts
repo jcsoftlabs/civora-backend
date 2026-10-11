@@ -53,7 +53,7 @@ export async function createMerchant(req: FastifyRequest, body: z.infer<typeof m
       targetType: "merchant_account",
       targetId: m!.id,
       metadata: { provider: body.provider },
-      ip: req.ip,
+      ip: req.clientIp,
     });
     return { id: m!.id };
   });
@@ -76,7 +76,7 @@ export async function updateMerchant(req: FastifyRequest, id: string, body: z.in
       targetType: "merchant_account",
       targetId: id,
       metadata: body,
-      ip: req.ip,
+      ip: req.clientIp,
     });
   });
 }
