@@ -44,6 +44,14 @@ Jalon : tests d'isolation réussis entre deux partis fictifs ; socle utilisable 
 
 ### Interfaces
 - [ ] Back-office : rail de navigation, liste des membres, organes avec panneau latéral (maquettes « Back-office ») : connexion par code e-mail, activation et saisie de la 2FA, rail, liste des membres (vues, onglets, recherche, filtres, cotisations de l'année, export) et fiche membre en panneau latéral (carte de membre, profil, classement, relevé de cotisations, validation ou rejet des adhésions) et actions groupées (étiquettes, statut, validation, export de la sélection) faits ; organes (grille, carte ouverte inversée, panneau latéral : identité et zone, postes et droits, nomination, fin de mandat, mode simple) faits ; reste l'envoi d'un message à la sélection (avec COM-03)
+- [ ] Écrans du back-office pour les exigences P2 dont l'API est faite (statut « fait » = API ; les écrans sont suivis ici) :
+  - [ ] Réglages du parti : identité visuelle, langues, mode d'adhésion, statuts de membre (SOC-01, SOC-03, ADH-03, ADH-04)
+  - [ ] Cotisations et argent : formules et échéances, saisie en espèces avec reçu, comptes marchands, paiements (FIN-03, FIN-05, FIN-10, FIN-12)
+  - [ ] Publications et notifications push ciblées (COM-01, COM-02)
+  - [ ] Agenda et événements, inscrits (ENG-03)
+  - [ ] Tableau de bord par zone, options hors formule affichées verrouillées (PIL-01, SOC-07)
+  - [ ] Journal d'audit et vérification de son intégrité (SEC-06)
+  - [ ] Filtres ET / OU et segments enregistrés de la liste des membres (maquette)
 - [x] Création d'un espace parti et thème marque blanche web (SOC-01, SOC-03) : assistant de création et profil public faits ; thème appliqué aux sites des partis avec le back-office
 - [ ] App mobile commune : rejoindre un parti par QR, lien ou code ; thème chargé selon le parti ; accueil membre (maquette « App membre : accueil »)
 - [ ] Hors ligne de base et Android 8 (NFR-01, NFR-02) ; français et créole (NFR-08) ; squelettes (NFR-09)
@@ -55,6 +63,7 @@ Pas de migration de NOU : le parti garde le système développé sur mesure pour
 
 Jalon : deux partis pilotes actifs et facturés ; création d'un espace parti en moins d'une heure.
 
+- [ ] Formation complète, en premier de P3 (décision du 2026-10-12) : modules séquentiels (vidéo, audio, documents), quiz, seuil de réussite et reprises, obligations par statut, suivi par zone, certificat de complétion livré avec le reste (FOR-01 à FOR-04)
 - [ ] Facturation plateforme : abonnements Stripe, factures, relances, suspension, mesure de l'usage et dépassements (SOC-08)
 - [ ] Assistant de démarrage et import : correspondance des colonnes, doublons, invitations, historique des cotisations (SOC-09, ADH-07 à ADH-10)
 - [ ] Parrainage configurable (ADH-05, ENG-01) ; carte de membre QR vérifiable (ADH-11)
@@ -63,7 +72,6 @@ Jalon : deux partis pilotes actifs et facturés ; création d'un espace parti en
 - [ ] Gamification : barème, bonus, badges, classements, journal (GAM-01 à GAM-05, GAM-09)
 - [ ] Votes internes : corps électoral par règles, liste figée, candidatures, modes, quorum, PV, installation du gagnant (VOT-01 à VOT-07, VOT-09, VOT-10)
 - [ ] Organes avancés : mandats, organigramme, pourvoi par vote, organes secrets et canaux (ORG-05 à ORG-08)
-- [ ] Formation : modules, quiz, obligations par statut, suivi (FOR-01 à FOR-03)
 - [ ] SMS et WhatsApp sur crédits (COM-03) ; messagerie et support (COM-06) ; sondages (ENG-02)
 - [ ] Documents et stockage R2 avec quotas, alertes, packs, corbeille (DOC-01 à DOC-08)
 - [ ] Finances : journal, reçus (CPT-01, CPT-04)
@@ -79,7 +87,7 @@ Jalon : test de charge au volume visé, test d'intrusion sans faille critique ou
 - [ ] Marque blanche stores : flavors Flutter, pipeline Codemagic ou Fastlane, publication depuis le compte Apple du parti (SOC-03) ; domaines personnalisés (SOC-04)
 - [ ] Réunions, pétitions, vote en assemblée (ENG-04, ENG-05, VOT-08)
 - [ ] Gamification avancée : défis, récompenses, points comme critère (GAM-06 à GAM-08)
-- [ ] Contributions spéciales (FIN-09) ; budgets et rapport d'origine des dons (CPT-02, CPT-03) ; certificat de formation (FOR-04)
+- [ ] Contributions spéciales (FIN-09) ; budgets et rapport d'origine des dons (CPT-02, CPT-03)
 - [ ] BI avancée : entrepôt nocturne, connecteur Power BI et Looker Studio, API de données (BI-05 à BI-07)
 - [ ] Module Élections complet : bureaux, mandataires, PV, décompte parallèle, incidents, porte-à-porte, candidats, calendrier (ELE-01 à ELE-18)
 - [ ] Infrastructure répliquée, test de charge (NFR-03, NFR-05) ; test d'intrusion (SEC-12)
