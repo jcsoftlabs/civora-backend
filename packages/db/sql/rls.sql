@@ -1,5 +1,7 @@
 -- Politiques d'isolation par parti (SOC-02, SEC-01). Rejoué après chaque migration par src/migrate.ts.
 -- Toute table qui porte party_id reçoit automatiquement la politique ; aucune exception.
+-- nullif : sur une connexion réutilisée par le pool, app.party_id vaut '' après la transaction (et non NULL) ;
+-- sans nullif, ''::uuid lève une erreur au lieu de ne renvoyer aucune ligne.
 
 DO $$
 DECLARE r record;
@@ -14,7 +16,7 @@ BEGIN
     EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', r.table_name);
     EXECUTE format('DROP POLICY IF EXISTS party_isolation ON %I', r.table_name);
     EXECUTE format(
-      'CREATE POLICY party_isolation ON %I USING (party_id = current_setting(''app.party_id'', true)::uuid) WITH CHECK (party_id = current_setting(''app.party_id'', true)::uuid)',
+      'CREATE POLICY party_isolation ON %I USING (party_id = nullif(current_setting(''app.party_id'', true), '''')::uuid) WITH CHECK (party_id = nullif(current_setting(''app.party_id'', true), '''')::uuid)',
       r.table_name
     );
   END LOOP;
@@ -24,7 +26,7 @@ END $$;
 ALTER TABLE parties ENABLE ROW LEVEL SECURITY;
 ALTER TABLE parties FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS party_self ON parties;
-CREATE POLICY party_self ON parties USING (id = current_setting('app.party_id', true)::uuid);
+CREATE POLICY party_self ON parties USING (id = nullif(current_setting('app.party_id', true), '')::uuid);
 
 -- Journal d'audit et journal des points : ajout seulement.
 REVOKE UPDATE, DELETE ON audit_log FROM civora_app;

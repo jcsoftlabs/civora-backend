@@ -1,2 +1,2 @@
 export * from "./schema/index.js";
-export { db, withParty, type Tx } from "./client.js";
+export { db, withParty, closeDb, type Tx } from "./client.js";
