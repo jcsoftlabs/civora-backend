@@ -13,7 +13,9 @@
   import DemoForm from "./DemoForm.svelte";
   import FieldSection from "./FieldSection.svelte";
   import Faq from "./Faq.svelte";
+  import Marquee from "./Marquee.svelte";
   import Pricing from "./Pricing.svelte";
+  import { reveal } from "./reveal";
 
   interface Props {
     locale: "fr" | "ht";
@@ -113,14 +115,16 @@
     </div>
   </section>
 
+  <Marquee {locale} />
+
   <section class="replace wrap" aria-labelledby="replace-title">
     <div>
       <h2 id="replace-title">{t("mk.replace.title")}</h2>
       <p class="lead">{t("mk.replace.lead")}</p>
     </div>
     <div class="replace-list">
-      <ul>
-        {#each [1, 2, 3, 4, 5] as i (i)}<li>{tk(`mk.replace.i${i}`)}</li>{/each}
+      <ul class="crossed" use:reveal={0.4}>
+        {#each [1, 2, 3, 4, 5] as i (i)}<li style:--i={i}><span>{tk(`mk.replace.i${i}`)}</span></li>{/each}
       </ul>
       <p class="replace-end">{t("mk.replace.end")}</p>
     </div>
@@ -141,7 +145,7 @@
           </ul>
           <p class="replaces"><span>{t("mk.replaces")}</span> {tk(`mk.m.${m.key}.r`)}</p>
         </div>
-        <figure class="screen">
+        <figure class="screen slide" class:from-left={i % 2 === 1} use:reveal={0.2}>
           <img
             src={shot(m.shot)}
             alt={tk(`mk.m.${m.key}.shot`)}
@@ -511,9 +515,57 @@
     border-bottom: 1px dashed var(--c-line);
     font-size: var(--fs-19);
     color: var(--c-ink-2);
-    text-decoration: line-through;
-    text-decoration-color: var(--c-stamp);
-    text-decoration-thickness: 2px;
+  }
+  /* Chaque outil est barré d'un trait d'encre rouge, tracé l'un après l'autre à l'arrivée de la liste. */
+  .crossed span {
+    position: relative;
+  }
+  .crossed span::after {
+    content: "";
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    top: 55%;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--c-stamp);
+    transform-origin: left center;
+    transform: rotate(-1.5deg);
+  }
+  .crossed:global(.reveal) span::after {
+    transform: rotate(-1.5deg) scaleX(0);
+    transition: transform 0.45s cubic-bezier(0.6, 0, 0.3, 1);
+    transition-delay: calc(var(--i) * 0.28s);
+  }
+  .crossed:global(.reveal.in) span::after {
+    transform: rotate(-1.5deg) scaleX(1);
+  }
+  /* Captures : elles glissent depuis leur côté et se redressent en entrant à l'écran. */
+  .slide:global(.reveal) {
+    opacity: 0;
+    transform: translateX(48px) rotate(1.5deg);
+    transition:
+      opacity 0.6s ease,
+      transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .slide.from-left:global(.reveal) {
+    transform: translateX(-48px) rotate(-1.5deg);
+  }
+  .slide:global(.reveal.in) {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .crossed:global(.reveal) span::after {
+      transform: rotate(-1.5deg);
+      transition: none;
+    }
+    .slide:global(.reveal),
+    .slide.from-left:global(.reveal) {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
   .replace-end {
     margin-top: var(--s-6);

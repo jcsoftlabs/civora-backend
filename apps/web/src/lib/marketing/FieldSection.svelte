@@ -5,6 +5,7 @@
 -->
 <script lang="ts">
   import { translator, type MessageKey } from "$lib/i18n";
+  import { reveal } from "./reveal";
 
   let { locale }: { locale: "fr" | "ht" } = $props();
   const t = $derived(translator(locale));
@@ -42,12 +43,20 @@
       <div class="item">
         <!-- Téléphone hors ligne : les présences attendent le réseau, le tampon est déjà posé. -->
         <div class="vignette" aria-hidden="true">
-          <div class="phone">
-            <p class="phone-bar"><span class="nosignal"></span>{t("mk.field.v.offline")}</p>
-            {#each ["9:02 AM", "9:05 AM", "9:11 AM"] as time (time)}
-              <p class="scan"><span class="dot"></span>{t("mk.field.v.scan")}<span class="time">{time}</span></p>
+          <div class="phone sync" use:reveal={0.6}>
+            <p class="phone-bar">
+              <span class="nosignal"></span><span class="waiting">{t("mk.field.v.offline")}</span>
+              <span class="done online">{t("mk.field.v.online")}</span>
+            </p>
+            {#each ["9:02 AM", "9:05 AM", "9:11 AM"] as time, n (time)}
+              <p class="scan" style:--n={n}>
+                <span class="dot"></span>{t("mk.field.v.scan")}<span class="time">{time}</span>
+              </p>
             {/each}
-            <p class="queue">{t("mk.field.v.queue")}</p>
+            <p class="queue">
+              <span class="waiting">{t("mk.field.v.queue")}</span>
+              <span class="done">{t("mk.field.v.synced")}</span>
+            </p>
             <span class="stamp">{t("mk.hero.stamp")}</span>
           </div>
         </div>
@@ -165,6 +174,7 @@
     transform: rotate(-3deg);
   }
   .phone-bar {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 5px;
@@ -208,8 +218,54 @@
     font-variant-numeric: tabular-nums;
   }
   .queue {
+    position: relative;
     margin-top: 6px !important;
     font-weight: 600;
+  }
+  .done.online {
+    left: 15px;
+  }
+  .done {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    color: var(--c-success-text);
+  }
+  /* Le réseau revient : les présences passent au vert l'une après l'autre, puis « Synchronisé ». */
+  .sync:global(.reveal) .dot {
+    transition: background-color 0.3s ease;
+    transition-delay: calc(0.9s + var(--n) * 0.45s);
+  }
+  .sync:global(.reveal.in) .dot {
+    background: var(--c-success);
+  }
+  .sync:global(.reveal) .waiting,
+  .sync:global(.reveal) .done {
+    transition: opacity 0.3s ease 2.4s;
+  }
+  .sync:global(.reveal.in) .waiting {
+    opacity: 0;
+  }
+  .sync:global(.reveal.in) .done {
+    opacity: 1;
+  }
+  .sync:global(.reveal) .phone-bar {
+    transition: color 0.3s ease 0.6s;
+  }
+  .sync:global(.reveal.in) .phone-bar {
+    color: var(--c-success-text);
+  }
+  .sync:global(.reveal) .phone-bar .waiting,
+  .sync:global(.reveal) .phone-bar .done {
+    transition-delay: 0.6s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sync:global(.reveal) .dot,
+    .sync:global(.reveal) .waiting,
+    .sync:global(.reveal) .done {
+      transition: none;
+    }
   }
   .stamp {
     position: absolute;

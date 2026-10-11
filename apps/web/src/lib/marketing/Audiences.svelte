@@ -7,6 +7,7 @@
   import { resolve } from "$app/paths";
   import { MemberCard } from "@civora/ui";
   import { translator, type MessageKey } from "$lib/i18n";
+  import { reveal } from "./reveal";
 
   let { locale }: { locale: "fr" | "ht" } = $props();
   const t = $derived(translator(locale));
@@ -56,10 +57,10 @@
 <section id="pour-qui" class="audiences" aria-labelledby="aud-title">
   <div class="wrap">
     <h2 id="aud-title">{t("mk.aud.title")}</h2>
-    <div class="grid">
+    <div class="grid fan" use:reveal={0.3}>
       {#each AUDIENCES as a (a.key)}
         <div class="aud">
-          <div class="stage" aria-hidden="true">
+          <div class="stage" aria-hidden="true" style:--n={AUDIENCES.indexOf(a)}>
             <div class="card" class:vertical={a.vertical} style:--tilt="{a.tilt}deg">
               <MemberCard
                 partyName={a.org}
@@ -119,6 +120,26 @@
     width: min(270px, 82%);
     transform: rotate(var(--tilt));
     filter: drop-shadow(0 16px 24px rgb(11 59 55 / 22%));
+  }
+  /* Les cartes se posent l'une après l'autre : elles tombent à plat puis prennent leur inclinaison. */
+  .fan:global(.reveal) .card {
+    opacity: 0;
+    transform: translateY(-36px) rotate(0deg) scale(1.06);
+    transition:
+      opacity 0.4s ease,
+      transform 0.7s cubic-bezier(0.25, 1.4, 0.4, 1);
+    transition-delay: calc(var(--n) * 0.18s);
+  }
+  .fan:global(.reveal.in) .card {
+    opacity: 1;
+    transform: rotate(var(--tilt));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fan:global(.reveal) .card {
+      opacity: 1;
+      transform: rotate(var(--tilt));
+      transition: none;
+    }
   }
   .card.vertical {
     width: min(150px, 46%);
