@@ -1,38 +1,58 @@
 // Heures de civora : toujours sur 12 heures avec AM ou PM, à l'heure d'Haïti (America/Port-au-Prince, heure
 // d'été comprise). Le rendu serveur tourne en UTC : le fuseau est donc toujours donné explicitement.
+// L'heure est composée ici à partir des valeurs numériques, et non par Intl : selon la version d'ICU (Node,
+// navigateur), le format français sur 12 heures varie. Le résultat est ainsi identique partout.
 
 export const PARTY_TIME_ZONE = "America/Port-au-Prince";
 
-/**
- * Espaces normalisés : selon la version de Node ou du navigateur (ICU), « 9:00 AM » s'écrit avec une espace
- * fine insécable (U+202F) ou normale. Une seule forme évite les écarts entre rendu serveur et navigateur.
- */
-const spaces = (s: string) => s.replace(/[\u202f\u00a0]/g, " ");
+const NUMERIC = new Intl.DateTimeFormat("en-CA", {
+  timeZone: PARTY_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
 
-const fmt = (opts: Intl.DateTimeFormatOptions) => {
-  const f = new Intl.DateTimeFormat("fr-FR", { timeZone: PARTY_TIME_ZONE, ...opts });
-  return { format: (d: Date) => spaces(f.format(d)) };
-};
+/** Année, mois, jour, heure (0 à 23) et minute à l'heure d'Haïti. */
+function parts(d: Date | string) {
+  const p = Object.fromEntries(NUMERIC.formatToParts(new Date(d)).map((x) => [x.type, x.value]));
+  return { year: +p.year!, month: +p.month!, day: +p.day!, hour: +p.hour! % 24, minute: +p.minute! };
+}
 
-const TIME = fmt({ hour: "numeric", minute: "2-digit", hour12: true });
-const DAY_TIME = fmt({ day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true });
-const FULL = fmt({ day: "numeric", month: "long", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true });
+const MONTH_SHORT = new Intl.DateTimeFormat("fr-FR", { month: "short", timeZone: "UTC" });
+const MONTH_LONG = new Intl.DateTimeFormat("fr-FR", { month: "long", timeZone: "UTC" });
+const monthName = (fmt: Intl.DateTimeFormat, month: number) => fmt.format(new Date(Date.UTC(2024, month - 1, 15)));
 
-/** « 9:00 AM » */
-export const formatTime = (d: Date | string) => TIME.format(new Date(d));
+/** « 9:00 AM », « 12:30 PM », « 12:00 AM » (minuit). */
+export function formatTime(d: Date | string): string {
+  const { hour, minute } = parts(d);
+  return `${hour % 12 === 0 ? 12 : hour % 12}:${String(minute).padStart(2, "0")} ${hour < 12 ? "AM" : "PM"}`;
+}
 /** « 17 oct., 9:00 AM » */
-export const formatDayTime = (d: Date | string) => DAY_TIME.format(new Date(d));
+export function formatDayTime(d: Date | string): string {
+  const p = parts(d);
+  return `${p.day} ${monthName(MONTH_SHORT, p.month)}, ${formatTime(d)}`;
+}
 /** « 17 octobre 2026 à 9:00 AM » */
-export const formatDateTime = (d: Date | string) => FULL.format(new Date(d));
+export function formatDateTime(d: Date | string): string {
+  const p = parts(d);
+  return `${p.day} ${monthName(MONTH_LONG, p.month)} ${p.year} à ${formatTime(d)}`;
+}
+
+/**
+ * Dates sans heure à l'heure d'Haïti (un soir en Haïti est déjà le lendemain en UTC) : jour, mois, année,
+ * jour de la semaine. Pour une heure, utiliser formatTime, formatDayTime ou formatDateTime.
+ */
+export const partyFormat = (opts: Omit<Intl.DateTimeFormatOptions, "hour" | "minute" | "second">) =>
+  new Intl.DateTimeFormat("fr-FR", { timeZone: PARTY_TIME_ZONE, ...opts });
 
 /** Décalage d'Haïti à cet instant, en minutes (−300 l'hiver, −240 l'été). */
 function offsetMinutes(at: Date): number {
-  const name =
-    new Intl.DateTimeFormat("en-US", { timeZone: PARTY_TIME_ZONE, timeZoneName: "longOffset" })
-      .formatToParts(at)
-      .find((p) => p.type === "timeZoneName")?.value ?? "GMT";
-  const m = /GMT([+-])(\d{2}):(\d{2})/.exec(name);
-  return m ? (m[1] === "-" ? -1 : 1) * (Number(m[2]) * 60 + Number(m[3])) : 0;
+  const p = parts(at);
+  const asUtc = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute);
+  return Math.round((asUtc - Math.floor(at.getTime() / 60_000) * 60_000) / 60_000);
 }
 
 /** Heure locale d'Haïti « AAAA-MM-JJTHH:mm » (24 h, valeur de formulaire) vers un instant ISO. */
@@ -49,22 +69,7 @@ export function fromPartyLocal(value: string): string | undefined {
 /** Instant vers l'heure locale d'Haïti « AAAA-MM-JJTHH:mm » (24 h), pour préremplir un formulaire. */
 export function toPartyLocal(d: Date | string | null | undefined): string {
   if (!d) return "";
-  const parts = Object.fromEntries(
-    new Intl.DateTimeFormat("en-CA", {
-      timeZone: PARTY_TIME_ZONE,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hourCycle: "h23",
-    })
-      .formatToParts(new Date(d))
-      .map((p) => [p.type, p.value]),
-  );
-  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+  const p = parts(d);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${p.year}-${pad(p.month)}-${pad(p.day)}T${pad(p.hour)}:${pad(p.minute)}`;
 }
-
-/** Format libre à l'heure d'Haïti (dates seules comprises : un soir en Haïti est déjà le lendemain en UTC). */
-export const partyFormat = (opts: Intl.DateTimeFormatOptions) =>
-  fmt({ ...(opts.hour ? { hour12: true } : {}), ...opts });

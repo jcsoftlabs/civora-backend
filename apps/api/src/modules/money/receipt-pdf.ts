@@ -44,22 +44,30 @@ const LABELS = {
 } as const;
 
 /** Reçu PDF A5, une page : en-tête du parti, membre, lignes de cotisation, total. */
-/** Date et heure du reçu à l'heure d'Haïti, sur 12 heures avec AM ou PM : « 11 octobre 2026 à 8:41 PM ». */
+/**
+ * Date et heure du reçu à l'heure d'Haïti, sur 12 heures avec AM ou PM : « 11 octobre 2026 à 8:41 PM ».
+ * L'heure est composée à la main : le format français sur 12 heures d'Intl varie selon la version d'ICU.
+ */
 export function issuedAt(iso: string): string {
-  return (
-    new Intl.DateTimeFormat("fr-FR", {
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", {
       timeZone: "America/Port-au-Prince",
-      day: "numeric",
-      month: "long",
       year: "numeric",
-      hour: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
       minute: "2-digit",
-      hour12: true,
+      hourCycle: "h23",
     })
-      .format(new Date(iso))
-      // Espace normale avant AM / PM, quelle que soit la version de Node (ICU).
-      .replace(/[\u202f\u00a0]/g, " ")
+      .formatToParts(new Date(iso))
+      .map((x) => [x.type, x.value]),
   );
+  const hour = Number(p.hour) % 24;
+  const month = new Intl.DateTimeFormat("fr-FR", { month: "long", timeZone: "UTC" }).format(
+    new Date(Date.UTC(2024, Number(p.month) - 1, 15)),
+  );
+  const time = `${hour % 12 === 0 ? 12 : hour % 12}:${p.minute} ${hour < 12 ? "AM" : "PM"}`;
+  return `${Number(p.day)} ${month} ${p.year} à ${time}`;
 }
 
 export function receiptPdf(r: ReceiptView, lang: MessageLocale): Promise<Buffer> {

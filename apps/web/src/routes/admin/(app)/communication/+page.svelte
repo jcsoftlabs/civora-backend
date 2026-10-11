@@ -3,7 +3,7 @@
   notifications push avec leur bilan d'envoi. Chaque élément dit à qui il s'adresse.
 -->
 <script lang="ts">
-  import { partyFormat } from "$lib/datetime";
+  import { formatDayTime } from "$lib/datetime";
   import { page } from "$app/state";
   import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
@@ -39,7 +39,6 @@
   // eslint-disable-next-line svelte/no-navigation-without-resolve
   const go = (changes: Record<string, string | null>) => goto(href(changes), { noScroll: true, keepFocus: true });
 
-  const dateFmt = $derived(partyFormat({ day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }));
   const label = (l: { fr: string; ht?: string }) => (data.locale === "ht" && l.ht ? l.ht : l.fr);
   /** Résumé lisible d'une audience : « Tout le parti », « 2 zones · Diaspora »… */
   function who(a: StoredAudience | null) {
@@ -157,7 +156,7 @@
                             : "admin.com.status.published",
                         ),
                         {
-                          date: dateFmt.format(new Date(p.publishedAt)),
+                          date: formatDayTime(new Date(p.publishedAt)),
                         },
                       )
                     : t("admin.com.status.draft")}
@@ -191,10 +190,10 @@
               <Badge tone={pushTone[c.status]}>
                 {c.status === "scheduled"
                   ? format(t("admin.push.status.scheduled"), {
-                      date: dateFmt.format(new Date(c.scheduledAt ?? Date.now())),
+                      date: formatDayTime(new Date(c.scheduledAt ?? Date.now())),
                     })
                   : c.status === "sent"
-                    ? format(t("admin.push.status.sent"), { date: dateFmt.format(new Date(c.sentAt ?? Date.now())) })
+                    ? format(t("admin.push.status.sent"), { date: formatDayTime(new Date(c.sentAt ?? Date.now())) })
                     : tk(`admin.push.status.${c.status}`)}
               </Badge>
               {#if c.status === "scheduled"}

@@ -4,7 +4,7 @@
   inscrits. Le panneau latéral sert à créer, modifier et voir les inscrits.
 -->
 <script lang="ts">
-  import { partyFormat } from "$lib/datetime";
+  import { formatTime, partyFormat } from "$lib/datetime";
   import { page } from "$app/state";
   import { goto } from "$app/navigation";
   import { resolve } from "$app/paths";
@@ -28,7 +28,6 @@
   const day = partyFormat({ day: "numeric" });
   const month = partyFormat({ month: "short" });
   const weekday = partyFormat({ weekday: "long" });
-  const hour = partyFormat({ hour: "numeric", minute: "2-digit" });
   const f = $derived(form as { ok?: boolean; done?: string; code?: string; id?: string } | null);
 
   // Après la création, le panneau s'ouvre sur l'événement (pour suivre ses inscrits).
@@ -83,7 +82,7 @@
               <span class="kind kind-{e.kind}">{tk(`admin.events.kind.${e.kind}`)}</span>
               <span class="title">{label(e.title)}</span>
               <span class="where">
-                {hour.format(start)} · {e.address ?? e.zoneName ?? t("admin.events.national")}
+                {formatTime(start)} · {e.address ?? e.zoneName ?? t("admin.events.national")}
               </span>
               <span class="scope">{e.organName ?? e.zoneName ?? t("admin.events.national")}</span>
               <span class="gauge">
