@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { and, desc, eq, lt } from "drizzle-orm";
+import { and, desc, eq, like, lt, sql } from "drizzle-orm";
 import { z } from "zod";
 import { auditLog, withParty } from "@civora/db";
 import { verifyAuditChain } from "../../lib/audit.js";
@@ -11,6 +11,11 @@ const listQuery = z.object({
   before: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().min(1).max(200).default(50),
   action: z.string().max(64).optional(),
+  /** Famille d'actions : préfixe avant le premier point (auth, member, payment, settings…). */
+  family: z
+    .string()
+    .regex(/^[a-z_]{2,30}$/)
+    .optional(),
 });
 
 /** SEC-06 : lecture du journal et vérification de son intégrité, réservées à un poste national (audit.read). */
@@ -25,6 +30,10 @@ export default async function auditRoutes(app: FastifyInstance) {
           action: auditLog.action,
           actorKind: auditLog.actorKind,
           actorUserId: auditLog.actorUserId,
+          // Qui a agi : le membre du parti rattaché au compte (nom et numéro), jamais d'autre donnée.
+          actor: sql<{ firstName: string; lastName: string; number: string } | null>`(
+            select json_build_object('firstName', m.first_name, 'lastName', m.last_name, 'number', m.member_number)
+            from members m where m.user_id = "audit_log"."actor_user_id" limit 1)`,
           targetType: auditLog.targetType,
           targetId: auditLog.targetId,
           metadata: auditLog.metadata,
@@ -33,7 +42,11 @@ export default async function auditRoutes(app: FastifyInstance) {
         })
         .from(auditLog)
         .where(
-          and(q.before ? lt(auditLog.seq, q.before) : undefined, q.action ? eq(auditLog.action, q.action) : undefined),
+          and(
+            q.before ? lt(auditLog.seq, q.before) : undefined,
+            q.action ? eq(auditLog.action, q.action) : undefined,
+            q.family ? like(auditLog.action, `${q.family}.%`) : undefined,
+          ),
         )
         .orderBy(desc(auditLog.seq))
         .limit(q.limit),

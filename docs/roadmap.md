@@ -50,7 +50,7 @@ Jalon : tests d'isolation réussis entre deux partis fictifs ; socle utilisable 
   - [x] Publications et notifications push ciblées (COM-01, COM-02) : brouillons, parution immédiate ou programmée, retrait, médias d'album et de podcast ; notifications avec aperçu sur téléphone (fr, ht), envoi immédiat ou programmé, annulation, bilan ; destinataires par zone, statut, lieu, organe, avec le nombre de membres visés
   - [x] Agenda et événements, inscrits (ENG-03) : événements en billets (à venir, passés), création avec zone et organe, modification, jauge et liste des inscrits
   - [x] Tableau de bord par zone, options hors formule affichées verrouillées (PIL-01, SOC-07) : accueil du back-office, chiffres clés, tendance sur six mois, détail par sous-zone jusqu'aux sections et pays de la diaspora
-  - [ ] Journal d'audit et vérification de son intégrité (SEC-06)
+  - [x] Journal d'audit et vérification de son intégrité (SEC-06) : lignes scellées avec auteur, heure (AM/PM) et détail, filtre par domaine, vérification de la chaîne à la demande
   - [ ] Filtres ET / OU et segments enregistrés de la liste des membres (maquette)
 - [x] Création d'un espace parti et thème marque blanche web (SOC-01, SOC-03) : assistant de création et profil public faits ; thème appliqué aux sites des partis avec le back-office
 - [ ] App mobile commune : rejoindre un parti par QR, lien ou code ; thème chargé selon le parti ; accueil membre (maquette « App membre : accueil »)

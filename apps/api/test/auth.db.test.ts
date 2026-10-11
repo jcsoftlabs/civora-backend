@@ -369,6 +369,14 @@ describe("journal d'audit (SEC-06)", () => {
     const res = await get("/audit/verify", admin.token);
     expect(res.json()).toMatchObject({ intact: true, brokenAt: null });
     expect(res.json().checked).toBeGreaterThan(5);
+    // Filtre par famille d'actions ; chaque entrée nomme le membre qui a agi.
+    const auth = (await get("/audit?family=auth&limit=200", admin.token)).json().entries as Array<{
+      action: string;
+      actor: { firstName: string } | null;
+    }>;
+    expect(auth.length).toBeGreaterThan(0);
+    expect(auth.every((e) => e.action.startsWith("auth."))).toBe(true);
+    expect(auth.find((e) => e.action === "auth.login")?.actor?.firstName).toBeTruthy();
   });
 });
 

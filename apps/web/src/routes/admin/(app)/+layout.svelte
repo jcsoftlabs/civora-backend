@@ -51,6 +51,12 @@
       visible: data.me.permissions.includes("organs.manage"),
     },
     {
+      href: resolve("/admin/journal"),
+      label: t("admin.nav.audit"),
+      icon: "audit",
+      visible: data.me.permissions.includes("audit.read"),
+    },
+    {
       href: resolve("/admin/reglages"),
       label: t("admin.nav.settings"),
       icon: "settings",
@@ -75,7 +81,11 @@
             title={m.label}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              {#if m.icon === "dashboard"}
+              {#if m.icon === "audit"}
+                <!-- Journal : registre scellé. -->
+                <path d="M6 3.5h9l3 3v14H6z" />
+                <path d="M9 9h6M9 12.5h6M9 16h3.5" />
+              {:else if m.icon === "dashboard"}
                 <!-- Tableau de bord : colonnes croissantes. -->
                 <path d="M4 20h16" />
                 <rect x="5.5" y="12" width="3" height="5.5" rx="1" />
