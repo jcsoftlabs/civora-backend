@@ -1,0 +1,263 @@
+// Site commercial (SOC-12) : textes en français. Même clés dans marketing.ht.ts.
+export const marketingFr = {
+  "mk.meta.title": "civora : la plateforme des partis et des associations d'Haïti",
+  "mk.meta.description":
+    "Adhésions, cotisations MonCash et NatCash, rassemblements, formation et communication pour les partis politiques, associations et syndicats d'Haïti et de la diaspora.",
+
+  "mk.nav.label": "Navigation principale",
+  "mk.nav.features": "Fonctionnalités",
+  "mk.nav.audiences": "Pour qui",
+  "mk.nav.pricing": "Tarifs",
+  "mk.nav.faq": "Questions",
+  "mk.nav.demo": "Demander une démo",
+  "mk.nav.create": "Créer mon espace",
+  "mk.nav.open": "Ouvrir le menu",
+  "mk.nav.close": "Fermer le menu",
+  "mk.lang": "Kreyòl",
+  "mk.lang.label": "Lire en créole",
+
+  "mk.hero.title": "Toute votre organisation, de la section communale à la diaspora.",
+  "mk.hero.lead":
+    "civora rassemble vos membres, vos cotisations, vos rassemblements et vos messages dans une seule plateforme, en français et en créole. Pour les partis politiques, les associations et les syndicats.",
+  "mk.hero.point1": "Paiements MonCash, NatCash et carte bancaire",
+  "mk.hero.point2": "Présence et formations même sans réseau",
+  "mk.hero.point3": "Chaque responsable ne voit que sa zone",
+  "mk.hero.shot": "Tableau de bord de civora : membres, adhésions et cotisations par département",
+  "mk.hero.stamp": "Présent",
+
+  "mk.replace.title": "Fini les outils éparpillés",
+  "mk.replace.lead":
+    "L'information d'une organisation vit souvent partout à la fois. Personne n'a la vue d'ensemble, et rien n'est à jour.",
+  "mk.replace.i1": "Les groupes WhatsApp qui débordent",
+  "mk.replace.i2": "Le fichier Excel que personne ne met à jour",
+  "mk.replace.i3": "Le cahier d'adhésion resté au local",
+  "mk.replace.i4": "Les reçus de cotisation écrits à la main",
+  "mk.replace.i5": "La liste de présence sur papier",
+  "mk.replace.end":
+    "Avec civora, une seule source à jour, que chaque responsable consulte pour sa zone, depuis son ordinateur ou son téléphone.",
+
+  "mk.features.title": "Tout ce qu'il faut pour faire vivre une organisation",
+  "mk.features.lead": "Chaque module fonctionne seul et tous partagent le même fichier de membres.",
+  "mk.replaces": "Remplace",
+
+  "mk.m.members.title": "Un fichier des membres vivant",
+  "mk.m.members.lead":
+    "Adhésion en ligne ou validée par un responsable, fiche complète, statut, étiquettes et localisation jusqu'à la section communale.",
+  "mk.m.members.b1": "Filtres ET / OU et segments enregistrés",
+  "mk.m.members.b2": "Actions groupées : valider, étiqueter, exporter",
+  "mk.m.members.b3": "Cotisations de l'année visibles sur chaque ligne",
+  "mk.m.members.r": "Excel, cahiers d'adhésion, formulaires en ligne",
+  "mk.m.members.shot": "Liste des membres avec filtres, étiquettes et cotisations de l'année",
+
+  "mk.m.dues.title": "Des cotisations qui rentrent",
+  "mk.m.dues.lead":
+    "Formules mensuelles ou annuelles, paiement MonCash, NatCash ou carte, espèces saisies par le trésorier avec un reçu numéroté.",
+  "mk.m.dues.b1": "L'argent va sur vos comptes : aucune commission sur les dons",
+  "mk.m.dues.b2": "Relevé par membre et courbe des encaissements",
+  "mk.m.dues.b3": "Retards et délai de grâce suivis tout seuls",
+  "mk.m.dues.r": "Reçus manuscrits, carnets, tableaux de caisse",
+  "mk.m.dues.shot": "Cotisations : encaissements par moyen de paiement et formules",
+
+  "mk.m.events.title": "Des rassemblements qui comptent",
+  "mk.m.events.lead":
+    "Créez un rassemblement, une réunion ou un congrès, ouvrez les inscriptions, suivez la jauge puis la présence réelle.",
+  "mk.m.events.b1": "Un billet pour chaque inscrit",
+  "mk.m.events.b2": "Présence par QR code, même sans réseau",
+  "mk.m.events.b3": "Participation par zone après l'événement",
+  "mk.m.events.r": "Listes papier, appels un par un",
+  "mk.m.events.shot": "Rassemblements à venir sous forme de billets avec la jauge des inscrits",
+
+  "mk.m.organs.title": "Une organisation à votre image",
+  "mk.m.organs.lead":
+    "Bureau national, coordinations départementales, sections, commissions, antennes de la diaspora : vous créez vos organes et leurs postes.",
+  "mk.m.organs.b1": "Chaque poste porte ses droits et sa zone",
+  "mk.m.organs.b2": "Mandats et successions gardés en mémoire",
+  "mk.m.organs.b3": "Postes vacants visibles d'un coup d'œil",
+  "mk.m.organs.r": "Organigrammes figés, mots de passe partagés",
+  "mk.m.organs.shot": "Organes du parti avec leurs responsables, effectifs et postes vacants",
+
+  "mk.m.comm.title": "Parler à chacun, ou à tous",
+  "mk.m.comm.lead":
+    "Annonces, actualités, albums photo et podcasts dans le fil des membres ; notifications ciblées par zone, statut ou organe.",
+  "mk.m.comm.b1": "Nombre de destinataires connu avant l'envoi",
+  "mk.m.comm.b2": "Aperçu du message sur un téléphone",
+  "mk.m.comm.b3": "Publication immédiate ou programmée",
+  "mk.m.comm.r": "Diffusions WhatsApp, chaînes de SMS",
+  "mk.m.comm.shot": "Composition d'une notification avec ciblage et aperçu sur téléphone",
+
+  "mk.m.training.title": "Former vos membres",
+  "mk.m.training.lead":
+    "Des formations en modules : textes, vidéos, audios, documents, liens YouTube ou Vimeo, et un quiz pour passer au module suivant.",
+  "mk.m.training.b1": "Formation obligatoire selon le statut du membre",
+  "mk.m.training.b2": "Progression suivie zone par zone",
+  "mk.m.training.b3": "Certificat signé, au nom de votre organisation",
+  "mk.m.training.r": "Formations sans suivi, attestations faites à la main",
+  "mk.m.training.shot": "Parcours de formation en modules, avec quiz et aperçu du certificat",
+
+  "mk.soon.title": "Bientôt dans civora",
+  "mk.soon.lead": "En cours de développement, inclus dans les formules le jour de leur sortie.",
+  "mk.soon.votes": "Votes internes à bulletin secret, avec la liste des votants figée",
+  "mk.soon.app": "Application mobile : carte de membre, scan de présence, cotisation en un geste",
+  "mk.soon.elections": "Module Élections : bureaux de vote, mandataires, procès-verbaux et incidents",
+  "mk.soon.badge": "Bientôt",
+
+  "mk.aud.title": "Pour toutes les organisations qui rassemblent des gens",
+  "mk.aud.party": "Partis politiques",
+  "mk.aud.party.text":
+    "Adhérents, sections, cotisations, congrès, formation des militants et, avec le module Élections, la journée du scrutin.",
+  "mk.aud.npo": "Associations et ONG",
+  "mk.aud.npo.text":
+    "Membres, bénévoles, cotisations et dons, assemblées générales, formation et communication avec vos donateurs.",
+  "mk.aud.union": "Syndicats et ordres professionnels",
+  "mk.aud.union.text":
+    "Adhérents par secteur et par ville, cotisations, assemblées, votes internes et information des membres.",
+  "mk.aud.words":
+    "Le vocabulaire suit votre organisation : section ou comité, militant ou bénévole, congrès ou assemblée.",
+
+  "mk.field.title": "Pensé pour Haïti et sa diaspora",
+  "mk.field.offline": "Sans réseau, le travail continue",
+  "mk.field.offline.text":
+    "La présence et les formations fonctionnent hors ligne ; tout se synchronise au retour du réseau, avec l'heure d'origine.",
+  "mk.field.lang": "Français et créole",
+  "mk.field.lang.text": "Chaque écran existe dans les deux langues, et chaque membre choisit la sienne.",
+  "mk.field.pay": "Paiements d'ici et d'ailleurs",
+  "mk.field.pay.text":
+    "MonCash, NatCash et KashPaw en gourdes ; carte bancaire pour la diaspora en dollars, euros ou dollars canadiens.",
+  "mk.field.map": "Le vrai découpage du pays",
+  "mk.field.map.text": "Les 10 départements, les communes et les sections communales, plus les villes de la diaspora.",
+
+  "mk.sec.title": "Vos données restent les vôtres",
+  "mk.sec.lead": "La confiance de vos membres passe avant tout. La sécurité est dans la structure, pas en option.",
+  "mk.sec.i1": "Chaque organisation est isolée : aucune ne voit les données d'une autre.",
+  "mk.sec.i2": "Les pièces d'identité sont chiffrées, et chaque consultation est tracée.",
+  "mk.sec.i3": "Les administrateurs se connectent avec une double authentification.",
+  "mk.sec.i4": "Un journal d'audit inaltérable garde la trace de chaque action sensible.",
+  "mk.sec.i5": "L'équipe civora n'accède à vos données qu'avec votre accord, et l'accès est tracé.",
+
+  "mk.price.title": "Des formules qui suivent votre croissance",
+  "mk.price.lead": "Prix en dollars américains. Aucune commission sur les dons ni sur les cotisations.",
+  "mk.price.monthly": "Mensuel",
+  "mk.price.annual": "Annuel",
+  "mk.price.annual.note": "2 mois offerts",
+  "mk.price.period": "Facturation",
+  "mk.price.perMonth": "par mois",
+  "mk.price.perYear": "par an",
+  "mk.price.essentiel": "Essentiel",
+  "mk.price.essentiel.pitch": "Pour démarrer : le fichier des membres, les cotisations et les rassemblements.",
+  "mk.price.mouvement": "Mouvement",
+  "mk.price.mouvement.pitch": "Pour une organisation présente dans plusieurs départements et dans la diaspora.",
+  "mk.price.national": "National",
+  "mk.price.national.pitch": "Pour une organisation nationale, jusqu'à la section communale.",
+  "mk.price.popular": "Le plus choisi",
+  "mk.price.members": "{n} membres",
+  "mk.price.members.unlimited": "Membres illimités",
+  "mk.price.admins": "{n} administrateurs",
+  "mk.price.admins.unlimited": "Administrateurs illimités",
+  "mk.price.storage": "{n} Go de documents",
+  "mk.price.support": "Assistance : {s}",
+  "mk.price.support.essentiel": "par e-mail",
+  "mk.price.support.mouvement": "WhatsApp, réponse sous 48 h",
+  "mk.price.support.national": "référent dédié, réponse sous 24 h",
+  "mk.price.f.members": "Fichier des membres, adhésion en ligne, import",
+  "mk.price.f.dues": "Cotisations MonCash, NatCash, espèces avec reçus",
+  "mk.price.f.events": "Rassemblements, inscriptions, billets",
+  "mk.price.f.organs": "Organes, postes et droits par zone",
+  "mk.price.f.publications": "Publications et notifications ciblées",
+  "mk.price.f.dashboard": "Tableau de bord par zone",
+  "mk.price.f.card": "Carte de membre",
+  "mk.price.f.stripe": "Paiement par carte pour la diaspora",
+  "mk.price.f.training": "Formations en modules avec quiz",
+  "mk.price.f.departement": "Responsables par département",
+  "mk.price.f.certificates": "Certificats de formation signés",
+  "mk.price.f.sections": "Responsables jusqu'à la section communale",
+  "mk.price.f.domain": "Site à votre adresse et application à votre nom",
+  "mk.price.everything": "Tout Essentiel, plus :",
+  "mk.price.everything2": "Tout Mouvement, plus :",
+  "mk.price.choose": "Choisir {plan}",
+  "mk.price.setup": "Frais de mise en route : {n} $, avec l'import de votre fichier existant.",
+  "mk.price.elections": "Module Élections, en option : {n} $ pour {m} mois, {s} bureaux de vote inclus.",
+  "mk.price.soon": "Bientôt",
+
+  "mk.faq.title": "Questions fréquentes",
+  "mk.faq.q1": "Qu'est-ce que civora ?",
+  "mk.faq.a1":
+    "civora est une plateforme en ligne pour gérer une organisation de membres : adhésions, cotisations, rassemblements, organes, formation et communication. Elle est conçue pour Haïti et la diaspora, en français et en créole.",
+  "mk.faq.q2": "Une association peut-elle utiliser civora, ou seulement un parti ?",
+  "mk.faq.a2":
+    "Oui. À la création de l'espace, vous choisissez parti politique, association, ONG ou syndicat. Le vocabulaire et les modules s'adaptent ; le module Élections reste réservé aux partis.",
+  "mk.faq.q3": "Comment mes membres paient-ils leur cotisation ?",
+  "mk.faq.a3":
+    "Par MonCash, NatCash ou KashPaw en gourdes, ou par carte bancaire depuis la diaspora. Un trésorier peut aussi saisir un paiement en espèces : un reçu numéroté est émis à chaque fois.",
+  "mk.faq.q4": "civora prend-il une commission sur les dons ?",
+  "mk.faq.a4":
+    "Non. L'argent va directement sur les comptes marchands de votre organisation. civora facture uniquement l'abonnement à la plateforme, jamais un pourcentage des dons ou des cotisations.",
+  "mk.faq.q5": "Est-ce que civora fonctionne sans connexion internet ?",
+  "mk.faq.a5":
+    "Oui pour le terrain : le scan de présence et les formations fonctionnent hors ligne sur l'application. Les données se synchronisent au retour du réseau, avec l'heure réelle de chaque scan.",
+  "mk.faq.q6": "Un responsable de section voit-il tout le fichier ?",
+  "mk.faq.a6":
+    "Non. Chaque poste a une zone : un responsable ne voit que les membres de sa zone et de ses sous-zones. Les droits se règlent poste par poste, dans les organes que vous créez.",
+  "mk.faq.q7": "Nos données sont-elles en sécurité ?",
+  "mk.faq.a7":
+    "Chaque organisation est isolée des autres au niveau de la base de données. Les pièces d'identité sont chiffrées, les administrateurs utilisent une double authentification et chaque action sensible est journalisée.",
+  "mk.faq.q8": "Peut-on importer notre fichier Excel existant ?",
+  "mk.faq.a8":
+    "Oui. La mise en route comprend l'import de votre fichier de membres, avec la correspondance des colonnes et la détection des doublons.",
+  "mk.faq.q9": "En combien de temps notre espace est-il prêt ?",
+  "mk.faq.a9":
+    "L'espace se crée en quelques minutes : nom, couleurs, logo, adresse. Vous pouvez ensuite inviter vos responsables et ouvrir les adhésions le jour même.",
+  "mk.faq.q10": "Dans quelles langues fonctionne civora ?",
+  "mk.faq.a10":
+    "En français et en créole haïtien, sur chaque écran. L'anglais et l'espagnol suivront pour la diaspora. Chaque membre choisit sa langue.",
+  "mk.faq.q11": "Nos membres ont-ils besoin d'une application ?",
+  "mk.faq.a11":
+    "Les responsables travaillent dans le navigateur. L'application mobile, en préparation, apportera aux membres la carte de membre, le scan de présence et le paiement de la cotisation.",
+  "mk.faq.q12": "Peut-on avoir notre propre adresse et notre propre application ?",
+  "mk.faq.a12":
+    "Chaque organisation a son adresse en civora.app dès la création. La formule National ajoute votre propre nom de domaine et une application publiée à votre nom dans les stores.",
+  "mk.faq.q13": "Que se passe-t-il si nous arrêtons l'abonnement ?",
+  "mk.faq.a13":
+    "Vos données restent conservées 90 jours après l'arrêt. Vous pouvez les exporter à tout moment, puis demander leur suppression définitive.",
+  "mk.faq.q14": "Comment se passe l'assistance ?",
+  "mk.faq.a14":
+    "Par e-mail pour la formule Essentiel, par WhatsApp sous 48 heures pour Mouvement, et avec un référent dédié sous 24 heures pour National.",
+  "mk.faq.q15": "Le personnel de civora peut-il lire nos données ?",
+  "mk.faq.a15":
+    "Non. La console de l'éditeur ne voit que des chiffres globaux. Un accès exceptionnel, par exemple pour une assistance, demande votre accord, est limité dans le temps et reste tracé.",
+
+  "mk.demo.title": "Voyons ensemble votre organisation",
+  "mk.demo.lead":
+    "Laissez vos coordonnées : nous vous montrons civora à partir de vos besoins, en français ou en créole.",
+  "mk.demo.name": "Votre nom",
+  "mk.demo.org": "Nom de l'organisation",
+  "mk.demo.kind": "Type d'organisation",
+  "mk.demo.kind.party": "Parti politique",
+  "mk.demo.kind.association": "Association",
+  "mk.demo.kind.ngo": "ONG",
+  "mk.demo.kind.union": "Syndicat ou ordre professionnel",
+  "mk.demo.kind.other": "Autre",
+  "mk.demo.size": "Nombre de membres",
+  "mk.demo.size.s": "Moins de 1 000",
+  "mk.demo.size.m": "De 1 000 à 10 000",
+  "mk.demo.size.l": "Plus de 10 000",
+  "mk.demo.phone": "Téléphone ou WhatsApp",
+  "mk.demo.phone.hint": "Avec l'indicatif, par exemple +509 3712 3456.",
+  "mk.demo.email": "E-mail",
+  "mk.demo.message": "Ce que vous voulez voir",
+  "mk.demo.message.hint": "Facultatif : cotisations, rassemblements, élections internes…",
+  "mk.demo.submit": "Demander une démo",
+  "mk.demo.done": "Demande reçue. Nous vous contactons par WhatsApp ou par téléphone.",
+  "mk.demo.contact": "Indiquez un téléphone ou un e-mail pour que nous puissions vous répondre.",
+  "mk.demo.privacy": "Vos coordonnées servent uniquement à vous recontacter pour la démo.",
+  "mk.demo.or": "Vous préférez essayer seul ?",
+
+  "mk.demo.stamp": "Reçu",
+  "error.demo_unavailable": "La demande n'a pas pu partir. Écrivez-nous sur WhatsApp ou réessayez plus tard.",
+  "mk.cta.title": "Votre espace est prêt en quelques minutes.",
+  "mk.cta.lead": "Choisissez un nom, vos couleurs et votre adresse ; invitez vos responsables le jour même.",
+
+  "mk.footer.tagline": "La plateforme des partis, associations et syndicats d'Haïti et de la diaspora.",
+  "mk.footer.product": "Produit",
+  "mk.footer.contact": "Contact",
+  "mk.footer.rights": "© 2026 civora",
+} as const;

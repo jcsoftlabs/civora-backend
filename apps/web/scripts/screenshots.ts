@@ -32,12 +32,33 @@ const SHOTS: Array<{
   { name: "dues", path: "/admin/cotisations" },
   { name: "events", path: "/admin/evenements" },
   { name: "organs", path: "/admin/organes" },
-  { name: "push", path: "/admin/communication?vue=notifications&notifier" },
+  {
+    name: "push",
+    path: "/admin/communication?vue=notifications&notifier",
+    // Message rempli : l'aperçu du téléphone montre une vraie notification.
+    prepare: async (p) => {
+      await p.fill("input[name=titleFr]", "Congrès national 2026");
+      await p.fill("input[name=titleHt]", "Kongrè nasyonal 2026");
+      await p.fill(
+        "textarea[name=bodyFr]",
+        "Les inscriptions sont ouvertes : réservez votre place dans l'application.",
+      );
+      await p.fill("textarea[name=bodyHt]", "Enskripsyon yo louvri : rezève plas ou nan aplikasyon an.");
+      // Le panneau revient en haut : l'aperçu du téléphone doit être visible.
+      await p.evaluate(() => {
+        (document.activeElement as HTMLElement | null)?.blur();
+        for (const el of document.querySelectorAll<HTMLElement>("*")) if (el.scrollTop > 0) el.scrollTop = 0;
+      });
+    },
+  },
   {
     name: "training",
     path: async (p) => {
       await p.goto(`${base}/admin/formation`);
-      return (await p.locator("a[href^='/admin/formation/']").first().getAttribute("href")) ?? "/admin/formation";
+      return (
+        (await p.locator("a[href^='/admin/formation/']:not([href$='certificat'])").first().getAttribute("href")) ??
+        "/admin/formation"
+      );
     },
   },
 ];
@@ -49,7 +70,7 @@ for (const lang of ["fr", "ht"] as const) {
   const dir = resolve(root, "apps/web/static/marketing", lang);
   mkdirSync(dir, { recursive: true });
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
+    viewport: { width: 1200, height: 750 },
     deviceScaleFactor: 2,
     locale: lang === "ht" ? "ht-HT" : "fr-FR",
     reducedMotion: "reduce",

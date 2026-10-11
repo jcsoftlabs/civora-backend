@@ -1,5 +1,6 @@
 // Kreyòl ayisyen. Tradiksyon pou yon moun ki pale kreyòl natifnatal relè anvan lansman (NFR-08).
 import type { MessageKey } from "./fr";
+import { marketingHt } from "./marketing.ht";
 
 export const ht: Record<MessageKey, string> = {
   "app.name": "civora",
@@ -1060,4 +1061,5 @@ export const ht: Record<MessageKey, string> = {
   "count.chapter.one": "1 chapit",
   "count.question": "{n} kesyon",
   "count.question.one": "1 kesyon",
+  ...marketingHt,
 };

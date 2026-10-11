@@ -13,7 +13,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   if (host === `console.${root}`) {
     event.locals.surface = "console";
-  } else if (host === root || host === `www.${root}`) {
+  } else if (host === root || host === `www.${root}` || host === "localhost" || host === "127.0.0.1") {
+    // localhost sans sous-domaine : le site commercial en développement.
     event.locals.surface = "marketing";
   } else {
     event.locals.surface = event.url.pathname.startsWith("/admin") ? "admin" : "site";

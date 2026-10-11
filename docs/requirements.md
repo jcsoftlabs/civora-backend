@@ -22,7 +22,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | SOC-09 | Assistant de démarrage et import du fichier existant | E M N | P3 | Neuf | à faire |
 | SOC-10 | Console de l'éditeur : partis clients, consommation, santé du service, sans accès au contenu | interne | P3 | Neuf | à faire |
 | SOC-11 | Type d'organisation choisi à la création (parti, association, ONG, syndicat) : vocabulaire et modules adaptés, module Élections réservé aux partis ; Haïti et diaspora (décision du 2026-10-11) | E M N | P3 | Neuf | à faire |
-| SOC-12 | Site commercial, premier contact avec les clients : promesse, captures de la plateforme par module, terrain haïtien, sécurité, tarifs, FAQ, demande de démo, création d'espace ; parle aux partis et aux associations ; fr et ht (décision du 2026-10-11) | interne | P3 | Neuf | à faire |
+| SOC-12 | Site commercial, premier contact avec les clients : promesse, captures de la plateforme par module, terrain haïtien, sécurité, tarifs, FAQ, demande de démo, création d'espace ; parle aux partis et aux associations ; fr et ht (décision du 2026-10-11) | interne | P3 | Neuf | fait |
 
 ## ADH : adhésion et fichier des membres
 

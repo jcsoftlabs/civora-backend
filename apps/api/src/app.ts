@@ -26,6 +26,7 @@ import { buildStorage } from "./lib/storage/registry.js";
 import type { ObjectStorage } from "./lib/storage/types.js";
 import communicationRoutes from "./modules/communication/routes.js";
 import duesRoutes from "./modules/dues/routes.js";
+import marketingRoutes from "./modules/marketing/routes.js";
 import moneyRoutes from "./modules/money/routes.js";
 import { PaymentsService } from "./modules/money/service.js";
 import { OnlinePayments, type LocalProvider } from "./modules/money/online.js";
@@ -159,6 +160,15 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
       publicUrl: config.API_PUBLIC_URL,
       log: app.log,
     }),
+  });
+
+  await app.register(marketingRoutes, {
+    email: deps.email ?? emailSender,
+    ...(config.SALES_EMAIL
+      ? { to: config.SALES_EMAIL }
+      : config.NODE_ENV !== "production"
+        ? { to: "ventes@civora.test" }
+        : {}),
   });
 
   app.get("/health", async () => ({ ok: true }));

@@ -25,6 +25,8 @@ const schema = z
     AUTH_SECRET: z.string().min(32).optional(),
     RESEND_API_KEY: z.string().optional(),
     RESEND_FROM: z.string().default("civora <notifications@civora.app>"),
+    /** Boîte qui reçoit les demandes de démonstration du site commercial (SOC-12). */
+    SALES_EMAIL: z.string().email().optional(),
     /** Fournisseur SMS de la plateforme : « none » en production tant qu'aucun n'est choisi, « log » en local. */
     SMS_PROVIDER: z.string().default("log"),
     /** Cloudflare R2 (stockage des fichiers). Absent en local : dossier .storage, même parcours d'URL signées. */

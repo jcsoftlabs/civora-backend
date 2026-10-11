@@ -1,4 +1,5 @@
 // Français, langue de référence : toute clé existe ici d'abord.
+import { marketingFr } from "./marketing.fr";
 export const fr = {
   "app.name": "civora",
   "app.tagline": "La plateforme des partis politiques haïtiens",
@@ -1080,6 +1081,7 @@ export const fr = {
   "count.chapter.one": "1 chapitre",
   "count.question": "{n} questions",
   "count.question.one": "1 question",
+  ...marketingFr,
 } as const;
 
 export type MessageKey = keyof typeof fr;
