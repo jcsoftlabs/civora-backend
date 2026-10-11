@@ -53,7 +53,7 @@ Jalon : tests d'isolation réussis entre deux partis fictifs ; socle utilisable 
   - [x] Journal d'audit et vérification de son intégrité (SEC-06) : lignes scellées avec auteur, heure (AM/PM) et détail, filtre par domaine, vérification de la chaîne à la demande
   - [x] Filtres ET / OU et segments enregistrés de la liste des membres (maquette) : zone, statut, étiquette, lieu, cotisations, adhésion, catégorie, organe ; segments partagés ; export du filtre
 - [x] Création d'un espace parti et thème marque blanche web (SOC-01, SOC-03) : assistant de création et profil public faits ; thème appliqué aux sites des partis avec le back-office
-- [ ] App mobile commune : rejoindre un parti par QR, lien ou code ; thème chargé selon le parti ; accueil membre (maquette « App membre : accueil »)
+- [x] App mobile commune : rejoindre un parti par QR, lien ou code ; thème chargé selon le parti ; accueil membre : fait (lot 1, conçue de zéro). Connexion par code e-mail ou SMS et double authentification des responsables ; accueil en portefeuille (carte, cotisation, billet du prochain rassemblement, bulletins), section en tableau d'affichage, carnet du militant (cotisations de l'année, tampons de vote et de certificat), carte plein écran avec QR hors ligne, profil et langue ; français et créole, heures en AM/PM d'Haïti ; captures sur le site commercial. Ensuite : vote et formation (lot 2), cotisation et scan de présence hors ligne (lot 3)
 - [ ] Hors ligne de base et Android 8 (NFR-01, NFR-02) ; français et créole (NFR-08) ; squelettes (NFR-09)
 
 ### Migration

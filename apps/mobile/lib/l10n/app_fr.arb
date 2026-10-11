@@ -1,0 +1,179 @@
+{
+  "@@locale": "fr",
+  "appName": "civora",
+  "welcomeTitle": "Votre organisation, dans votre poche",
+  "welcomeLead": "Carte de membre, rassemblements, votes et formations. Rejoignez votre parti, votre association ou votre syndicat.",
+  "welcomeScan": "Scanner le QR code",
+  "welcomeCode": "J'ai un code",
+  "welcomeCodeLabel": "Code ou adresse de votre organisation",
+  "welcomeCodeHint": "horizon",
+  "welcomeCodeHelp": "Il figure sur l'affiche, le lien d'invitation ou la carte remise par votre section.",
+  "welcomeContinue": "Continuer",
+  "scanTitle": "Scannez le QR code de votre organisation",
+  "scanHelp": "Visez le QR code de l'affiche ou de l'invitation.",
+  "scanDenied": "L'appareil photo est refusé. Autorisez-le dans les réglages, ou saisissez le code.",
+  "joinSignIn": "Se connecter",
+  "joinLead": "Recevez un code à usage unique pour ouvrir votre espace membre.",
+  "joinEmail": "Adresse e-mail",
+  "joinPhone": "Numéro de téléphone",
+  "joinByEmail": "Par e-mail",
+  "joinBySms": "Par SMS",
+  "joinSend": "Recevoir un code",
+  "joinOther": "Changer d'organisation",
+  "joinNotMember": "Pas encore membre ? Adhérez sur le site de l'organisation, puis revenez ici.",
+  "otpTitle": "Entrez le code reçu",
+  "otpLead": "Envoyé à {destination}. Il est valable 10 minutes.",
+  "@otpLead": {
+    "placeholders": {
+      "destination": {
+        "type": "String"
+      }
+    }
+  },
+  "otpLabel": "Code à 6 chiffres",
+  "otpVerify": "Ouvrir mon espace",
+  "otpResend": "Renvoyer un code",
+  "mfaTitle": "Double authentification",
+  "mfaLead": "Votre poste donne des droits de gestion. Entrez le code de votre application d'authentification.",
+  "mfaSetupLead": "Votre poste donne des droits de gestion : activez d'abord la double authentification dans le back-office, puis revenez ici.",
+  "mfaLabel": "Code à 6 chiffres",
+  "mfaVerify": "Valider",
+  "navWallet": "Accueil",
+  "navSection": "Section",
+  "navScan": "Ma carte",
+  "navCarnet": "Carnet",
+  "navProfile": "Profil",
+  "hello": "Bonjou, {name}",
+  "@hello": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cardMember": "Membre",
+  "cardNumber": "N°",
+  "cardSince": "Depuis {year}",
+  "@cardSince": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "cardOffline": "Carte disponible hors ligne",
+  "cardShow": "Présentez ce QR code à l'entrée. Il fonctionne sans connexion.",
+  "cardPending": "Votre adhésion est en cours de validation. La carte apparaîtra dès qu'elle sera acceptée.",
+  "duesPaid": "{year} réglée",
+  "@duesPaid": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "duesDue": "Cotisation à régler",
+  "duesAmount": "{amount} à régler",
+  "@duesAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketLabel": "Billet",
+  "ticketPlaces": "{n} places restantes",
+  "@ticketPlaces": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ticketRegistered": "Vous êtes inscrit",
+  "ballotOpen": "Vote ouvert",
+  "ballotCloses": "Jusqu'au {date}",
+  "@ballotCloses": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ballotOpens": "Ouverture le {date}",
+  "@ballotOpens": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ballotVote": "Déposer mon bulletin",
+  "ballotVoted": "Bulletin déposé",
+  "walletEmpty": "Rien à faire pour l'instant. Les rassemblements et les votes de votre section apparaîtront ici.",
+  "sectionTitle": "Ma section",
+  "sectionAnnouncement": "Annonce",
+  "sectionEditorial": "À lire",
+  "sectionEvent": "Rassemblement",
+  "sectionTraining": "Formation",
+  "sectionModules": "{done} modules sur {total}",
+  "@sectionModules": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionEmpty": "Votre section n'a rien publié pour l'instant.",
+  "carnetTitle": "Mon carnet",
+  "carnetNumber": "Carnet n° {number}",
+  "@carnetNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "carnetDues": "Cotisations {year}",
+  "@carnetDues": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "carnetDuesNone": "Aucune cotisation prévue cette année.",
+  "carnetStamps": "Votes et certificats",
+  "carnetVoted": "VOTÉ",
+  "carnetCertified": "CERTIFIÉ",
+  "carnetStampsNone": "Vos tampons apparaîtront ici : chaque vote, chaque formation réussie.",
+  "carnetStatus": "Statut : {status}",
+  "@carnetStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "profileTitle": "Profil",
+  "profileLanguage": "Langue",
+  "profileLogout": "Se déconnecter",
+  "profileOrganization": "Organisation",
+  "offline": "Hors ligne : dernières informations enregistrées",
+  "retry": "Réessayer",
+  "errorGeneric": "Le service ne répond pas. Vérifiez votre connexion et réessayez.",
+  "errorNotFound": "Cette organisation est introuvable. Vérifiez le code.",
+  "errorOtpInvalid": "Ce code est incorrect ou expiré. Demandez-en un nouveau.",
+  "errorRateLimited": "Trop d'essais. Patientez quelques minutes.",
+  "errorChannelDisabled": "Votre organisation n'envoie pas de code par ce moyen. Choisissez l'autre.",
+  "errorInvalidEmail": "Cette adresse e-mail n'est pas valide.",
+  "errorInvalidPhone": "Indiquez le numéro avec l'indicatif, par exemple +509 37 00 00 00.",
+  "errorMfaInvalid": "Ce code est incorrect. Réessayez avec le code affiché maintenant.",
+  "yes": "Oui",
+  "no": "Non",
+  "emailHint": "nom@exemple.com",
+  "phoneHint": "+509 37 00 00 00"
+}

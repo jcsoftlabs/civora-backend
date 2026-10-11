@@ -9,6 +9,7 @@
   import { MemberCard } from "@civora/ui";
   import { resolve } from "$app/paths";
   import { translator, type MessageKey } from "$lib/i18n";
+  import AppSection from "./AppSection.svelte";
   import Audiences from "./Audiences.svelte";
   import DemoForm from "./DemoForm.svelte";
   import FieldSection from "./FieldSection.svelte";
@@ -171,12 +172,14 @@
         <p>{t("mk.soon.lead")}</p>
       </div>
       <ul>
-        {#each ["app", "elections"] as k (k)}
+        {#each ["elections"] as k (k)}
           <li><span class="badge">{t("mk.soon.badge")}</span>{tk(`mk.soon.${k}`)}</li>
         {/each}
       </ul>
     </div>
   </section>
+
+  <AppSection {locale} />
 
   <Audiences {locale} />
 

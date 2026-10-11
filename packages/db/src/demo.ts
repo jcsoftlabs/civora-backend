@@ -1061,13 +1061,34 @@ async function main() {
     closesAt: new Date(now.getTime() + 11 * DAY),
   });
 
+  // Militante de démonstration pour l'application mobile : sans poste (donc sans double authentification),
+  // dans l'Ouest, cotisations réglées, a voté à la coordination. Connexion par code à membre@horizon.demo.
+  const [militante] = await sql<{ id: string }[]>`
+    select m.id from members m
+    join ballot_receipts r on r.member_id = m.id and r.election_id = ${coord}
+    where m.party_id = ${P} and m.user_id is null and m.application_state = 'approved'
+      and not exists (select 1 from post_holders h where h.member_id = m.id)
+      and exists (select 1 from dues_obligations o where o.member_id = m.id and o.paid_at is not null)
+    order by m.member_number limit 1`;
+  let memberToken: string | null = null;
+  if (militante) {
+    const [u] = await sql<{ id: string }[]>`
+      insert into users (email, locale) values ('membre@horizon.demo', 'fr') returning id`;
+    await sql`update members set user_id = ${u!.id} where id = ${militante.id}`;
+    // Session de la militante pour les captures de l'application (aucun e-mail envoyé).
+    memberToken = randomBytes(32).toString("base64url");
+    await sql`insert into sessions (party_id, user_id, member_id, token_hash, expires_at)
+      values (${P}, ${u!.id}, ${militante.id}, ${createHash("sha256").update(memberToken, "utf8").digest("hex")},
+        ${new Date(now.getTime() + 7 * DAY)})`;
+  }
+
   // Session de démonstration (sans double authentification : base locale seulement).
   const token = randomBytes(32).toString("base64url");
   await sql`insert into sessions (party_id, user_id, member_id, token_hash, expires_at)
     values (${P}, ${adminUser!.id}, ${adminId}, ${createHash("sha256").update(token, "utf8").digest("hex")},
       ${new Date(now.getTime() + 7 * DAY)})`;
   const out = resolve(process.cwd(), "../../.demo-session.json");
-  writeFileSync(out, JSON.stringify({ slug: SLUG, token }, null, 2));
+  writeFileSync(out, JSON.stringify({ slug: SLUG, token, memberToken }, null, 2));
   console.log(
     `Parti Horizon : ${rows.length} membres, ${payments.length} paiements, ${obligations.length} échéances, ` +
       `${learners.length} apprenants, ${certificate} certificats. Session écrite dans .demo-session.json.`,

@@ -87,6 +87,8 @@ export class AuthService {
           otpChannels: parties.otpChannels,
           admissionMode: parties.admissionMode,
           status: parties.status,
+          brandColor: parties.brandColor,
+          kind: parties.organizationKind,
         })
         .from(parties),
     );

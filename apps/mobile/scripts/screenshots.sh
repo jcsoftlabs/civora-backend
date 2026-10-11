@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Captures de l'application membre pour le site commercial (SOC-12), en français et en créole, sur l'émulateur
+# Android, à partir du jeu de démonstration local (`pnpm db:demo`, puis l'API en marche).
+# Usage : apps/mobile/scripts/screenshots.sh   (un émulateur démarré, 1344 × 2992 : Pixel 8 Pro)
+# Sortie : apps/web/static/marketing/<langue>/app-<écran>.jpg, barres du système retirées.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+ROOT=$(cd ../.. && pwd)
+ADB=${ADB:-$HOME/Library/Android/sdk/platform-tools/adb}
+OUT=$ROOT/apps/web/static/marketing
+TMP=$(mktemp -d)
+TOKEN=$(python3 -c "import json;print(json.load(open('$ROOT/.demo-session.json'))['memberToken'])")
+
+flutter build apk --debug --dart-define=DEMO_SESSION=horizon:$TOKEN >/dev/null
+$ADB install -r build/app/outputs/flutter-apk/app-debug.apk >/dev/null
+$ADB shell pm clear app.civora.civora >/dev/null
+
+shot() { $ADB exec-out screencap -p > "$TMP/$1.png"; }
+tap() { $ADB shell input tap "$1" "$2"; sleep "${3:-3}"; }
+
+capture() {
+  local lang=$1
+  $ADB shell am force-stop app.civora.civora
+  $ADB shell am start -n app.civora.civora/.MainActivity >/dev/null
+  sleep 12
+  if [ "$lang" = "ht" ]; then
+    tap 1175 2790 2 # Profil
+    tap 836 873 3   # Kreyòl
+    tap 171 2790 4  # Accueil
+  fi
+  shot "$lang-wallet"
+  tap 429 2790; shot "$lang-section"
+  tap 916 2790; shot "$lang-carnet"
+  tap 673 2730 4; shot "$lang-card"
+  $ADB shell input keyevent 4; sleep 1
+}
+capture fr
+capture ht
+# Retour au français pour la suite.
+tap 1175 2790 2; tap 300 873 1
+
+python3 - "$TMP" "$OUT" <<'PY'
+import sys
+from PIL import Image
+tmp, out = sys.argv[1], sys.argv[2]
+for lang in ("fr", "ht"):
+    for name in ("wallet", "section", "carnet", "card"):
+        im = Image.open(f"{tmp}/{lang}-{name}.png").convert("RGB")
+        w, h = im.size
+        # Barre d'état (150 px) et barre de gestes (78 px) retirées : pas de fausse barre système sur le site.
+        im = im.crop((0, 150, w, h - 78)).resize((672, int((h - 228) * 672 / w)), Image.LANCZOS)
+        im.save(f"{out}/{lang}/app-{name}.jpg", quality=84, optimize=True)
+        print(f"{lang}/app-{name}.jpg")
+PY
+rm -rf "$TMP"

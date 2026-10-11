@@ -52,7 +52,7 @@ Le cahier des charges de référence est le document « Cahier des charges, SaaS
 | Tâches de fond | pg-boss (file dans Postgres, pas de Redis) | worker dédié |
 | Base | PostgreSQL 16 managé, RLS | réplique en lecture seule pour la BI |
 | Web : back-office, console éditeur, sites des partis | SvelteKit | Vercel |
-| Mobile | Flutter (reprise de nou_app), application commune multi-partis + marque blanche par flavors | App Store, Google Play |
+| Mobile | Flutter, conçue de zéro (aucun écran de nou_app), application commune multi-partis + marque blanche par flavors | App Store, Google Play |
 | Fichiers | Cloudflare R2, préfixe `party/<party_id>/` | |
 | E-mails | Resend | |
 | Paiements | MonCash, NatCash, KashPaw (HTG), Stripe (devises et abonnements) | |

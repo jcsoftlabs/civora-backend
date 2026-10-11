@@ -1,0 +1,179 @@
+{
+  "@@locale": "ht",
+  "appName": "civora",
+  "welcomeTitle": "Òganizasyon w, nan pòch ou",
+  "welcomeLead": "Kat manm, rasanbleman, vòt ak fòmasyon. Rantre nan pati w, asosyasyon w oswa sendika w.",
+  "welcomeScan": "Eskane kòd QR la",
+  "welcomeCode": "Mwen gen yon kòd",
+  "welcomeCodeLabel": "Kòd oswa adrès òganizasyon w",
+  "welcomeCodeHint": "horizon",
+  "welcomeCodeHelp": "Li sou afich la, lyen envitasyon an oswa kat seksyon w ba ou a.",
+  "welcomeContinue": "Kontinye",
+  "scanTitle": "Eskane kòd QR òganizasyon w",
+  "scanHelp": "Vize kòd QR ki sou afich la oswa envitasyon an.",
+  "scanDenied": "Kamera a refize. Otorize l nan paramèt yo, oswa tape kòd la.",
+  "joinSignIn": "Konekte",
+  "joinLead": "Resevwa yon kòd pou yon sèl fwa pou ouvri espas manm ou.",
+  "joinEmail": "Adrès imèl",
+  "joinPhone": "Nimewo telefòn",
+  "joinByEmail": "Pa imèl",
+  "joinBySms": "Pa SMS",
+  "joinSend": "Resevwa yon kòd",
+  "joinOther": "Chanje òganizasyon",
+  "joinNotMember": "Ou poko manm ? Fè adezyon sou sit òganizasyon an, epi tounen la a.",
+  "otpTitle": "Tape kòd ou resevwa a",
+  "otpLead": "Nou voye l bay {destination}. Li bon pou 10 minit.",
+  "@otpLead": {
+    "placeholders": {
+      "destination": {
+        "type": "String"
+      }
+    }
+  },
+  "otpLabel": "Kòd 6 chif",
+  "otpVerify": "Ouvri espas mwen",
+  "otpResend": "Voye yon lòt kòd",
+  "mfaTitle": "Doub otantifikasyon",
+  "mfaLead": "Pòs ou ba ou dwa pou jere. Tape kòd aplikasyon otantifikasyon w lan.",
+  "mfaSetupLead": "Pòs ou ba ou dwa pou jere : aktive doub otantifikasyon an nan back-office la anvan, epi tounen la a.",
+  "mfaLabel": "Kòd 6 chif",
+  "mfaVerify": "Valide",
+  "navWallet": "Akèy",
+  "navSection": "Seksyon",
+  "navScan": "Kat mwen",
+  "navCarnet": "Kanè",
+  "navProfile": "Pwofil",
+  "hello": "Bonjou, {name}",
+  "@hello": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cardMember": "Manm",
+  "cardNumber": "Nimewo",
+  "cardSince": "Depi {year}",
+  "@cardSince": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "cardOffline": "Kat la disponib san entènèt",
+  "cardShow": "Montre kòd QR sa a nan antre a. Li mache san koneksyon.",
+  "cardPending": "Y ap valide adezyon w. Kat la ap parèt depi yo aksepte l.",
+  "duesPaid": "{year} peye",
+  "@duesPaid": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "duesDue": "Kotizasyon pou peye",
+  "duesAmount": "{amount} pou peye",
+  "@duesAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ticketLabel": "Tikè",
+  "ticketPlaces": "{n} plas ki rete",
+  "@ticketPlaces": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ticketRegistered": "Ou enskri",
+  "ballotOpen": "Vòt ouvè",
+  "ballotCloses": "Jiska {date}",
+  "@ballotCloses": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ballotOpens": "Ouvèti {date}",
+  "@ballotOpens": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ballotVote": "Depoze bilten mwen",
+  "ballotVoted": "Bilten depoze",
+  "walletEmpty": "Pa gen anyen pou fè kounye a. Rasanbleman ak vòt seksyon w ap parèt la a.",
+  "sectionTitle": "Seksyon mwen",
+  "sectionAnnouncement": "Anons",
+  "sectionEditorial": "Pou li",
+  "sectionEvent": "Rasanbleman",
+  "sectionTraining": "Fòmasyon",
+  "sectionModules": "{done} modil sou {total}",
+  "@sectionModules": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionEmpty": "Seksyon w poko pibliye anyen.",
+  "carnetTitle": "Kanè mwen",
+  "carnetNumber": "Kanè nimewo {number}",
+  "@carnetNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "carnetDues": "Kotizasyon {year}",
+  "@carnetDues": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "carnetDuesNone": "Pa gen kotizasyon pou ane sa a.",
+  "carnetStamps": "Vòt ak sètifika",
+  "carnetVoted": "VOTE",
+  "carnetCertified": "SÈTIFYE",
+  "carnetStampsNone": "Tanpon w yo ap parèt la a : chak vòt, chak fòmasyon ou reyisi.",
+  "carnetStatus": "Estati : {status}",
+  "@carnetStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "profileTitle": "Pwofil",
+  "profileLanguage": "Lang",
+  "profileLogout": "Dekonekte",
+  "profileOrganization": "Òganizasyon",
+  "offline": "San entènèt : dènye enfòmasyon ki anrejistre",
+  "retry": "Eseye ankò",
+  "errorGeneric": "Sèvis la pa reponn. Verifye koneksyon w epi eseye ankò.",
+  "errorNotFound": "Nou pa jwenn òganizasyon sa a. Verifye kòd la.",
+  "errorOtpInvalid": "Kòd sa a pa bon oswa li ekspire. Mande yon lòt.",
+  "errorRateLimited": "Twòp esè. Tann kèk minit.",
+  "errorChannelDisabled": "Òganizasyon w pa voye kòd pa mwayen sa a. Chwazi lòt la.",
+  "errorInvalidEmail": "Adrès imèl sa a pa valab.",
+  "errorInvalidPhone": "Mete nimewo a ak endikatif la, tankou +509 37 00 00 00.",
+  "errorMfaInvalid": "Kòd sa a pa bon. Eseye ak kòd ki parèt kounye a.",
+  "yes": "Wi",
+  "no": "Non",
+  "emailHint": "non@egzanp.com",
+  "phoneHint": "+509 37 00 00 00"
+}

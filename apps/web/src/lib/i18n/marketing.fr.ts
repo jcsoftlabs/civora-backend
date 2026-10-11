@@ -123,6 +123,18 @@ export const marketingFr = {
   "mk.marquee.18": "Procès-verbal de dépouillement",
   "mk.price.f.votes": "Votes internes à bulletin secret, un scrutin à la fois",
   "mk.price.f.votesAdvanced": "Deux tours, scrutin de liste, candidatures en ligne",
+  "mk.app.title": "L'application des membres",
+  "mk.app.lead":
+    "Chaque membre a son espace dans la poche, aux couleurs de votre organisation, en français et en créole.",
+  "mk.app.b1": "Carte de membre avec QR code, lisible sans connexion",
+  "mk.app.b2": "Bulletin de vote secret, déposé en deux gestes",
+  "mk.app.b3": "Le tableau de la section : rassemblements, annonces, formations",
+  "mk.app.b4": "Le carnet du militant : cotisations, votes, certificats",
+  "mk.app.soon": "Bientôt sur Android et iPhone",
+  "mk.app.shot.wallet":
+    "Accueil de l'application : carte de membre, billet du prochain rassemblement, bulletin à déposer",
+  "mk.app.shot.section": "Tableau de la section : rassemblements et annonces épinglés",
+  "mk.app.shot.carnet": "Carnet du militant : cotisations de l'année et tampon de vote",
   "mk.soon.title": "Bientôt dans civora",
   "mk.soon.lead": "En cours de développement, inclus dans les formules le jour de leur sortie.",
   "mk.soon.app": "Application mobile : carte de membre, scan de présence, cotisation en un geste",

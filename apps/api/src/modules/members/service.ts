@@ -80,7 +80,14 @@ export class MembersService {
   async joinInfo(slug: string) {
     const party = await this.auth.partyBySlug(slug);
     if (!party) throw new ApiError(404, "not_found");
-    return { name: party.name, admissionMode: party.admissionMode, otpChannels: party.otpChannels };
+    // Thème de l'accueil de l'application mobile, avant la connexion : nom, couleur, type d'organisation.
+    return {
+      name: party.name,
+      admissionMode: party.admissionMode,
+      otpChannels: party.otpChannels,
+      brandColor: party.brandColor,
+      kind: party.kind,
+    };
   }
 
   /**
