@@ -65,7 +65,7 @@ async function session(permissions: string[], scope: string | null) {
   return token;
 }
 
-const call = (method: "GET" | "POST" | "PUT", url: string, token: string, payload?: object) =>
+const call = (method: "GET" | "POST" | "PUT" | "DELETE", url: string, token: string, payload?: object) =>
   app.inject({ method, url, headers: { authorization: `Bearer ${token}` }, ...(payload ? { payload } : {}) });
 
 let national = "";
@@ -106,6 +106,7 @@ afterAll(async () => {
   for (const t of [
     "audit_log",
     "sessions",
+    "member_segments",
     "member_statuses",
     "dues_obligations",
     "dues_plans",
@@ -359,5 +360,80 @@ describe("actions groupées", () => {
       .slice(1)
       .map((l) => l.split(";")[2]);
     expect(names).toEqual(["Paul"]);
+  });
+});
+
+describe("filtres composés et segments", () => {
+  type Item = { firstName: string };
+  const q = (token: string, filter: object, extra = "") =>
+    call("GET", `/members?limit=100${extra}&filter=${encodeURIComponent(JSON.stringify(filter))}`, token);
+  const names = async (token: string, filter: object) =>
+    ((await q(token, filter)).json().items as Item[]).map((i) => i.firstName).sort();
+
+  it("zone, lieu et étiquettes, reliés par ET ou par OU", async () => {
+    await owner`update members set tags = ${["jeunesse"]} where id = ${ids.diaspora}`;
+    const zone = { field: "zone", operator: "in", value: ["HT03"] };
+    const dia = { field: "place", operator: "is", value: "diaspora" };
+    // Le Nord compte Luc et la demande « Lot Nord » des actions groupées ; Rose est la seule de la diaspora.
+    const nord = await names(national, { rules: [zone] });
+    expect(nord).toContain("Luc");
+    expect(nord).not.toContain("Rose");
+    expect(await names(national, { combinator: "and", rules: [zone, dia] })).toEqual([]);
+    expect(await names(national, { combinator: "or", rules: [zone, dia] })).toEqual([...nord, "Rose"].sort());
+    const tag = { field: "tag", operator: "hasAny", value: ["jeunesse"] };
+    expect(await names(national, { rules: [tag, dia] })).toEqual(["Rose"]);
+    const none = await names(national, { rules: [{ field: "tag", operator: "hasNone", value: ["jeunesse"] }] });
+    expect(none).not.toContain("Rose");
+  });
+
+  it("un OU ne fait jamais sortir de la zone de la personne", async () => {
+    const or = {
+      combinator: "or",
+      rules: [
+        { field: "zone", operator: "in", value: ["HT03"] },
+        { field: "place", operator: "is", value: "diaspora" },
+      ],
+    };
+    expect(await names(pvReader, or)).toEqual([]);
+  });
+
+  it("cotisations à jour, en retard ou sans échéance", async () => {
+    const late = await names(national, { rules: [{ field: "dues", operator: "is", value: "late" }] });
+    expect(late).toContain("Eve");
+    const nothing = await names(national, { rules: [{ field: "dues", operator: "is", value: "none" }] });
+    expect(nothing).toContain("Luc");
+    expect(nothing).not.toContain("Eve");
+  });
+
+  it("refuse un filtre illisible ou un champ inconnu", async () => {
+    expect((await call("GET", "/members?filter=%7Bpas-du-json", national)).statusCode).toBe(400);
+    expect((await q(national, { rules: [{ field: "salaire", operator: "is", value: 1 }] })).statusCode).toBe(400);
+  });
+
+  it("enregistre un segment, le partage, et seuls l'auteur ou un national le suppriment", async () => {
+    const filter = { combinator: "and", rules: [{ field: "place", operator: "is", value: "diaspora" }] };
+    const r = await call("POST", "/member-segments", pvReader, { name: "Diaspora active", filter });
+    expect(r.statusCode).toBe(201);
+    expect(
+      (await call("POST", "/member-segments", pvReader, { name: "Diaspora active", filter })).json(),
+    ).toMatchObject({
+      code: "segment_name_taken",
+    });
+    const listed = (await call("GET", "/member-segments", national)).json().segments;
+    expect(listed.map((x: { name: string }) => x.name)).toContain("Diaspora active");
+    expect((await call("DELETE", `/member-segments/${r.json().id}`, pvApprover)).statusCode).toBe(403);
+    expect((await call("DELETE", `/member-segments/${r.json().id}`, national)).statusCode).toBe(204);
+    expect((await call("GET", "/member-segments", nobody)).statusCode).toBe(403);
+  });
+
+  it("l'export applique le même filtre composé", async () => {
+    const res = await call("POST", "/members/export", national, {
+      format: "csv",
+      filters: { expression: { rules: [{ field: "zone", operator: "in", value: ["HT03"] }] } },
+    });
+    const rows = res.body.trim().split("\r\n").slice(1);
+    const exported = rows.map((l) => l.split(";")[2]);
+    expect(exported).toContain("Luc");
+    expect(exported).not.toContain("Paul");
   });
 });

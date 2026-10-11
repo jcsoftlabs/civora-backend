@@ -5,7 +5,7 @@ import { z } from "zod";
 import { memberStatuses, members, users, withParty, zones } from "@civora/db";
 import { zoneScope } from "../../lib/zone-scope.js";
 import { ApiError } from "../../plugins/errors.js";
-import { filterConditions, memberFilters } from "./filters.js";
+import { filterConditions, filterExpression, memberFilters } from "./filters.js";
 
 const csv = (max: number) =>
   z
@@ -23,6 +23,20 @@ export const listQuery = z.object({
   diaspora: z
     .enum(["true", "false"])
     .transform((v) => v === "true")
+    .optional(),
+  /** Filtre composé, en JSON dans l'adresse : { combinator, rules }. */
+  filter: z
+    .string()
+    .max(4000)
+    .transform((v, ctx) => {
+      try {
+        return JSON.parse(v) as unknown;
+      } catch {
+        ctx.addIssue({ code: "custom", message: "filtre illisible" });
+        return z.NEVER;
+      }
+    })
+    .pipe(filterExpression)
     .optional(),
   sort: z.enum(["name", "recent", "number"]).default("name"),
   page: z.coerce.number().int().min(1).max(10_000).default(1),
@@ -43,8 +57,12 @@ export async function listMembers(req: FastifyRequest, q: z.infer<typeof listQue
   const year = new Date().getUTCFullYear();
 
   return withParty(req.partyId, async (tx) => {
-    const { state, ...rest } = q;
-    const base = await filterConditions(tx, rest, scope.where(zones.path));
+    const { state, filter, ...rest } = q;
+    const base = await filterConditions(
+      tx,
+      { ...rest, ...(filter ? { expression: filter } : {}) },
+      scope.where(zones.path),
+    );
     if (q.q) {
       const like = `%${escapeLike(q.q)}%`;
       base.push(

@@ -63,6 +63,22 @@ export interface DuesStatement {
     state: "paid" | "upcoming" | "due" | "late";
   }>;
 }
+export interface FilterRule {
+  field: "zone" | "status" | "tag" | "place" | "dues" | "joined" | "category" | "organ";
+  operator: string;
+  value: string | string[];
+  label?: string;
+}
+export interface FilterExpr {
+  combinator: "and" | "or";
+  rules: FilterRule[];
+}
+export interface Segment {
+  id: string;
+  name: string;
+  filter: FilterExpr;
+  createdByMemberId: string | null;
+}
 interface ListResponse {
   items: MemberRow[];
   total: number;
@@ -82,20 +98,31 @@ export const load: PageServerLoad = async ({ url, cookies, locals, getClientAddr
     const v = url.searchParams.get(k);
     if (v) params.set(k, v);
   }
+  // Filtre composé (règles ET / OU) en JSON dans `f` ; l'API le valide et y ajoute la portée de la personne.
+  const f = url.searchParams.get("f");
+  if (f && f.length <= 4000) params.set("filter", f);
   // Par défaut, les membres dont l'adhésion est validée.
   if (!url.searchParams.has("state")) params.set("state", "approved");
   if (params.get("state") === "all") params.delete("state");
   const ip = getClientAddress();
   try {
-    const [list, statuses] = await Promise.all([
+    const [list, statuses, segments, organs] = await Promise.all([
       api<ListResponse>(`/members?${params}`, { token: s.token, ip }),
       api<{ statuses: Array<{ id: string; label: { fr: string; ht?: string } }> }>("/member-statuses", {
         token: s.token,
         ip,
       }),
+      api<{ segments: Segment[] }>("/member-segments", { token: s.token, ip }).then((r) => r.segments),
+      s.me.permissions.includes("organs.manage")
+        ? api<{ organs: Array<{ id: string; name: string }> }>("/organs", { token: s.token, ip }).then((r) =>
+            r.organs.map(({ id, name }) => ({ id, name })),
+          )
+        : [],
     ]);
     return {
       list,
+      segments,
+      organs,
       statuses: statuses.statuses,
       state: params.get("state") ?? "all",
       sheet: await sheet(url.searchParams.get("m"), s.token, s.me.permissions, ip),
@@ -106,6 +133,8 @@ export const load: PageServerLoad = async ({ url, cookies, locals, getClientAddr
       return {
         list: { items: [], total: 0, counts: { pending: 0, approved: 0, rejected: 0 }, page: 1, limit: 25, year: 0 },
         statuses: [],
+        segments: [] as Segment[],
+        organs: [] as Array<{ id: string; name: string }>,
         state: params.get("state") ?? "all",
         sheet: null,
       };
@@ -198,6 +227,42 @@ async function bulk(
 }
 
 export const actions: Actions = {
+  /** Enregistre le filtre en cours sous un nom, partagé dans le parti. */
+  saveSegment: async (event) => {
+    const s = await currentSession(event.cookies, event.locals.partySlug!);
+    if (!s || s.me.mfaPending) return fail(401, { code: "unauthorized" });
+    const f = await event.request.formData();
+    let filter: unknown;
+    try {
+      filter = JSON.parse(text(f, "filter"));
+    } catch {
+      return fail(400, { code: "invalid_request" });
+    }
+    try {
+      const r = await api<{ id: string }>("/member-segments", {
+        body: { name: text(f, "name"), filter },
+        token: s.token,
+        ip: event.getClientAddress(),
+      });
+      return { ok: true, segment: r.id };
+    } catch (e) {
+      if (e instanceof ApiFailure) return fail(400, { code: e.code, segmentError: true });
+      throw e;
+    }
+  },
+  deleteSegment: async (event) => {
+    const s = await currentSession(event.cookies, event.locals.partySlug!);
+    if (!s || s.me.mfaPending) return fail(401, { code: "unauthorized" });
+    const id = text(await event.request.formData(), "id");
+    if (!UUID.test(id)) return fail(400, { code: "invalid_request" });
+    try {
+      await api(`/member-segments/${id}`, { method: "DELETE", token: s.token, ip: event.getClientAddress() });
+      return { ok: true, segmentDeleted: true };
+    } catch (e) {
+      if (e instanceof ApiFailure) return fail(400, { code: e.code });
+      throw e;
+    }
+  },
   /** Statut, catégorie et étiquettes (members.write dans la zone du membre). */
   update: (event) =>
     act(

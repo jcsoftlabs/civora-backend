@@ -7,6 +7,7 @@ import { z } from "zod";
 import { exportMembers, exportRequest } from "./export.js";
 import { listMembers, listQuery } from "./list.js";
 import { bulkBody, bulkUpdate } from "./bulk.js";
+import { createSegment, deleteSegment, listSegments, segmentCreate } from "./segments.js";
 import type { MembersService } from "./service.js";
 import {
   admissionUpdate,
@@ -56,6 +57,15 @@ export default async function memberRoutes(
     },
     async (req) => bulkUpdate(req, bulkBody.parse(req.body)),
   );
+  // Segments enregistrés (filtres nommés de la liste).
+  app.get("/member-segments", { preHandler: requireAuth }, async (req) => ({ segments: await listSegments(req) }));
+  app.post("/member-segments", { preHandler: requireAuth }, async (req, reply) =>
+    reply.code(201).send(await createSegment(req, segmentCreate.parse(req.body))),
+  );
+  app.delete("/member-segments/:id", { preHandler: requireAuth }, async (req, reply) => {
+    await deleteSegment(req, idParam.parse(req.params).id);
+    return reply.code(204).send();
+  });
   app.get("/members/me", { preHandler: requireAuth }, async (req) => svc.getMe(req));
   app.patch("/members/me", { preHandler: requireAuth }, async (req, reply) => {
     await svc.updateMe(req, meUpdate.parse(req.body));

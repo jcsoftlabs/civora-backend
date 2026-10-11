@@ -136,3 +136,25 @@ export const memberImports = pgTable(
   },
   (t) => [sameParty("member_imports", t.partyId, t.fileId, files)],
 );
+
+/**
+ * Segments enregistrés de la liste des membres (ADH-12, maquette « liste des membres ») : un filtre nommé,
+ * partagé avec les responsables du parti. La portée territoriale s'applique toujours à la lecture.
+ */
+export const memberSegments = pgTable(
+  "member_segments",
+  {
+    id: id(),
+    partyId: partyId(),
+    name: text("name").notNull(),
+    /** { combinator: "and" | "or", rules: [{ field, operator, value }] } */
+    filter: jsonb("filter").notNull(),
+    createdByMemberId: uuid("created_by_member_id"),
+    ...timestamps,
+  },
+  (t) => [
+    partyKey("member_segments", t),
+    unique("member_segments_party_name").on(t.partyId, t.name),
+    sameParty("member_segments", t.partyId, t.createdByMemberId, members),
+  ],
+);

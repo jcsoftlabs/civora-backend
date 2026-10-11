@@ -24,6 +24,15 @@ export const POST: RequestHandler = async ({ request, cookies, locals, getClient
   // Export de la sélection cochée (barre d'actions groupées).
   const ids = [...new Set(f.getAll("ids").map(String))].filter((id) => /^[0-9a-f-]{36}$/i.test(id)).slice(0, 1000);
   if (ids.length) filters.ids = ids;
+  // Filtre composé de la liste, s'il y en a un.
+  const expression = String(f.get("filter") ?? "");
+  if (expression) {
+    try {
+      filters.expression = JSON.parse(expression);
+    } catch {
+      error(400, { message: "invalid_request", code: "invalid_request" });
+    }
+  }
 
   const base = env.API_INTERNAL_URL || pub.PUBLIC_API_URL || "http://localhost:4000";
   const res = await fetch(`${base}/members/export`, {

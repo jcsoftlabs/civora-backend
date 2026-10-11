@@ -14,6 +14,8 @@
   import type { ActionData, PageData } from "./$types";
   import type { MemberRow } from "./+page.server";
   import MemberSheet from "./MemberSheet.svelte";
+  import FilterBuilder from "./FilterBuilder.svelte";
+  import type { FilterExpr } from "./+page.server";
 
   let { data, form }: { data: PageData & { locale: "fr" | "ht" }; form: ActionData } = $props();
   const t = $derived(translator(data.locale));
@@ -71,7 +73,25 @@
       active: params.get("diaspora") === "true",
     },
   ]);
-  const filtered = $derived(["q", "statusId", "diaspora", "zoneCode", "tags"].some((k) => params.has(k)));
+  /** Filtre composé de l'adresse (`f`), ou aucun. */
+  const expr = $derived.by((): FilterExpr => {
+    try {
+      const parsed = JSON.parse(params.get("f") ?? "") as FilterExpr;
+      return {
+        combinator: parsed.combinator === "or" ? "or" : "and",
+        rules: Array.isArray(parsed.rules) ? parsed.rules : [],
+      };
+    } catch {
+      return { combinator: "and", rules: [] };
+    }
+  });
+  const applyExpr = (e: FilterExpr) => go({ f: e.rules.length ? JSON.stringify(e) : null, seg: null });
+  const segmentHref = (s: { id: string; filter: FilterExpr }) =>
+    `${resolve("/admin/membres")}?state=all&f=${encodeURIComponent(JSON.stringify(s.filter))}&seg=${s.id}`;
+  const clearHref = $derived(
+    href({ q: null, statusId: null, diaspora: null, zoneCode: null, tags: null, f: null, seg: null }),
+  );
+  const filtered = $derived(["q", "statusId", "diaspora", "zoneCode", "tags", "f"].some((k) => params.has(k)));
 
   const columns = $derived([
     { key: "member", label: t("admin.members.col.member") },
@@ -139,6 +159,29 @@
         </li>
       {/each}
     </ul>
+    <p class="views-title seg-title">{t("admin.segments.title")}</p>
+    {#if data.segments.length === 0}
+      <p class="seg-none">{t("admin.segments.none")}</p>
+    {:else}
+      <ul>
+        {#each data.segments as sg (sg.id)}
+          <li class="seg">
+            <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+            <a href={segmentHref(sg)} aria-current={params.get("seg") === sg.id ? "page" : undefined}>
+              <span>{sg.name}</span>
+            </a>
+            {#if sg.createdByMemberId === data.me.memberId || data.me.permissions.includes("members.write")}
+              <form method="POST" action="?/deleteSegment" use:enhance>
+                <input type="hidden" name="id" value={sg.id} />
+                <button type="submit" class="seg-del" aria-label={format(t("admin.segments.delete"), { name: sg.name })}
+                  >×</button
+                >
+              </form>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    {/if}
   </aside>
 
   <main>
@@ -176,21 +219,6 @@
 
       <div class="filters">
         <label class="pill">
-          <span>{t("admin.members.filter.status")}</span>
-          <select value={params.get("statusId") ?? ""} onchange={(e) => go({ statusId: e.currentTarget.value })}>
-            <option value="">{t("admin.members.filter.anyStatus")}</option>
-            {#each data.statuses as s (s.id)}<option value={s.id}>{label(s.label)}</option>{/each}
-          </select>
-        </label>
-        <label class="pill">
-          <span>{t("admin.members.filter.place")}</span>
-          <select value={params.get("diaspora") ?? ""} onchange={(e) => go({ diaspora: e.currentTarget.value })}>
-            <option value="">{t("admin.members.filter.anyPlace")}</option>
-            <option value="false">{t("admin.members.filter.haiti")}</option>
-            <option value="true">{t("admin.members.filter.diaspora")}</option>
-          </select>
-        </label>
-        <label class="pill">
           <span>{t("admin.members.filter.sort")}</span>
           <select
             value={params.get("sort") ?? "name"}
@@ -203,7 +231,7 @@
         </label>
         {#if filtered}
           <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-          <a class="clear" href={href({ q: null, statusId: null, diaspora: null, zoneCode: null, tags: null })}>
+          <a class="clear" href={clearHref}>
             {t("admin.members.filter.clear")}
           </a>
         {/if}
@@ -216,6 +244,7 @@
             <input type="hidden" name="state" value={data.state === "all" ? "" : data.state} />
             <input type="hidden" name="statusId" value={params.get("statusId") ?? ""} />
             <input type="hidden" name="diaspora" value={params.get("diaspora") ?? ""} />
+            <input type="hidden" name="filter" value={expr.rules.length ? JSON.stringify(expr) : ""} />
             {#each ["csv", "xlsx", "pdf"] as f (f)}
               <button type="submit" name="format" value={f}>{tk(`admin.members.export.${f}`)}</button>
             {/each}
@@ -223,6 +252,15 @@
         </details>
       {/if}
     </div>
+
+    <FilterBuilder
+      {expr}
+      locale={data.locale}
+      statuses={data.statuses}
+      organs={data.organs}
+      form={(form as { code?: string; segmentError?: boolean } | null) ?? null}
+      onchange={applyExpr}
+    />
 
     <DataTable
       caption={t("admin.members.caption")}
@@ -460,6 +498,42 @@
     background: var(--c-primary-tint);
     color: var(--c-ink);
     font-weight: 600;
+  }
+  .seg-title {
+    margin-top: var(--s-6);
+  }
+  .seg-none {
+    margin: 0 var(--s-3);
+    font-size: var(--fs-13);
+    color: var(--c-ink-2);
+    line-height: 1.45;
+  }
+  .seg {
+    display: flex;
+    align-items: center;
+  }
+  .seg a {
+    flex: 1;
+    min-width: 0;
+  }
+  .seg-del {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: var(--c-ink-2);
+    font-size: var(--fs-16);
+    cursor: pointer;
+    opacity: 0;
+  }
+  .seg:hover .seg-del,
+  .seg-del:focus-visible {
+    opacity: 1;
+  }
+  .seg-del:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
   .count {
     min-width: 22px;
