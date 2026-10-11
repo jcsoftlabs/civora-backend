@@ -9,7 +9,9 @@
   import { MemberCard } from "@civora/ui";
   import { resolve } from "$app/paths";
   import { translator, type MessageKey } from "$lib/i18n";
+  import Audiences from "./Audiences.svelte";
   import DemoForm from "./DemoForm.svelte";
+  import FieldSection from "./FieldSection.svelte";
   import Faq from "./Faq.svelte";
   import Pricing from "./Pricing.svelte";
 
@@ -165,33 +167,9 @@
     </div>
   </section>
 
-  <section id="pour-qui" class="audiences wrap" aria-labelledby="aud-title">
-    <h2 id="aud-title">{t("mk.aud.title")}</h2>
-    <div class="aud-grid">
-      {#each [["party", "party"], ["npo", "association"], ["union", "union"]] as [k, type] (k)}
-        <div class="aud">
-          <h3>{tk(`mk.aud.${k}`)}</h3>
-          <p>{tk(`mk.aud.${k}.text`)}</p>
-          <a class="aud-link" href="{resolve('/creer')}?type={type}">{tk(`mk.aud.${k}.cta`)}</a>
-        </div>
-      {/each}
-    </div>
-    <p class="aud-words">{t("mk.aud.words")}</p>
-  </section>
+  <Audiences {locale} />
 
-  <section class="field" aria-labelledby="field-title">
-    <div class="wrap">
-      <h2 id="field-title">{t("mk.field.title")}</h2>
-      <div class="field-grid">
-        {#each ["offline", "lang", "pay", "map"] as k (k)}
-          <div>
-            <h3>{tk(`mk.field.${k}`)}</h3>
-            <p>{tk(`mk.field.${k}.text`)}</p>
-          </div>
-        {/each}
-      </div>
-    </div>
-  </section>
+  <FieldSection {locale} />
 
   <section class="security wrap" aria-labelledby="sec-title">
     <div>
@@ -626,68 +604,6 @@
     font-weight: 600;
   }
 
-  /* Publics : trois colonnes séparées par des filets, pas trois cartes identiques. */
-  .audiences {
-    padding: var(--s-24) 0;
-  }
-  .aud-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin-top: var(--s-10);
-    border-top: 2px solid var(--c-ink);
-  }
-  .aud {
-    padding: var(--s-6) var(--s-6) 0 0;
-  }
-  .aud + .aud {
-    padding-left: var(--s-6);
-    border-left: 1px solid var(--c-line);
-  }
-  .aud p {
-    margin-top: var(--s-3);
-    line-height: 1.6;
-    color: var(--c-ink-2);
-  }
-  .aud-link {
-    display: inline-flex;
-    min-height: 44px;
-    align-items: center;
-    margin-top: var(--s-3);
-    color: var(--c-primary);
-    font-weight: 600;
-    text-underline-offset: 3px;
-  }
-  .aud-words {
-    margin-top: var(--s-10);
-    font-size: var(--fs-16);
-    font-weight: 500;
-  }
-
-  /* Terrain haïtien */
-  .field {
-    padding: var(--s-24) 0;
-    background: var(--c-primary-deep);
-    color: var(--c-surface);
-  }
-  .field h2,
-  .field h3 {
-    color: var(--c-surface);
-  }
-  .field-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--s-10) var(--s-14);
-    margin-top: var(--s-10);
-  }
-  .field-grid h3 {
-    font-size: var(--fs-22);
-  }
-  .field-grid p {
-    margin-top: var(--s-2);
-    line-height: 1.6;
-    color: color-mix(in srgb, var(--c-surface) 78%, transparent);
-  }
-
   .security {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -838,8 +754,6 @@
     .hero,
     .replace,
     .features,
-    .audiences,
-    .field,
     .security,
     #tarifs,
     .demo {
@@ -848,16 +762,8 @@
     .module {
       padding: var(--s-8) 0;
     }
-    .aud-grid,
-    .field-grid,
     .foot-grid {
       grid-template-columns: minmax(0, 1fr);
-    }
-    .aud,
-    .aud + .aud {
-      padding: var(--s-5) 0;
-      border-left: 0;
-      border-bottom: 1px solid var(--c-line);
     }
     .card {
       left: -4%;
