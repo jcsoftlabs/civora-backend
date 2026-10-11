@@ -308,6 +308,7 @@ describe("double authentification des administrateurs", () => {
     expect((await post("/auth/mfa/verify", { code }, { token })).statusCode).toBe(204);
     const me = (await get("/auth/me", token)).json();
     expect(me).toMatchObject({ mfaPending: false, mfa: "none" });
+    expect(["essentiel", "mouvement", "national"]).toContain(me.tier);
     expect(me.permissions.sort()).toEqual(["members.approve", "members.read"]);
     expect((await get("/zone-admin", token)).statusCode).toBe(200);
   });

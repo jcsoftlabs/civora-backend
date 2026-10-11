@@ -127,8 +127,29 @@ export async function zoneStats(req: FastifyRequest, parentCode?: string) {
       },
       engagement: { eventRegistrationsLast30Days: r.registrations_30 },
     });
+    // Tendance sur six mois pour la zone demandée : nouveaux membres validés et encaissements, mois par mois.
+    const months = await tx.execute<{ month: string; new_members: number }>(sql`
+      select to_char(m.month, 'YYYY-MM') as month,
+        (select count(*)::int from members mb join zones z on z.id = mb.zone_id
+          where z.path <@ ${parent.path}::ltree and mb.deleted_at is null and mb.application_state = 'approved'
+            and mb.joined_at >= m.month and mb.joined_at < m.month + interval '1 month') as new_members
+      from generate_series(date_trunc('month', now()) - interval '5 months', date_trunc('month', now()), interval '1 month') as m(month)
+      order by m.month`);
+    const money = await tx.execute<{ month: string; currency: string; total: string }>(sql`
+      select to_char(date_trunc('month', p.confirmed_at), 'YYYY-MM') as month, p.currency,
+        sum(p.amount)::numeric(14,2)::text as total
+      from payments p join members mb on mb.id = p.member_id join zones z on z.id = mb.zone_id
+      where z.path <@ ${parent.path}::ltree and p.status = 'succeeded'
+        and p.confirmed_at >= date_trunc('month', now()) - interval '5 months'
+      group by 1, 2`);
+    const trend = months.map((m) => ({
+      month: m.month,
+      newMembers: m.new_members,
+      collected: Object.fromEntries(money.filter((x) => x.month === m.month).map((x) => [x.currency, x.total])),
+    }));
+
     const total = rows.find((r) => r.is_total);
-    return { zone: total ? toStats(total) : null, children: rows.filter((r) => !r.is_total).map(toStats) };
+    return { zone: total ? toStats(total) : null, children: rows.filter((r) => !r.is_total).map(toStats), trend };
   });
 }
 

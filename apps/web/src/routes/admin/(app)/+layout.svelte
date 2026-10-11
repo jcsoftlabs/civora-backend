@@ -15,6 +15,12 @@
   const hasAccess = $derived(data.me.permissions.length > 0);
   const modules = $derived([
     {
+      href: resolve("/admin"),
+      label: t("admin.nav.dashboard"),
+      icon: "dashboard",
+      visible: data.me.permissions.includes("bi.read"),
+    },
+    {
       href: resolve("/admin/membres"),
       label: t("admin.nav.members"),
       icon: "members",
@@ -62,12 +68,20 @@
           <!-- eslint-disable svelte/no-navigation-without-resolve -->
           <a
             href={m.href}
-            aria-current={page.url.pathname.startsWith(m.href) ? "page" : undefined}
+            aria-current={(m.icon === "dashboard" ? page.url.pathname === m.href : page.url.pathname.startsWith(m.href))
+              ? "page"
+              : undefined}
             aria-label={m.label}
             title={m.label}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              {#if m.icon === "events"}
+              {#if m.icon === "dashboard"}
+                <!-- Tableau de bord : colonnes croissantes. -->
+                <path d="M4 20h16" />
+                <rect x="5.5" y="12" width="3" height="5.5" rx="1" />
+                <rect x="10.5" y="8" width="3" height="9.5" rx="1" />
+                <rect x="15.5" y="4.5" width="3" height="13" rx="1" />
+              {:else if m.icon === "events"}
                 <!-- Agenda : billet de rassemblement. -->
                 <path d="M3.5 7.5h17v3a1.8 1.8 0 0 0 0 3.6v3.4h-17v-3.4a1.8 1.8 0 0 0 0-3.6z" />
                 <path d="M9 8v1.5M9 11.5v1M9 14.5V16" />

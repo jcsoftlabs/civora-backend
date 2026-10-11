@@ -32,6 +32,8 @@ export default async function authRoutes(app: FastifyInstance) {
       memberId: a.memberId,
       mfaPending: a.mfaPending,
       permissions: [...new Set(a.grants.map((g) => g.permission))],
+      // Formule du parti : le back-office affiche les options hors formule verrouillées (SOC-07).
+      tier: (await app.entitlements.get(a.partyId))?.tier ?? null,
       ...(await app.auth.whoami(a)),
     };
   });

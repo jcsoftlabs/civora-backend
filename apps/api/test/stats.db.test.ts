@@ -126,6 +126,15 @@ describe("statistiques par zone (PIL-01)", () => {
     expect(child(body, "HT05").members.approved).toBe(0);
   });
 
+  it("donne la tendance des six derniers mois pour la zone", async () => {
+    const { trend } = (await get("/stats/zones", national)).json();
+    expect(trend).toHaveLength(6);
+    const last = trend.at(-1);
+    expect(last.month).toBe(new Date().toISOString().slice(0, 7));
+    expect(last.newMembers).toBe(4);
+    expect(last.collected).toMatchObject({ HTG: "250.00" });
+  });
+
   it("descend d'un niveau, jusqu'aux sections communales", async () => {
     expect(child((await get("/stats/zones?parent=HT01", national)).json(), "HT0114").members.approved).toBe(3);
     const sections = (await get("/stats/zones?parent=HT0114", national)).json();

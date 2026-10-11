@@ -17,6 +17,8 @@ export interface Me {
   mfaPending: boolean;
   mfa: "none" | "required" | "setup_required";
   permissions: string[];
+  /** Formule du parti, pour afficher verrouillées les options hors formule (SOC-07). */
+  tier: "essentiel" | "mouvement" | "national" | null;
   party: { slug: string; name: string; brandColor: string; brandColorSecondary: string | null };
   member: { firstName: string; lastName: string; number: string };
 }
