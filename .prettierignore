@@ -9,3 +9,4 @@ apps/mobile/
 results.sarif
 gitleaks-report*
 *.sarif
+.storage/

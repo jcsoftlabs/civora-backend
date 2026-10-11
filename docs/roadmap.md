@@ -30,14 +30,14 @@ Jalon : NOU migré sans perte, tests d'isolation réussis entre deux partis fict
 - [x] Organes, postes, droits attachés au poste, visibilité par zone (ORG-01 à ORG-04, SOC-06, SEC-05)
 
 ### Membres et argent
-- [ ] Inscription mobile, fiche membre, statuts configurables, mode d'adhésion (ADH-01 à ADH-04) : API faite ; photo (stockage R2) et écrans mobiles à faire
+- [ ] Inscription mobile, fiche membre, statuts configurables, mode d'adhésion (ADH-01 à ADH-04) : API faite, photo comprise (stockage R2) ; écrans mobiles à faire
 - [x] Validation des adhésions, export journalisé (ADH-06, ADH-12)
 - [x] Formules de cotisation, échéances (FIN-03, FIN-05)
 - [ ] MonCash, NatCash, KashPaw : webhooks, job de vérification, idempotence, comptes marchands du parti (FIN-01, FIN-12) : fait avec le faux fournisseur ; job de vérification en place (worker) ; MonCash à valider en sandbox, NatCash et KashPaw en attente d'accès
 - [x] Saisie des espèces par un trésorier, reçu (FIN-10)
 
 ### Communication et pilotage
-- [ ] Annonces, actualités, podcasts, albums multi-partis (COM-01) : annonces et actualités faites ; médias des podcasts et albums avec le stockage R2
+- [x] Annonces, actualités, podcasts, albums multi-partis (COM-01) : fait, médias des podcasts et albums compris (stockage R2)
 - [x] Notifications push ciblées (COM-02) : FCM à configurer (compte de service du projet Firebase)
 - [x] Agenda et événements (ENG-03)
 - [x] Statistiques par zone (PIL-01)

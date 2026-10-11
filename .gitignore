@@ -17,3 +17,6 @@ civora en info.txt
 *cred*.txt
 # Base Postgres locale
 .pgdata/
+
+# Fichiers du stockage local (développement)
+.storage/

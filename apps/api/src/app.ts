@@ -17,6 +17,10 @@ import authRoutes from "./modules/auth/routes.js";
 import territoryRoutes from "./modules/territory/routes.js";
 import organRoutes from "./modules/organs/routes.js";
 import biRoutes from "./modules/bi/stats.js";
+import fileRoutes from "./modules/files/routes.js";
+import { FilesService } from "./modules/files/service.js";
+import { buildStorage } from "./lib/storage/registry.js";
+import type { ObjectStorage } from "./lib/storage/types.js";
 import communicationRoutes from "./modules/communication/routes.js";
 import duesRoutes from "./modules/dues/routes.js";
 import moneyRoutes from "./modules/money/routes.js";
@@ -48,6 +52,7 @@ export interface AppDeps {
   email?: EmailSender;
   paymentProviders?: Partial<Record<LocalProvider, PaymentProvider>>;
   push?: PushSender;
+  storage?: ObjectStorage;
   credentials?: CredentialStore;
 }
 
@@ -118,8 +123,10 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
     applications: new ApplicationsService(deps.email ?? emailSender, dues),
   });
   await app.register(duesRoutes, { dues });
+  const filesService = new FilesService(deps.storage ?? buildStorage(config));
+  await app.register(fileRoutes, { files: filesService });
   await app.register(biRoutes);
-  await app.register(communicationRoutes, { push: deps.push ?? buildPushSender(config, app.log) });
+  await app.register(communicationRoutes, { push: deps.push ?? buildPushSender(config, app.log), files: filesService });
   const providers = deps.paymentProviders ?? buildPaymentProviders(config.NODE_ENV);
   await app.register(moneyRoutes, {
     payments: new PaymentsService(deps.email ?? emailSender),

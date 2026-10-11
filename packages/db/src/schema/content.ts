@@ -24,6 +24,12 @@ export const files = pgTable(
     version: integer("version").notNull().default(1),
     previousVersionId: uuid("previous_version_id"),
     trashedAt: timestamp("trashed_at", { withTimezone: true }),
+    /** Usage du fichier : member_photo | publication_media | document… ; fixe le type et la taille admis. */
+    purpose: text("purpose").notNull().default("document"),
+    /** pending : URL d'envoi délivrée ; ready : objet vérifié dans le stockage. */
+    uploadStatus: text("upload_status").notNull().default("pending"),
+    /** Membre qui a envoyé le fichier (contrôlé par l'API ; pas de clé étrangère : référence circulaire avec members). */
+    uploadedByMemberId: uuid("uploaded_by_member_id"),
     ...timestamps,
   },
   (t) => [

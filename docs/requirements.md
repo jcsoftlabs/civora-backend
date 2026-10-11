@@ -69,7 +69,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| COM-01 | Annonces, actualités, podcasts, albums | E M N | P2 | NOU | en cours |
+| COM-01 | Annonces, actualités, podcasts, albums | E M N | P2 | NOU | fait |
 | COM-02 | Notifications push ciblées par zone, statut et profil | E M N | P2 | NOU | fait |
 | COM-03 | SMS et WhatsApp groupés, facturés sur crédits | E M N | P3 | Neuf | à faire |
 | COM-04 | Accès USSD sans smartphone | M N | P5 | Neuf | à faire |

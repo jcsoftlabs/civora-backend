@@ -244,6 +244,7 @@ export class MembersService {
         lastName: members.lastName,
         birthDate: members.birthDate,
         phone: members.phoneE164,
+        photoFileId: members.photoFileId,
         isDiaspora: members.isDiaspora,
         residenceCountry: members.residenceCountry,
         applicationState: members.applicationState,

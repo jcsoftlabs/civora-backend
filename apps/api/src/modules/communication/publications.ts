@@ -2,12 +2,13 @@
 import type { FastifyRequest } from "fastify";
 import { and, desc, eq, gt, isNotNull, isNull, lt, lte, sql } from "drizzle-orm";
 import { z } from "zod";
-import { publications, withParty } from "@civora/db";
+import { publications, withParty, type Tx } from "@civora/db";
 import { audienceInput, memberInAudience, resolveAudience, type Audience } from "../../lib/audience.js";
 import { audit } from "../../lib/audit.js";
 import { currentMember } from "../../lib/member-context.js";
 import { ApiError } from "../../plugins/errors.js";
 import { authorize } from "../../plugins/tenant.js";
+import type { FilesService } from "../files/service.js";
 
 const i18n = z.object({ fr: z.string().trim().min(1).max(20_000), ht: z.string().trim().max(20_000).optional() });
 const title = z.object({ fr: z.string().trim().min(1).max(160), ht: z.string().trim().max(160).optional() });
@@ -18,6 +19,8 @@ export const publicationCreate = z.object({
   title,
   body: i18n.optional(),
   audience: audienceInput.default(null),
+  /** Images d'un album, fichier audio d'un podcast : fichiers envoyés avec l'usage publication_media. */
+  mediaFileIds: z.array(z.string().uuid()).max(50).default([]),
 });
 export const publicationUpdate = publicationCreate.partial();
 export const publishBody = z.object({ at: z.coerce.date().optional() });
@@ -47,12 +50,26 @@ const columns = {
 };
 
 export class PublicationsService {
+  constructor(private readonly files: FilesService) {}
+
+  private async checkMedia(tx: Tx, ids: string[]) {
+    for (const id of ids) await this.files.readyFile(tx, id, "publication_media");
+  }
+
   async create(req: Req, body: z.infer<typeof publicationCreate>) {
     return withParty(req.partyId, async (tx) => {
       const audience = await resolveAudience(tx, req, PERM, body.audience);
+      await this.checkMedia(tx, body.mediaFileIds);
       const [p] = await tx
         .insert(publications)
-        .values({ partyId: req.partyId, kind: body.kind, title: body.title, body: body.body ?? null, audience })
+        .values({
+          partyId: req.partyId,
+          kind: body.kind,
+          title: body.title,
+          body: body.body ?? null,
+          audience,
+          mediaFileIds: body.mediaFileIds,
+        })
         .returning({ id: publications.id });
       return { id: p!.id };
     });
@@ -69,6 +86,7 @@ export class PublicationsService {
     await withParty(req.partyId, async (tx) => {
       await this.load(tx, req, id);
       const audience = body.audience !== undefined ? await resolveAudience(tx, req, PERM, body.audience) : undefined;
+      if (body.mediaFileIds) await this.checkMedia(tx, body.mediaFileIds);
       await tx
         .update(publications)
         .set({
@@ -76,6 +94,7 @@ export class PublicationsService {
           ...(body.title ? { title: body.title } : {}),
           ...(body.body ? { body: body.body } : {}),
           ...(audience !== undefined ? { audience } : {}),
+          ...(body.mediaFileIds ? { mediaFileIds: body.mediaFileIds } : {}),
           updatedAt: new Date(),
         })
         .where(eq(publications.id, id));
@@ -147,6 +166,7 @@ export class PublicationsService {
           title: publications.title,
           body: publications.body,
           publishedAt: publications.publishedAt,
+          mediaFileIds: publications.mediaFileIds,
         })
         .from(publications)
         .where(
@@ -160,7 +180,16 @@ export class PublicationsService {
         )
         .orderBy(desc(publications.publishedAt))
         .limit(q.limit);
-      return { items: rows, nextBefore: rows.length === q.limit ? rows.at(-1)?.publishedAt : null };
+      // Médias : URL de lecture signées (1 heure), jamais d'accès public au stockage.
+      const urls = await this.files.mediaUrls(
+        tx,
+        rows.flatMap((r) => r.mediaFileIds ?? []),
+      );
+      const items = rows.map(({ mediaFileIds, ...r }) => ({
+        ...r,
+        media: (mediaFileIds ?? []).flatMap((id) => (urls.has(id) ? [{ id, ...urls.get(id)! }] : [])),
+      }));
+      return { items, nextBefore: rows.length === q.limit ? rows.at(-1)?.publishedAt : null };
     });
   }
 }

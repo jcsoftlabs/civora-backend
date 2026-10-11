@@ -39,7 +39,11 @@ await withParty(ctx.partyId, async (tx) => {
 
 **Test d'isolation générique.** `packages/db/test/isolation.test.ts` crée deux partis, insère une ligne par table pour chacun, puis vérifie, table par table, que le contexte A ne voit rien de B. Toute nouvelle table est automatiquement couverte.
 
-**Fichiers.** Clés R2 sous `party/<party_id>/<module>/<uuid>`. L'API délivre des URL signées courtes ; jamais d'accès public direct sauf médias explicitement publiés.
+**Fichiers.** Clés R2 sous `party/<party_id>/<usage>/<uuid>`. Jamais d'accès public : l'API délivre des URL signées courtes.
+
+- Envoi en deux temps (`apps/api/src/modules/files`) : `POST /files/uploads` vérifie l'usage, le type et la taille (photo de membre : image 5 Mo ; média de publication : image 10 Mo ou audio 100 Mo ; document : 25 Mo) et le droit d'envoyer, puis délivre une URL d'envoi de 15 minutes qui fixe le type ; le téléphone envoie le fichier directement au stockage ; `POST /files/:id/complete` vérifie l'objet reçu (présent, même type, même taille) ou le supprime.
+- Lecture : URL de 5 minutes (1 heure pour les médias du fil), réservée : photo au membre et aux responsables `members.read` de sa zone ; médias de publication à tout membre du parti ; documents avec `documents.read`, lecture auditée.
+- Signature SigV4 écrite localement (`lib/storage/sigv4.ts`), vérifiée sur l'exemple officiel AWS et contre R2. En local, `LocalStorage` reproduit le même parcours (URL signées, expiration) dans `.storage/`.
 
 **Temps réel.** Une salle WebSocket par parti, puis par organe ; le jeton porte `party_id` et l'abonnement est refusé hors de son parti. Origines en liste blanche.
 

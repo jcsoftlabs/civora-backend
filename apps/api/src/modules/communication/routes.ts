@@ -4,6 +4,7 @@ import { requireAuth } from "../../plugins/auth.js";
 import { EventsService, eventCreate, eventsQuery } from "../events/service.js";
 import { PushService, deviceBody, pushCampaign } from "./push.js";
 import type { PushSender } from "../../lib/messaging/push.js";
+import type { FilesService } from "../files/service.js";
 import {
   PublicationsService,
   feedQuery,
@@ -16,9 +17,12 @@ import {
 const idParam = z.object({ id: z.string().uuid() });
 
 /** COM-01 (publications) et ENG-03 (agenda). */
-export default async function communicationRoutes(app: FastifyInstance, opts: { push: PushSender }) {
+export default async function communicationRoutes(
+  app: FastifyInstance,
+  opts: { push: PushSender; files: FilesService },
+) {
   const push = new PushService(opts.push);
-  const pubs = new PublicationsService();
+  const pubs = new PublicationsService(opts.files);
   const events = new EventsService();
   const auth = { preHandler: requireAuth };
 
