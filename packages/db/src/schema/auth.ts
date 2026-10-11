@@ -14,6 +14,7 @@ export const otpChallenges = pgTable("otp_challenges", {
     .notNull()
     .references(() => users.id),
   channel: text("channel").notNull(), // email | sms
+  purpose: text("purpose").notNull().default("login"), // login | signup : un code ne sert qu'à son usage
   codeHash: text("code_hash").notNull(),
   attempts: integer("attempts").notNull().default(0),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),

@@ -68,6 +68,15 @@ await withParty(ctx.partyId, async (tx) => {
 - **Anti-élévation de privilèges** (`holdsAll`) : créer, modifier ou attribuer un poste exige de détenir soi-même chacune de ses permissions sur une portée qui couvre la sienne ; retirer des droits exige aussi de détenir les anciens.
 - **Succession (ORG-04)** : les droits appartiennent au poste. Attribuer un successeur clôt le mandat en cours ; les droits sont relus en base à chaque requête, ils passent donc immédiatement. Chaque attribution, fin de mandat et changement de droits est audité (`role.change`, `post.update`).
 
+## 3 bis. Adhésion (ADH-01 à ADH-04)
+
+- Deux étapes publiques : `POST /join/start` envoie un code d'adhésion à l'adresse e-mail (preuve qu'elle appartient à la personne ; réponse identique dans tous les cas), puis `POST /join/complete` vérifie le code et crée la fiche. Un code de connexion ne sert jamais à adhérer (`otp_challenges.purpose`). Un formulaire refusé laisse le code valable pour corriger.
+- Localisation obligatoire jusqu'à la section communale en Haïti, ou un pays ou une ville de la diaspora ; « diaspora » et le pays de résidence sont déduits de la zone.
+- Mode d'adhésion du parti (`parties.admission_mode`, modifiable, audité) : `libre` (accepté tout de suite), `validation` (en attente, ADH-06), `parrainage` (numéro d'un membre validé exigé, ligne dans `referrals`).
+- Pièce d'identité chiffrée dès l'adhésion ; un numéro déjà présent dans le parti est refusé sans dire à qui il appartient. Numéro de membre séquentiel par parti, sous verrou (pas de doublon). Un compte n'adhère qu'à un parti.
+- Fiche : le membre lit et corrige la sienne ; un responsable la lit avec `members.read` et la modifie (statut, catégorie, étiquettes) avec `members.write`, dans sa zone. La valeur d'une pièce n'apparaît jamais dans la fiche : lecture dédiée, `identity.read`, auditée.
+- Statuts (ADH-03) : libellés du parti en français et en créole, rang ; créés et modifiés avec `settings.party`, audités.
+
 ## 4. Données sensibles
 
 - Chiffrement enveloppe : chaque parti a une clé de données (`party_keys`) chiffrée par la clé maîtresse (KMS). Les champs `nin`, `nif`, `passport`, `ssn` sont stockés chiffrés (AES-256-GCM) dans `member_identities`, avec une empreinte HMAC pour la recherche de doublons.

@@ -50,6 +50,13 @@
       "when": 1791681356225,
       "tag": "0006_tranquil_roughhouse",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791682130869,
+      "tag": "0007_cynical_albert_cleary",
+      "breakpoints": true
     }
   ]
 }

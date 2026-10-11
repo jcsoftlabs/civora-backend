@@ -13,6 +13,7 @@ import {
   withAuthLookup,
   withParty,
   zones,
+  type Tx,
 } from "@civora/db";
 import { PERMISSIONS, type Permission } from "@civora/shared";
 import { audit } from "../../lib/audit.js";
@@ -33,6 +34,8 @@ const MEMBER_SESSION_MS = 30 * 24 * 3600_000;
 const ADMIN_SESSION_MS = 7 * 24 * 3600_000;
 
 export type Channel = "email" | "sms";
+/** Un code de connexion ne sert jamais à adhérer, et inversement. */
+export type OtpPurpose = "login" | "signup";
 
 export interface Grant {
   permission: Permission;
@@ -74,16 +77,163 @@ export class AuthService {
     return createHmac("sha256", this.d.secret).update(`${challengeId}:${code}`).digest("hex");
   }
 
-  /** Parti visé par l'écran de connexion (application ou site du parti). */
-  private async partyBySlug(slug: string) {
+  /** Parti visé par l'écran de connexion ou d'adhésion (application ou site du parti). */
+  async partyBySlug(slug: string) {
     const [p] = await withAuthLookup({ partySlug: slug }, (tx) =>
-      tx.select({ id: parties.id, name: parties.name, otpChannels: parties.otpChannels }).from(parties),
+      tx
+        .select({
+          id: parties.id,
+          name: parties.name,
+          otpChannels: parties.otpChannels,
+          admissionMode: parties.admissionMode,
+        })
+        .from(parties),
     );
     return p ?? null;
   }
 
   /**
-   * Demande d'un code. La réponse est identique que le compte existe ou non (pas d'énumération des membres) :
+   * Crée un code à usage unique pour ce compte, dans ce parti. null si le compte a déjà reçu trop de codes
+   * dans le quart d'heure (SEC-09) : l'appelant répond alors comme si tout allait bien.
+   */
+  async issueChallenge(
+    tx: Tx,
+    p: { partyId: string; userId: string; channel: Channel; purpose: OtpPurpose; ip?: string | undefined },
+  ): Promise<{ challengeId: string; code: string } | null> {
+    const [recent] = await tx
+      .select({ n: count() })
+      .from(otpChallenges)
+      .where(
+        and(eq(otpChallenges.userId, p.userId), gt(otpChallenges.createdAt, new Date(this.now() - OTP_WINDOW_MS))),
+      );
+    if ((recent?.n ?? 0) >= OTP_MAX_PER_WINDOW) return null;
+    const challengeId = randomUUID();
+    const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
+    await tx.insert(otpChallenges).values({
+      id: challengeId,
+      partyId: p.partyId,
+      userId: p.userId,
+      channel: p.channel,
+      purpose: p.purpose,
+      codeHash: this.codeHash(challengeId, code),
+      expiresAt: new Date(this.now() + OTP_TTL_MS),
+      ip: p.ip ?? null,
+      createdAt: new Date(this.now()),
+    });
+    return { challengeId, code };
+  }
+
+  /**
+   * Consomme un code : renvoie le compte si le code est bon, null sinon. Chaque essai est compté ; le dernier
+   * essai épuisé est audité. L'appelant doit laisser la transaction se valider même en cas d'échec.
+   */
+  async consumeChallenge(
+    tx: Tx,
+    p: { partyId: string; challengeId: string; code: string; purpose: OtpPurpose; ip?: string | undefined },
+  ): Promise<{ userId: string; channel: string } | null> {
+    const [c] = await tx.select().from(otpChallenges).where(eq(otpChallenges.id, p.challengeId)).for("update");
+    if (
+      !c ||
+      c.purpose !== p.purpose ||
+      c.consumedAt ||
+      c.expiresAt.getTime() <= this.now() ||
+      c.attempts >= OTP_MAX_ATTEMPTS
+    ) {
+      return null;
+    }
+    const expected = Buffer.from(c.codeHash, "hex");
+    const given = Buffer.from(this.codeHash(c.id, p.code), "hex");
+    const match = expected.length === given.length && timingSafeEqual(expected, given);
+    await tx
+      .update(otpChallenges)
+      .set(match ? { attempts: c.attempts + 1, consumedAt: new Date(this.now()) } : { attempts: c.attempts + 1 })
+      .where(eq(otpChallenges.id, c.id));
+    if (match) return { userId: c.userId, channel: c.channel };
+    if (c.attempts + 1 >= OTP_MAX_ATTEMPTS) {
+      await audit(tx, {
+        partyId: p.partyId,
+        actorUserId: c.userId,
+        actorKind: "member",
+        action: "auth.otp.locked",
+        targetType: "otp_challenge",
+        targetId: c.id,
+        ...(p.ip ? { ip: p.ip } : {}),
+      });
+    }
+    return null;
+  }
+
+  /** Rend un code de nouveau utilisable (formulaire refusé après un code juste) ; l'essai reste compté. */
+  async releaseChallenge(tx: Tx, challengeId: string): Promise<void> {
+    await tx.update(otpChallenges).set({ consumedAt: null }).where(eq(otpChallenges.id, challengeId));
+  }
+
+  /** Envoie le code par le canal choisi, dans la langue du compte. */
+  async deliverCode(
+    to: { email: string | null; phone: string | null; locale: string | null },
+    channel: Channel,
+    partyName: string,
+    code: string,
+    purpose: OtpPurpose,
+  ): Promise<void> {
+    const t = OTP_MESSAGES[messageLocale(to.locale)];
+    const subject = purpose === "signup" ? t.signupSubject(partyName) : t.subject(partyName);
+    const text = purpose === "signup" ? t.signupText(partyName, code) : t.text(partyName, code);
+    if (channel === "email" && to.email) await this.d.email.send({ to: to.email, subject, text });
+    else if (channel === "sms" && to.phone) await this.d.sms.send(to.phone, t.sms(partyName, code));
+  }
+
+  /** Ouvre une session ; un titulaire de poste devra valider sa 2FA avant d'exercer ses droits. */
+  async openSession(
+    tx: Tx,
+    p: {
+      partyId: string;
+      userId: string;
+      memberId: string;
+      channel: string;
+      ip?: string | undefined;
+      userAgent?: string | undefined;
+    },
+  ): Promise<{ token: string; expiresAt: Date; mfa: "none" | "required" | "setup_required" }> {
+    const isAdmin = (await this.loadGrants(tx, p.memberId)).length > 0;
+    const [mfa] = isAdmin
+      ? await tx
+          .select({ confirmedAt: memberMfa.confirmedAt })
+          .from(memberMfa)
+          .where(eq(memberMfa.memberId, p.memberId))
+      : [];
+    const token = randomBytes(32).toString("base64url");
+    const expiresAt = new Date(this.now() + (isAdmin ? ADMIN_SESSION_MS : MEMBER_SESSION_MS));
+    await tx.insert(sessions).values({
+      partyId: p.partyId,
+      userId: p.userId,
+      memberId: p.memberId,
+      tokenHash: hashToken(token),
+      mfaRequiredAt: isAdmin ? new Date(this.now()) : null,
+      expiresAt,
+      ip: p.ip ?? null,
+      userAgent: p.userAgent?.slice(0, 300) ?? null,
+    });
+    const mfaState: "none" | "required" | "setup_required" = !isAdmin
+      ? "none"
+      : mfa?.confirmedAt
+        ? "required"
+        : "setup_required";
+    await audit(tx, {
+      partyId: p.partyId,
+      actorUserId: p.userId,
+      actorKind: "member",
+      action: "auth.login",
+      targetType: "member",
+      targetId: p.memberId,
+      metadata: { channel: p.channel, admin: isAdmin },
+      ...(p.ip ? { ip: p.ip } : {}),
+    });
+    return { token, expiresAt, mfa: mfaState };
+  }
+
+  /**
+   * Demande d'un code de connexion. La réponse est identique que le compte existe ou non (pas d'énumération) :
    * un identifiant de défi est toujours renvoyé ; il ne mène à rien si personne n'a reçu de code.
    */
   async requestOtp(input: {
@@ -109,41 +259,17 @@ export class AuthService {
         .where(and(where, isNull(members.deletedAt)))
         .limit(1);
       if (!m) return null;
-
-      const [recent] = await tx
-        .select({ n: count() })
-        .from(otpChallenges)
-        .where(
-          and(eq(otpChallenges.userId, m.userId), gt(otpChallenges.createdAt, new Date(this.now() - OTP_WINDOW_MS))),
-        );
-      if ((recent?.n ?? 0) >= OTP_MAX_PER_WINDOW) return null;
-
-      const challengeId = randomUUID();
-      const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
-      await tx.insert(otpChallenges).values({
-        id: challengeId,
+      const ch = await this.issueChallenge(tx, {
         partyId: party.id,
         userId: m.userId,
         channel: input.channel,
-        codeHash: this.codeHash(challengeId, code),
-        expiresAt: new Date(this.now() + OTP_TTL_MS),
-        ip: input.ip ?? null,
-        createdAt: new Date(this.now()),
+        purpose: "login",
+        ip: input.ip,
       });
-      return { challengeId, code, m };
+      return ch ? { ...ch, m } : null;
     });
     if (!found) return decoy;
-
-    const t = OTP_MESSAGES[messageLocale(found.m.locale)];
-    if (input.channel === "email" && found.m.email) {
-      await this.d.email.send({
-        to: found.m.email,
-        subject: t.subject(party.name),
-        text: t.text(party.name, found.code),
-      });
-    } else if (input.channel === "sms" && found.m.phone) {
-      await this.d.sms.send(found.m.phone, t.sms(party.name, found.code));
-    }
+    await this.deliverCode(found.m, input.channel, party.name, found.code, "login");
     return { challengeId: found.challengeId };
   }
 
@@ -159,80 +285,29 @@ export class AuthService {
     if (!party) throw new ApiError(401, "otp_invalid");
 
     const outcome = await withParty(party.id, async (tx) => {
-      const [c] = await tx.select().from(otpChallenges).where(eq(otpChallenges.id, input.challengeId)).for("update");
-      if (!c || c.consumedAt || c.expiresAt.getTime() <= this.now() || c.attempts >= OTP_MAX_ATTEMPTS) {
-        return { ok: false as const };
-      }
-      const expected = Buffer.from(c.codeHash, "hex");
-      const given = Buffer.from(this.codeHash(c.id, input.code), "hex");
-      const match = expected.length === given.length && timingSafeEqual(expected, given);
-      await tx
-        .update(otpChallenges)
-        .set(match ? { attempts: c.attempts + 1, consumedAt: new Date(this.now()) } : { attempts: c.attempts + 1 })
-        .where(eq(otpChallenges.id, c.id));
-      if (!match) {
-        // Dernier essai épuisé : trace d'une tentative de force brute possible.
-        if (c.attempts + 1 >= OTP_MAX_ATTEMPTS) {
-          await audit(tx, {
-            partyId: party.id,
-            actorUserId: c.userId,
-            actorKind: "member",
-            action: "auth.otp.locked",
-            targetType: "otp_challenge",
-            targetId: c.id,
-            ...(input.ip ? { ip: input.ip } : {}),
-          });
-        }
-        return { ok: false as const };
-      }
-
+      const c = await this.consumeChallenge(tx, { partyId: party.id, ...input, purpose: "login" });
+      if (!c) return null;
       const [member] = await tx
         .select({ id: members.id })
         .from(members)
         .where(and(eq(members.userId, c.userId), isNull(members.deletedAt)));
-      if (!member) return { ok: false as const };
-
-      const isAdmin = (await this.loadGrants(tx, member.id)).length > 0;
-      const [mfa] = isAdmin
-        ? await tx
-            .select({ confirmedAt: memberMfa.confirmedAt })
-            .from(memberMfa)
-            .where(eq(memberMfa.memberId, member.id))
-        : [];
-
-      const token = randomBytes(32).toString("base64url");
-      const expiresAt = new Date(this.now() + (isAdmin ? ADMIN_SESSION_MS : MEMBER_SESSION_MS));
-      await tx.insert(sessions).values({
+      if (!member) return null;
+      return this.openSession(tx, {
         partyId: party.id,
         userId: c.userId,
         memberId: member.id,
-        tokenHash: hashToken(token),
-        mfaRequiredAt: isAdmin ? new Date(this.now()) : null,
-        expiresAt,
-        ip: input.ip ?? null,
-        userAgent: input.userAgent?.slice(0, 300) ?? null,
+        channel: c.channel,
+        ip: input.ip,
+        userAgent: input.userAgent,
       });
-      const mfaState = !isAdmin ? "none" : mfa?.confirmedAt ? "required" : "setup_required";
-      await audit(tx, {
-        partyId: party.id,
-        actorUserId: c.userId,
-        actorKind: "member",
-        action: "auth.login",
-        targetType: "member",
-        targetId: member.id,
-        metadata: { channel: c.channel, admin: isAdmin },
-        ...(input.ip ? { ip: input.ip } : {}),
-      });
-      return { ok: true as const, token, expiresAt, mfa: mfaState as "none" | "required" | "setup_required" };
     });
-
     // L'essai est enregistré (transaction validée) avant de répondre par un refus.
-    if (!outcome.ok) throw new ApiError(401, "otp_invalid");
-    return { token: outcome.token, expiresAt: outcome.expiresAt, mfa: outcome.mfa };
+    if (!outcome) throw new ApiError(401, "otp_invalid");
+    return outcome;
   }
 
   /** Droits effectifs : postes occupés à cette date, avec la zone de chaque poste (null = national). */
-  private async loadGrants(tx: Parameters<Parameters<typeof withParty>[1]>[0], memberId: string): Promise<Grant[]> {
+  private async loadGrants(tx: Tx, memberId: string): Promise<Grant[]> {
     const now = new Date(this.now());
     const rows = await tx
       .select({ permissions: posts.permissions, zonePath: zones.path })

@@ -16,6 +16,9 @@ import auditRoutes from "./modules/audit/routes.js";
 import authRoutes from "./modules/auth/routes.js";
 import territoryRoutes from "./modules/territory/routes.js";
 import organRoutes from "./modules/organs/routes.js";
+import { IdentityService } from "./modules/members/identity.js";
+import memberRoutes from "./modules/members/routes.js";
+import { MembersService } from "./modules/members/service.js";
 import { AuthService } from "./modules/auth/service.js";
 import auth from "./plugins/auth.js";
 import { loggerOptions } from "./lib/logger.js";
@@ -27,6 +30,8 @@ import tenant from "./plugins/tenant.js";
 export interface AppDeps {
   entitlements?: EntitlementsCache;
   auth?: AuthService;
+  /** Partagées par l'authentification (2FA) et les pièces d'identité. */
+  keys?: PartyKeys;
 }
 
 export async function buildApp(config: Config, deps: AppDeps = {}) {
@@ -72,6 +77,7 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   await app.register(errors);
   await app.register(tenant, { entitlements: deps.entitlements ?? new EntitlementsCache(fetchEntitlements) });
 
+  const keys = deps.keys ?? new PartyKeys(new LazyKeyProvider());
   const authService =
     deps.auth ??
     new AuthService({
@@ -81,13 +87,14 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
         ? new ResendEmailSender(config.RESEND_API_KEY, config.RESEND_FROM)
         : new LogEmailSender(app.log),
       sms: createSmsSender(config.SMS_PROVIDER, app.log),
-      keys: new PartyKeys(new LazyKeyProvider()),
+      keys,
     });
   await app.register(auth, { auth: authService });
   await app.register(authRoutes);
   await app.register(auditRoutes);
   await app.register(territoryRoutes);
   await app.register(organRoutes);
+  await app.register(memberRoutes, { members: new MembersService(authService, new IdentityService(keys)) });
 
   app.get("/health", async () => ({ ok: true }));
 

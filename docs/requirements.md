@@ -26,10 +26,10 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| ADH-01 | Inscription mobile avec OTP, photo et pièce d'identité (NIN, NIF, passeport, SSN) | E M N | P2 | NOU | à faire |
-| ADH-02 | Fiche membre : localisation jusqu'à la section communale, local ou diaspora, pays, personne référente | E M N | P2 | NOU | à faire |
-| ADH-03 | Niveaux de statut configurables par le parti | E M N | P2 | NOU | à faire |
-| ADH-04 | Mode d'adhésion au choix et modifiable : libre, sur validation, par parrainage obligatoire | E M N | P2 | Neuf | à faire |
+| ADH-01 | Inscription mobile avec OTP, photo et pièce d'identité (NIN, NIF, passeport, SSN) | E M N | P2 | NOU | en cours |
+| ADH-02 | Fiche membre : localisation jusqu'à la section communale, local ou diaspora, pays, personne référente | E M N | P2 | NOU | fait |
+| ADH-03 | Niveaux de statut configurables par le parti | E M N | P2 | NOU | fait |
+| ADH-04 | Mode d'adhésion au choix et modifiable : libre, sur validation, par parrainage obligatoire | E M N | P2 | Neuf | fait |
 | ADH-05 | Parrainage : nombre de parrains, statut minimum du parrain, quota de filleuls, validation par un organe | E M N | P3 | Neuf | à faire |
 | ADH-06 | Validation, rejet et notation des adhésions | E M N | P2 | NOU | à faire |
 | ADH-07 | Import Excel, CSV, Google Sheets : correspondance des colonnes, aperçu, rapport d'erreurs | E M N | P3 | NOU (partiel) | à faire |
