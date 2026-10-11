@@ -244,6 +244,30 @@ describe("agenda et inscriptions (ENG-03)", () => {
     expect((await call("POST", `/events/${ev.rally}/registration`, paul.token)).statusCode).toBe(204);
   });
 
+  it("le responsable retrouve les événements de sa zone, avec le nombre d'inscrits", async () => {
+    const pv = (await call("GET", "/events/manage", pvChief.token)).json().events;
+    expect(pv.map((e: { id: string }) => e.id)).toEqual([ev.rally]);
+    expect(pv[0]).toMatchObject({ zoneCode: "HT0114", registered: 1 });
+    const all = (await call("GET", "/events/manage", national.token)).json().events.map((e: { id: string }) => e.id);
+    expect(all).toEqual(expect.arrayContaining([ev.rally, ev.congress, ev.bureau]));
+    expect((await call("GET", "/events/manage?period=past", national.token)).json().events).toEqual([]);
+    expect((await call("GET", "/events/manage", marie.token)).statusCode).toBe(403);
+  });
+
+  it("modifie un événement de sa zone ; la capacité ne passe pas sous les inscrits", async () => {
+    expect(
+      (await call("PATCH", `/events/${ev.rally}`, pvChief.token, { address: "Place Boyer", capacity: 50 })).statusCode,
+    ).toBe(204);
+    const [row] = await owner`select address, capacity from events where id = ${ev.rally!}`;
+    expect(row).toMatchObject({ address: "Place Boyer", capacity: 50 });
+    expect((await call("PATCH", `/events/${ev.congress}`, pvChief.token, { address: "X" })).statusCode).toBe(403);
+    await owner`insert into event_registrations (party_id, event_id, member_id) values (${A}, ${ev.rally!}, ${luc.id})`;
+    expect((await call("PATCH", `/events/${ev.rally}`, pvChief.token, { capacity: 1 })).json()).toMatchObject({
+      code: "capacity_below_registered",
+    });
+    await owner`delete from event_registrations where event_id = ${ev.rally!} and member_id = ${luc.id}`;
+  });
+
   it("deux inscriptions simultanées pour la dernière place : une seule passe", async () => {
     const id = (
       await call("POST", "/events", national.token, {

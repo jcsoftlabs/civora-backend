@@ -1,7 +1,7 @@
 // ENG-03 : agenda et événements avec inscription. Visibilité : tout le parti, une zone, ou les membres d'un organe.
 import { randomBytes } from "node:crypto";
 import type { FastifyRequest } from "fastify";
-import { and, asc, count, eq, gte, isNull, lte, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, isNull, lt, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 import { eventRegistrations, events, members, organs, withParty, zones, type Tx } from "@civora/db";
 import { audit } from "../../lib/audit.js";
@@ -32,6 +32,17 @@ export const eventCreate = z
   })
   .refine((e) => e.endsAt > e.startsAt, { message: "fin avant le début", path: ["endsAt"] });
 export const eventsQuery = z.object({ from: z.coerce.date().optional(), to: z.coerce.date().optional() });
+export const eventUpdate = z
+  .object({
+    title: text(160),
+    description: text(5000).nullable(),
+    startsAt: z.coerce.date(),
+    endsAt: z.coerce.date(),
+    address: z.string().trim().max(300).nullable(),
+    capacity: z.number().int().min(1).max(1_000_000).nullable(),
+  })
+  .partial();
+export const manageEventsQuery = z.object({ period: z.enum(["upcoming", "past"]).default("upcoming") });
 
 type Req = FastifyRequest;
 
@@ -179,6 +190,81 @@ export class EventsService {
       await tx
         .delete(eventRegistrations)
         .where(and(eq(eventRegistrations.eventId, id), eq(eventRegistrations.memberId, req.memberId!)));
+    });
+  }
+
+  /**
+   * Événements que la personne organise (events.manage) : ceux de sa zone et de ses sous-zones, ou tous pour un
+   * poste national ; à venir (du plus proche au plus lointain) ou passés (du plus récent au plus ancien).
+   */
+  async manageList(req: Req, q: z.infer<typeof manageEventsQuery>) {
+    const scopes = req.grants.filter((g) => g.permission === "events.manage");
+    if (!scopes.length) throw new ApiError(403, "forbidden");
+    const national = scopes.some((g) => g.zonePath === null);
+    const now = new Date();
+    const rows = await withParty(req.partyId, (tx) =>
+      tx
+        .select({
+          id: events.id,
+          kind: events.kind,
+          title: events.title,
+          description: events.description,
+          startsAt: events.startsAt,
+          endsAt: events.endsAt,
+          address: events.address,
+          capacity: events.capacity,
+          zoneCode: zones.code,
+          zoneName: zones.name,
+          zonePath: zones.path,
+          organId: events.organId,
+          organName: sql<string | null>`(select o.name from organs o where o.id = "events"."organ_id")`,
+          registered: sql<number>`(select count(*)::int from event_registrations r where r.event_id = "events"."id")`,
+        })
+        .from(events)
+        .leftJoin(zones, eq(zones.id, events.zoneId))
+        .where(q.period === "past" ? lt(events.endsAt, now) : gte(events.endsAt, now))
+        .orderBy(q.period === "past" ? desc(events.startsAt) : asc(events.startsAt))
+        .limit(200),
+    );
+    return rows
+      .filter((e) => national || (e.zonePath !== null && scopes.some((g) => zoneWithin(e.zonePath!, g.zonePath!))))
+      .map(({ zonePath: _p, ...e }) => e);
+  }
+
+  /** Modification par un responsable de la zone ; la capacité ne descend pas sous le nombre d'inscrits. */
+  async update(req: Req, id: string, body: z.infer<typeof eventUpdate>) {
+    await withParty(req.partyId, async (tx) => {
+      const ev = await eventScope(tx, id);
+      if (!authorize(req, "events.manage", ev.zonePath ?? undefined)) throw new ApiError(403, "forbidden");
+      const startsAt = body.startsAt ?? ev.startsAt;
+      const endsAt = body.endsAt ?? ev.endsAt;
+      if (endsAt <= startsAt) throw new ApiError(400, "event_ends_before_start");
+      if (body.capacity) {
+        const [n] = await tx.select({ n: count() }).from(eventRegistrations).where(eq(eventRegistrations.eventId, id));
+        if ((n?.n ?? 0) > body.capacity) throw new ApiError(409, "capacity_below_registered");
+      }
+      await tx
+        .update(events)
+        .set({
+          ...(body.title ? { title: body.title } : {}),
+          ...(body.description !== undefined ? { description: body.description } : {}),
+          ...(body.address !== undefined ? { address: body.address } : {}),
+          ...(body.capacity !== undefined ? { capacity: body.capacity } : {}),
+          startsAt,
+          endsAt,
+          updatedAt: new Date(),
+        })
+        .where(eq(events.id, id));
+      await audit(tx, {
+        partyId: req.partyId,
+        actorUserId: req.auth?.userId ?? null,
+        actorKind: "member",
+        action: "event.update",
+        targetType: "event",
+        targetId: id,
+        metadata: { fields: Object.keys(body) },
+        ip: req.clientIp,
+      });
     });
   }
 

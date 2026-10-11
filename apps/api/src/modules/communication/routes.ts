@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { requireAuth } from "../../plugins/auth.js";
-import { EventsService, eventCreate, eventsQuery } from "../events/service.js";
+import { EventsService, eventCreate, eventUpdate, eventsQuery, manageEventsQuery } from "../events/service.js";
 import { PushService, deviceBody, pushCampaign } from "./push.js";
 import type { PushSender } from "../../lib/messaging/push.js";
 import { audienceInput } from "../../lib/audience.js";
@@ -48,6 +48,13 @@ export default async function communicationRoutes(
   });
 
   app.get("/events", auth, async (req) => ({ events: await events.list(req, eventsQuery.parse(req.query)) }));
+  app.get("/events/manage", auth, async (req) => ({
+    events: await events.manageList(req, manageEventsQuery.parse(req.query)),
+  }));
+  app.patch("/events/:id", auth, async (req, reply) => {
+    await events.update(req, idParam.parse(req.params).id, eventUpdate.parse(req.body));
+    return reply.code(204).send();
+  });
   app.post("/events", auth, async (req, reply) =>
     reply.code(201).send(await events.create(req, eventCreate.parse(req.body))),
   );

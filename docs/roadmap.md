@@ -48,7 +48,7 @@ Jalon : tests d'isolation réussis entre deux partis fictifs ; socle utilisable 
   - [x] Réglages du parti : identité visuelle (nom, couleurs, logo, aperçu de la carte), langues avec le quota de la formule et les langues verrouillées (SOC-07), mode d'adhésion, statuts de membre (SOC-01, SOC-03, ADH-03, ADH-04)
   - [x] Cotisations et argent : chiffres clés du mois, journal des paiements filtrable avec reçus PDF, encaissement en espèces avec reçu, formules et échéances, comptes marchands (FIN-03, FIN-05, FIN-10, FIN-12)
   - [x] Publications et notifications push ciblées (COM-01, COM-02) : brouillons, parution immédiate ou programmée, retrait, médias d'album et de podcast ; notifications avec aperçu sur téléphone (fr, ht), envoi immédiat ou programmé, annulation, bilan ; destinataires par zone, statut, lieu, organe, avec le nombre de membres visés
-  - [ ] Agenda et événements, inscrits (ENG-03)
+  - [x] Agenda et événements, inscrits (ENG-03) : événements en billets (à venir, passés), création avec zone et organe, modification, jauge et liste des inscrits
   - [ ] Tableau de bord par zone, options hors formule affichées verrouillées (PIL-01, SOC-07)
   - [ ] Journal d'audit et vérification de son intégrité (SEC-06)
   - [ ] Filtres ET / OU et segments enregistrés de la liste des membres (maquette)

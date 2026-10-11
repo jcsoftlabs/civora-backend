@@ -27,6 +27,12 @@
       visible: ["payments.read", "dues.manage", "payments.recordCash"].some((p) => data.me.permissions.includes(p)),
     },
     {
+      href: resolve("/admin/evenements"),
+      label: t("admin.nav.events"),
+      icon: "events",
+      visible: data.me.permissions.includes("events.manage"),
+    },
+    {
       href: resolve("/admin/communication"),
       label: t("admin.nav.communication"),
       icon: "communication",
@@ -61,7 +67,11 @@
             title={m.label}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              {#if m.icon === "communication"}
+              {#if m.icon === "events"}
+                <!-- Agenda : billet de rassemblement. -->
+                <path d="M3.5 7.5h17v3a1.8 1.8 0 0 0 0 3.6v3.4h-17v-3.4a1.8 1.8 0 0 0 0-3.6z" />
+                <path d="M9 8v1.5M9 11.5v1M9 14.5V16" />
+              {:else if m.icon === "communication"}
                 <!-- Communication : mégaphone. -->
                 <path d="M4 10v4h3l6 4V6L7 10z" />
                 <path d="M16.5 9.5a3.5 3.5 0 0 1 0 5M7 14l1.5 5h2.5l-1.3-4.3" />
@@ -271,18 +281,33 @@
       grid-template-columns: minmax(0, 1fr);
       padding-bottom: 72px;
     }
+    /* Téléphone : barre en bas ; le sceau disparaît, les modules défilent, l'avatar reste visible à droite. */
     .rail {
       position: fixed;
       inset: auto 0 0 0;
       z-index: 10;
       height: 64px;
       flex-direction: row;
-      justify-content: space-between;
-      padding: 0 var(--s-4);
+      gap: var(--s-2);
+      padding: 0 var(--s-3);
+    }
+    .seal {
+      display: none;
     }
     ul {
+      min-width: 0;
       flex-direction: row;
-      justify-content: center;
+      justify-content: flex-start;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    a {
+      width: 46px;
+      flex: none;
+    }
+    .me {
+      flex: none;
     }
     a[aria-current="page"] {
       box-shadow: inset 0 -3px 0 var(--c-accent-bright);
