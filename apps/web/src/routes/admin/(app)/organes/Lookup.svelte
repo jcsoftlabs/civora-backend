@@ -21,8 +21,21 @@
     /** Libellé de l'option qui vide le choix (ex. « Organe national »). */
     clearLabel?: string;
     onpick?: (item: Item | null) => void;
+    /** Code de zone : ne propose que les membres de cette zone et de ses sous-zones. */
+    within?: string | null;
   }
-  let { label, hint, type, name, placeholder, emptyText, initial = null, clearLabel, onpick }: Props = $props();
+  let {
+    label,
+    hint,
+    type,
+    name,
+    placeholder,
+    emptyText,
+    initial = null,
+    clearLabel,
+    onpick,
+    within = null,
+  }: Props = $props();
 
   const uid = $props.id();
   let picked = $state<Item | null>(null);
@@ -43,7 +56,9 @@
       return;
     }
     timer = setTimeout(async () => {
-      const res = await fetch(`${resolve("/admin/organes/recherche")}?type=${type}&q=${encodeURIComponent(q)}`);
+      const res = await fetch(
+        `${resolve("/admin/organes/recherche")}?type=${type}&q=${encodeURIComponent(q)}${within ? `&within=${encodeURIComponent(within)}` : ""}`,
+      );
       if (q !== query.trim()) return;
       results = res.ok ? ((await res.json()) as { results: Item[] }).results : [];
       searched = true;

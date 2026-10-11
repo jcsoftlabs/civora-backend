@@ -178,6 +178,7 @@
                       label={t("admin.organ.assign")}
                       type="members"
                       name="memberId"
+                      within={organ.zoneCode}
                       placeholder={t("admin.organ.assign.search")}
                       emptyText={t("admin.organ.assign.none")}
                     />

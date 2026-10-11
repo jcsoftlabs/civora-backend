@@ -373,7 +373,7 @@ export const fr = {
   "admin.organ.assign.replace.hint":
     "Oui : le titulaire actuel perd les droits du poste. Non : le poste a un titulaire de plus.",
   "admin.organ.assigned": "Titulaire nommé",
-  "admin.organ.assign.none": "Aucun membre validé ne correspond",
+  "admin.organ.assign.none": "Aucun membre validé de cette zone ne correspond",
   "admin.organ.addPost": "Ajouter un poste",
   "admin.organ.postTitle": "Intitulé du poste",
   "admin.organ.postTitle.hint": "Par exemple : Président, Trésorière, Délégué à la jeunesse.",
@@ -388,6 +388,7 @@ export const fr = {
   "error.organ_children_outside_zone":
     "Des sous-organes ou des postes sortiraient de cette zone. Déplacez-les d'abord.",
   "error.post_scope_outside_organ": "La portée du poste doit rester dans la zone de l'organe.",
+  "error.member_outside_organ_zone": "Seul un membre de la zone de l'organe peut y occuper un poste.",
   "error.member_not_eligible": "Seul un membre dont l'adhésion est validée peut occuper un poste.",
   "error.zone_level_not_in_plan": "Ce niveau de territoire n'est pas inclus dans votre formule.",
   "error.zone_not_found": "Zone introuvable. Choisissez-la dans la liste.",

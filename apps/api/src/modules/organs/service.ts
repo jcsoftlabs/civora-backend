@@ -344,10 +344,16 @@ export async function assignHolder(req: Req, postId: string, body: z.infer<typeo
     if (!authorize(req, "posts.assign", path(post.scopePath))) throw new ApiError(403, "forbidden");
     if (!holdsAll(req, post.permissions, path(post.scopePath))) throw new ApiError(403, "privilege_escalation");
     const [member] = await tx
-      .select({ id: members.id })
+      .select({ id: members.id, zonePath: zones.path })
       .from(members)
+      .innerJoin(zones, eq(zones.id, members.zoneId))
       .where(and(eq(members.id, body.memberId), isNull(members.deletedAt), eq(members.applicationState, "approved")));
     if (!member) throw new ApiError(400, "member_not_eligible");
+    // Règle du produit : un poste d'un organe local revient à un membre de la zone de cet organe.
+    const organ = await loadOrgan(tx, post.organId);
+    if (organ.zonePath && !zoneWithin(member.zonePath, organ.zonePath)) {
+      throw new ApiError(400, "member_outside_organ_zone");
+    }
 
     const startsAt = body.startsAt ?? new Date();
     let replaced: string[] = [];

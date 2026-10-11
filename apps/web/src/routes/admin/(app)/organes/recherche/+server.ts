@@ -6,7 +6,7 @@ import type { RequestHandler } from "./$types";
 /**
  * Recherches du panneau des organes, côté serveur (jeton en cookie httpOnly) :
  * - zones où rattacher un organe (département, commune, section, pays ou ville de la diaspora) ;
- * - membres validés à nommer à un poste, dans la zone de la personne (members.read).
+ * - membres validés à nommer à un poste, dans la zone de la personne (members.read) et celle de l'organe.
  */
 export const GET: RequestHandler = async ({ url, cookies, locals, getClientAddress }) => {
   const s = await currentSession(cookies, locals.partySlug!);
@@ -14,6 +14,8 @@ export const GET: RequestHandler = async ({ url, cookies, locals, getClientAddre
   const q = (url.searchParams.get("q") ?? "").trim().slice(0, 60);
   if (q.length < 2) return json({ results: [] });
   const ip = getClientAddress();
+  // Zone de l'organe : seuls ses membres peuvent y occuper un poste (l'API le vérifie aussi).
+  const within = /^[A-Z0-9-]{2,20}$/.test(url.searchParams.get("within") ?? "") ? url.searchParams.get("within") : null;
 
   if (url.searchParams.get("type") === "zones") {
     const res = await api<{ zones: Array<{ code: string; level: string; name: string }> }>(
@@ -36,7 +38,10 @@ export const GET: RequestHandler = async ({ url, cookies, locals, getClientAddre
 
   const res = await api<{
     items: Array<{ id: string; firstName: string; lastName: string; number: string; zoneName: string }>;
-  }>(`/members?state=approved&limit=8&q=${encodeURIComponent(q)}`, { token: s.token, ip }).catch(() => ({
+  }>(`/members?state=approved&limit=8&q=${encodeURIComponent(q)}${within ? `&zoneCode=${within}` : ""}`, {
+    token: s.token,
+    ip,
+  }).catch(() => ({
     items: [],
   }));
   return json({

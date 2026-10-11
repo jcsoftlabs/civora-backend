@@ -19,13 +19,13 @@ async function zoneId(code: string) {
   return (await owner`select id from zones where code = ${code}`)[0]!.id as string;
 }
 
-/** Membre approuvé, localisé à Pétion-Ville, avec une session active (2FA validée). */
-async function member(label: string, state = "approved") {
+/** Membre approuvé, localisé à Pétion-Ville par défaut, avec une session active (2FA validée). */
+async function member(label: string, state = "approved", zone = "HT0114") {
   const user = (await owner`insert into users (email) values (${`${label}-${tag}@example.test`}) returning id`)[0]!.id;
   created.users.push(user);
   const id = (
     await owner`insert into members (party_id, user_id, member_number, first_name, last_name, zone_id, application_state)
-    values (${A}, ${user}, ${label}, ${label}, 'Test', ${await zoneId("HT0114")}, ${state}) returning id`
+    values (${A}, ${user}, ${label}, ${label}, 'Test', ${await zoneId(zone)}, ${state}) returning id`
   )[0]!.id as string;
   const token = randomBytes(32).toString("base64url");
   await owner`insert into sessions (party_id, user_id, member_id, token_hash, expires_at)
@@ -245,6 +245,15 @@ describe("organes et territoire (ORG-01, ORG-03)", () => {
     it("refuse d'attribuer un poste à une adhésion non validée", async () => {
       const res = await call("POST", `/posts/${treasurerPost}/holders`, pvCoordinator.token, { memberId: pending.id });
       expect(res.json()).toMatchObject({ code: "member_not_eligible" });
+    });
+
+    it("un poste d'un organe local revient à un membre de sa zone", async () => {
+      const capHaitien = await member("cap", "approved", "HT0311-01");
+      const res = await call("POST", `/posts/${treasurerPost}/holders`, president.token, {
+        memberId: capHaitien.id,
+        replaceCurrent: false,
+      });
+      expect(res.json()).toMatchObject({ code: "member_outside_organ_zone" });
     });
 
     it("la fin de mandat retire les droits immédiatement", async () => {
