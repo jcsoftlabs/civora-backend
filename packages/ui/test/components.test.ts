@@ -55,3 +55,17 @@ describe("Skeleton", () => {
     expect(screen.getByRole("status").textContent).toContain("Chargement des membres");
   });
 });
+
+describe("Locked", () => {
+  it("montre l'option verrouillée, son palier et le lien de changement de formule", async () => {
+    const { Locked } = await import("../src/index.js");
+    render(Locked, {
+      title: "Classements et badges",
+      message: "Disponible avec la formule Mouvement",
+      actionLabel: "Voir les formules",
+      actionHref: "/admin/abonnement",
+    });
+    expect(screen.getByRole("region", { name: "Classements et badges" }).textContent).toContain("Mouvement");
+    expect(screen.getByRole("link", { name: "Voir les formules" }).getAttribute("href")).toBe("/admin/abonnement");
+  });
+});

@@ -3,7 +3,18 @@
   Contrôle visuel de la checklist ui-design : 4 couleurs de parti, squelettes, états, largeur téléphone.
 -->
 <script lang="ts">
-  import { Badge, Button, DataTable, Field, SidePanel, Skeleton, Switch, partyTheme, themeStyle } from "@civora/ui";
+  import {
+    Badge,
+    Button,
+    DataTable,
+    Field,
+    Locked,
+    SidePanel,
+    Skeleton,
+    Switch,
+    partyTheme,
+    themeStyle,
+  } from "@civora/ui";
 
   const PARTIES = [
     { name: "Pétrole", hex: "#0F6E66" },
@@ -117,6 +128,18 @@
     <Skeleton variant="avatar" label="Chargement" />
     <Skeleton lines={3} label="Chargement" />
     <Skeleton variant="card" label="Chargement" />
+  </div>
+
+  <h2>Option hors palier</h2>
+  <div class="stack">
+    <Locked
+      title="Classements et badges"
+      message="Disponible avec la formule Mouvement"
+      actionLabel="Voir les formules"
+      actionHref="/admin/abonnement"
+    >
+      <Badge tone="accent">1 240 points</Badge>
+    </Locked>
   </div>
 
   <h2>Panneau latéral</h2>

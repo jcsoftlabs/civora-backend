@@ -6,13 +6,18 @@ import rateLimit from "@fastify/rate-limit";
 import websocket from "@fastify/websocket";
 import type { VerifyClientCallbackAsync } from "ws";
 import type { Config } from "./config.js";
+import { EntitlementsCache, fetchEntitlements } from "./lib/entitlements.js";
 import { loggerOptions } from "./lib/logger.js";
 import { isAllowedOrigin } from "./lib/origins.js";
 import errors from "./plugins/errors.js";
 import tenant from "./plugins/tenant.js";
 
 /** Construit l'application sans l'écouter : utilisé par server.ts et par les tests (app.inject). */
-export async function buildApp(config: Config) {
+export interface AppDeps {
+  entitlements?: EntitlementsCache;
+}
+
+export async function buildApp(config: Config, deps: AppDeps = {}) {
   const app = Fastify({
     logger: loggerOptions(config.LOG_LEVEL),
     genReqId: () => randomUUID(),
@@ -53,7 +58,7 @@ export async function buildApp(config: Config) {
   });
 
   await app.register(errors);
-  await app.register(tenant);
+  await app.register(tenant, { entitlements: deps.entitlements ?? new EntitlementsCache(fetchEntitlements) });
 
   app.get("/health", async () => ({ ok: true }));
 

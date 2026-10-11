@@ -188,12 +188,84 @@ export const ADD_ONS = {
   platformCommissionOnDonations: 0, // jamais de commission
 } as const;
 
+export const TIERS: readonly Tier[] = ["essentiel", "mouvement", "national"];
+
+/**
+ * Droits effectifs d'un parti, lus en base à chaque requête (cache court côté API) :
+ * changer de palier ou activer une option prend effet sans redéploiement (SOC-07).
+ */
+export interface Entitlements {
+  tier: Tier;
+  /** Module Élections : option par cycle, actif jusqu'à cette date. */
+  electionsModuleUntil: Date | null;
+  biConnectorOption: boolean;
+  extraStoragePacks: number;
+  /** Abonnement suspendu après impayé (SOC-08) : lecture seule, aucune fonctionnalité payante. */
+  suspended: boolean;
+}
+
+/** Fonctionnalités hors paliers : options achetées séparément. */
+export type AddOnFeature = "elections";
+
 /** Le module Élections est une option : actif si la date de fin n'est pas dépassée. */
+export function hasElectionsModule(electionsModuleUntil: Date | null, now = new Date()): boolean {
+  return electionsModuleUntil !== null && electionsModuleUntil > now;
+}
+
 export function hasFeature(tier: Tier, feature: Feature, opts?: { biConnectorOption?: boolean }): boolean {
   if (feature === "bi.connector" && opts?.biConnectorOption) return true;
   return PLANS[tier].features.has(feature);
 }
 
-export function hasElectionsModule(electionsModuleUntil: Date | null, now = new Date()): boolean {
-  return electionsModuleUntil !== null && electionsModuleUntil > now;
+/** Point d'entrée commun à l'API (requireFeature), au web et au mobile (hasFeature sur les droits du parti). */
+export function can(e: Entitlements, feature: Feature | AddOnFeature, now = new Date()): boolean {
+  if (e.suspended) return false;
+  if (feature === "elections") return hasElectionsModule(e.electionsModuleUntil, now);
+  return hasFeature(e.tier, feature, { biConnectorOption: e.biConnectorOption });
+}
+
+/**
+ * Palier minimal qui inclut la fonctionnalité, pour afficher l'option verrouillée avec son palier
+ * plutôt que de la masquer (vente additionnelle). null : option hors palier (module Élections).
+ */
+export function requiredTier(feature: Feature | AddOnFeature): Tier | null {
+  if (feature === "elections") return null;
+  return TIERS.find((t) => PLANS[t].features.has(feature)) ?? null;
+}
+
+export type QuotaKey = keyof PlanDefinition["quotas"];
+
+/**
+ * Nature de chaque quota : « hard » bloque l'action ; « billed » l'autorise et facture le dépassement
+ * (tranches de 1 000 membres, packs de 50 Go : job billing.overage, SOC-08).
+ */
+export const QUOTA_KIND: Record<QuotaKey, "hard" | "billed"> = {
+  members: "billed",
+  storageGb: "billed",
+  admins: "hard",
+  customDuesPlans: "hard",
+  activeInternalElections: "hard",
+  siteLanguages: "hard",
+};
+
+/** Limite effective, packs de stockage compris. null : illimité. */
+export function quotaLimit(e: Entitlements, key: QuotaKey): number | null {
+  const base = PLANS[e.tier].quotas[key];
+  if (key === "storageGb" && base !== null) return base + e.extraStoragePacks * ADD_ONS.storagePack.gb;
+  return base;
+}
+
+export interface QuotaCheck {
+  allowed: boolean;
+  limit: number | null;
+  /** Unités au-delà de la limite après l'opération (facturées si le quota est « billed »). */
+  overage: number;
+}
+
+/** Contrôle avant d'ajouter `adding` unités à un usage `current`. */
+export function checkQuota(e: Entitlements, key: QuotaKey, current: number, adding = 1): QuotaCheck {
+  const limit = quotaLimit(e, key);
+  if (limit === null) return { allowed: true, limit, overage: 0 };
+  const overage = Math.max(0, current + adding - limit);
+  return { allowed: overage === 0 || QUOTA_KIND[key] === "billed", limit, overage };
 }

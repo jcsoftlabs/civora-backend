@@ -17,7 +17,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | SOC-04 | Domaine personnalisé pour le site public, certificat automatique | N | P4 | Neuf | à faire |
 | SOC-05 | Hiérarchie territoriale national, département, commune, section communale ; chaque responsable ne voit que sa zone | E M N (profondeur selon palier) | P2 | NOU | à faire |
 | SOC-06 | Rôles, organes et postes définis librement par le parti | E M N | P2 | Neuf | à faire |
-| SOC-07 | Activation des modules selon le palier, sans redéploiement | E M N | P2 | Neuf | à faire |
+| SOC-07 | Activation des modules selon le palier, sans redéploiement | E M N | P2 | Neuf | fait |
 | SOC-08 | Abonnement, factures, relances, suspension après impayé (données gardées 90 jours) ; mesure de la consommation et facturation des dépassements | E M N | P3 | Neuf | à faire |
 | SOC-09 | Assistant de démarrage et import du fichier existant | E M N | P3 | Neuf | à faire |
 | SOC-10 | Console de l'éditeur : partis clients, consommation, santé du service, sans accès au contenu | interne | P3 | Neuf | à faire |

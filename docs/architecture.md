@@ -13,6 +13,8 @@ Sites publics (SvelteKit)┘        │  └──> pg-boss (jobs)
 
 Une seule base de code et une seule API servent tous les partis. Le palier ne fait qu'activer des fonctionnalités (`plans.ts`).
 
+**Activation sans redéploiement (SOC-07).** Les droits d'un parti (`Entitlements` : palier de `parties.tier`, option Élections, options et suspension du dernier abonnement) sont lus en base par `fetchEntitlements` et gardés 30 secondes dans `EntitlementsCache` ; le code qui change un palier appelle `invalidate(partyId)` pour un effet immédiat. `requireFeature()` répond 402 avec `requiredTier`, que l'interface affiche sur l'option verrouillée (composant `Locked`). Quotas : `checkQuota()` bloque les quotas stricts (administrateurs, formules, scrutins actifs) et mesure le dépassement des quotas facturés (membres, stockage).
+
 ## 1. Isolation multi-partis
 
 **Rôles Postgres**

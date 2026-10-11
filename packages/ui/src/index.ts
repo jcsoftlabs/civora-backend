@@ -5,4 +5,5 @@ export { default as Switch } from "./components/Switch.svelte";
 export { default as Badge } from "./components/Badge.svelte";
 export { default as DataTable } from "./components/DataTable.svelte";
 export { default as SidePanel } from "./components/SidePanel.svelte";
+export { default as Locked } from "./components/Locked.svelte";
 export * from "./theme.js";

@@ -23,3 +23,8 @@ export function translator(locale: Locale) {
   const dict = dictionaries[locale];
   return (key: MessageKey): string => dict[key] ?? fr[key];
 }
+
+/** Remplace les repères {nom} d'un texte traduit. */
+export function format(text: string, values: Record<string, string>): string {
+  return text.replace(/\{(\w+)\}/g, (m, k: string) => values[k] ?? m);
+}
