@@ -27,7 +27,7 @@
   h1 {
     margin: 0;
     font-size: var(--fs-40);
-    font-weight: 800;
+    font-weight: 600;
   }
   p {
     margin: 0;

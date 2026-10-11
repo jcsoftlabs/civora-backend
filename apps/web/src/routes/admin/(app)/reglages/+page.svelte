@@ -301,7 +301,7 @@
   }
   .toc-title {
     margin: 0 0 var(--s-3);
-    font: 700 var(--fs-15) / 1.2 var(--font-display);
+    font: 600 var(--fs-15) / 1.2 var(--font-display);
   }
   .toc ul {
     margin: 0;
@@ -344,7 +344,7 @@
   }
   h1 {
     margin: 0;
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   section {
@@ -359,7 +359,7 @@
   }
   h2 {
     margin: 0;
-    font: 700 var(--fs-22) / 1.2 var(--font-display);
+    font: 600 var(--fs-22) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .lead,
@@ -529,7 +529,7 @@
     border-radius: var(--r-pill);
     background: var(--c-accent-tint);
     color: var(--c-on-accent);
-    font: 700 var(--fs-13) / 1 var(--font-display);
+    font: 600 var(--fs-13) / 1.12 var(--font-display);
     font-variant-numeric: tabular-nums;
   }
   .status-name {

@@ -8,7 +8,8 @@
     "build": "vite build",
     "test": "vitest run --passWithNoTests",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "screenshots": "tsx scripts/screenshots.ts"
   },
   "dependencies": {
     "@civora/shared": "workspace:*",

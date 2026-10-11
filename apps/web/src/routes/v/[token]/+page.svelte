@@ -57,7 +57,7 @@
   .party {
     margin: 0;
     font-size: var(--fs-22);
-    font-weight: 800;
+    font-weight: 600;
     color: var(--c-ink);
   }
   /* Tampon encreur : bord double, texture irrégulière, légère rotation, se pose une fois. */
@@ -72,7 +72,7 @@
     border-radius: var(--r-md);
     color: var(--ink);
     transform: rotate(-6deg);
-    font: 800 var(--fs-52) / 1 var(--font-display);
+    font: 600 var(--fs-52) / 1.12 var(--font-display);
     letter-spacing: 0.02em;
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -0.85 1.2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -0.85 1.2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -107,7 +107,7 @@
   .name {
     margin: 0;
     font-size: var(--fs-32);
-    font-weight: 800;
+    font-weight: 600;
   }
   .number {
     margin: 0;

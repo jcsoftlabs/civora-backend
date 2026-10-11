@@ -237,8 +237,8 @@
   .clock {
     margin: 0;
     text-align: center;
-    font: 700 var(--fs-40) / 1 var(--font-display);
-    letter-spacing: -0.02em;
+    font: 600 var(--fs-40) / 1.12 var(--font-display);
+    letter-spacing: var(--tracking-display);
   }
   .notif {
     display: flex;
@@ -258,7 +258,7 @@
     border-radius: 8px;
     background: var(--c-primary);
     color: var(--c-on-primary);
-    font: 800 var(--fs-13) / 1 var(--font-display);
+    font: 600 var(--fs-13) / 1.12 var(--font-display);
   }
   .app img {
     width: 100%;
@@ -286,7 +286,7 @@
     color: var(--c-ink);
   }
   .ntitle {
-    font-weight: 700;
+    font-weight: 600;
     overflow-wrap: anywhere;
   }
   .nbody {

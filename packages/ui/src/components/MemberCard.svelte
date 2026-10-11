@@ -276,7 +276,7 @@
     border: 1.5px solid currentColor;
     outline: 0.5px solid currentColor;
     outline-offset: 2px;
-    font: 800 var(--fs-13) / 1 var(--font-display);
+    font: 600 var(--fs-13) / 1.12 var(--font-display);
     letter-spacing: 0.02em;
   }
   .logo {
@@ -289,7 +289,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font: 700 var(--fs-16) / 1.15 var(--font-display);
+    font: 600 var(--fs-16) / 1.15 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .vertical .party {
@@ -327,7 +327,7 @@
   }
   /* Numéro frappé : ombre sombre dessous, lumière dessus. */
   .value {
-    font: 800 var(--fs-40) / 1 var(--font-display);
+    font: 600 var(--fs-40) / 1.12 var(--font-display);
     letter-spacing: 0.04em;
     font-variant-numeric: tabular-nums;
     text-shadow:
@@ -363,7 +363,7 @@
     min-width: 0;
   }
   .name {
-    font: 700 var(--fs-16) / 1.2 var(--font-display);
+    font: 600 var(--fs-16) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .place {

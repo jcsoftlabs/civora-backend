@@ -25,7 +25,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["**/scripts/**", "**/src/migrate.ts", "**/src/seed.ts"],
+    files: ["**/scripts/**", "**/src/migrate.ts", "**/src/seed.ts", "**/src/demo.ts"],
     rules: { "no-console": "off" },
   },
 );

@@ -430,12 +430,12 @@
   }
   h1 {
     margin: var(--s-2) 0;
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   h2 {
     margin: 0;
-    font: 700 var(--fs-19) / 1.2 var(--font-display);
+    font: 600 var(--fs-19) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .state {
@@ -463,7 +463,7 @@
     border-bottom: 3px solid transparent;
     color: var(--c-ink-2);
     text-decoration: none;
-    font: 700 var(--fs-22) / 1.1 var(--font-display);
+    font: 600 var(--fs-22) / 1.1 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .tabs a[aria-current="page"] {
@@ -522,7 +522,7 @@
     border-radius: var(--r-pill);
     background: var(--c-primary);
     color: var(--c-on-primary);
-    font: 700 var(--fs-13) / 1.2 var(--font-display);
+    font: 600 var(--fs-13) / 1.2 var(--font-display);
   }
   .m-title {
     flex: 1;
@@ -559,7 +559,7 @@
     border-radius: var(--r-sm);
     background: var(--c-surface);
     border: 1px solid var(--c-line);
-    font: 700 var(--fs-13) / 1 var(--font-display);
+    font: 600 var(--fs-13) / 1.12 var(--font-display);
   }
   .glyph.youtube,
   .glyph.vimeo,
@@ -600,7 +600,7 @@
     border-radius: 50%;
     background: var(--c-accent-bright);
     color: var(--c-on-accent);
-    font: 800 var(--fs-13) / 1 var(--font-display);
+    font: 600 var(--fs-13) / 1.12 var(--font-display);
   }
   /* Entre deux modules : un filet pointillé et un cadenas qui dit ce qui ouvre la suite. */
   .lock {
@@ -746,7 +746,7 @@
   .cert-title {
     margin-top: var(--s-2) !important;
     color: var(--cert-accent);
-    font: 800 var(--fs-19) / 1.1 var(--font-display);
+    font: 600 var(--fs-19) / 1.1 var(--font-display);
   }
   .cert-small {
     margin-top: var(--s-3) !important;
@@ -754,7 +754,7 @@
     color: var(--c-ink-2);
   }
   .cert-name {
-    font: 700 var(--fs-16) / 1.3 var(--font-display);
+    font: 600 var(--fs-16) / 1.3 var(--font-display);
     border-bottom: 1px dashed var(--c-ink-3);
     padding-bottom: 2px;
   }
@@ -792,7 +792,7 @@
     border-radius: 50%;
     background: var(--c-accent-bright);
     color: var(--c-on-accent);
-    font: 800 var(--fs-12) / 1 var(--font-display);
+    font: 600 var(--fs-12) / 1.12 var(--font-display);
     box-shadow:
       0 0 0 3px var(--c-surface),
       0 0 0 4px var(--c-accent);
@@ -820,7 +820,7 @@
   }
   dd {
     margin: 0;
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     font-variant-numeric: tabular-nums;
   }
   dd.sub {

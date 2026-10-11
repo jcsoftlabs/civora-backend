@@ -20,3 +20,6 @@ civora en info.txt
 
 # Fichiers du stockage local (développement)
 .storage/
+
+# Session du jeu de démonstration local (pnpm db:demo)
+.demo-session.json

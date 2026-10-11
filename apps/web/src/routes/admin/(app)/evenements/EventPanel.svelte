@@ -282,7 +282,7 @@
     display: flex;
     align-items: baseline;
     gap: var(--s-2);
-    font: 700 var(--fs-19) / 1.2 var(--font-display);
+    font: 600 var(--fs-19) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .n {
@@ -311,7 +311,7 @@
     border-radius: var(--r-pill);
     background: var(--c-primary-tint);
     color: var(--c-primary-deep);
-    font: 700 var(--fs-12) / 1 var(--font-display);
+    font: 600 var(--fs-12) / 1.12 var(--font-display);
   }
   .who {
     display: flex;

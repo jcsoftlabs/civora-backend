@@ -269,7 +269,7 @@
     border-radius: var(--r-sm);
     background: var(--c-ink);
     color: var(--c-surface);
-    font: 800 var(--fs-12) / 1 var(--font-display);
+    font: 600 var(--fs-12) / 1.12 var(--font-display);
     letter-spacing: 0.06em;
     cursor: pointer;
   }
@@ -300,7 +300,7 @@
   }
   .link.strong {
     color: var(--c-ink);
-    font-weight: 700;
+    font-weight: 600;
   }
   .chip button:focus-visible,
   .join:focus-visible,

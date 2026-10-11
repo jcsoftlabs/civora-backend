@@ -142,7 +142,7 @@
   }
   h1 {
     margin: 0;
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .tabs {
@@ -156,7 +156,7 @@
     border-bottom: 3px solid transparent;
     color: var(--c-ink-2);
     text-decoration: none;
-    font: 700 var(--fs-22) / 1.1 var(--font-display);
+    font: 600 var(--fs-22) / 1.1 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .tabs a[aria-current="page"] {
@@ -222,12 +222,12 @@
     transition: background-color var(--dur-base);
   }
   .d {
-    font: 800 var(--fs-40) / 1 var(--font-display);
-    letter-spacing: -0.04em;
+    font: 600 var(--fs-40) / 1.12 var(--font-display);
+    letter-spacing: var(--tracking-display);
     font-variant-numeric: tabular-nums;
   }
   .m {
-    font: 700 var(--fs-15) / 1 var(--font-display);
+    font: 600 var(--fs-15) / 1.12 var(--font-display);
     text-transform: uppercase;
   }
   .w {
@@ -259,7 +259,7 @@
     color: var(--c-surface);
   }
   .title {
-    font: 700 var(--fs-19) / 1.2 var(--font-display);
+    font: 600 var(--fs-19) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .where,

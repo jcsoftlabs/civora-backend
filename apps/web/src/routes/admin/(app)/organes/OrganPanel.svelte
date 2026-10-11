@@ -277,7 +277,7 @@
   }
   h3 {
     margin: 0;
-    font: 700 var(--fs-19) / 1.2 var(--font-display);
+    font: 600 var(--fs-19) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .select {
@@ -359,7 +359,7 @@
     border-radius: var(--r-pill);
     background: var(--c-primary-tint);
     color: var(--c-primary-deep);
-    font: 700 var(--fs-13) / 1 var(--font-display);
+    font: 600 var(--fs-13) / 1.12 var(--font-display);
     box-shadow:
       0 0 0 2px var(--c-surface),
       0 0 0 4px var(--c-accent);

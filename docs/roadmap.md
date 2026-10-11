@@ -11,7 +11,7 @@ Jalon : audit de sécurité validé (aucun secret détecté, chaque brique recon
 - [x] CI GitHub Actions : lint, typecheck, migrations, tests, gitleaks, `check:requirements`
 - [x] Postgres local (docker compose, ou `scripts/db-local.sh` sans Docker) avec les rôles `civora_owner`, `civora_app`, `civora_bi`
 - [x] Fastify : serveur, configuration, CORS en liste blanche, en-têtes de sécurité, journalisation sans données personnelles (SEC-08)
-- [x] SvelteKit : application vide branchée sur `docs/design/tokens.css`, polices Bricolage Grotesque et Geist
+- [x] SvelteKit : application vide branchée sur `docs/design/tokens.css`, police Figtree (remplace Bricolage Grotesque et Geist le 2026-10-11)
 - [x] Squelette de chargement et composants de base dans packages/ui (bouton, champ, interrupteur, pastille, tableau, panneau latéral)
 
 ## P2 : Socle SaaS (mois 2 à 4)

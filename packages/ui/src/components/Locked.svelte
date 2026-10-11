@@ -49,7 +49,7 @@
   }
   h3 {
     margin: 0;
-    font: 700 var(--fs-16) / 1.2 var(--font-display);
+    font: 600 var(--fs-16) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
     color: var(--c-ink);
   }

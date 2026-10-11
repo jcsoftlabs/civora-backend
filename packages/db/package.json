@@ -8,6 +8,7 @@
     "generate": "node --env-file-if-exists=../../.env ./node_modules/drizzle-kit/bin.cjs generate",
     "migrate": "tsx --env-file-if-exists=../../.env src/migrate.ts",
     "seed": "tsx --env-file-if-exists=../../.env src/seed.ts",
+    "demo": "tsx --env-file-if-exists=../../.env src/demo.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src"

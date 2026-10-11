@@ -119,7 +119,7 @@
   }
   .name {
     margin: 0;
-    font: 800 var(--fs-52) / 0.98 var(--font-display);
+    font: 600 var(--fs-52) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
     max-width: 12ch;
   }
@@ -140,7 +140,7 @@
   }
   h1 {
     margin: 0;
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .lead {
@@ -155,7 +155,7 @@
     gap: var(--s-4);
   }
   .form :global(input.code) {
-    font: 700 var(--fs-26) / 1 var(--font-display);
+    font: 600 var(--fs-26) / 1.12 var(--font-display);
     letter-spacing: 0.3em;
     font-variant-numeric: tabular-nums;
   }

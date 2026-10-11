@@ -156,7 +156,7 @@
   }
   legend {
     padding: 0 var(--s-2);
-    font: 700 var(--fs-15) / 1.2 var(--font-display);
+    font: 600 var(--fs-15) / 1.2 var(--font-display);
   }
   .muted {
     margin: 0;

@@ -127,7 +127,7 @@
   }
   h1 {
     margin: 0;
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .create {
@@ -158,7 +158,7 @@
   }
   .empty h2 {
     margin: 0 0 var(--s-2);
-    font: 700 var(--fs-22) / 1.2 var(--font-display);
+    font: 600 var(--fs-22) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .empty p {
@@ -197,7 +197,7 @@
     border-style: dashed;
   }
   .name {
-    font: 700 var(--fs-19) / 1.25 var(--font-display);
+    font: 600 var(--fs-19) / 1.25 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .mandatory {
@@ -222,7 +222,7 @@
     border-radius: var(--r-pill);
     color: var(--c-on-accent);
     background: var(--c-accent-tint);
-    font-weight: 700;
+    font-weight: 600;
   }
   .seal.none {
     border-color: var(--c-line);

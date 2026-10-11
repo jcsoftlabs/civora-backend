@@ -468,7 +468,7 @@
   }
   .views-title {
     margin: 0 var(--s-3) var(--s-3);
-    font: 700 var(--fs-19) / 1.1 var(--font-display);
+    font: 600 var(--fs-19) / 1.1 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .views ul {
@@ -572,7 +572,7 @@
     border-bottom: 3px solid transparent;
     color: var(--c-ink-2);
     text-decoration: none;
-    font: 700 var(--fs-26) / 1.1 var(--font-display);
+    font: 600 var(--fs-26) / 1.1 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .tabs a[aria-current="page"] {
@@ -721,7 +721,7 @@
     border-radius: var(--r-pill);
     background: var(--c-primary-tint);
     color: var(--c-primary-deep);
-    font: 700 var(--fs-13) / 1 var(--font-display);
+    font: 600 var(--fs-13) / 1.12 var(--font-display);
   }
   .names,
   .place {
@@ -807,7 +807,7 @@
   }
   .empty h2 {
     margin: 0;
-    font: 700 var(--fs-22) / 1.2 var(--font-display);
+    font: 600 var(--fs-22) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .empty p {
@@ -928,7 +928,7 @@
   }
   .count-sel {
     margin: 0;
-    font: 700 var(--fs-15) / 1 var(--font-display);
+    font: 600 var(--fs-15) / 1.12 var(--font-display);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }

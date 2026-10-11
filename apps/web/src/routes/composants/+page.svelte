@@ -197,12 +197,12 @@
   }
   h1 {
     font-size: var(--fs-52);
-    font-weight: 800;
+    font-weight: 600;
     margin: 0 0 var(--s-6);
   }
   h2 {
     font-size: var(--fs-22);
-    font-weight: 700;
+    font-weight: 600;
     margin: var(--s-10) 0 var(--s-4);
   }
   .grid {
@@ -236,7 +236,7 @@
     margin-bottom: var(--s-3);
   }
   .points {
-    font-weight: 700;
+    font-weight: 600;
     font-size: var(--fs-16);
   }
 </style>

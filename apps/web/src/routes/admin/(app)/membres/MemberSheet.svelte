@@ -361,7 +361,7 @@
   }
   h3 {
     margin: 0;
-    font: 700 var(--fs-19) / 1.2 var(--font-display);
+    font: 600 var(--fs-19) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .application p {
@@ -517,7 +517,7 @@
     gap: 2px;
   }
   .amount {
-    font: 800 var(--fs-22) / 1.1 var(--font-display);
+    font: 600 var(--fs-22) / 1.1 var(--font-display);
     font-variant-numeric: tabular-nums;
   }
   .list-title {

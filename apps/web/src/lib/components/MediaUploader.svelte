@@ -441,7 +441,7 @@
     border-radius: 4px 14px 4px 4px;
     background: var(--c-surface);
     color: var(--c-danger-text);
-    font: 800 var(--fs-13) / 1 var(--font-display);
+    font: 600 var(--fs-13) / 1.12 var(--font-display);
     box-shadow: var(--shadow-object);
   }
   .veil {

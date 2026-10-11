@@ -222,7 +222,7 @@
     background: var(--c-paper);
   }
   .total strong {
-    font: 800 var(--fs-26) / 1 var(--font-display);
+    font: 600 var(--fs-26) / 1.12 var(--font-display);
     font-variant-numeric: tabular-nums;
   }
   /* Ticket de caisse : bord perforé en bas, ligne pointillée avant le montant. */
@@ -255,7 +255,7 @@
   }
   .ticket-title {
     margin: 0;
-    font: 700 var(--fs-19) / 1.25 var(--font-display);
+    font: 600 var(--fs-19) / 1.25 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .ticket-who {
@@ -266,7 +266,7 @@
     margin: var(--s-3) 0;
     padding-top: var(--s-3);
     border-top: 1px dashed var(--c-ink-3);
-    font: 800 var(--fs-40) / 1 var(--font-display);
+    font: 600 var(--fs-40) / 1.12 var(--font-display);
     font-variant-numeric: tabular-nums;
   }
   .ticket-actions {

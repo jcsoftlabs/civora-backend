@@ -189,7 +189,7 @@
     border-radius: var(--r-md);
     background: var(--c-primary);
     color: var(--c-on-primary);
-    font: 800 var(--fs-19) / 1 var(--font-display);
+    font: 600 var(--fs-19) / 1.12 var(--font-display);
   }
   ul {
     flex: 1;
@@ -285,7 +285,7 @@
     cursor: pointer;
     background: color-mix(in srgb, var(--c-primary) 35%, var(--c-rail));
     color: var(--c-surface);
-    font: 700 var(--fs-14) / 1 var(--font-display);
+    font: 600 var(--fs-14) / 1.12 var(--font-display);
     box-shadow:
       0 0 0 2px var(--c-rail),
       0 0 0 4px var(--c-accent-bright);
@@ -313,7 +313,7 @@
     margin: 0;
   }
   .who {
-    font: 700 var(--fs-15) / 1.3 var(--font-display);
+    font: 600 var(--fs-15) / 1.3 var(--font-display);
   }
   .party {
     font-size: var(--fs-13);
@@ -342,7 +342,7 @@
   }
   .no-access h1 {
     margin: 0 0 var(--s-3);
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .no-access p {

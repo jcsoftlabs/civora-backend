@@ -116,7 +116,7 @@
   }
   h2 {
     margin: 0;
-    font: 700 var(--fs-22) / 1.1 var(--font-display);
+    font: 600 var(--fs-22) / 1.1 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .tools {

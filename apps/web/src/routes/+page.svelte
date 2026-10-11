@@ -44,7 +44,7 @@
   }
   .brand {
     font-size: var(--fs-26);
-    font-weight: 800;
+    font-weight: 600;
     color: var(--c-primary-deep);
   }
   .lang {
@@ -67,9 +67,9 @@
   h1 {
     margin: 0;
     font-size: clamp(var(--fs-40), 8vw, var(--fs-82));
-    font-weight: 800;
-    letter-spacing: -0.045em;
-    line-height: 0.95;
+    font-weight: 600;
+    letter-spacing: var(--tracking-display);
+    line-height: 1.1;
   }
   p {
     margin: 0;
@@ -88,7 +88,7 @@
     transform: rotate(-1.5deg);
     box-shadow: var(--shadow-object);
     font-size: var(--fs-22);
-    font-weight: 700;
+    font-weight: 600;
     -webkit-mask:
       radial-gradient(circle 12px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
       radial-gradient(circle 12px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;

@@ -18,6 +18,7 @@
     "db:generate": "pnpm --filter @civora/db generate",
     "db:migrate": "pnpm --filter @civora/db migrate",
     "db:seed": "pnpm --filter @civora/db seed",
+    "db:demo": "pnpm --filter @civora/db demo",
     "check:requirements": "node scripts/check-requirements.mjs"
   },
   "devDependencies": {

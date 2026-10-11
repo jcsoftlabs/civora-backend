@@ -166,7 +166,7 @@
   }
   h1 {
     margin: 0;
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .lead,
@@ -196,7 +196,7 @@
   }
   .check h2 {
     margin: 0 0 var(--s-1);
-    font: 700 var(--fs-19) / 1.2 var(--font-display);
+    font: 600 var(--fs-19) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .check p {
@@ -220,7 +220,7 @@
     outline-offset: 3px;
     border-radius: var(--r-sm);
     color: var(--c-success);
-    font: 800 var(--fs-22) / 1 var(--font-display);
+    font: 600 var(--fs-22) / 1.12 var(--font-display);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     transform: rotate(-6deg);

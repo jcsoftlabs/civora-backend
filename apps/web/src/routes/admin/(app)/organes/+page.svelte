@@ -176,7 +176,7 @@
   }
   h1 {
     margin: 0;
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .n {
@@ -306,7 +306,7 @@
     text-align: right;
   }
   .name {
-    font: 700 var(--fs-19) / 1.2 var(--font-display);
+    font: 600 var(--fs-19) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .parent {
@@ -334,7 +334,7 @@
     border-radius: var(--r-pill);
     background: var(--c-primary-tint);
     color: var(--c-primary-deep);
-    font: 700 var(--fs-12) / 1 var(--font-display);
+    font: 600 var(--fs-12) / 1.12 var(--font-display);
     box-shadow:
       0 0 0 2px var(--c-surface),
       0 0 0 3.5px var(--c-accent);
@@ -411,7 +411,7 @@
   }
   .empty h2 {
     margin: 0;
-    font: 700 var(--fs-22) / 1.2 var(--font-display);
+    font: 600 var(--fs-22) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .empty p,

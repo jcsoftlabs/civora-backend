@@ -102,7 +102,7 @@
     padding: 0 var(--s-2);
   }
   .colon {
-    font-weight: 700;
+    font-weight: 600;
   }
   .ampm {
     display: inline-flex;

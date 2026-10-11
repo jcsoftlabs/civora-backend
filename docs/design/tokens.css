@@ -1,5 +1,5 @@
 /* civora, tokens de design. Source unique : ne jamais coder une couleur en dur dans un composant. */
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Geist:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap");
 
 :root {
   /* Marque (remplacée par la couleur du parti dans son espace) */
@@ -42,8 +42,8 @@
   --c-card-cream: #f6e7c8; /* numéro sur la carte de membre */
 
   /* Typographie */
-  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
-  --font-ui: "Geist", system-ui, sans-serif;
+  --font-display: "Figtree", system-ui, sans-serif;
+  --font-ui: "Figtree", system-ui, sans-serif;
   --fs-12: 12px;
   --fs-13: 13px;
   --fs-14: 14px;
@@ -57,7 +57,7 @@
   --fs-52: 52px;
   --fs-64: 64px;
   --fs-82: 82px;
-  --tracking-display: -0.03em;
+  --tracking-display: -0.015em;
 
   /* Rayons */
   --r-sm: 8px; /* étiquettes */

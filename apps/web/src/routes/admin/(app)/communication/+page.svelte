@@ -248,7 +248,7 @@
   }
   .views-title {
     margin: 0 var(--s-3) var(--s-3);
-    font: 700 var(--fs-19) / 1.1 var(--font-display);
+    font: 600 var(--fs-19) / 1.1 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .views ul {
@@ -297,7 +297,7 @@
   }
   h1 {
     margin: 0;
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .msg {
@@ -325,7 +325,7 @@
     color: var(--c-ink-2);
     text-decoration: none;
     white-space: nowrap;
-    font: 700 var(--fs-22) / 1.1 var(--font-display);
+    font: 600 var(--fs-22) / 1.1 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .tabs a[aria-current="page"] {
@@ -386,7 +386,7 @@
     gap: 4px;
   }
   .title {
-    font: 700 var(--fs-16) / 1.3 var(--font-display);
+    font: 600 var(--fs-16) / 1.3 var(--font-display);
     letter-spacing: var(--tracking-display);
     color: var(--c-ink);
     text-decoration: none;

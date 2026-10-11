@@ -46,19 +46,19 @@ Interdits : bleu marine, dégradés décoratifs, ombres grises génériques part
 
 ## 3. Typographie
 
-- **Titres et chiffres** : Bricolage Grotesque (Google Fonts), 700 à 800, interlettrage négatif (-0.02 à -0.045 em), interligne serré (0.95 à 1.1).
-- **Texte et interface** : Geist (Google Fonts), 400 à 600.
+- **Une seule police : Figtree** (Google Fonts), choisie le 2026-10-11 pour une voix proche de Qomon (Centra No 2). Bricolage Grotesque, jugée trop « bricolée », n'est plus utilisée.
+- **Titres et chiffres** : Figtree 500 à 600, interlettrage léger (-0.015 em, `--tracking-display`), interligne 1.1 à 1.2. Jamais de 800.
+- **Texte et interface** : Figtree 400 à 600.
 - Chiffres : `font-variant-numeric: tabular-nums` dans les tableaux, montants, compteurs.
 - Échelle : 12, 13, 14, 15, 16, 19, 22, 26, 32, 40, 52, 64, 82 px.
 - Pas de libellés en majuscules espacées au-dessus des titres. Pas de police monospace pour les petites données.
-- Alternative si l'on veut une voix plus proche de Qomon (qui utilise Centra No 2, police payante) : Figtree ou Outfit en remplacement de Geist, à valider sur maquette.
 
 ## 4. Structure du back-office
 
 Référence : les écrans Membres, Organes et Liste des membres de la toile de maquettes.
 
 - **Double navigation** : rail d'icônes sombre (modules) à gauche, puis sous-menu de section (vues, segments enregistrés, import). Le rail porte l'avatar de l'administrateur avec un anneau de présence.
-- **En-tête de page** : fil d'Ariane discret, onglets en grand (Bricolage 26 px) avec compteurs, état de synchronisation.
+- **En-tête de page** : fil d'Ariane discret, onglets en grand (26 px) avec compteurs, état de synchronisation.
 - **Barre d'actions** : recherche en pilule à gauche ; à droite une action secondaire en contour et une action principale pleine. Une seule action principale par vue.
 - **Bascule de vue** : Liste, Carte, Calendrier, Tableur, en contrôle segmenté.
 - **Constructeur de filtres** : pastilles « champ, opérateur, valeur » reliées par ET / OU, retrait individuel, « Ajouter un filtre », « Enregistrer ce segment ».
@@ -66,7 +66,7 @@ Référence : les écrans Membres, Organes et Liste des membres de la toile de m
 - **Grilles d'entités** (organes, équipes, campagnes) : nom, type et zone, canaux (WhatsApp, Telegram, lien), responsables cerclés d'ambre, pile d'avatars avec « +N », effectif, statut (Très active, À relancer, Secrète) et prochaine échéance. Chaque carte doit dire quelque chose d'utile, jamais des cartes identiques.
 - **Sélection** : la carte sélectionnée s'inverse (fond encre, texte blanc, anneau pétrole).
 - **Panneau d'édition latéral** : on modifie sans quitter la liste. Champs avec libellé au-dessus et compteur de caractères ; réglages en interrupteurs avec état écrit (Oui, Non) et une phrase d'explication ; champs conditionnels qui apparaissent quand on active l'option ; bouton « Mode simple » qui masque les réglages avancés ; Annuler et Enregistrer en bas.
-- **Tableaux** : avatars en duotone, étiquettes colorées (2 visibles puis « +N »), cotisations de l'année en 12 petits carrés, points en Bricolage, menu « … » par ligne, pagination.
+- **Tableaux** : avatars en duotone, étiquettes colorées (2 visibles puis « +N »), cotisations de l'année en 12 petits carrés, points en grand, menu « … » par ligne, pagination.
 - **Chiffres clés** : bande unique découpée par des filets verticaux, chiffre + mini-courbe + variation. Pas de 4 cartes identiques.
 - Écrans à prévoir sur ce modèle : fiche membre complète (onglets, organisations liées, fil de messages et d'appels), assistant de campagne SMS / WhatsApp en étapes avec aperçu téléphone, carte des membres, matrice de rôles et permissions, relevé des cotisations et dons avec courbe de solde, file d'approbations.
 

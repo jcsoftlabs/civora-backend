@@ -395,12 +395,12 @@
   }
   h1 {
     margin: var(--s-2) 0;
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   h2 {
     margin: 0;
-    font: 700 var(--fs-19) / 1.2 var(--font-display);
+    font: 600 var(--fs-19) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .muted {
@@ -503,7 +503,7 @@
     border-radius: 50%;
     background: var(--c-ink);
     color: var(--c-surface);
-    font: 700 var(--fs-13) / 1 var(--font-display);
+    font: 600 var(--fs-13) / 1.12 var(--font-display);
   }
   .icon {
     width: 36px;

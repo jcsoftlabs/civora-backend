@@ -105,7 +105,7 @@ scripts/          outils de contrôle (check-requirements)
 - Jamais de spinner : squelettes animés.
 - Jamais de tiret cadratin, dans l'interface comme dans la documentation.
 - Jamais de bleu marine. Pas de dégradés décoratifs, pas d'emoji.
-- Identité : vert pétrole, ambre, encre, papier ; Bricolage Grotesque et Geist ; objets du militantisme (carte de membre, billet, tampon, bulletin).
+- Identité : vert pétrole, ambre, encre, papier ; police Figtree (titres en 500 à 600, texte en 400) ; objets du militantisme (carte de membre, billet, tampon, bulletin).
 
 ## Qualité
 - TypeScript strict, ESLint, Prettier. CI bloquante : lint, typecheck, migrations, tests, gitleaks, contrôle des exigences.

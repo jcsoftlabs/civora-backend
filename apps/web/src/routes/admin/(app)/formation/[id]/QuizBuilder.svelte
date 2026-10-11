@@ -149,7 +149,7 @@
     border-radius: var(--r-pill);
     background: var(--c-ink);
     color: var(--c-surface);
-    font: 700 var(--fs-13) / 1 var(--font-display);
+    font: 600 var(--fs-13) / 1.12 var(--font-display);
   }
   .q-fields {
     flex: 1;

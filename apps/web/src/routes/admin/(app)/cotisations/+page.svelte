@@ -381,7 +381,7 @@
   }
   .views-title {
     margin: 0 var(--s-3) var(--s-3);
-    font: 700 var(--fs-19) / 1.1 var(--font-display);
+    font: 600 var(--fs-19) / 1.1 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .views ul {
@@ -430,7 +430,7 @@
   }
   h1 {
     margin: 0;
-    font: 800 var(--fs-32) / 1.05 var(--font-display);
+    font: 600 var(--fs-32) / 1.12 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .kpis {
@@ -458,7 +458,7 @@
     margin: 0;
   }
   .big {
-    font: 800 var(--fs-26) / 1.1 var(--font-display);
+    font: 600 var(--fs-26) / 1.1 var(--font-display);
     letter-spacing: var(--tracking-display);
     font-variant-numeric: tabular-nums;
   }
@@ -542,7 +542,7 @@
     white-space: nowrap;
   }
   .amount {
-    font: 700 var(--fs-15) / 1 var(--font-display);
+    font: 600 var(--fs-15) / 1.12 var(--font-display);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
@@ -571,7 +571,7 @@
   .empty h2,
   .add-account h2 {
     margin: 0;
-    font: 700 var(--fs-22) / 1.2 var(--font-display);
+    font: 600 var(--fs-22) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .empty p,
@@ -620,7 +620,7 @@
     border-top: 1px solid var(--c-line-soft);
   }
   .plan-name {
-    font: 700 var(--fs-19) / 1.2 var(--font-display);
+    font: 600 var(--fs-19) / 1.2 var(--font-display);
     letter-spacing: var(--tracking-display);
   }
   .tags {
@@ -634,7 +634,7 @@
     gap: var(--s-2);
   }
   .plan-amount strong {
-    font: 800 var(--fs-26) / 1 var(--font-display);
+    font: 600 var(--fs-26) / 1.12 var(--font-display);
     font-variant-numeric: tabular-nums;
   }
   .plan-amount span {

@@ -366,7 +366,7 @@
   }
   .brand {
     font-size: var(--fs-22);
-    font-weight: 800;
+    font-weight: 600;
     color: var(--c-ink);
     text-decoration: none;
   }
@@ -434,8 +434,8 @@
   h1 {
     margin: 0;
     font-size: clamp(var(--fs-32), 5vw, var(--fs-52));
-    font-weight: 800;
-    letter-spacing: -0.035em;
+    font-weight: 600;
+    letter-spacing: var(--tracking-display);
   }
   .lead {
     margin: var(--s-3) 0 0;
@@ -550,13 +550,13 @@
   }
   .tier-name {
     font-size: var(--fs-19);
-    font-weight: 700;
+    font-weight: 600;
   }
   .price {
     font-size: var(--fs-13);
   }
   .price .num {
-    font: 800 var(--fs-22) / 1 var(--font-display);
+    font: 600 var(--fs-22) / 1.12 var(--font-display);
   }
   .tier-desc {
     font-size: var(--fs-12);
