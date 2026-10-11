@@ -1,0 +1,19 @@
+node_modules/
+dist/
+build/
+.svelte-kit/
+.vercel/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+apps/mobile/build/
+apps/mobile/.dart_tool/
+
+# Notes locales contenant des secrets : jamais versionnées (SEC-07)
+civora en info.txt
+*cred*.txt
+# Base Postgres locale
+.pgdata/

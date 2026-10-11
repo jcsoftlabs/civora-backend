@@ -1,0 +1,115 @@
+/* civora, tokens de design. Source unique : ne jamais coder une couleur en dur dans un composant. */
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Geist:wght@400;500;600&display=swap");
+
+:root {
+  /* Marque (remplacée par la couleur du parti dans son espace) */
+  --c-primary: #0f6e66;
+  --c-primary-hover: #0a4f49;
+  --c-primary-deep: #0b3b37;
+  --c-primary-tint: #e4efec;
+  --c-on-primary: #ffffff;
+  --c-rail: #12211f;
+
+  /* Accent (gamification, mises en avant) */
+  --c-accent: #e0a33b;
+  --c-accent-bright: #f2b84b;
+  --c-accent-tint: #fbf0da;
+  --c-on-accent: #2b1c03;
+
+  /* Encre et papier */
+  --c-ink: #1c1b19;
+  --c-ink-2: #6b6862;
+  --c-ink-3: #8e8a82;
+  --c-paper: #f3f0ea;
+  --c-surface: #ffffff;
+  --c-line: #e4dfd6;
+  --c-line-soft: #f1ede6;
+
+  /* Statuts */
+  --c-success: #2e8b57;
+  --c-success-tint: #e3f1e8;
+  --c-success-text: #1f6340;
+  --c-warning: #c98a12;
+  --c-warning-tint: #faebd3;
+  --c-warning-text: #6b4508;
+  --c-danger: #c2412d;
+  --c-danger-tint: #f8e3df;
+  --c-danger-text: #8e2c1e;
+
+  /* Objets */
+  --c-ink-blue: #1e3fa8; /* encre du bulletin */
+  --c-stamp: #c2412d; /* tampon PRÉSENT / VOTÉ */
+  --c-card-cream: #f6e7c8; /* numéro sur la carte de membre */
+
+  /* Typographie */
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-ui: "Geist", system-ui, sans-serif;
+  --fs-12: 12px;
+  --fs-13: 13px;
+  --fs-14: 14px;
+  --fs-15: 15px;
+  --fs-16: 16px;
+  --fs-19: 19px;
+  --fs-22: 22px;
+  --fs-26: 26px;
+  --fs-32: 32px;
+  --fs-40: 40px;
+  --fs-52: 52px;
+  --fs-64: 64px;
+  --fs-82: 82px;
+  --tracking-display: -0.03em;
+
+  /* Rayons */
+  --r-sm: 8px; /* étiquettes */
+  --r-md: 12px; /* champs */
+  --r-lg: 20px; /* cartes, panneaux */
+  --r-xl: 28px; /* grandes sections */
+  --r-pill: 999px;
+
+  /* Espacement (pas de 4) */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-14: 56px;
+  --s-24: 96px;
+
+  /* Ombres (rares, réservées aux objets posés) */
+  --shadow-object: 0 18px 30px -18px rgba(11, 59, 55, 0.55);
+  --focus-ring: 0 0 0 2px var(--c-surface), 0 0 0 4px var(--c-primary);
+
+  /* Mouvement */
+  --ease-stamp: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --dur-fast: 150ms;
+  --dur-base: 220ms;
+
+  --touch-min: 44px;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+.skeleton {
+  background: var(--c-line);
+  border-radius: var(--r-sm);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

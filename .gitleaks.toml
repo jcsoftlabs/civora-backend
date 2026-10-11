@@ -1,0 +1,8 @@
+# Règles par défaut de gitleaks, plus les fichiers d'exemple dont les valeurs sont factices.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Valeurs factices de développement"
+paths = ['''\.env\.example$''', '''pnpm-lock\.yaml$''', '''^skills/''']
+regexes = ['''change-me''', '''sk_test_$''', '''whsec_$''']

@@ -1,0 +1,8 @@
+pnpm-lock.yaml
+**/migrations/**
+skills/
+apps/mobile/
+.svelte-kit/
+*.md
+.claude/
+.pgdata/
