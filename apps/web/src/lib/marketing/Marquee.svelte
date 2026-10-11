@@ -1,6 +1,6 @@
 <!--
   Bandeaux de fonctions qui défilent en sens contraires (site commercial, SOC-12), comme sur qomon.com : chaque
-  pastille nomme un outil de la plateforme. Pause au survol ; immobile si les animations sont réduites.
+  pastille nomme un outil de la plateforme. Pause au survol ; bandeau immobile si les animations sont réduites.
 -->
 <script lang="ts">
   import { translator, type MessageKey } from "$lib/i18n";
@@ -77,23 +77,14 @@
       transform: translateX(-50%);
     }
   }
+  /* Animations réduites : le bandeau reste en place, mêmes pastilles sur une ligne, la seconde décalée. */
   @media (prefers-reduced-motion: reduce) {
-    .row {
+    .row,
+    .row.reverse {
       animation: none;
-      width: auto;
-      flex-wrap: wrap;
-      justify-content: center;
     }
-    .track[aria-hidden="true"] {
-      display: none;
-    }
-    .track {
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 0 var(--s-4);
-    }
-    .marquee {
-      mask: none;
+    .row.reverse {
+      transform: translateX(-18%);
     }
   }
 </style>
