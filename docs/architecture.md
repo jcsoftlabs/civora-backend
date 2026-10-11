@@ -59,6 +59,8 @@ await withParty(ctx.partyId, async (tx) => {
 
 - Chiffrement enveloppe : chaque parti a une clé de données (`party_keys`) chiffrée par la clé maîtresse (KMS). Les champs `nin`, `nif`, `passport`, `ssn` sont stockés chiffrés (AES-256-GCM) dans `member_identities`, avec une empreinte HMAC pour la recherche de doublons.
 - Lecture d'une pièce : permission dédiée + ligne d'audit.
+- Mise en œuvre (`apps/api/src/lib/crypto.ts`, `party-keys.ts`, `modules/members/identity.ts`) : la clé maîtresse est derrière l'interface `KeyProvider` (`LocalKeyProvider` lit `KMS_MASTER_KEY`, trousseau versionné ; un KMS managé s'y branche sans changer le reste). La clé du parti est créée au premier usage, versionnée (`rotate()`), et deux sous-clés en sont dérivées par HKDF : chiffrement et empreintes. Le chiffré est lié à sa ligne (parti, membre, type, version de clé) : recopié sur une autre ligne, il devient illisible. Les doublons comparent des empreintes HMAC du numéro normalisé, une par version de clé, sans rien déchiffrer. La lecture exige `identity.read` dans la zone du membre et écrit `audit_log` dans la même transaction.
+- Transit (SEC-03) : HTTPS et HSTS côté API ; `DATABASE_SSL=require` dès que la base est jointe par le réseau public. Au repos : chiffrement de l'hébergeur (Postgres managé, R2), à vérifier à la mise en production.
 - Logs : sérialiseurs qui masquent téléphones et identifiants.
 
 ## 5. Votes internes

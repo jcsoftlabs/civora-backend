@@ -214,8 +214,8 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | ID | Exigence | Phase | Statut |
 | --- | --- | --- | --- |
 | SEC-01 | Isolation stricte par parti, prouvée par tests automatisés | P2 | fait |
-| SEC-02 | Chiffrement des pièces d'identité au niveau du champ, clé par parti | P2 | à faire |
-| SEC-03 | TLS en transit, chiffrement au repos | P2 | à faire |
+| SEC-02 | Chiffrement des pièces d'identité au niveau du champ, clé par parti | P2 | fait |
+| SEC-03 | TLS en transit, chiffrement au repos | P2 | en cours |
 | SEC-04 | Double authentification obligatoire pour les administrateurs | P2 | à faire |
 | SEC-05 | Contrôle d'accès par rôle et par zone | P2 | à faire |
 | SEC-06 | Journal d'audit inaltérable | P2 | à faire |

@@ -10,7 +10,11 @@ if (/:6432\b|pgbouncer/i.test(url)) {
   console.error("DATABASE_URL_MIGRATOR pointe vers PgBouncer. Utilisez la connexion directe à Postgres.");
   process.exit(1);
 }
-const owner = postgres(url, { max: 1, onnotice: () => {} });
+const owner = postgres(url, {
+  max: 1,
+  ssl: process.env.DATABASE_SSL === "require" ? "require" : false,
+  onnotice: () => {},
+});
 
 await owner.unsafe(readFileSync(new URL("../sql/roles.sql", import.meta.url), "utf8"));
 await migrate(drizzle(owner), { migrationsFolder: new URL("../migrations", import.meta.url).pathname });

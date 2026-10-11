@@ -1,0 +1,1 @@
+ALTER TABLE "party_keys" ADD CONSTRAINT "party_keys_party_version" UNIQUE("party_id","version");

@@ -46,7 +46,7 @@ export function zoneWithin(zone: string, scope: string): boolean {
  * Un poste limité à une zone n'agit que sur des ressources rattachées à cette zone ou à ses sous-zones ;
  * une ressource sans zone (niveau national) exige un poste national (zonePath null).
  */
-export function authorize(req: FastifyRequest, permission: Permission, zonePath?: string): boolean {
+export function authorize(req: Pick<FastifyRequest, "grants">, permission: Permission, zonePath?: string): boolean {
   return req.grants.some(
     (g) =>
       g.permission === permission &&

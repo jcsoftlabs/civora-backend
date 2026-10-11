@@ -11,9 +11,13 @@ import * as schema from "./schema/index.js";
  */
 const behindPgBouncer = process.env.DATABASE_PGBOUNCER === "true";
 
+/** SEC-03 : TLS vers la base dès qu'elle est jointe par le réseau public (DATABASE_SSL=require). */
+const ssl = process.env.DATABASE_SSL === "require" ? ("require" as const) : false;
+
 const client = postgres(process.env.DATABASE_URL ?? "", {
   max: behindPgBouncer ? 10 : 20,
   prepare: !behindPgBouncer,
+  ssl,
   onnotice: () => {},
 });
 export const db = drizzle(client, { schema });

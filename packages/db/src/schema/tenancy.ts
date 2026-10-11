@@ -9,6 +9,7 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
   uuid,
 } from "drizzle-orm/pg-core";
 import { encrypted, id, partyId, partyKey, timestamps } from "./_helpers.js";
@@ -59,14 +60,18 @@ export const partyDomains = pgTable("party_domains", {
 });
 
 /** Clé de données du parti, chiffrée par la clé maîtresse (enveloppe). */
-export const partyKeys = pgTable("party_keys", {
-  id: id(),
-  partyId: partyId(),
-  wrappedKey: encrypted("wrapped_key").notNull(),
-  version: integer("version").notNull().default(1),
-  active: boolean("active").notNull().default(true),
-  ...timestamps,
-});
+export const partyKeys = pgTable(
+  "party_keys",
+  {
+    id: id(),
+    partyId: partyId(),
+    wrappedKey: encrypted("wrapped_key").notNull(),
+    version: integer("version").notNull().default(1),
+    active: boolean("active").notNull().default(true),
+    ...timestamps,
+  },
+  (t) => [unique("party_keys_party_version").on(t.partyId, t.version)],
+);
 
 /** Comptes marchands du parti : les fonds y arrivent directement (FIN-12). */
 export const merchantAccounts = pgTable(
