@@ -19,6 +19,7 @@ Le niveau visé est celui des meilleurs outils SaaS, appliqué au terrain politi
 Ces objets apparaissent dans l'app mobile, la landing page et les fiches du back-office. Une seule animation forte par écran (le tampon qui s'écrase, la croix qui se trace, le reflet de la carte), le reste reste calme. Toujours respecter `prefers-reduced-motion`.
 
 **Neutralité politique.** Pas de bleu et rouge du drapeau comme couleurs de marque, aucune couleur associée à un parti connu. La plateforme n'appartient à aucun camp.
+Cette règle vaut pour l'identité de civora (site commercial, console, valeurs par défaut), **jamais pour les partis** : chaque parti choisit librement sa couleur, y compris rouge, bleu, jaune ou noir. L'assistant de création propose les couleurs fondamentales, un sélecteur libre et la saisie du code exact de la charte du parti ; la lisibilité est garantie par le calcul de contraste (texte blanc ou encre, couleur assombrie seulement si nécessaire).
 
 ## 2. Tokens
 

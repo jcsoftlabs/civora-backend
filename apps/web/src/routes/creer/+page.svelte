@@ -14,13 +14,21 @@
   const t = $derived(translator(data.locale));
   const tk = (key: string) => t(key as MessageKey);
 
+  // Couleurs fondamentales, toutes lisibles telles quelles (contraste 4,5:1 au moins avec leur texte).
+  // Le parti peut aussi choisir n'importe quelle couleur, ou saisir le code exact de sa charte graphique.
   const COLORS = [
+    { hex: "#C8102E", name: "rouge" },
+    { hex: "#E8590C", name: "orange" },
+    { hex: "#F2C200", name: "jaune" },
+    { hex: "#1C8339", name: "vert" },
     { hex: "#0F6E66", name: "petrole" },
-    { hex: "#7A2E5C", name: "prune" },
-    { hex: "#B5452B", name: "brique" },
-    { hex: "#2F5D9E", name: "bleu" },
-    { hex: "#5B6B1E", name: "olive" },
-    { hex: "#1C1B19", name: "encre" },
+    { hex: "#1F8FD1", name: "bleuciel" },
+    { hex: "#1F5FBF", name: "bleu" },
+    { hex: "#6D28D9", name: "violet" },
+    { hex: "#D6336C", name: "rose" },
+    { hex: "#7A4A2A", name: "marron" },
+    { hex: "#5F6368", name: "gris" },
+    { hex: "#1C1B19", name: "noir" },
   ];
   const LANGS = ["fr", "ht", "en", "es"] as const;
 
@@ -29,7 +37,13 @@
   let slug = $state("");
   let slugTouched = $state(false);
   let slugState = $state<"idle" | "checking" | "available" | "taken" | "reserved" | "invalid">("idle");
-  let color = $state(COLORS[0]!.hex);
+  let color = $state("#0F6E66");
+  // Suit la couleur choisie ; reste modifiable à la main (code de la charte du parti).
+  let hexInput = $derived(color.toUpperCase());
+  function applyHex() {
+    const v = hexInput.trim().replace(/^([0-9a-f]{6})$/i, "#$1");
+    if (/^#[0-9a-f]{6}$/i.test(v)) color = v.toUpperCase();
+  }
   let tier = $state<"essentiel" | "mouvement" | "national">("mouvement");
   let languages = $state<string[]>(["fr", "ht"]);
   let firstName = $state("");
@@ -223,6 +237,17 @@
                 <input type="color" bind:value={color} aria-label={t("create.color.custom")} />
               </label>
             </div>
+            <label class="hex">
+              <span>{t("create.color.hex")}</span>
+              <input
+                bind:value={hexInput}
+                onchange={applyHex}
+                onkeydown={(e) => e.key === "Enter" && applyHex()}
+                maxlength={7}
+                spellcheck={false}
+                autocapitalize="characters"
+              />
+            </label>
             {#if adjusted}<p class="msg">{t("create.color.adjusted")}</p>{/if}
           </fieldset>
 
@@ -506,6 +531,29 @@
       0 0 0 4px var(--c-ink);
   }
   .swatch input:focus-visible + .dot {
+    box-shadow: var(--focus-ring);
+  }
+  .hex {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+    font: 500 var(--fs-13) / 1 var(--font-ui);
+    color: var(--c-ink-2);
+  }
+  .hex input {
+    width: 7.5em;
+    min-height: 36px;
+    padding: 0 var(--s-3);
+    border: 1.5px solid var(--c-line);
+    border-radius: var(--r-sm);
+    background: var(--c-surface);
+    color: var(--c-ink);
+    font: 600 var(--fs-14) / 1 var(--font-ui);
+    font-variant-numeric: tabular-nums;
+  }
+  .hex input:focus-visible {
+    outline: none;
+    border-color: var(--c-primary);
     box-shadow: var(--focus-ring);
   }
   .custom input {
