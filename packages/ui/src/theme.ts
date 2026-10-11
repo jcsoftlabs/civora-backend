@@ -93,3 +93,32 @@ export function secondaryTheme(
     "--c-on-secondary": contrastRatio(color, WHITE) >= contrastRatio(color, INK) ? WHITE : INK,
   };
 }
+
+const CARD_TEXT = "#F6E7C8"; // --c-card-cream
+
+/**
+ * Fond et texte de la carte de membre : toujours la couleur exacte du parti. Texte crème sur une couleur foncée
+ * (rouge, bleu, vert…), texte encre sur une couleur claire (jaune, orange, bleu ciel). La couleur n'est assombrie
+ * que si aucun des deux n'atteint 4,5:1.
+ */
+export function cardBackground(brand: string): { background: string; depth: string; text: string; dark: boolean } {
+  let bg = toHex(parseHex(brand));
+  if (contrastRatio(bg, CARD_TEXT) < 4.5 && contrastRatio(bg, INK) >= 4.5) {
+    return { background: bg, depth: mix(bg, "#000000", 0.18), text: INK, dark: false };
+  }
+  for (let i = 0; contrastRatio(bg, CARD_TEXT) < 4.5 && i < 30; i++) bg = mix(bg, "#000000", 0.05);
+  return { background: bg, depth: mix(bg, "#000000", 0.3), text: CARD_TEXT, dark: true };
+}
+
+/**
+ * Opacité du disque de la seconde couleur sur la carte : la plus forte qui garde le texte lisible (4,5:1) là où il
+ * passe sur le disque. Une seconde couleur proche du texte (noir sous un texte encre, blanc sous un texte crème)
+ * reste un simple reflet, ou disparaît si même un reflet gênerait la lecture.
+ */
+export function discOpacity(background: string, text: string, secondary: string, max = 0.55): number {
+  for (let o = max; o > 0.04; o -= 0.03) {
+    if (contrastRatio(mix(background, secondary, o), text) >= 4.5) return Math.round(o * 100) / 100;
+  }
+  // Aucune opacité ne laisse le texte lisible : pas de disque, la seconde couleur reste sur la pastille.
+  return 0;
+}

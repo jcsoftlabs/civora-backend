@@ -6,7 +6,7 @@
   Une seule animation : le reflet passe quand `shineKey` change ; aucune si les animations sont réduites.
 -->
 <script lang="ts">
-  import { luminance, partyTheme, secondaryTheme } from "../theme.js";
+  import { cardBackground, discOpacity, secondaryTheme } from "../theme.js";
   import QrCode from "./QrCode.svelte";
 
   interface Props {
@@ -40,10 +40,10 @@
     shineKey = "",
   }: Props = $props();
 
-  const theme = $derived(partyTheme(brandColor));
+  const bg = $derived(cardBackground(brandColor));
   const second = $derived(secondaryTheme(secondaryColor));
-  /** Seconde couleur très claire (blanc, jaune pâle) : en grand aplat translucide, elle délaverait le fond. */
-  const lightSecond = $derived(!!second && luminance(second["--c-secondary"]) > 0.6);
+  /** Opacité du disque : la plus forte qui laisse le texte lisible par-dessus. */
+  const discAlpha = $derived(second ? discOpacity(bg.background, bg.text, second["--c-secondary"]) : 0.4);
   const initials = $derived(
     partyName
       .split(/\s+/)
@@ -75,9 +75,11 @@
   class="card"
   class:vertical
   class:has-second={!!second}
-  class:light-second={lightSecond}
-  style:--card-deep={theme["--c-primary-deep"]}
-  style:--card-main={theme["--c-primary"]}
+  style:--card-deep={bg.background}
+  style:--card-main={bg.depth}
+  style:--card-text={bg.text}
+  style:--disc-alpha={discAlpha}
+  class:light-bg={!bg.dark}
   style:--card-second={second?.["--c-secondary"] ?? null}
   style:--card-on-second={second?.["--c-on-secondary"] ?? null}
   aria-label="{labels.card} {partyName}, {memberName}, {labels.number} {memberNumber}"
@@ -131,7 +133,7 @@
     grid-template-rows: auto 1fr auto;
     row-gap: var(--s-2);
     border-radius: 18px;
-    color: var(--c-card-cream);
+    color: var(--card-text);
     background: var(--card-deep);
     box-shadow:
       var(--shadow-object),
@@ -171,12 +173,10 @@
     background: var(--card-main);
     opacity: 0.4;
   }
+  /* Opacité calculée (discOpacity) : le texte reste lisible là où il passe sur le disque. */
   .has-second .disc {
     background: var(--card-second);
-    opacity: 0.55;
-  }
-  .light-second .disc {
-    opacity: 0.16;
+    opacity: var(--disc-alpha);
   }
   .vertical .disc {
     right: -45%;
@@ -199,7 +199,7 @@
   }
   .rosette path {
     fill: none;
-    stroke: var(--c-card-cream);
+    stroke: var(--card-text);
     stroke-width: 0.45;
   }
   .rosette path:nth-child(2) {
@@ -214,7 +214,7 @@
     z-index: -1;
     border-radius: 12px;
     pointer-events: none;
-    border: 0.5px solid color-mix(in srgb, var(--c-card-cream) 28%, transparent);
+    border: 0.5px solid color-mix(in srgb, var(--card-text) 28%, transparent);
   }
   .micro {
     position: absolute;
@@ -226,7 +226,7 @@
     white-space: nowrap;
     font: 500 4.5px / 1 var(--font-ui);
     letter-spacing: 0.08em;
-    color: var(--c-card-cream);
+    color: var(--card-text);
     opacity: 0.4;
   }
   .shine {
@@ -333,6 +333,12 @@
     text-shadow:
       0 1px 0 rgba(0, 0, 0, 0.45),
       0 -1px 0 rgba(255, 255, 255, 0.14);
+  }
+  /* Sur une couleur claire, le relief s'inverse : lumière dessous, ombre légère dessus. */
+  .light-bg .value {
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.5),
+      0 -1px 0 rgba(0, 0, 0, 0.12);
   }
   .vertical .value {
     font-size: var(--fs-32);
