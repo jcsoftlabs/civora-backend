@@ -61,6 +61,19 @@ const SHOTS: Array<{
       );
     },
   },
+  {
+    // Résultats de l'élection certifiée : participation, voix, élu coché sur le bulletin.
+    name: "votes",
+    path: async (p) => {
+      await p.goto(`${base}/admin/votes`);
+      const href = await p
+        .locator("a.ballot")
+        .filter({ hasText: /Coordination|Kowòdinasyon/ })
+        .first()
+        .getAttribute("href");
+      return href ? `${href}?onglet=resultats` : "/admin/votes";
+    },
+  },
 ];
 
 const only = process.argv.slice(2);

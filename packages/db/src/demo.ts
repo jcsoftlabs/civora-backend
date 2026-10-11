@@ -925,6 +925,142 @@ async function main() {
         },
       ])})`;
 
+  // Votes internes (VOT-01 à VOT-10) : une élection certifiée, une question ouverte, un scrutin en préparation.
+  // Bulletins sans votant ni heure, reçus à l'heure près, comme le fait l'API.
+  const ouest = await byPrefix("HT01");
+  const election = async (e: {
+    title: object;
+    kind: "post" | "question";
+    method: string;
+    state: string;
+    opensAt: Date;
+    closesAt: Date;
+    quorum?: number;
+    certified?: boolean;
+  }) => {
+    const [row] = await sql<{ id: string }[]>`
+      insert into elections (party_id, title, kind, method, state, zone_id, rules, opens_at, closes_at,
+        quorum_percent, allow_blank, roll_frozen_at, certified_at, certified_by_member_id, created_at)
+      values (${P}, ${sql.json(e.title as postgres.JSONValue)}, ${e.kind}, ${e.method}, ${e.state},
+        (select id from zones where code = 'HT01'), ${sql.json({ combinator: "and", rules: [] })},
+        ${e.opensAt}, ${e.closesAt}, ${e.quorum ?? null}, true,
+        ${new Date(e.opensAt.getTime() - 6 * DAY)}, ${e.certified ? e.closesAt : null},
+        ${e.certified ? adminId : null}, ${new Date(e.opensAt.getTime() - 9 * DAY)})
+      returning id`;
+    const id = row!.id;
+    for (let i = 0; i < ouest.length; i += 500)
+      await sql`insert into electoral_rolls ${sql(
+        ouest.slice(i, i + 500).map((m) => ({ party_id: P, election_id: id, member_id: m })),
+      )}`;
+    return id;
+  };
+  const cast = async (id: string, options: string[], weights: number[], share: number, at: Date) => {
+    const voters = ouest.filter(() => chance(share));
+    const receipts = voters.map((m) => ({
+      party_id: P,
+      election_id: id,
+      member_id: m,
+      round: 1,
+      cast_at: new Date(Math.floor((at.getTime() - rand() * 2 * DAY) / 3_600_000) * 3_600_000),
+    }));
+    const picks = voters.map(() => {
+      let x = rand();
+      const i = weights.findIndex((w) => (x -= w) < 0);
+      return i === -1 ? null : options[i]!;
+    });
+    const ballots = picks.map((c) => ({
+      party_id: P,
+      election_id: id,
+      round: 1,
+      choice: sql.json(c ? { candidateIds: [c] } : { blank: true }),
+      public_hash: createHash("sha256").update(randomBytes(16)).digest("hex"),
+    }));
+    if (receipts.length) await sql`insert into ballot_receipts ${sql(receipts)}`;
+    if (ballots.length) await sql`insert into ballots ${sql(ballots)}`;
+    return picks;
+  };
+  const named = await sql<{ id: string; first_name: string; last_name: string }[]>`
+    select id, first_name, last_name from members where id in ${sql(ouest.slice(3, 6))} order by member_number`;
+
+  // Coordination départementale de l'Ouest : majorité simple, close et certifiée.
+  const closed = new Date(now.getTime() - 12 * DAY);
+  const coord = await election({
+    title: { fr: "Coordination départementale de l'Ouest", ht: "Kowòdinasyon depatmantal Lwès" },
+    kind: "post",
+    method: "simple_majority",
+    state: "published",
+    opensAt: new Date(closed.getTime() - 3 * DAY),
+    closesAt: closed,
+    quorum: 25,
+    certified: true,
+  });
+  const cands = await sql<{ id: string }[]>`insert into candidates ${sql(
+    named.map((m, i) => ({
+      party_id: P,
+      election_id: coord,
+      member_id: m.id,
+      label: sql.json({ fr: `${m.first_name} ${m.last_name}` }),
+      eligibility_checked: closed,
+      position: i,
+    })),
+  )} returning id`;
+  const coordBallots = await cast(
+    coord,
+    cands.map((c) => c.id),
+    [0.48, 0.33, 0.14],
+    0.62,
+    closed,
+  );
+  const counts = Object.fromEntries(cands.map((c) => [c.id, 0]));
+  let blank = 0;
+  for (const picked of coordBallots) {
+    if (picked) counts[picked]!++;
+    else blank++;
+  }
+  const valid = coordBallots.length - blank;
+  const winner = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]![0];
+  await sql`insert into election_results (party_id, election_id, round, tally, turnout, registered, valid, outcome, created_at)
+    values (${P}, ${coord}, 1, ${sql.json({
+      counts,
+      ballots: coordBallots.length,
+      blank,
+      validVotes: valid,
+      turnoutPercent: Math.round((coordBallots.length / ouest.length) * 1000) / 10,
+    })}, ${coordBallots.length}, ${ouest.length}, true,
+      ${sql.json({ winners: [winner], runoff: [], reason: "elected" })}, ${closed})`;
+
+  // Statuts révisés : question oui ou non, vote ouvert.
+  const statutes = await election({
+    title: { fr: "Adoption des statuts révisés", ht: "Adopsyon lalwa entèn revize a" },
+    kind: "question",
+    method: "yes_no",
+    state: "roll_frozen",
+    opensAt: new Date(now.getTime() - 2 * DAY),
+    closesAt: new Date(now.getTime() + 5 * DAY),
+    quorum: 30,
+  });
+  const yesNo = await sql<{ id: string }[]>`insert into candidates ${sql([
+    { party_id: P, election_id: statutes, label: sql.json({ fr: "Oui", ht: "Wi" }), position: 0 },
+    { party_id: P, election_id: statutes, label: sql.json({ fr: "Non", ht: "Non" }), position: 1 },
+  ])} returning id`;
+  await cast(
+    statutes,
+    yesNo.map((c) => c.id),
+    [0.7, 0.25],
+    0.34,
+    now,
+  );
+
+  // Délégués au congrès : scrutin en préparation, liste figée, vote dans dix jours.
+  await election({
+    title: { fr: "Délégués de l'Ouest au congrès national", ht: "Delege Lwès nan kongrè nasyonal la" },
+    kind: "post",
+    method: "simple_majority",
+    state: "roll_frozen",
+    opensAt: new Date(now.getTime() + 10 * DAY),
+    closesAt: new Date(now.getTime() + 11 * DAY),
+  });
+
   // Session de démonstration (sans double authentification : base locale seulement).
   const token = randomBytes(32).toString("base64url");
   await sql`insert into sessions (party_id, user_id, member_id, token_hash, expires_at)

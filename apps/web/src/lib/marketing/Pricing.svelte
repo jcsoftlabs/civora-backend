@@ -21,8 +21,15 @@
       { key: "organs" },
       { key: "publications" },
       { key: "dashboard" },
+      { key: "votes" },
     ],
-    mouvement: [{ key: "card" }, { key: "stripe" }, { key: "training" }, { key: "departement" }],
+    mouvement: [
+      { key: "card" },
+      { key: "stripe" },
+      { key: "training" },
+      { key: "votesAdvanced" },
+      { key: "departement" },
+    ],
     national: [{ key: "certificates" }, { key: "sections" }, { key: "domain", soon: true }],
   };
   const money = (n: number) =>

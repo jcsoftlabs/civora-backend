@@ -14,8 +14,10 @@
   import FieldSection from "./FieldSection.svelte";
   import Faq from "./Faq.svelte";
   import Marquee from "./Marquee.svelte";
+  import OrbitScene from "./OrbitScene.svelte";
   import Pricing from "./Pricing.svelte";
   import { reveal } from "./reveal";
+  import ScatterScene from "./ScatterScene.svelte";
 
   interface Props {
     locale: "fr" | "ht";
@@ -34,6 +36,7 @@
     { key: "organs", shot: "organs" },
     { key: "comm", shot: "push" },
     { key: "training", shot: "training" },
+    { key: "votes", shot: "votes" },
   ] as const;
   const NAV = [
     ["fonctionnalites", "mk.nav.features"],
@@ -121,6 +124,7 @@
     <div>
       <h2 id="replace-title">{t("mk.replace.title")}</h2>
       <p class="lead">{t("mk.replace.lead")}</p>
+      <ScatterScene />
     </div>
     <div class="replace-list">
       <ul class="crossed" use:reveal={0.4}>
@@ -131,9 +135,12 @@
   </section>
 
   <section id="fonctionnalites" class="features" aria-labelledby="features-title">
-    <div class="wrap section-head">
-      <h2 id="features-title">{t("mk.features.title")}</h2>
-      <p class="lead">{t("mk.features.lead")}</p>
+    <div class="wrap section-head hub">
+      <div>
+        <h2 id="features-title">{t("mk.features.title")}</h2>
+        <p class="lead">{t("mk.features.lead")}</p>
+      </div>
+      <OrbitScene {locale} />
     </div>
     {#each MODULES as m, i (m.key)}
       <article class="module wrap" class:flip={i % 2 === 1} aria-labelledby="m-{m.key}">
@@ -164,7 +171,7 @@
         <p>{t("mk.soon.lead")}</p>
       </div>
       <ul>
-        {#each ["votes", "app", "elections"] as k (k)}
+        {#each ["app", "elections"] as k (k)}
           <li><span class="badge">{t("mk.soon.badge")}</span>{tk(`mk.soon.${k}`)}</li>
         {/each}
       </ul>
@@ -583,6 +590,12 @@
   .section-head {
     margin-bottom: var(--s-14);
   }
+  .section-head.hub {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--s-10);
+    align-items: center;
+  }
   .module {
     display: grid;
     grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
@@ -784,6 +797,7 @@
     }
     .hero,
     .replace,
+    .section-head.hub,
     .module,
     .soon,
     .security,
@@ -802,6 +816,10 @@
     .wrap,
     .narrow {
       width: calc(100% - 2 * var(--s-4));
+    }
+    /* Une ligne par outil : le trait qui le raye ne couvre qu'une ligne. */
+    .replace-list li {
+      font-size: var(--fs-15);
     }
     .hero,
     .replace,
