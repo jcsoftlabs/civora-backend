@@ -114,7 +114,10 @@ describe("modèle de carte (ADH-13)", () => {
     expect(r.design).toMatchObject({ orientation: "vertical", pattern: "waves", qrSide: "back" });
     expect(r.design.fields).toMatchObject({ status: true, since: false, photo: true });
     // Le membre lit le même modèle pour sa carte numérique.
-    expect((await call("GET", "/members/me/card-design", marie.token)).json().design.orientation).toBe("vertical");
+    const mine = (await call("GET", "/members/me/card-design", marie.token)).json();
+    expect(mine.design.orientation).toBe("vertical");
+    expect(mine.member).toHaveProperty("photoUrl");
+    expect(mine.member).toHaveProperty("status");
     const [a] = await owner`select count(*)::int n from audit_log where party_id = ${A} and action = 'settings.card'`;
     expect(a!.n).toBe(1);
   });

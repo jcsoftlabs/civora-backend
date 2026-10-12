@@ -9,6 +9,7 @@ import '../../l10n/app_localizations.dart';
 import '../../widgets/layout.dart';
 import '../../widgets/member_card.dart';
 import '../../widgets/objects.dart';
+import 'common.dart';
 
 /// Accueil : la banderole salue le membre et dit ce qui l'attend ; sa carte de membre se pose à cheval sur la
 /// banderole et la feuille (seul objet fort de l'écran) ; dessous, la liste nue de ce qu'il a à faire, puis ses
@@ -34,6 +35,7 @@ class WalletScreen extends ConsumerWidget {
     final party = me?.data['party'] as Map?;
     final brand = parseHex(party?['brandColor'] as String?);
     final upToDate = dues?.data['upToDate'] == true;
+    final look = cardDesign(ref, t, locale, since: (card?.data['member'] as Map?)?['since'] as String?);
     final outstanding = ((dues?.data['outstanding'] as Map?) ?? const {}).entries
         .map((e) => formatAmount('${e.value}', '${e.key}'))
         .join(', ');
@@ -95,6 +97,9 @@ class WalletScreen extends ConsumerWidget {
                   location: (card?.data['member'] as Map?)?['location'] as String?,
                   year: upToDate ? '${haitiYear()}' : null,
                   tilt: -0.03,
+                  style: look.style,
+                  photoUrl: look.photoUrl,
+                  details: look.details,
                 ),
               ),
             ),

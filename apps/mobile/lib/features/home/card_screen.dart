@@ -9,6 +9,7 @@ import '../../core/time.dart';
 import '../../l10n/app_localizations.dart';
 import '../../widgets/member_card.dart';
 import '../../widgets/objects.dart';
+import 'common.dart';
 
 /// Carte de membre en plein écran (ADH-11) : la carte et son QR code signé, à présenter à l'entrée. Enregistrée
 /// sur le téléphone : elle s'affiche sans connexion, le contrôle se fait sur l'appareil du responsable.
@@ -21,6 +22,8 @@ class CardScreen extends ConsumerWidget {
     final card = ref.watch(apiGet('/members/me/card'));
     final dues = ref.watch(apiGet('/members/me/dues')).value;
     final upToDate = dues?.data['upToDate'] == true;
+    final since = (card.value?.data['member'] as Map?)?['since'] as String?;
+    final look = cardDesign(ref, t, Localizations.localeOf(context), since: since);
     return Scaffold(
       backgroundColor: Palette.ink,
       appBar: AppBar(backgroundColor: Palette.ink, foregroundColor: Palette.paper),
@@ -53,6 +56,9 @@ class CardScreen extends ConsumerWidget {
                   location: m['location'] as String?,
                   year: upToDate ? '${haitiYear()}' : null,
                   tilt: 0,
+                  style: look.style,
+                  photoUrl: look.photoUrl,
+                  details: look.details,
                 ),
                 const SizedBox(height: 28),
                 Center(

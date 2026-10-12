@@ -5,6 +5,7 @@ import '../../core/errors.dart';
 import '../../core/state.dart';
 import '../../core/theme.dart';
 import '../../l10n/app_localizations.dart';
+import '../../widgets/member_card.dart';
 import '../../widgets/objects.dart';
 
 /// En-tête d'onglet : petite ligne de contexte, puis le titre en grand.
@@ -62,3 +63,26 @@ class Remote extends ConsumerWidget {
 
 /// Bas de page : laisse la place à la barre flottante.
 const bottomSpace = SizedBox(height: 120);
+
+/// Modèle de la carte réglé par l'organisation (ADH-13), avec la photo et les lignes du membre à imprimer.
+/// Sans la formule qui inclut la carte, ou hors ligne sans modèle en cache : dessin par défaut.
+({CardStyle? style, String? photoUrl, List<String> details}) cardDesign(
+  WidgetRef ref,
+  L t,
+  Locale locale, {
+  String? since,
+}) {
+  final data = ref.watch(apiGet('/members/me/card-design')).value?.data;
+  if (data == null) return (style: null, photoUrl: null, details: const []);
+  final style = CardStyle.fromJson(data, locale.languageCode);
+  final m = (data['member'] as Map?) ?? const {};
+  final status = m['status'] == null ? '' : tr(m['status'], locale);
+  return (
+    style: style,
+    photoUrl: m['photoUrl'] as String?,
+    details: [
+      if (style.show('status') && status.isNotEmpty) status,
+      if (style.show('since') && since != null) t.cardSince(since),
+    ],
+  );
+}

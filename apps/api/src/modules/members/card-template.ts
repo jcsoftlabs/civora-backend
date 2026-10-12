@@ -95,9 +95,25 @@ export class CardTemplateService {
     };
   }
 
-  /** Modèle vu par le membre (sa carte numérique dans l'application). */
+  /** Modèle vu par le membre (sa carte numérique dans l'application), avec son statut et sa photo. */
   async forMember(req: Req) {
-    return withParty(req.partyId, (tx) => this.design(tx));
+    return withParty(req.partyId, async (tx) => {
+      const [m] = await tx
+        .select({ status: memberStatuses.label, photo: members.photoFileId })
+        .from(members)
+        .leftJoin(
+          memberStatuses,
+          and(eq(memberStatuses.partyId, members.partyId), eq(memberStatuses.id, members.statusId)),
+        )
+        .where(eq(members.id, req.memberId!));
+      return {
+        ...(await this.design(tx)),
+        member: {
+          status: (m?.status as { fr: string; ht?: string } | null) ?? null,
+          photoUrl: await this.url(tx, m?.photo ?? null, ["member_photo"]),
+        },
+      };
+    });
   }
 
   async get(req: Req) {

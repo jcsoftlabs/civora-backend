@@ -22,6 +22,9 @@ class MemberCard extends StatefulWidget {
     this.secondary,
     this.verifyUrl,
     this.tilt = -0.044,
+    this.style,
+    this.photoUrl,
+    this.details = const [],
   });
 
   final Color brand;
@@ -35,8 +38,72 @@ class MemberCard extends StatefulWidget {
   final String? verifyUrl;
   final double tilt;
 
+  /// Modèle de carte réglé par l'organisation dans le back-office (ADH-13) ; dessin par défaut s'il manque.
+  final CardStyle? style;
+  final String? photoUrl;
+
+  /// Lignes sous le nom : statut, ancienneté, si le modèle les imprime.
+  final List<String> details;
+
   @override
   State<MemberCard> createState() => _MemberCardState();
+}
+
+/// Modèle de carte de l'organisation, lu de /members/me/card-design (même schéma que packages/shared/src/card.ts).
+/// La carte de l'application reste au format carte : le badge vertical et le verso ne servent qu'à l'impression.
+class CardStyle {
+  const CardStyle({
+    this.background,
+    this.backgroundUrl,
+    this.veil = 0.35,
+    this.text,
+    this.accent,
+    this.pattern = 'rosette',
+    this.logoUrl,
+    this.title,
+    this.fields = const {},
+    this.validityMode = 'year',
+    this.validUntil,
+  });
+
+  final Color? background;
+  final String? backgroundUrl;
+  final double veil;
+  final Color? text;
+  final Color? accent;
+  final String pattern;
+  final String? logoUrl;
+  final String? title;
+  final Map<String, bool> fields;
+  final String validityMode;
+  final String? validUntil;
+
+  bool show(String field) => fields[field] ?? field != 'status';
+
+  static Color? _hex(Object? v) =>
+      v is String && v.length == 7 ? Color(int.parse('FF${v.substring(1)}', radix: 16)) : null;
+
+  static CardStyle fromJson(Map data, String lang) {
+    final d = (data['design'] as Map?) ?? const {};
+    final bg = (d['background'] as Map?) ?? const {};
+    final assets = (data['assets'] as Map?) ?? const {};
+    final party = (data['party'] as Map?) ?? const {};
+    final title = d['title'] as Map?;
+    final validity = (d['validity'] as Map?) ?? const {};
+    return CardStyle(
+      background: _hex(bg['color']),
+      backgroundUrl: bg['kind'] == 'image' ? assets['backgroundUrl'] as String? : null,
+      veil: (bg['veil'] as num?)?.toDouble() ?? 0.35,
+      text: _hex(d['textColor']),
+      accent: _hex(d['accentColor']),
+      pattern: d['pattern'] as String? ?? 'rosette',
+      logoUrl: d['showLogo'] == false ? null : party['logoUrl'] as String?,
+      title: title == null ? null : ((lang == 'ht' ? title['ht'] : null) ?? title['fr']) as String?,
+      fields: {for (final e in ((d['fields'] as Map?) ?? const {}).entries) e.key as String: e.value == true},
+      validityMode: validity['mode'] as String? ?? 'year',
+      validUntil: validity['until'] as String?,
+    );
+  }
 }
 
 const _cardText = Color(0xFFF6E7C8); // --c-card-cream
@@ -95,11 +162,23 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final c = cardColors(widget.brand);
-    final text = c.text;
-    final year = widget.year;
-    final pill = widget.secondary ?? _accentBright;
-    final onPill = widget.secondary != null ? onColor(widget.secondary!) : _onAccent;
+    final st = widget.style;
+    final c = cardColors(st?.background ?? widget.brand);
+    final text = st?.text ?? c.text;
+    // Validité : année réglée (cotisation à jour), date fixe, ou rien, selon le modèle.
+    final year = st == null || st.validityMode == 'year'
+        ? (st?.show('validity') == false ? null : widget.year)
+        : st.validityMode == 'until' && st.show('validity') && st.validUntil != null
+        ? st.validUntil!.split('-').reversed.join('/')
+        : null;
+    final pill = st?.accent ?? widget.secondary ?? _accentBright;
+    final onPill = st?.accent != null
+        ? onColor(st!.accent!)
+        : widget.secondary != null
+        ? onColor(widget.secondary!)
+        : _onAccent;
+    final image = st?.backgroundUrl;
+    final pattern = st?.pattern ?? 'rosette';
     return Transform.rotate(
       angle: widget.tilt,
       child: AspectRatio(
@@ -116,6 +195,20 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
               final w = box.maxWidth, h = box.maxHeight;
               return Stack(
                 children: [
+                  // Image de fond du modèle, voilée pour garder le texte lisible ; couleur seule hors ligne.
+                  if (image != null) ...[
+                    Positioned.fill(
+                      child: Image.network(
+                        image,
+                        fit: BoxFit.cover,
+                        cacheWidth: 1012,
+                        errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: ColoredBox(color: c.background.withValues(alpha: st!.veil)),
+                    ),
+                  ],
                   // Grand disque, coupé par le bord : la seconde couleur du parti, sinon sa couleur plus profonde.
                   Positioned(
                     right: -0.28 * w,
@@ -129,14 +222,19 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                       ),
                     ),
                   ),
-                  // Rosette guillochée : hypotrochoïdes superposées, le motif des billets.
-                  Positioned(
-                    right: -0.24 * w,
-                    bottom: -0.46 * h,
-                    width: 0.88 * w,
-                    height: 0.88 * w,
-                    child: Opacity(opacity: 0.32, child: CustomPaint(painter: _RosettePainter(text))),
-                  ),
+                  // Motif de sécurité : rosette guillochée (hypotrochoïdes, le motif des billets) ou ondes.
+                  if (pattern == 'rosette')
+                    Positioned(
+                      right: -0.24 * w,
+                      bottom: -0.46 * h,
+                      width: 0.88 * w,
+                      height: 0.88 * w,
+                      child: Opacity(opacity: 0.32, child: CustomPaint(painter: _RosettePainter(text))),
+                    )
+                  else if (pattern == 'waves')
+                    Positioned.fill(
+                      child: Opacity(opacity: 0.22, child: CustomPaint(painter: _WavesPainter(text))),
+                    ),
                   // Filet intérieur.
                   Positioned.fill(
                     child: Padding(
@@ -175,7 +273,19 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                       children: [
                         Row(
                           children: [
-                            _Seal(initials: _initials.isEmpty ? '•' : _initials, color: text),
+                            if (st?.logoUrl != null)
+                              ClipOval(
+                                child: Image.network(
+                                  st!.logoUrl!,
+                                  width: 38,
+                                  height: 38,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, _, _) =>
+                                      _Seal(initials: _initials.isEmpty ? '•' : _initials, color: text),
+                                ),
+                              )
+                            else
+                              _Seal(initials: _initials.isEmpty ? '•' : _initials, color: text),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
@@ -209,42 +319,67 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                           ],
                         ),
                         const Spacer(),
-                        Text(
-                          widget.numberLabel,
-                          style: TextStyle(
-                            fontFamily: 'Figtree',
-                            color: text.withValues(alpha: 0.72),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                        if (st?.show('number') != false) ...[
+                          Text(
+                            st?.title ?? widget.numberLabel,
+                            style: TextStyle(
+                              fontFamily: 'Figtree',
+                              color: text.withValues(alpha: 0.72),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        // Numéro frappé : ombre sombre dessous, lumière dessus (inversé sur un fond clair).
-                        Text(
-                          widget.number,
-                          style: TextStyle(
-                            fontFamily: 'Figtree',
-                            color: text,
-                            fontWeight: FontWeight.w600,
-                            fontSize: (w * 0.105).clamp(26, 40),
-                            height: 1.12,
-                            letterSpacing: 1.4,
-                            fontFeatures: const [FontFeature.tabularFigures()],
-                            shadows: c.dark
-                                ? const [
-                                    Shadow(color: Color(0x73000000), offset: Offset(0, 1)),
-                                    Shadow(color: Color(0x24FFFFFF), offset: Offset(0, -1)),
-                                  ]
-                                : const [
-                                    Shadow(color: Color(0x80FFFFFF), offset: Offset(0, 1)),
-                                    Shadow(color: Color(0x1F000000), offset: Offset(0, -1)),
-                                  ],
+                          const SizedBox(height: 2),
+                          // Numéro frappé : ombre sombre dessous, lumière dessus (inversé sur un fond clair).
+                          Text(
+                            widget.number,
+                            style: TextStyle(
+                              fontFamily: 'Figtree',
+                              color: text,
+                              fontWeight: FontWeight.w600,
+                              fontSize: (w * 0.105).clamp(26, 40),
+                              height: 1.12,
+                              letterSpacing: 1.4,
+                              fontFeatures: const [FontFeature.tabularFigures()],
+                              shadows: c.dark
+                                  ? const [
+                                      Shadow(color: Color(0x73000000), offset: Offset(0, 1)),
+                                      Shadow(color: Color(0x24FFFFFF), offset: Offset(0, -1)),
+                                    ]
+                                  : const [
+                                      Shadow(color: Color(0x80FFFFFF), offset: Offset(0, 1)),
+                                      Shadow(color: Color(0x1F000000), offset: Offset(0, -1)),
+                                    ],
+                            ),
                           ),
-                        ),
+                        ] else if (st?.title != null)
+                          Text(
+                            st!.title!,
+                            style: TextStyle(
+                              fontFamily: 'Figtree',
+                              color: text,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         const Spacer(),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
+                            if (widget.photoUrl != null && st?.show('photo') != false) ...[
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: Image.network(
+                                  widget.photoUrl!,
+                                  width: 0.13 * w,
+                                  height: 0.16 * w,
+                                  fit: BoxFit.cover,
+                                  cacheWidth: 200,
+                                  errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                            ],
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,7 +397,7 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                                       letterSpacing: -0.2,
                                     ),
                                   ),
-                                  if (widget.location != null)
+                                  if (widget.location != null && st?.show('zone') != false)
                                     Text(
                                       widget.location!,
                                       maxLines: 1,
@@ -271,6 +406,17 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                                         fontFamily: 'Figtree',
                                         color: text.withValues(alpha: 0.78),
                                         fontSize: 12,
+                                      ),
+                                    ),
+                                  if (widget.details.isNotEmpty)
+                                    Text(
+                                      widget.details.join(', '),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: 'Figtree',
+                                        color: text.withValues(alpha: 0.78),
+                                        fontSize: 11,
                                       ),
                                     ),
                                 ],
@@ -396,4 +542,30 @@ class _RosettePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_RosettePainter old) => old.color != color;
+}
+
+/// Ondes de sécurité : 14 sinusoïdes décalées (mêmes paramètres que WAVES sur le web, cadre de 340 sur 214).
+class _WavesPainter extends CustomPainter {
+  _WavesPainter(this.color);
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final sx = size.width / 340, sy = size.height / 214;
+    final stroke = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.7
+      ..color = color;
+    for (var i = 0; i < 14; i++) {
+      final p = Path();
+      for (var x = 0.0; x <= 340; x += 6) {
+        final y = 24 + i * 13 + math.sin(x / 340 * math.pi * 3 + i * 0.5) * 9;
+        x == 0 ? p.moveTo(x * sx, y * sy) : p.lineTo(x * sx, y * sy);
+      }
+      canvas.drawPath(p, stroke);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_WavesPainter old) => old.color != color;
 }
