@@ -47,6 +47,8 @@ import { DuesService } from "./modules/dues/service.js";
 import { ApplicationsService } from "./modules/members/applications.js";
 import { MemberCardService } from "./modules/members/card.js";
 import { IdentityService } from "./modules/members/identity.js";
+import memberImportRoutes from "./modules/members/import/routes.js";
+import { MemberImportService } from "./modules/members/import/service.js";
 import memberRoutes from "./modules/members/routes.js";
 import { MembersService } from "./modules/members/service.js";
 import { AuthService } from "./modules/auth/service.js";
@@ -154,6 +156,16 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
     members: new MembersService(authService, new IdentityService(keys), dues),
     applications: new ApplicationsService(deps.email ?? emailSender, dues),
     cards: new MemberCardService(keys, authService, filesService.storage, config.WEB_PARTY_ORIGIN),
+  });
+  await app.register(memberImportRoutes, {
+    imports: new MemberImportService({
+      storage: filesService.storage,
+      keys,
+      identity: new IdentityService(keys),
+      dues,
+      email: deps.email ?? emailSender,
+      partyOrigin: config.WEB_PARTY_ORIGIN,
+    }),
   });
   await app.register(duesRoutes, { dues });
   await app.register(fileRoutes, { files: filesService });

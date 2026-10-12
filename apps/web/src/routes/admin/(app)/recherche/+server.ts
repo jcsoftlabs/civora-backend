@@ -22,7 +22,15 @@ export const GET: RequestHandler = async ({ url, cookies, locals, getClientAddre
       `/zones/search?q=${encodeURIComponent(q)}`,
       { ip },
     );
-    const zones = res.zones.filter((z) => z.level !== "pays" && z.level !== "diaspora").slice(0, 8);
+    // levels=member : seulement les zones où inscrire un membre (section communale, pays ou ville de la diaspora).
+    const member = url.searchParams.get("levels") === "member";
+    const zones = res.zones
+      .filter((z) =>
+        member
+          ? ["section_communale", "diaspora_pays", "diaspora_ville"].includes(z.level)
+          : z.level !== "pays" && z.level !== "diaspora",
+      )
+      .slice(0, 8);
     const results = await Promise.all(
       zones.map(async (z) => {
         const d = await api<{ ancestors: Array<{ name: string; level: string }> }>(

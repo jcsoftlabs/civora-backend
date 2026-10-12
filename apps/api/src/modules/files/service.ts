@@ -39,6 +39,20 @@ export const PURPOSES = {
   party_logo: { folder: "branding", types: IMAGES, maxBytes: () => 2 * MB },
   /** Fond de la carte de membre (ADH-13) : image matricielle. */
   card_background: { folder: "cards", types: IMAGES, maxBytes: () => 5 * MB },
+  /**
+   * Fichier de membres à importer (ADH-07) : Excel ou CSV (Windows envoie parfois un CSV en « ms-excel »).
+   * Il contient des pièces d'identité en clair : supprimé du stockage dès la fin de l'import.
+   */
+  member_import: {
+    folder: "imports",
+    types: [
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "text/csv",
+      "application/vnd.ms-excel",
+      "text/plain",
+    ],
+    maxBytes: () => 10 * MB,
+  },
   /** Signature d'un certificat (FOR-04), envoyée ou tracée à l'écran : PNG ou JPEG, que le PDF sait intégrer. */
   signature: { folder: "signatures", types: ["image/png", "image/jpeg"], maxBytes: () => 1 * MB },
 } as const;
@@ -77,6 +91,8 @@ export class FilesService {
     )
       throw new ApiError(403, "forbidden");
     if (body.purpose === "card_background" && !req.grants.some((g) => g.permission === "settings.party"))
+      throw new ApiError(403, "forbidden");
+    if (body.purpose === "member_import" && !req.grants.some((g) => g.permission === "members.import"))
       throw new ApiError(403, "forbidden");
 
     const id = randomUUID();

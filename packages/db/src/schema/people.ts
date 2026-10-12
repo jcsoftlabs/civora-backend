@@ -131,13 +131,64 @@ export const memberImports = pgTable(
   {
     id: id(),
     partyId: partyId(),
-    fileId: uuid("file_id").notNull(),
+    /** Fichier déposé (Excel ou CSV) ; absent pour une feuille Google Sheets, lue par son adresse. */
+    fileId: uuid("file_id"),
+    sheetUrl: text("sheet_url"),
+    /** Réglages de l'assistant : colonnes associées aux champs, zones corrigées, statut par défaut. */
     columnMapping: jsonb("column_mapping").notNull(),
-    state: text("state").notNull().default("preview"), // preview | running | done | failed
-    report: jsonb("report"), // erreurs ligne par ligne, doublons
+    /** mapping | preview | queued | running | done | failed */
+    state: text("state").notNull().default("preview"),
+    /** Synthèse : lignes, valides, erreurs par motif, doublons, zones inconnues, résultat. Jamais de pièce d'identité. */
+    report: jsonb("report"),
+    /** file (Excel ou CSV déposé) | sheet (Google Sheets, lu en CSV) */
+    source: text("source").notNull().default("file"),
+    createdByMemberId: uuid("created_by_member_id"),
+    /** Invitations par e-mail demandées (ADH-09) : le worker les envoie par lots. */
+    inviteRequestedAt: timestamp("invite_requested_at", { withTimezone: true }),
     ...timestamps,
   },
-  (t) => [sameParty("member_imports", t.partyId, t.fileId, files)],
+  (t) => [
+    partyKey("member_imports", t),
+    sameParty("member_imports", t.partyId, t.fileId, files),
+    sameParty("member_imports", t.partyId, t.createdByMemberId, members),
+  ],
+);
+
+/**
+ * Lignes d'un import, figées à l'aperçu (ADH-07, ADH-08) : données normalisées (la pièce d'identité scellée avec la
+ * clé du parti, jamais en clair), zone retrouvée, problèmes, doublon et décision ; puis le résultat du worker.
+ * Chaque ligne n'est traitée qu'une fois : un import interrompu reprend où il s'était arrêté.
+ */
+export const memberImportRows = pgTable(
+  "member_import_rows",
+  {
+    id: id(),
+    partyId: partyId(),
+    importId: uuid("import_id").notNull(),
+    /** Numéro de ligne dans le fichier (en-tête = 1). */
+    line: integer("line").notNull(),
+    data: jsonb("data").notNull(),
+    zoneId: uuid("zone_id").references(() => zones.id),
+    /** Codes des problèmes bloquants (ligne non importée) et avertissements. */
+    issues: text("issues").array().notNull().default([]),
+    duplicateMemberId: uuid("duplicate_member_id"),
+    /** phone | email | identity | name_birth | file (doublon d'une ligne précédente du fichier) */
+    duplicateReason: text("duplicate_reason"),
+    /** create | merge | skip */
+    decision: text("decision").notNull().default("create"),
+    /** created | merged | skipped | failed, posé par le worker */
+    result: text("result"),
+    memberId: uuid("member_id"),
+    invitedAt: timestamp("invited_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [
+    unique("member_import_rows_line_key").on(t.partyId, t.importId, t.line),
+    index("member_import_rows_pending").on(t.importId, t.result),
+    sameParty("member_import_rows", t.partyId, t.importId, memberImports),
+    sameParty("member_import_rows", t.partyId, t.duplicateMemberId, members),
+    sameParty("member_import_rows", t.partyId, t.memberId, members),
+  ],
 );
 
 /**

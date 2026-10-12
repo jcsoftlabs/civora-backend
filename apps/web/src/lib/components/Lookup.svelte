@@ -23,6 +23,8 @@
     onpick?: (item: Item | null) => void;
     /** Code de zone : ne propose que les membres de cette zone et de ses sous-zones. */
     within?: string | null;
+    /** Zones : « member » limite aux zones où inscrire un membre. */
+    levels?: "member" | null;
   }
   let {
     label,
@@ -35,6 +37,7 @@
     clearLabel,
     onpick,
     within = null,
+    levels = null,
   }: Props = $props();
 
   const uid = $props.id();
@@ -57,7 +60,7 @@
     }
     timer = setTimeout(async () => {
       const res = await fetch(
-        `${resolve("/admin/recherche")}?type=${type}&q=${encodeURIComponent(q)}${within ? `&within=${encodeURIComponent(within)}` : ""}`,
+        `${resolve("/admin/recherche")}?type=${type}&q=${encodeURIComponent(q)}${within ? `&within=${encodeURIComponent(within)}` : ""}${levels ? `&levels=${levels}` : ""}`,
       );
       if (q !== query.trim()) return;
       results = res.ok ? ((await res.json()) as { results: Item[] }).results : [];

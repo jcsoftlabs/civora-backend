@@ -187,6 +187,9 @@
         {/each}
       </ul>
     {/if}
+    {#if can("members.import")}
+      <a class="card-link" href={resolve("/admin/membres/importer")}>{t("imp.nav")}</a>
+    {/if}
     {#if can("settings.party")}
       <a class="card-link" href={resolve("/admin/membres/carte")}>{t("admin.cardEditor.nav")}</a>
     {/if}
@@ -482,7 +485,7 @@
     display: flex;
     align-items: center;
     min-height: 44px;
-    margin-top: var(--s-5);
+    margin-top: var(--s-3);
     padding: 0 var(--s-3);
     border: 1px dashed var(--c-line);
     border-radius: var(--r-md);

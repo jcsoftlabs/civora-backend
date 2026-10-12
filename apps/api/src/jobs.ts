@@ -15,6 +15,13 @@ import { OnlinePayments } from "./modules/money/online.js";
 import { PushService } from "./modules/communication/push.js";
 import { buildPushSender } from "./lib/messaging/push-registry.js";
 import type { PushSender } from "./lib/messaging/push.js";
+import { LogEmailSender, ResendEmailSender, type EmailSender } from "./lib/messaging/email.js";
+import { LazyKeyProvider } from "./lib/lazy-key-provider.js";
+import { PartyKeys } from "./lib/party-keys.js";
+import { buildStorage } from "./lib/storage/registry.js";
+import type { ObjectStorage } from "./lib/storage/types.js";
+import { IdentityService } from "./modules/members/identity.js";
+import { MemberImportService } from "./modules/members/import/service.js";
 
 export { loadConfig } from "./config.js";
 export { DuesService } from "./modules/dues/service.js";
@@ -22,11 +29,13 @@ export { OnlinePayments } from "./modules/money/online.js";
 export { FakeProvider } from "./lib/payments/fake.js";
 export { MemoryCredentialStore } from "./lib/payments/credentials.js";
 export { LogPushSender } from "./lib/messaging/push.js";
+export { MemberImportService } from "./modules/members/import/service.js";
 
 export interface JobServices {
   online: OnlinePayments;
   dues: DuesService;
   push: PushService;
+  imports: MemberImportService;
 }
 
 export function createJobServices(
@@ -36,8 +45,13 @@ export function createJobServices(
     providers?: Partial<Record<ProviderId, PaymentProvider>>;
     credentials?: CredentialStore;
     push?: PushSender;
+    email?: EmailSender;
+    storage?: ObjectStorage;
+    keys?: PartyKeys;
   } = {},
 ): JobServices {
+  const keys = overrides.keys ?? new PartyKeys(new LazyKeyProvider());
+  const dues = new DuesService();
   return {
     online: new OnlinePayments({
       providers: overrides.providers ?? buildPaymentProviders(config.NODE_ENV),
@@ -45,7 +59,19 @@ export function createJobServices(
       publicUrl: config.API_PUBLIC_URL,
       log,
     }),
-    dues: new DuesService(),
+    dues,
     push: new PushService(overrides.push ?? buildPushSender(config, log)),
+    imports: new MemberImportService({
+      storage: overrides.storage ?? buildStorage(config),
+      keys,
+      identity: new IdentityService(keys),
+      dues,
+      email:
+        overrides.email ??
+        (config.RESEND_API_KEY
+          ? new ResendEmailSender(config.RESEND_API_KEY, config.RESEND_FROM)
+          : new LogEmailSender(log)),
+      partyOrigin: config.WEB_PARTY_ORIGIN,
+    }),
   };
 }

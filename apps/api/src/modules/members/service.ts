@@ -62,7 +62,7 @@ async function approvedMemberByNumber(tx: Tx, number: string) {
 }
 
 /** Numéro de membre suivant, sans doublon même sous inscriptions simultanées (verrou par parti). */
-async function nextMemberNumber(tx: Tx, partyId: string): Promise<string> {
+export async function nextMemberNumber(tx: Tx, partyId: string): Promise<string> {
   await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${"members:" + partyId}, 0))`);
   const [r] = await tx.execute<{ n: string }>(
     sql`select coalesce(max(member_number::bigint), 0) + 1 as n from members where member_number ~ '^[0-9]+$'`,

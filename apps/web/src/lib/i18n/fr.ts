@@ -1,6 +1,7 @@
 // Français, langue de référence : toute clé existe ici d'abord.
 import { votesFr } from "./votes.fr";
 import { cardFr } from "./card.fr";
+import { importFr } from "./import.fr";
 import { consoleFr } from "./console.fr";
 import { marketingFr } from "./marketing.fr";
 export const fr = {
@@ -1119,6 +1120,7 @@ export const fr = {
   ...consoleFr,
   ...votesFr,
   ...cardFr,
+  ...importFr,
   ...marketingFr,
 } as const;
 

@@ -51,4 +51,16 @@ export const fanoutNotifications: JobDefinition = {
   run: (s, log) => forEachParty(log, "notifications.fanout", (partyId) => s.push.dispatchDue(partyId)),
 };
 
-export const JOBS: JobDefinition[] = [reconcilePayments, generateDues, fanoutNotifications];
+/** ADH-07 à ADH-09 : imports de membres lancés et invitations par e-mail demandées, chaque minute. */
+export const importMembers: JobDefinition = {
+  name: "import.members",
+  cron: "* * * * *",
+  run: (s, log) =>
+    forEachParty(log, "import.members", async (partyId) => {
+      const done = await s.imports.process(partyId);
+      const invited = await s.imports.sendInvites(partyId);
+      return { rows: done.rows, imports: done.imports, invited: invited.sent };
+    }),
+};
+
+export const JOBS: JobDefinition[] = [reconcilePayments, generateDues, fanoutNotifications, importMembers];

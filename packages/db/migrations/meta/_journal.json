@@ -176,6 +176,20 @@
       "when": 1791768743109,
       "tag": "0024_publication_author",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1791770905570,
+      "tag": "0025_member_import_rows",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1791771150633,
+      "tag": "0026_member_import_sheet",
+      "breakpoints": true
     }
   ]
 }

@@ -110,3 +110,35 @@ export const RECEIPT_MESSAGES: Record<MessageLocale, ReceiptMessage> = {
     methods: { cash: "lajan kach", moncash: "MonCash", natcash: "NatCash", kashpaw: "KashPaw", stripe: "kat" },
   },
 };
+
+/** ADH-09 : invitation d'un membre importé, par e-mail ou par un lien WhatsApp envoyé par un responsable. */
+interface InviteMessage {
+  subject: (party: string) => string;
+  text: (v: { party: string; firstName: string; number: string; email: string; link: string }) => string;
+  whatsapp: (v: { party: string; firstName: string; number: string; link: string }) => string;
+}
+
+export const INVITE_MESSAGES: Record<MessageLocale, InviteMessage> = {
+  fr: {
+    subject: (party) => `${party} : votre espace de membre`,
+    text: ({ party, firstName, number, email, link }) =>
+      `Bonjour ${firstName},\n\n${party} vous a inscrit dans son espace de membres sur civora. ` +
+      `Votre numéro de membre : ${number}.\n\nPour retrouver votre carte de membre, les votes, les formations et ` +
+      `les rassemblements, ouvrez l'application civora et connectez-vous avec cette adresse : ${email}. ` +
+      `Aucun mot de passe : un code vous sera envoyé.\n\n${link}\n\nSi vous ne connaissez pas ${party}, ignorez ce message.`,
+    whatsapp: ({ party, firstName, number, link }) =>
+      `Bonjour ${firstName}, ${party} vous a inscrit dans son espace de membres sur civora (membre n° ${number}). ` +
+      `Ouvrez l'application civora et connectez-vous avec votre adresse e-mail pour retrouver votre carte : ${link}`,
+  },
+  ht: {
+    subject: (party) => `${party} : espas manm ou`,
+    text: ({ party, firstName, number, email, link }) =>
+      `Bonjou ${firstName},\n\n${party} enskri w nan espas manm li sou civora. ` +
+      `Nimewo manm ou : ${number}.\n\nPou w jwenn kat manm ou, vòt yo, fòmasyon yo ak rasanbleman yo, ` +
+      `louvri aplikasyon civora a epi konekte ak adrès sa a : ${email}. ` +
+      `Pa gen modpas : y ap voye yon kòd ba ou.\n\n${link}\n\nSi ou pa konnen ${party}, pa okipe mesaj la.`,
+    whatsapp: ({ party, firstName, number, link }) =>
+      `Bonjou ${firstName}, ${party} enskri w nan espas manm li sou civora (manm nimewo ${number}). ` +
+      `Louvri aplikasyon civora a epi konekte ak adrès imel ou pou w jwenn kat ou : ${link}`,
+  },
+};

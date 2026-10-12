@@ -9,6 +9,11 @@ export const UPLOAD_RULES = {
   },
   signature: { types: ["image/png", "image/jpeg"], max: () => 1024 * 1024 },
   card_background: { types: ["image/png", "image/jpeg", "image/webp"], max: () => 5 * 1024 * 1024 },
+  /** Fichier de membres à importer (ADH-07) : Excel ou CSV. */
+  member_import: {
+    types: ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "text/csv"],
+    max: () => 10 * 1024 * 1024,
+  },
   training_media: {
     types: [
       "video/mp4",
