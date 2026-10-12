@@ -1,4 +1,5 @@
 import { error, fail, redirect } from "@sveltejs/kit";
+import { hasFeature } from "@civora/shared";
 import { ApiFailure, api } from "$lib/server/api";
 import { currentSession } from "$lib/server/session";
 import { uploadFile } from "$lib/server/upload";
@@ -20,8 +21,14 @@ export interface ImportView {
   id: string;
   state: ImportState;
   source: "file" | "sheet";
+  kind: "members" | "dues";
   settings: { mapping: Record<string, number>; zoneFixes: Record<string, string>; defaultStatusId: string | null };
-  report: { headers?: string[]; rows?: number; summary?: ImportSummary; result?: Record<string, number> } | null;
+  report: {
+    headers?: string[];
+    rows?: number;
+    summary?: ImportSummary & { totals?: Record<string, string> };
+    result?: Record<string, number>;
+  } | null;
   inviteRequestedAt: string | null;
   table: { headers: string[]; sample: string[][]; rows: number } | null;
   progress?: { total: number; done: number };
@@ -36,6 +43,7 @@ export interface ImportRow {
   issues: string[];
   duplicate: { reason: string; member: { id: string; name: string; number: string } | null } | null;
   decision: "create" | "merge" | "skip";
+  payment: { amount: string; currency: string; paidAt: string; periods: string[]; number: string | null } | null;
   result: string | null;
 }
 
@@ -44,14 +52,37 @@ const TABS = ["duplicates", "errors", "warnings"] as const;
 /** ADH-07 à ADH-09 : assistant d'import du fichier de membres (members.import). */
 export const load: PageServerLoad = async ({ cookies, locals, url, getClientAddress }) => {
   const s = (await currentSession(cookies, locals.partySlug!))!;
-  if (!s.me.permissions.includes("members.import")) error(403, { message: "forbidden", code: "forbidden" });
+  const canMembers = s.me.permissions.includes("members.import");
+  // ADH-10 : l'historique des cotisations relève du trésorier (payments.recordCash), formules Mouvement et National.
+  const canDues = s.me.permissions.includes("payments.recordCash");
+  if (!canMembers && !canDues) error(403, { message: "forbidden", code: "forbidden" });
+  const duesInPlan = !!s.me.tier && hasFeature(s.me.tier, "dues.history");
   const auth = { token: s.token, ip: getClientAddress() };
   const id = url.searchParams.get("id");
   if (!id || !/^[0-9a-f-]{36}$/.test(id)) {
+    const kind = url.searchParams.get("kind") === "dues" || !canMembers ? "dues" : "members";
     const { imports } = await api<{
-      imports: Array<{ id: string; state: ImportState; source: string; name: string | null; createdAt: string }>;
+      imports: Array<{
+        id: string;
+        state: ImportState;
+        source: string;
+        kind: "members" | "dues";
+        name: string | null;
+        createdAt: string;
+      }>;
     }>("/member-imports", auth);
-    return { view: null, imports, rows: null, tab: null, statuses: [], links: null };
+    return {
+      view: null,
+      imports,
+      rows: null,
+      tab: null,
+      statuses: [],
+      links: null,
+      kind,
+      canMembers,
+      canDues,
+      duesLocked: kind === "dues" && !duesInPlan,
+    };
   }
   const view = await api<ImportView>(`/member-imports/${id}`, auth).catch((e) => {
     if (e instanceof ApiFailure && e.status === 404) error(404, { message: "not_found", code: "not_found" });
@@ -64,18 +95,31 @@ export const load: PageServerLoad = async ({ cookies, locals, url, getClientAddr
       ? await api<{ total: number; rows: ImportRow[] }>(`/member-imports/${id}/rows?kind=${tab}&page=${page}`, auth)
       : null;
   const { statuses } =
-    view.state === "mapping" || view.state === "preview"
+    view.kind === "members" && (view.state === "mapping" || view.state === "preview")
       ? await api<{ statuses: Array<{ id: string; label: { fr: string; ht?: string } }> }>("/member-statuses", auth)
       : { statuses: [] };
   const lang = url.searchParams.get("lang") === "ht" ? "ht" : "fr";
   const links =
-    view.state === "done"
+    view.state === "done" && view.kind === "members"
       ? await api<{ total: number; links: Array<{ name: string; number: string; phone: string; url: string }> }>(
           `/member-imports/${id}/whatsapp?lang=${lang}&page=${page}`,
           auth,
         )
       : null;
-  return { view, imports: [], rows, tab, page, statuses, links, lang };
+  return {
+    view,
+    imports: [],
+    rows,
+    tab,
+    page,
+    statuses,
+    links,
+    lang,
+    kind: view.kind,
+    canMembers,
+    canDues,
+    duesLocked: false,
+  };
 };
 
 async function session(event: Parameters<Actions[string]>[0]) {
@@ -109,14 +153,15 @@ export const actions: Actions = {
     const f = await event.request.formData();
     const file = f.get("file");
     const sheetUrl = String(f.get("sheetUrl") ?? "").trim();
+    const kind = f.get("kind") === "dues" ? "dues" : "members";
     let id: string;
     try {
       if (file instanceof File && file.size > 0) {
         if (/\.xls$/i.test(file.name)) return fail(400, { code: "import_xls_unsupported" });
         const fileId = await uploadFile(typed(file), "member_import", auth);
-        ({ id } = await api<{ id: string }>("/member-imports", { body: { fileId }, ...auth }));
+        ({ id } = await api<{ id: string }>("/member-imports", { body: { fileId, kind }, ...auth }));
       } else if (sheetUrl) {
-        ({ id } = await api<{ id: string }>("/member-imports", { body: { sheetUrl }, ...auth }));
+        ({ id } = await api<{ id: string }>("/member-imports", { body: { sheetUrl, kind }, ...auth }));
       } else return fail(400, { code: "import_source_required" });
     } catch (e) {
       return failure(e);

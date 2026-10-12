@@ -37,7 +37,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | ADH-07 | Import Excel, CSV, Google Sheets : correspondance des colonnes, aperçu, rapport d'erreurs | E M N | P3 | NOU (partiel) | fait |
 | ADH-08 | Détection des doublons à l'import (téléphone, NIN, nom et date de naissance), fusion ou rejet | E M N | P3 | Neuf | fait |
 | ADH-09 | Invitation des membres importés par SMS ou WhatsApp | E M N | P3 | Neuf | fait |
-| ADH-10 | Import de l'historique des cotisations | M N | P3 | Neuf | à faire |
+| ADH-10 | Import de l'historique des cotisations | M N | P3 | Neuf | fait |
 | ADH-11 | Carte de membre numérique avec QR code vérifiable | M N | P3 | NOU (partiel) | en cours |
 | ADH-12 | Export filtré (Excel, CSV, PDF), journalisé, limité aux rôles autorisés | E M N | P2 | NOU | fait |
 | ADH-13 | Carte de membre personnalisable dans le back-office (fond couleur ou image, couleurs, motif, champs, validité, verso, signature, QR) et impression PDF : carte PVC CR80 ou planche A4 avec traits de coupe | M N | P3 | Neuf | fait |

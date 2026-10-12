@@ -23,7 +23,7 @@ import {
   zones,
   type Tx,
 } from "@civora/db";
-import { quotaLimit } from "@civora/shared";
+import { can, quotaLimit } from "@civora/shared";
 import { audit } from "../../../lib/audit.js";
 import { deriveKey, hmacHex, open, seal } from "../../../lib/crypto.js";
 import type { EmailSender } from "../../../lib/messaging/email.js";
@@ -36,7 +36,8 @@ import type { DuesService } from "../../dues/service.js";
 import { onApproved } from "../../engagement/points.js";
 import { normalizeIdentity, type IdentityKind, type IdentityService } from "../identity.js";
 import { nextMemberNumber } from "../service.js";
-import { IMPORT_FIELDS, plain, suggestMapping, type ColumnMapping } from "./fields.js";
+import { plain, suggestDuesMapping, suggestMapping, type ColumnMapping, type DuesMapping } from "./fields.js";
+import { analyzeDues, DUES_BLOCKING, executeDues, type DuesRowData } from "./dues-history.js";
 import { cleanName, normalizeDate, normalizeEmail, normalizePhone, splitFullName, splitTags } from "./normalize.js";
 import { fetchSheet, readTable, type Table } from "./parse.js";
 import { ZoneIndex, zoneKey, zoneLabel, type ZoneRow } from "./zone-match.js";
@@ -45,17 +46,23 @@ type Req = FastifyRequest;
 const PERM = "members.import" as const;
 const MEMBER_LEVELS = new Set(["section_communale", "diaspora_pays", "diaspora_ville"]);
 /** Problèmes qui empêchent d'importer la ligne. */
-export const BLOCKING = new Set(["name_missing", "zone_unknown", "zone_outside_scope"]);
+export const BLOCKING = new Set<string>(["name_missing", "zone_unknown", "zone_outside_scope", ...DUES_BLOCKING]);
+/** Droit requis selon le genre d'import : fichier de membres, ou historique des cotisations (ADH-10). */
+const PERM_OF = { members: PERM, dues: "payments.recordCash" } as const;
+type ImportKind = keyof typeof PERM_OF;
 const CHUNK = 200;
 const STALE_MS = 10 * 60_000;
 
-export const importStart = z.union([
-  z.object({ fileId: z.string().uuid() }),
-  z.object({ sheetUrl: z.string().url().max(500) }),
-]);
+export const importStart = z
+  .object({
+    fileId: z.string().uuid().optional(),
+    sheetUrl: z.string().url().max(500).optional(),
+    kind: z.enum(["members", "dues"]).default("members"),
+  })
+  .refine((v) => !!v.fileId !== !!v.sheetUrl, { message: "un fichier ou une feuille" });
 
 export const importSettings = z.object({
-  mapping: z.record(z.enum(IMPORT_FIELDS), z.number().int().min(0).max(300)),
+  mapping: z.record(z.string().max(30), z.number().int().min(0).max(300)),
   /** Valeur inconnue (clé de zoneKey) → code de la zone choisie par le responsable. */
   zoneFixes: z.record(z.string().max(500), z.string().max(40)).default({}),
   defaultStatusId: z.string().uuid().nullable().default(null),
@@ -110,14 +117,28 @@ export class MemberImportService {
     },
   ) {}
 
-  private guard(req: Req) {
-    if (!req.grants.some((g) => g.permission === PERM)) throw new ApiError(403, "forbidden");
+  private guard(req: Req, kind?: ImportKind) {
+    const perms: string[] = kind ? [PERM_OF[kind]] : Object.values(PERM_OF);
+    if (!req.grants.some((g) => perms.includes(g.permission))) throw new ApiError(403, "forbidden");
+  }
+
+  /** L'historique des cotisations est réservé aux formules Mouvement et National (ADH-10). */
+  private async duesAllowed(req: Req) {
+    const e = req.partyEntitlements ?? (await req.server.entitlements.get(req.partyId));
+    if (!e || !can(e, "dues.history"))
+      throw Object.assign(new ApiError(402, "feature_not_in_plan"), { requiredTier: "mouvement" });
   }
 
   private async load(tx: Tx, req: Req, id: string) {
     const [imp] = await tx.select().from(memberImports).where(eq(memberImports.id, id));
-    // Un responsable ne voit que ses imports ; un poste national les voit tous.
-    if (!imp || (imp.createdByMemberId !== req.memberId && !authorize(req, PERM))) throw new ApiError(404, "not_found");
+    const perm = imp ? PERM_OF[imp.kind as ImportKind] : PERM;
+    // Il faut le droit du genre d'import ; un responsable ne voit que ses imports, un poste national les voit tous.
+    if (
+      !imp ||
+      !req.grants.some((g) => g.permission === perm) ||
+      (imp.createdByMemberId !== req.memberId && !authorize(req, perm))
+    )
+      throw new ApiError(404, "not_found");
     return imp;
   }
 
@@ -147,10 +168,12 @@ export class MemberImportService {
 
   /** Étape 1 : fichier ou feuille ; correspondance des colonnes proposée. */
   async start(req: Req, input: z.infer<typeof importStart>) {
-    this.guard(req);
+    this.guard(req, input.kind);
+    if (input.kind === "dues") await this.duesAllowed(req);
     return withParty(req.partyId, async (tx) => {
-      const source =
-        "sheetUrl" in input ? { fileId: null, sheetUrl: input.sheetUrl } : { fileId: input.fileId, sheetUrl: null };
+      const source = input.sheetUrl
+        ? { fileId: null, sheetUrl: input.sheetUrl }
+        : { fileId: input.fileId!, sheetUrl: null };
       if (source.fileId) {
         const [f] = await tx
           .select({ by: files.uploadedByMemberId })
@@ -166,7 +189,12 @@ export class MemberImportService {
           ...source,
           source: source.sheetUrl ? "sheet" : "file",
           state: "mapping",
-          columnMapping: { mapping: suggestMapping(t.headers), zoneFixes: {}, defaultStatusId: null },
+          kind: input.kind,
+          columnMapping: {
+            mapping: input.kind === "dues" ? suggestDuesMapping(t.headers) : suggestMapping(t.headers),
+            zoneFixes: {},
+            defaultStatusId: null,
+          },
           report: { headers: t.headers, rows: t.rows.length },
           createdByMemberId: req.memberId,
         })
@@ -183,6 +211,7 @@ export class MemberImportService {
           id: memberImports.id,
           state: memberImports.state,
           source: memberImports.source,
+          kind: memberImports.kind,
           report: memberImports.report,
           createdAt: memberImports.createdAt,
           by: memberImports.createdByMemberId,
@@ -193,7 +222,11 @@ export class MemberImportService {
         .orderBy(desc(memberImports.createdAt))
         .limit(30);
       return rows
-        .filter((r) => r.by === req.memberId || authorize(req, PERM))
+        .filter(
+          (r) =>
+            req.grants.some((g) => g.permission === PERM_OF[r.kind as ImportKind]) &&
+            (r.by === req.memberId || authorize(req, PERM_OF[r.kind as ImportKind])),
+        )
         .map(({ by: _by, report, ...r }) => ({
           ...r,
           summary: (report as { summary?: unknown } | null)?.summary ?? null,
@@ -211,6 +244,7 @@ export class MemberImportService {
         id: imp.id,
         state: imp.state,
         source: imp.source,
+        kind: imp.kind,
         settings,
         report: imp.report as Record<string, unknown> | null,
         inviteRequestedAt: imp.inviteRequestedAt,
@@ -239,6 +273,30 @@ export class MemberImportService {
       const imp = await this.load(tx, req, id);
       if (imp.state !== "mapping" && imp.state !== "preview") throw new ApiError(409, "import_already_started");
       const t = await this.table(tx, imp);
+      if (imp.kind === "dues") {
+        await this.duesAllowed(req);
+        const dm = settings.mapping as DuesMapping;
+        if (dm.amount === undefined) throw new ApiError(400, "import_amount_column_required");
+        if (
+          dm.memberNumber === undefined &&
+          dm.phone === undefined &&
+          dm.email === undefined &&
+          dm.fullName === undefined &&
+          dm.lastName === undefined
+        )
+          throw new ApiError(400, "import_member_column_required");
+        const summary = await analyzeDues(tx, req, id, t, dm);
+        await tx
+          .update(memberImports)
+          .set({
+            columnMapping: settings,
+            state: "preview",
+            report: { headers: t.headers, rows: t.rows.length, summary },
+            updatedAt: new Date(),
+          })
+          .where(eq(memberImports.id, id));
+        return summary;
+      }
       const m = settings.mapping as ColumnMapping;
       const cell = (cells: string[], f: keyof ColumnMapping) => (m[f] === undefined ? "" : (cells[m[f]!] ?? ""));
       if (m.firstName === undefined && m.lastName === undefined && m.fullName === undefined)
@@ -558,9 +616,20 @@ export class MemberImportService {
         total: n,
         rows: rows.map((r) => {
           const d = r.data as RowData;
+          const p = r.data as Partial<DuesRowData>;
           return {
             line: r.line,
-            name: `${d.firstName} ${d.lastName}`.trim(),
+            name: p.memberName !== undefined ? p.memberName : `${d.firstName} ${d.lastName}`.trim(),
+            payment:
+              p.memberName !== undefined && p.amount
+                ? {
+                    amount: p.amount,
+                    currency: p.currency,
+                    paidAt: p.paidAt,
+                    periods: p.periods ?? [],
+                    number: p.memberNumber,
+                  }
+                : null,
             phone: d.phone,
             email: d.email,
             hasIdentity: !!d.identity,
@@ -650,7 +719,12 @@ export class MemberImportService {
     const pick = () =>
       withParty(partyId, async (tx) => {
         const [imp] = await tx
-          .select({ id: memberImports.id, by: memberImports.createdByMemberId, fileId: memberImports.fileId })
+          .select({
+            id: memberImports.id,
+            by: memberImports.createdByMemberId,
+            fileId: memberImports.fileId,
+            kind: memberImports.kind,
+          })
           .from(memberImports)
           .where(
             or(
@@ -670,17 +744,17 @@ export class MemberImportService {
       });
     for (let imp = await pick(); imp; imp = await pick()) {
       for (;;) {
-        const n = await withParty(partyId, (tx) => this.chunk(tx, partyId, imp.id));
+        const n = await withParty(partyId, (tx) => this.chunk(tx, partyId, imp.id, imp.kind as ImportKind, imp.by));
         done.rows += n;
         if (n < CHUNK) break;
       }
-      await this.finish(partyId, imp.id, imp.fileId);
+      await this.finish(partyId, imp.id, imp.fileId, imp.kind as ImportKind);
       done.imports++;
     }
     return done;
   }
 
-  private async chunk(tx: Tx, partyId: string, importId: string): Promise<number> {
+  private async chunk(tx: Tx, partyId: string, importId: string, kind: ImportKind, by: string | null): Promise<number> {
     const rows = await tx
       .select()
       .from(memberImportRows)
@@ -690,9 +764,15 @@ export class MemberImportService {
       .for("update", { skipLocked: true });
     for (const row of rows) {
       let result: "created" | "merged" | "skipped" | "failed" = "skipped";
-      let memberId: string | null = null;
+      let memberId: string | null = kind === "dues" ? row.memberId : null;
       const issues = [...row.issues];
-      if (row.decision !== "skip" && !row.issues.some((x) => BLOCKING.has(x))) {
+      if (kind === "dues" && row.decision !== "skip" && !row.issues.some((x) => BLOCKING.has(x))) {
+        try {
+          result = await tx.transaction((sp) => executeDues(sp, partyId, row, by));
+        } catch {
+          result = "failed";
+        }
+      } else if (row.decision !== "skip" && !row.issues.some((x) => BLOCKING.has(x))) {
         try {
           const out = await tx.transaction((sp) =>
             row.decision === "merge" && row.duplicateMemberId
@@ -833,7 +913,7 @@ export class MemberImportService {
   }
 
   /** Fin : synthèse, audit, et suppression du fichier déposé (pièces d'identité en clair). */
-  private async finish(partyId: string, importId: string, fileId: string | null) {
+  private async finish(partyId: string, importId: string, fileId: string | null, kind: ImportKind = "members") {
     const key = await withParty(partyId, async (tx) => {
       const counts = await tx
         .select({ result: memberImportRows.result, n: sql<number>`count(*)::int` })
@@ -853,7 +933,7 @@ export class MemberImportService {
         partyId,
         actorUserId: null,
         actorKind: "system",
-        action: "members.import",
+        action: kind === "dues" ? "dues.history.import" : "members.import",
         targetType: "member_import",
         targetId: importId,
         metadata: result,
@@ -874,7 +954,7 @@ export class MemberImportService {
     this.guard(req);
     return withParty(req.partyId, async (tx) => {
       const imp = await this.load(tx, req, id);
-      if (imp.state !== "done") throw new ApiError(409, "import_not_done");
+      if (imp.state !== "done" || imp.kind !== "members") throw new ApiError(409, "import_not_done");
       const [{ n } = { n: 0 }] = await tx
         .select({ n: sql<number>`count(*)::int` })
         .from(memberImportRows)
@@ -970,7 +1050,7 @@ export class MemberImportService {
     this.guard(req);
     return withParty(req.partyId, async (tx) => {
       const imp = await this.load(tx, req, id);
-      if (imp.state !== "done") throw new ApiError(409, "import_not_done");
+      if (imp.state !== "done" || imp.kind !== "members") throw new ApiError(409, "import_not_done");
       const where = and(
         eq(memberImportRows.importId, id),
         eq(memberImportRows.result, "created"),

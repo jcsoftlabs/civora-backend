@@ -128,8 +128,14 @@
         <h1>{t("admin.dues.title")}</h1>
       </div>
       {#if can("payments.recordCash")}
-        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-        <Button href={href({ encaisser: "" })}>{t("admin.dues.cash")}</Button>
+        <div class="head-actions">
+          <!-- ADH-10 : reprise du cahier de caisse (formule verrouillée affichée dans l'assistant). -->
+          <Button variant="secondary" href={`${resolve("/admin/membres/importer")}?kind=dues`}
+            >{t("imp.dues.cta")}</Button
+          >
+          <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+          <Button href={href({ encaisser: "" })}>{t("admin.dues.cash")}</Button>
+        </div>
       {/if}
     </header>
 
@@ -183,7 +189,7 @@
             onchange={(e) => go({ provider: e.currentTarget.value || null })}
           >
             <option value="">{t("admin.dues.filter.anyMethod")}</option>
-            {#each ["cash", "moncash", "natcash", "kashpaw"] as p (p)}
+            {#each ["cash", "moncash", "natcash", "kashpaw", "history"] as p (p)}
               <option value={p}>{tk(`admin.dues.method.${p}`)}</option>
             {/each}
           </select>
@@ -724,5 +730,10 @@
       border-left: 0;
       border-top: 1px solid var(--c-line);
     }
+  }
+  .head-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
   }
 </style>

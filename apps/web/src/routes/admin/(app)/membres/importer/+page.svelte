@@ -11,7 +11,7 @@
   import { SvelteURLSearchParams } from "svelte/reactivity";
   import { resolve } from "$app/paths";
   import { formatDayTime } from "$lib/datetime";
-  import { Badge, Button, Field, Skeleton } from "@civora/ui";
+  import { Badge, Button, Field, Locked, Skeleton } from "@civora/ui";
   import Lookup from "$lib/components/Lookup.svelte";
   import { format, translator, type MessageKey } from "$lib/i18n";
   import type { ActionData, PageData } from "./$types";
@@ -22,7 +22,7 @@
   const tk = (k: string) => t(k as MessageKey);
   const n = (v: number) => v.toLocaleString(data.locale === "ht" ? "fr-HT" : "fr-FR");
 
-  const FIELDS = [
+  const MEMBER_FIELDS = [
     "firstName",
     "lastName",
     "fullName",
@@ -39,7 +39,25 @@
     "joinedAt",
     "tags",
   ] as const;
+  /** ADH-10 : colonnes d'un cahier de cotisations. */
+  const DUES_FIELDS = [
+    "memberNumber",
+    "fullName",
+    "firstName",
+    "lastName",
+    "phone",
+    "email",
+    "amount",
+    "currency",
+    "paidAt",
+    "period",
+    "method",
+    "receiptRef",
+  ] as const;
   const view = $derived(data.view);
+  const kind = $derived(view?.kind ?? data.kind ?? "members");
+  const dues = $derived(kind === "dues");
+  const FIELDS: readonly string[] = $derived(dues ? DUES_FIELDS : MEMBER_FIELDS);
   const summary = $derived(view?.report?.summary ?? null);
   const step = $derived(
     !view
@@ -80,7 +98,15 @@
     const v = view.table.sample.find((r) => r[Number(i)])?.[Number(i)] ?? "";
     return field === "nin" || field === "nif" ? (v ? `•••• ${v.slice(-2)}` : "") : v;
   }
-  const hasName = $derived(!!(mapping.fullName || (mapping.firstName && mapping.lastName) || mapping.lastName));
+  const hasName = $derived(
+    dues
+      ? !!mapping.amount &&
+          !!(mapping.memberNumber || mapping.phone || mapping.email || mapping.fullName || mapping.lastName)
+      : !!(mapping.fullName || (mapping.firstName && mapping.lastName) || mapping.lastName),
+  );
+  const money = (amount: string, currency: string) =>
+    `${Number(amount).toLocaleString("fr-FR", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ${currency}`;
+  const day = (d: string) => d.split("-").reverse().join("/");
 
   const href = (params: Record<string, string | number | null>) => {
     const u = new SvelteURLSearchParams(page.url.searchParams);
@@ -106,8 +132,8 @@
 <main>
   <header class="head">
     <a class="crumb" href={resolve("/admin/membres")}>{t("admin.nav.members")}</a>
-    <h1>{t("imp.title")}</h1>
-    <p class="lead">{t("imp.lead")}</p>
+    <h1>{dues ? t("imp.dues.title") : t("imp.title")}</h1>
+    <p class="lead">{dues ? t("imp.dues.lead") : t("imp.lead")}</p>
   </header>
 
   <ol class="steps" aria-label={t("imp.title")}>
@@ -121,37 +147,56 @@
   {#if code}<p class="msg bad" role="alert">{tk(`error.${code}`)}</p>{/if}
 
   {#if !view}
-    <section class="grid2">
-      <form method="POST" action="?/start" enctype="multipart/form-data" use:enhance={submit("start")} class="register">
-        <label class="drop">
-          <span class="drop-title">{t("imp.file.title")}</span>
-          <span class="drop-hint">{t("imp.file.hint")}</span>
-          <input
-            type="file"
-            name="file"
-            accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    {#if data.canMembers && data.canDues}
+      <!-- eslint-disable svelte/no-navigation-without-resolve -->
+      <nav class="seg kinds" aria-label={t("imp.kind.label")}>
+        {#each ["members", "dues"] as k (k)}
+          <a href="?kind={k}" class:on={kind === k} aria-current={kind === k ? "page" : undefined}
+            >{tk(`imp.kind.${k}`)}</a
+          >
+        {/each}
+      </nav>
+      <!-- eslint-enable svelte/no-navigation-without-resolve -->
+    {/if}
+    {#if data.duesLocked}
+      <Locked title={t("imp.dues.title")} message={format(t("plan.lockedIn"), { tier: t("plan.mouvement") })} />
+    {:else}
+      <section class="grid2">
+        <form
+          method="POST"
+          action="?/start"
+          enctype="multipart/form-data"
+          use:enhance={submit("start")}
+          class="register"
+        >
+          <input type="hidden" name="kind" value={kind} />
+          <label class="drop">
+            <span class="drop-title">{dues ? t("imp.dues.fileTitle") : t("imp.file.title")}</span>
+            <span class="drop-hint">{t("imp.file.hint")}</span>
+            <input
+              type="file"
+              name="file"
+              accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            />
+          </label>
+          <div class="or"><span>{t("imp.file.or")}</span></div>
+          <Field
+            label={t("imp.sheet.label")}
+            name="sheetUrl"
+            type="url"
+            placeholder="https://docs.google.com/spreadsheets/d/..."
+            hint={t("imp.sheet.hint")}
           />
-        </label>
-        <div class="or"><span>{t("imp.file.or")}</span></div>
-        <Field
-          label={t("imp.sheet.label")}
-          name="sheetUrl"
-          type="url"
-          placeholder="https://docs.google.com/spreadsheets/d/..."
-          hint={t("imp.sheet.hint")}
-        />
-        <Button type="submit" pending={pending === "start"}>{t("imp.file.read")}</Button>
-      </form>
-      <aside class="tips">
-        <h2>{t("imp.tips.title")}</h2>
-        <ul>
-          <li>{t("imp.tips.1")}</li>
-          <li>{t("imp.tips.2")}</li>
-          <li>{t("imp.tips.3")}</li>
-          <li>{t("imp.tips.4")}</li>
-        </ul>
-      </aside>
-    </section>
+          <Button type="submit" pending={pending === "start"}>{t("imp.file.read")}</Button>
+        </form>
+        <aside class="tips">
+          <h2>{t("imp.tips.title")}</h2>
+          <ul>
+            {#each [1, 2, 3, 4] as i (i)}<li>{tk(dues ? `imp.dues.tips.${i}` : `imp.tips.${i}`)}</li>{/each}
+          </ul>
+        </aside>
+      </section>
+    {/if}
     {#if data.imports.length}
       <section class="history">
         <h2>{t("imp.history")}</h2>
@@ -160,6 +205,7 @@
             <li>
               <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
               <a href={`?id=${imp.id}`}>{imp.name ?? t("imp.sheet.name")}</a>
+              <span>{tk(`imp.kind.${imp.kind}`)}</span>
               <span>{formatDayTime(imp.createdAt)}</span>
               <Badge tone={imp.state === "done" ? "success" : imp.state === "failed" ? "danger" : "neutral"}
                 >{tk(`imp.state.${imp.state}`)}</Badge
@@ -196,14 +242,16 @@
           {/each}
         </tbody>
       </table>
-      <label class="select">
-        <span>{t("imp.columns.status")}</span>
-        <select name="defaultStatusId" value={view.settings.defaultStatusId ?? ""}>
-          <option value="">{t("imp.columns.noStatus")}</option>
-          {#each data.statuses as s (s.id)}<option value={s.id}>{label(s)}</option>{/each}
-        </select>
-      </label>
-      {#if !hasName}<p class="msg warn">{t("imp.columns.needName")}</p>{/if}
+      {#if !dues}
+        <label class="select">
+          <span>{t("imp.columns.status")}</span>
+          <select name="defaultStatusId" value={view.settings.defaultStatusId ?? ""}>
+            <option value="">{t("imp.columns.noStatus")}</option>
+            {#each data.statuses as s (s.id)}<option value={s.id}>{label(s)}</option>{/each}
+          </select>
+        </label>
+      {/if}
+      {#if !hasName}<p class="msg warn">{dues ? t("imp.dues.needColumns") : t("imp.columns.needName")}</p>{/if}
       <div class="actions">
         <Button type="submit" pending={pending === "settings"} disabled={!hasName}>{t("imp.columns.check")}</Button>
       </div>
@@ -211,7 +259,9 @@
   {:else if step === 2 && summary}
     <section class="band" aria-label={t("imp.review.summary")}>
       <div><strong>{n(summary.rows)}</strong><span>{t("imp.review.rows")}</span></div>
-      <div class="ok"><strong>{n(summary.valid)}</strong><span>{t("imp.review.valid")}</span></div>
+      <div class="ok">
+        <strong>{n(summary.valid)}</strong><span>{dues ? t("imp.dues.valid") : t("imp.review.valid")}</span>
+      </div>
       <div><strong>{n(summary.duplicates)}</strong><span>{t("imp.review.duplicates")}</span></div>
       <div class:bad={summary.blocked > 0}>
         <strong>{n(summary.blocked)}</strong><span>{t("imp.review.blocked")}</span>
@@ -276,7 +326,7 @@
       <!-- eslint-enable svelte/no-navigation-without-resolve -->
       {#if data.tab === "duplicates" && summary.duplicates}
         <div class="bulk">
-          {#each ["merge", "skip"] as d (d)}
+          {#each dues ? ["skip"] : ["merge", "skip"] as d (d)}
             <form method="POST" action="?/decide" use:enhance={submit(`all-${d}`)}>
               <input type="hidden" name="id" value={view.id} />
               <input type="hidden" name="decision" value={d} />
@@ -294,7 +344,17 @@
               <span class="line">{format(t("imp.review.line"), { n: String(r.line) })}</span>
               <div class="who">
                 <strong>{r.name || t("imp.review.noName")}</strong>
-                <span>{[r.zone, r.phone, r.email].filter(Boolean).join(", ")}</span>
+                {#if r.payment}
+                  <span
+                    >{format(t(r.payment.periods.length === 1 ? "imp.dues.line1" : "imp.dues.line"), {
+                      amount: money(r.payment.amount, r.payment.currency),
+                      n: String(r.payment.periods.length),
+                      date: day(r.payment.paidAt),
+                    })}{r.payment.number ? `, n° ${r.payment.number}` : ""}</span
+                  >
+                {:else}
+                  <span>{[r.zone, r.phone, r.email].filter(Boolean).join(", ")}</span>
+                {/if}
                 {#if r.duplicate}
                   <span class="dup">
                     {r.duplicate.member
@@ -342,13 +402,24 @@
           <!-- eslint-enable svelte/no-navigation-without-resolve -->
         {/if}
       {:else}
-        <p class="empty">{tk(`imp.tab.${data.tab}.empty`)}</p>
+        <p class="empty">
+          {dues && data.tab === "duplicates" ? t("imp.dues.noDuplicates") : tk(`imp.tab.${data.tab}.empty`)}
+        </p>
       {/if}
     </section>
 
     <form method="POST" action="?/run" use:enhance={submit("run")} class="launch">
       <input type="hidden" name="id" value={view.id} />
-      <p>{format(t("imp.run.lead"), { n: n(summary.valid) })}</p>
+      <p>
+        {dues
+          ? format(t("imp.dues.runLead"), {
+              n: n(summary.valid),
+              total: Object.entries(summary.totals ?? {})
+                .map(([c, a]) => money(a, c))
+                .join(" + "),
+            })
+          : format(t("imp.run.lead"), { n: n(summary.valid) })}
+      </p>
       <Button type="submit" pending={pending === "run"}>{t("imp.run.go")}</Button>
     </form>
   {:else if view.state === "queued" || view.state === "running"}
@@ -367,53 +438,59 @@
     <section class="panel done">
       <span class="stamp" aria-hidden="true">{t("imp.stamp")}</span>
       <div class="band small">
-        {#each ["created", "merged", "skipped", "failed"] as k (k)}
+        {#each dues ? ["created", "skipped", "failed"] : ["created", "merged", "skipped", "failed"] as k (k)}
           <div class:bad={k === "failed" && (result[k] ?? 0) > 0}>
-            <strong>{n(result[k] ?? 0)}</strong><span>{tk(`imp.result.${k}`)}</span>
+            <strong>{n(result[k] ?? 0)}</strong><span>{tk(dues ? `imp.dues.result.${k}` : `imp.result.${k}`)}</span>
           </div>
         {/each}
       </div>
       <p class="links">
         <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
         <a href={`${resolve("/admin/membres/importer/rapport")}?id=${view.id}`} download>{t("imp.report")}</a>
-        <a href={resolve("/admin/membres")}>{t("imp.toMembers")}</a>
+        {#if dues}
+          <a href={resolve("/admin/cotisations")}>{t("imp.dues.toDues")}</a>
+        {:else}
+          <a href={resolve("/admin/membres")}>{t("imp.toMembers")}</a>
+        {/if}
       </p>
     </section>
 
-    <section class="panel">
-      <h2>{t("imp.invite.title")}</h2>
-      <p class="hint">{t("imp.invite.lead")}</p>
-      <form method="POST" action="?/invite" use:enhance={submit("invite")} class="actions start">
-        <input type="hidden" name="id" value={view.id} />
-        <Button type="submit" pending={pending === "invite"} disabled={!!view.inviteRequestedAt}>
-          {view.inviteRequestedAt ? t("imp.invite.sent") : t("imp.invite.email")}
-        </Button>
-      </form>
-      {#if invited !== null}<p class="msg" role="status">{format(t("imp.invite.queued"), { n: n(invited) })}</p>{/if}
-      {#if data.links && data.links.total}
-        <div class="wa-head">
-          <h3>{format(t("imp.invite.whatsapp"), { n: n(data.links.total) })}</h3>
-          <!-- eslint-disable svelte/no-navigation-without-resolve -->
-          <div class="seg">
-            {#each ["fr", "ht"] as l (l)}<a href={href({ lang: l, page: null })} class:on={data.lang === l}
-                >{tk(`imp.invite.lang.${l}`)}</a
-              >{/each}
+    {#if !dues}
+      <section class="panel">
+        <h2>{t("imp.invite.title")}</h2>
+        <p class="hint">{t("imp.invite.lead")}</p>
+        <form method="POST" action="?/invite" use:enhance={submit("invite")} class="actions start">
+          <input type="hidden" name="id" value={view.id} />
+          <Button type="submit" pending={pending === "invite"} disabled={!!view.inviteRequestedAt}>
+            {view.inviteRequestedAt ? t("imp.invite.sent") : t("imp.invite.email")}
+          </Button>
+        </form>
+        {#if invited !== null}<p class="msg" role="status">{format(t("imp.invite.queued"), { n: n(invited) })}</p>{/if}
+        {#if data.links && data.links.total}
+          <div class="wa-head">
+            <h3>{format(t("imp.invite.whatsapp"), { n: n(data.links.total) })}</h3>
+            <!-- eslint-disable svelte/no-navigation-without-resolve -->
+            <div class="seg">
+              {#each ["fr", "ht"] as l (l)}<a href={href({ lang: l, page: null })} class:on={data.lang === l}
+                  >{tk(`imp.invite.lang.${l}`)}</a
+                >{/each}
+            </div>
+            <!-- eslint-enable svelte/no-navigation-without-resolve -->
           </div>
-          <!-- eslint-enable svelte/no-navigation-without-resolve -->
-        </div>
-        <ul class="wa">
-          {#each data.links.links as l (l.number)}
-            <li>
-              <span><strong>{l.name}</strong> {l.phone}</span>
-              <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-              <a href={l.url} target="_blank" rel="noopener">{t("imp.invite.open")}</a>
-            </li>
-          {/each}
-        </ul>
-      {:else}
-        <p class="hint">{t("imp.invite.noPhone")}</p>
-      {/if}
-    </section>
+          <ul class="wa">
+            {#each data.links.links as l (l.number)}
+              <li>
+                <span><strong>{l.name}</strong> {l.phone}</span>
+                <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+                <a href={l.url} target="_blank" rel="noopener">{t("imp.invite.open")}</a>
+              </li>
+            {/each}
+          </ul>
+        {:else}
+          <p class="hint">{t("imp.invite.noPhone")}</p>
+        {/if}
+      </section>
+    {/if}
   {:else}
     <p class="msg bad">{t("imp.failed")}</p>
   {/if}
@@ -509,6 +586,9 @@
     align-items: start;
   }
   /* Page du cahier d'adhésion : lignes bleu pâle et marge rouge, le fichier qu'on remplace. */
+  .kinds {
+    margin-bottom: var(--s-5);
+  }
   .register {
     display: flex;
     flex-direction: column;

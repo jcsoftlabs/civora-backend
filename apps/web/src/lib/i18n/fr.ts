@@ -495,6 +495,7 @@ export const fr = {
   "admin.dues.method.natcash": "NatCash",
   "admin.dues.method.kashpaw": "KashPaw",
   "admin.dues.method.stripe": "Carte",
+  "admin.dues.method.history": "Historique",
   "admin.dues.method.fake": "Test",
   "admin.dues.col.member": "Membre",
   "admin.dues.col.amount": "Montant",

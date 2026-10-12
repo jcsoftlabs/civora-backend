@@ -1,0 +1,1 @@
+ALTER TABLE "member_imports" ADD COLUMN "kind" text DEFAULT 'members' NOT NULL;

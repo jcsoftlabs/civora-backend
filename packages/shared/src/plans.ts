@@ -13,6 +13,7 @@ export type Feature =
   | "members.referralAdmission"
   | "members.card"
   | "dues.customPlans"
+  | "dues.history"
   | "dues.differentiatedAmounts"
   | "dues.lateEffects"
   | "dues.prepay"
@@ -92,6 +93,7 @@ const essentiel: Feature[] = [
 const mouvement: Feature[] = [
   ...essentiel,
   "members.card",
+  "dues.history",
   "dues.differentiatedAmounts",
   "dues.lateEffects",
   "dues.prepay",

@@ -92,7 +92,11 @@ export class FilesService {
       throw new ApiError(403, "forbidden");
     if (body.purpose === "card_background" && !req.grants.some((g) => g.permission === "settings.party"))
       throw new ApiError(403, "forbidden");
-    if (body.purpose === "member_import" && !req.grants.some((g) => g.permission === "members.import"))
+    // Fichier de membres (members.import) ou cahier de cotisations (payments.recordCash, ADH-10).
+    if (
+      body.purpose === "member_import" &&
+      !req.grants.some((g) => g.permission === "members.import" || g.permission === "payments.recordCash")
+    )
       throw new ApiError(403, "forbidden");
 
     const id = randomUUID();

@@ -485,6 +485,7 @@ export const ht: Record<MessageKey, string> = {
   "admin.dues.method.natcash": "NatCash",
   "admin.dues.method.kashpaw": "KashPaw",
   "admin.dues.method.stripe": "Kat",
+  "admin.dues.method.history": "Istwa",
   "admin.dues.method.fake": "Tès",
   "admin.dues.col.member": "Manm",
   "admin.dues.col.amount": "Montan",

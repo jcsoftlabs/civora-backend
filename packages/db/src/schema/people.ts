@@ -142,6 +142,8 @@ export const memberImports = pgTable(
     report: jsonb("report"),
     /** file (Excel ou CSV déposé) | sheet (Google Sheets, lu en CSV) */
     source: text("source").notNull().default("file"),
+    /** members (fichier de membres, ADH-07) | dues (historique des cotisations, ADH-10) */
+    kind: text("kind").notNull().default("members"),
     createdByMemberId: uuid("created_by_member_id"),
     /** Invitations par e-mail demandées (ADH-09) : le worker les envoie par lots. */
     inviteRequestedAt: timestamp("invite_requested_at", { withTimezone: true }),

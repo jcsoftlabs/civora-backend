@@ -113,3 +113,67 @@ export function suggestMapping(headers: string[]): ColumnMapping {
     delete mapping.fullName;
   return mapping;
 }
+
+/** ADH-10 : champs d'un cahier de cotisations (un paiement par ligne). */
+export const DUES_FIELDS = [
+  "memberNumber",
+  "fullName",
+  "firstName",
+  "lastName",
+  "phone",
+  "email",
+  "amount",
+  "currency",
+  "paidAt",
+  "period",
+  "method",
+  "receiptRef",
+] as const;
+export type DuesField = (typeof DUES_FIELDS)[number];
+export type DuesMapping = Partial<Record<DuesField, number>>;
+
+const DUES_ALIASES: Record<DuesField, string[]> = {
+  memberNumber: [
+    "n membre",
+    "no membre",
+    "num membre",
+    "numero du membre",
+    "nimewo",
+    "numero de membre",
+    "n de membre",
+    "no de membre",
+    "numero membre",
+    "matricule",
+    "nimewo manm",
+    "member number",
+    "numero",
+    "n",
+  ],
+  fullName: ALIASES.fullName,
+  firstName: ALIASES.firstName,
+  lastName: ALIASES.lastName,
+  phone: ALIASES.phone,
+  email: ALIASES.email,
+  amount: ["montant", "somme", "montant paye", "amount", "kantite", "lajan", "valeur"],
+  currency: ["devise", "monnaie", "currency", "lajan an", "deviz"],
+  paidAt: ["date", "date de paiement", "paye le", "date du paiement", "date paiement", "payment date", "dat peman"],
+  period: ["periode", "mois", "mois paye", "periode couverte", "pour", "period", "month", "mwa", "peryod"],
+  method: ["mode", "mode de paiement", "moyen", "moyen de paiement", "payment method", "mwayen"],
+  receiptRef: ["recu", "n recu", "numero de recu", "no recu", "receipt", "resi"],
+};
+
+export function suggestDuesMapping(headers: string[]): DuesMapping {
+  const mapping: DuesMapping = {};
+  const used = new Set<number>();
+  const normalized = headers.map(plain);
+  for (const field of DUES_FIELDS) {
+    const i = normalized.findIndex((h, idx) => !used.has(idx) && h && DUES_ALIASES[field].includes(h));
+    if (i >= 0) {
+      mapping[field] = i;
+      used.add(i);
+    }
+  }
+  if (mapping.fullName !== undefined && mapping.firstName !== undefined && mapping.lastName !== undefined)
+    delete mapping.fullName;
+  return mapping;
+}
