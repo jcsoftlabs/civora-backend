@@ -17,8 +17,15 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (event.url.pathname === "/") redirect(307, "/console");
     if (!event.url.pathname.startsWith("/console") && event.url.pathname !== "/langue")
       error(404, { message: "not_found", code: "not_found" });
-  } else if (host === root || host === `www.${root}` || host === "localhost" || host === "127.0.0.1") {
-    // localhost sans sous-domaine : le site commercial en développement.
+  } else if (
+    host === root ||
+    host === `www.${root}` ||
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host.endsWith(".vercel.app")
+  ) {
+    // localhost sans sous-domaine : le site commercial en développement. Adresse Vercel (*.vercel.app, avant le
+    // domaine ou pour un aperçu) : le site commercial aussi, aucune organisation n'y a d'espace.
     event.locals.surface = "marketing";
   } else {
     event.locals.surface = event.url.pathname.startsWith("/admin") ? "admin" : "site";
