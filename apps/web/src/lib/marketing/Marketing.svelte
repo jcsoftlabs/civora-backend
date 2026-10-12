@@ -6,7 +6,7 @@
   Les captures viennent du jeu de démonstration (`pnpm db:demo`, puis `pnpm --filter @civora/web screenshots`).
 -->
 <script lang="ts">
-  import { MemberCard } from "@civora/ui";
+  import { BrandMark, MemberCard } from "@civora/ui";
   import { resolve } from "$app/paths";
   import { translator, type MessageKey } from "$lib/i18n";
   import AppSection from "./AppSection.svelte";
@@ -60,7 +60,7 @@
 <header class="top">
   <div class="bar wrap">
     <a class="brand" href="#haut" aria-label="civora">
-      <span class="mark" aria-hidden="true"></span>civora
+      <BrandMark size={30} />civora
     </a>
     <nav class="links" class:open={menu} aria-label={t("mk.nav.label")}>
       {#each NAV as [id, key] (id)}
@@ -221,7 +221,7 @@
 <footer class="foot">
   <div class="wrap foot-grid">
     <div>
-      <a class="brand" href="#haut"><span class="mark" aria-hidden="true"></span>civora</a>
+      <a class="brand" href="#haut"><BrandMark size={30} tone="dark" />civora</a>
       <p>{t("mk.footer.tagline")}</p>
     </div>
     <nav aria-label={t("mk.footer.product")}>
@@ -320,16 +320,6 @@
     text-decoration: none;
     font: 700 var(--fs-22) / 1 var(--font-display);
     letter-spacing: var(--tracking-display);
-  }
-  /* Le logotype : un tampon rond à double cercle, comme sur un procès-verbal. */
-  .mark {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    border: 3px solid var(--c-primary);
-    box-shadow:
-      inset 0 0 0 3px var(--c-paper),
-      inset 0 0 0 6px var(--c-primary);
   }
   .links {
     display: flex;
@@ -727,12 +717,6 @@
   }
   .foot .brand {
     color: var(--c-surface);
-  }
-  .foot .mark {
-    border-color: var(--c-accent);
-    box-shadow:
-      inset 0 0 0 3px var(--c-rail),
-      inset 0 0 0 6px var(--c-accent);
   }
   .foot-grid {
     display: grid;

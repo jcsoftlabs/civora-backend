@@ -4,7 +4,7 @@
 -->
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import { Button, Field, QrCode } from "@civora/ui";
+  import { BrandMark, Button, Field, QrCode } from "@civora/ui";
   import { translator, type MessageKey } from "$lib/i18n";
   import type { ActionData, PageData } from "./$types";
 
@@ -27,7 +27,7 @@
 
 <main>
   <section class="card" aria-labelledby="title">
-    <p class="brand"><span class="mark" aria-hidden="true"></span>{t("con.name")}</p>
+    <p class="brand"><BrandMark size={24} />{t("con.name")}</p>
     {#if data.step === "email" && !codeStep}
       <h1 id="title">{t("con.name")}</h1>
       <p class="lead">{t("con.login.lead")}</p>
@@ -123,15 +123,6 @@
     gap: var(--s-2);
     font-weight: 600;
     color: var(--c-ink-2);
-  }
-  .mark {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2.5px solid var(--c-primary);
-    box-shadow:
-      inset 0 0 0 2.5px var(--c-surface),
-      inset 0 0 0 5px var(--c-primary);
   }
   h1 {
     margin: 0;

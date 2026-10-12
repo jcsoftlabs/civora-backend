@@ -5,6 +5,7 @@
   animations sont réduites.
 -->
 <script lang="ts">
+  import { BrandMark } from "@civora/ui";
   import { translator, type MessageKey } from "$lib/i18n";
   import { inview } from "./inview";
 
@@ -17,7 +18,7 @@
 <div class="orbit" aria-hidden="true" use:inview>
   <span class="wave"></span>
   <span class="wave late"></span>
-  <span class="seal"><span class="mark"></span></span>
+  <span class="seal"><BrandMark size={50} tone="primary" /></span>
   <div class="ring">
     {#each MODULES as m, i (m)}
       <div class="slot" style:--a="{(360 / MODULES.length) * i}deg">
@@ -96,24 +97,6 @@
     border-radius: 24px;
     background: var(--c-primary);
     box-shadow: 0 0 0 10px var(--c-primary-tint);
-  }
-  /* La marque civora : une carte de membre stylisée. */
-  .mark {
-    width: 38px;
-    height: 26px;
-    border: 3px solid var(--c-on-primary);
-    border-radius: 6px;
-    position: relative;
-  }
-  .mark::after {
-    content: "";
-    position: absolute;
-    left: 5px;
-    right: 12px;
-    bottom: 4px;
-    height: 3px;
-    border-radius: 2px;
-    background: var(--c-accent);
   }
   .wave {
     position: absolute;

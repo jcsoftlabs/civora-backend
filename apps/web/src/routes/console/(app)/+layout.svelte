@@ -3,6 +3,7 @@
   personne connectée et rôle, rappel de ce que la console ne voit pas. Même grammaire que le back-office.
 -->
 <script lang="ts">
+  import { BrandMark } from "@civora/ui";
   import type { Snippet } from "svelte";
   import { page } from "$app/state";
   import { resolve } from "$app/paths";
@@ -30,7 +31,7 @@
 
 <div class="shell">
   <aside class="rail">
-    <p class="brand"><span class="mark" aria-hidden="true"></span>{t("con.name")}</p>
+    <p class="brand"><BrandMark size={24} tone="dark" />{t("con.name")}</p>
     <nav aria-label={t("con.nav.label")}>
       {#each nav as n (n.href)}
         <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
@@ -75,15 +76,6 @@
     align-items: center;
     gap: var(--s-2);
     font: 600 var(--fs-16) / 1 var(--font-display);
-  }
-  .mark {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2.5px solid var(--c-accent);
-    box-shadow:
-      inset 0 0 0 2.5px var(--c-rail),
-      inset 0 0 0 5px var(--c-accent);
   }
   nav {
     display: flex;

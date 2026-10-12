@@ -6,6 +6,7 @@ import '../../core/errors.dart';
 import '../../core/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../widgets/member_card.dart';
+import '../../widgets/brand_mark.dart';
 import '../../widgets/objects.dart';
 import 'join_flow.dart';
 
@@ -90,7 +91,13 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
           children: [
-            Text('civora', style: text.titleLarge?.copyWith(color: Palette.primaryDeep)),
+            Row(
+              children: [
+                const BrandMark(size: 30),
+                const SizedBox(width: 10),
+                Text('civora', style: text.titleLarge?.copyWith(color: Palette.primaryDeep)),
+              ],
+            ),
             const SizedBox(height: 20),
             // Pile d'objets : un aperçu de ce que contient l'espace membre, sans données réelles.
             LayoutBuilder(
