@@ -41,7 +41,7 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
       final flow = ref.read(joinFlowProvider);
       final r = await ref.read(joinFlowProvider.notifier).verify(_code.text);
       final session = Session(
-        slug: flow.party!.slug,
+        slug: (r['party'] as Map?)?['slug'] as String? ?? flow.party!.slug,
         token: r['token'] as String,
         expiresAt: DateTime.parse(r['expiresAt'] as String),
       );
@@ -84,7 +84,10 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
           children: [
             Text(t.otpTitle, style: text.headlineSmall),
             const SizedBox(height: 8),
-            Text(t.otpLead(flow.destination ?? ''), style: text.bodyLarge?.copyWith(color: Palette.ink2)),
+            Text(
+              flow.party == null ? t.otpLeadAny(flow.destination ?? '') : t.otpLead(flow.destination ?? ''),
+              style: text.bodyLarge?.copyWith(color: Palette.ink2),
+            ),
             const SizedBox(height: 24),
             TextField(
               controller: _code,
@@ -179,10 +182,7 @@ class _MfaScreenState extends ConsumerState<MfaScreen> {
             FilledButton(onPressed: _busy ? null : _verify, child: Text(t.mfaVerify)),
           ] else ...[
             const SizedBox(height: 24),
-            OutlinedButton(
-              onPressed: () => context.go('/bienvenue'),
-              child: Text(t.joinOther),
-            ),
+            OutlinedButton(onPressed: () => context.go('/bienvenue'), child: Text(t.joinOther)),
           ],
         ],
       ),

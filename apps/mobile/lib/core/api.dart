@@ -25,6 +25,7 @@ class ApiClient {
 
   Future<Map<String, dynamic>> get(String path) => _send('GET', path);
   Future<Map<String, dynamic>> post(String path, [Object? body]) => _send('POST', path, body);
+  Future<Map<String, dynamic>> delete(String path) => _send('DELETE', path);
 
   Future<Map<String, dynamic>> _send(String method, String path, [Object? body]) async {
     final req = http.Request(method, Uri.parse('$apiUrl$path'))

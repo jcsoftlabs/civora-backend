@@ -49,14 +49,13 @@ class Remote extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = L.of(context);
-    return ref.watch(apiGet(path)).when(
+    return ref
+        .watch(apiGet(path))
+        .when(
           data: builder,
           loading: () => skeleton,
-          error: (e, _) => ErrorRetry(
-            message: errorText(t, e),
-            retry: t.retry,
-            onRetry: () => ref.invalidate(apiGet(path)),
-          ),
+          error: (e, _) =>
+              ErrorRetry(message: errorText(t, e), retry: t.retry, onRetry: () => ref.invalidate(apiGet(path))),
         );
   }
 }

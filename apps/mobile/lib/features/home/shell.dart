@@ -3,13 +3,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/theme.dart';
 import '../../l10n/app_localizations.dart';
-import 'carnet_screen.dart';
-import 'profile_screen.dart';
-import 'section_screen.dart';
+import '../act/act_screen.dart';
+import '../me/me_screen.dart';
+import '../news/news_screen.dart';
 import 'wallet_screen.dart';
 
-/// Coque de l'espace membre : quatre onglets et, au centre de la barre flottante sombre, le bouton surélevé
-/// qui montre la carte de membre (à un pouce depuis chaque onglet).
+/// Coque de l'espace membre : Accueil (ce qui attend le membre), Actualités (fil de la section, podcasts,
+/// albums), Agir (tous les modules), Moi (carnet et réglages) ; au centre de la barre flottante sombre, le
+/// bouton surélevé qui montre la carte de membre, à un pouce depuis chaque onglet.
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 
@@ -19,46 +20,46 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   int _tab = 0;
-  static const _pages = [WalletScreen(), SectionScreen(), CarnetScreen(), ProfileScreen()];
+  static const _pages = [WalletScreen(), NewsScreen(), ActScreen(), MeScreen()];
 
   @override
   Widget build(BuildContext context) {
     final t = L.of(context);
     final items = [
-      (Icons.account_balance_wallet_outlined, t.navWallet),
-      (Icons.push_pin_outlined, t.navSection),
-      (Icons.menu_book_outlined, t.navCarnet),
-      (Icons.person_outline, t.navProfile),
+      (Icons.home_outlined, t.navWallet),
+      (Icons.feed_outlined, t.navNews),
+      (Icons.flag_outlined, t.navAct),
+      (Icons.person_outline, t.navMe),
     ];
     Widget tab(int i) => Expanded(
-          child: Semantics(
-            selected: _tab == i,
-            button: true,
-            label: items[i].$2,
-            child: InkResponse(
-              onTap: () => setState(() => _tab = i),
-              radius: 28,
-              child: SizedBox(
-                height: 60,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(items[i].$1, color: _tab == i ? Palette.paper : const Color(0xFF8FA6A1), size: 24),
-                    const SizedBox(height: 3),
-                    Text(
-                      items[i].$2,
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: _tab == i ? Palette.paper : const Color(0xFF8FA6A1),
-                      ),
-                    ),
-                  ],
+      child: Semantics(
+        selected: _tab == i,
+        button: true,
+        label: items[i].$2,
+        child: InkResponse(
+          onTap: () => setState(() => _tab = i),
+          radius: 28,
+          child: SizedBox(
+            height: 60,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(items[i].$1, color: _tab == i ? Palette.paper : const Color(0xFF8FA6A1), size: 24),
+                const SizedBox(height: 3),
+                Text(
+                  items[i].$2,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: _tab == i ? Palette.paper : const Color(0xFF8FA6A1),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
-        );
+        ),
+      ),
+    );
     return Scaffold(
       extendBody: true,
       body: IndexedStack(index: _tab, children: _pages),

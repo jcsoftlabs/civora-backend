@@ -15,10 +15,10 @@ class Session {
 
   Map<String, dynamic> toJson() => {'slug': slug, 'token': token, 'expiresAt': expiresAt.toIso8601String()};
   static Session fromJson(Map<String, dynamic> j) => Session(
-        slug: j['slug'] as String,
-        token: j['token'] as String,
-        expiresAt: DateTime.parse(j['expiresAt'] as String),
-      );
+    slug: j['slug'] as String,
+    token: j['token'] as String,
+    expiresAt: DateTime.parse(j['expiresAt'] as String),
+  );
 }
 
 class SessionStore {

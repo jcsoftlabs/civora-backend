@@ -58,22 +58,25 @@ class JoinFlow extends Notifier<JoinState> {
     return party;
   }
 
+  /// Demande d'un code. Sans organisation choisie, l'API la retrouve d'après l'adresse (et ne la révèle
+  /// qu'après le bon code).
   Future<void> requestCode(String channel, String destination) async {
-    final p = state.party!;
+    final p = state.party;
     final r = await ApiClient().post('/auth/otp/request', {
-      'partySlug': p.slug,
+      'partySlug': ?p?.slug,
       'channel': channel,
       'destination': destination,
     });
     state = JoinState(party: p, channel: channel, destination: destination, challengeId: r['challengeId'] as String);
   }
 
-  /// Vérifie le code : renvoie le jeton, son expiration et l'état de la double authentification.
+  /// Vérifie le code : session de l'application (espace membre, jusqu'à la déconnexion) et son organisation.
   Future<Map<String, dynamic>> verify(String code) => ApiClient().post('/auth/otp/verify', {
-        'partySlug': state.party!.slug,
-        'challengeId': state.challengeId,
-        'code': code,
-      });
+    'partySlug': ?state.party?.slug,
+    'challengeId': state.challengeId,
+    'code': code,
+    'client': 'app',
+  });
 
   void reset() => state = const JoinState();
 }

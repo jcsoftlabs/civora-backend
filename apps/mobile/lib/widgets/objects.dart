@@ -65,10 +65,7 @@ class TicketCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(when, style: GoogleFonts.figtree(fontSize: 14, fontWeight: FontWeight.w600, height: 1.3)),
-                        if (footnote != null) ...[
-                          const SizedBox(height: 6),
-                          Text(footnote!, style: _label),
-                        ],
+                        if (footnote != null) ...[const SizedBox(height: 6), Text(footnote!, style: _label)],
                       ],
                     ),
                   ),
@@ -209,9 +206,9 @@ class InkCrossBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox.square(
-        dimension: size,
-        child: CustomPaint(painter: _CrossPainter(crossed)),
-      );
+    dimension: size,
+    child: CustomPaint(painter: _CrossPainter(crossed)),
+  );
 }
 
 class _CrossPainter extends CustomPainter {
@@ -346,34 +343,34 @@ class Stamp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Transform.rotate(
-        angle: angle,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            border: Border.all(color: color.withValues(alpha: 0.85), width: 2.2),
-            borderRadius: BorderRadius.circular(5),
+    angle: angle,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        border: Border.all(color: color.withValues(alpha: 0.85), width: 2.2),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            text,
+            style: GoogleFonts.figtree(
+              color: color.withValues(alpha: 0.9),
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+              letterSpacing: 1.6,
+            ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                text,
-                style: GoogleFonts.figtree(
-                  color: color.withValues(alpha: 0.9),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                  letterSpacing: 1.6,
-                ),
-              ),
-              if (date != null)
-                Text(
-                  date!,
-                  style: GoogleFonts.figtree(color: color.withValues(alpha: 0.8), fontSize: 11, letterSpacing: 0.8),
-                ),
-            ],
-          ),
-        ),
-      );
+          if (date != null)
+            Text(
+              date!,
+              style: GoogleFonts.figtree(color: color.withValues(alpha: 0.8), fontSize: 11, letterSpacing: 0.8),
+            ),
+        ],
+      ),
+    ),
+  );
 }
 
 /// Squelette animé (jamais d'indicateur rotatif) : pulsation douce de la forme attendue.
@@ -421,19 +418,18 @@ class OfflineBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: Palette.warning.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(12),
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+    decoration: BoxDecoration(color: Palette.warning.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(12)),
+    child: Row(
+      children: [
+        const Icon(Icons.cloud_off_outlined, size: 18, color: Palette.warning),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(text, style: GoogleFonts.figtree(fontSize: 13, color: Palette.ink)),
         ),
-        child: Row(
-          children: [
-            const Icon(Icons.cloud_off_outlined, size: 18, color: Palette.warning),
-            const SizedBox(width: 10),
-            Expanded(child: Text(text, style: GoogleFonts.figtree(fontSize: 13, color: Palette.ink))),
-          ],
-        ),
-      );
+      ],
+    ),
+  );
 }
 
 /// Message d'erreur : ce qui s'est passé, et le bouton pour réessayer.
@@ -445,14 +441,14 @@ class ErrorRetry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(message, textAlign: TextAlign.center, style: GoogleFonts.figtree(fontSize: 15, height: 1.45)),
-            const SizedBox(height: 16),
-            OutlinedButton(onPressed: onRetry, child: Text(retry)),
-          ],
-        ),
-      );
+    padding: const EdgeInsets.all(24),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(message, textAlign: TextAlign.center, style: GoogleFonts.figtree(fontSize: 15, height: 1.45)),
+        const SizedBox(height: 16),
+        OutlinedButton(onPressed: onRetry, child: Text(retry)),
+      ],
+    ),
+  );
 }

@@ -10,7 +10,7 @@
   let { locale }: { locale: "fr" | "ht" } = $props();
   const t = $derived(translator(locale));
   const tk = (k: string) => t(k as MessageKey);
-  const PHONES = ["section", "wallet", "carnet"] as const;
+  const PHONES = ["act", "wallet", "news"] as const;
 </script>
 
 <section id="application" class="app" aria-labelledby="app-title">

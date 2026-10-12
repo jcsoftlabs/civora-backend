@@ -25,6 +25,7 @@ await owner.unsafe(readFileSync(new URL("../sql/audit.sql", import.meta.url), "u
 await installJobQueues(url, process.env.DATABASE_SSL === "require"); // pg-boss, par le propriétaire
 await owner.unsafe(readFileSync(new URL("../sql/jobs.sql", import.meta.url), "utf8"));
 await owner.unsafe(readFileSync(new URL("../sql/console.sql", import.meta.url), "utf8")); // SOC-10
+await owner.unsafe(readFileSync(new URL("../sql/login.sql", import.meta.url), "utf8")); // connexion de l'app
 const zoneCount = await syncZones(owner); // SOC-05 : référentiel territorial
 await owner.end();
 console.log(`Migrations et politiques RLS appliquées, ${zoneCount} zones à jour.`);

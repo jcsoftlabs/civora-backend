@@ -22,6 +22,7 @@ const slugA = `auth-a-${tag}`;
 const slugB = `auth-b-${tag}`;
 const memberEmail = `membre-${tag}@example.test`;
 const adminEmail = `admin-${tag}@example.test`;
+const extraUsers: string[] = [];
 const fx = { zone: "", memberUser: "", adminUser: "", member: "", admin: "", organ: "", post: "" };
 
 let clock = Date.now();
@@ -119,7 +120,7 @@ afterAll(async () => {
     await owner.unsafe(`delete from ${t} where party_id in ($1, $2)`, [A, B]);
   }
   await owner`delete from parties where id in (${A}, ${B})`;
-  await owner`delete from users where id in (${fx.memberUser}, ${fx.adminUser})`;
+  await owner`delete from users where id in ${owner([fx.memberUser, fx.adminUser, ...extraUsers])}`;
   await owner`delete from zones where id = ${fx.zone}`;
   await owner.end();
   await closeDb();
@@ -335,6 +336,88 @@ describe("double authentification des administrateurs", () => {
   it("le secret TOTP est chiffré en base", async () => {
     const [row] = await owner`select secret_encrypted from member_mfa where member_id = ${fx.admin}`;
     expect(Buffer.from(row!.secret_encrypted).includes(secret)).toBe(false);
+  });
+});
+
+describe("application mobile : connexion par l'adresse seule, session membre", () => {
+  // Membre propre à ces essais : les précédents ont épuisé les codes du membre de test sur la fenêtre en cours.
+  const appEmail = `appli-${tag}@example.test`;
+  beforeAll(async () => {
+    const [u] = await owner`insert into users (email) values (${appEmail}) returning id`;
+    await owner`insert into members (party_id, user_id, member_number, first_name, last_name, zone_id, application_state)
+      values (${A}, ${u!.id}, 'M9', 'Appli', 'Membre', ${fx.zone}, 'approved')`;
+    extraUsers.push(u!.id as string);
+  });
+
+  async function appLogin(addr: string) {
+    const before = email.sent.length;
+    const r = await post("/auth/otp/request", { channel: "email", destination: addr });
+    expect(r.statusCode).toBe(202);
+    const sent = email.sent.length > before;
+    const { challengeId } = r.json();
+    return { challengeId, sent };
+  }
+
+  it("retrouve l'organisation du membre à partir de son adresse, et ne la révèle qu'après le bon code", async () => {
+    const { challengeId, sent } = await appLogin(appEmail.toUpperCase());
+    expect(sent).toBe(true);
+    const wrong = await post("/auth/otp/verify", { challengeId, code: "000000", client: "app" });
+    expect(wrong.statusCode).toBe(401);
+    expect(wrong.json()).toEqual({ code: "otp_invalid", requestId: expect.any(String) });
+    const res = await post("/auth/otp/verify", { challengeId, code: lastCode(), client: "app" });
+    expect(res.statusCode).toBe(200);
+    const body = res.json();
+    expect(body.party).toMatchObject({ slug: slugA, name: `Parti ${slugA}` });
+    expect(body.mfa).toBe("none");
+    // Session de l'application : jusqu'à la déconnexion (dix ans), portée « membre ».
+    expect(new Date(body.expiresAt).getTime() - clock).toBeGreaterThan(3000 * 24 * 3600_000);
+    const [row] = await owner`select scope from sessions where token_hash = ${hashToken(body.token)}`;
+    expect(row!.scope).toBe("member");
+  });
+
+  it("répond de la même façon pour une adresse inconnue, sans rien envoyer", async () => {
+    const unknown = await appLogin(`inconnu-${tag}@example.test`);
+    expect(unknown.sent).toBe(false);
+    expect(Object.keys((await post("/auth/otp/request", { channel: "email", destination: appEmail })).json())).toEqual([
+      "challengeId",
+    ]);
+    const res = await post("/auth/otp/verify", { challengeId: unknown.challengeId, code: "123456", client: "app" });
+    expect(res.json()).toEqual({ code: "otp_invalid", requestId: expect.any(String) });
+  });
+
+  it("ne trahit pas un moyen d'envoi désactivé : même réponse qu'une adresse inconnue", async () => {
+    await owner`update parties set otp_channels = ${["email"]} where id = ${A}`;
+    const [u] = await owner`select phone_e164 from users where id = ${fx.memberUser}`;
+    const before = sms.sent.length;
+    const r = await post("/auth/otp/request", { channel: "sms", destination: u!.phone_e164 });
+    expect(r.statusCode).toBe(202);
+    expect(sms.sent.length).toBe(before);
+  });
+
+  it("une session de l'application n'a aucun droit de gestion, même pour un responsable, et pas de 2FA", async () => {
+    const { challengeId } = await appLogin(adminEmail);
+    const res = await post("/auth/otp/verify", { challengeId, code: lastCode(), client: "app" });
+    expect(res.json().mfa).toBe("none");
+    const token = res.json().token as string;
+    const me = (await get("/auth/me", token)).json();
+    expect(me.permissions).toEqual([]);
+    expect(me.mfaPending).toBe(false);
+    // Le back-office reste fermé : la gestion se fait sur le web, avec la double authentification.
+    expect((await get("/audit", token)).statusCode).toBe(403);
+    // Le même responsable connecté depuis le web garde ses droits, derrière la 2FA.
+    const web = await login(adminEmail);
+    expect(web.mfa).not.toBe("none");
+  });
+
+  it("la déconnexion ferme la session de l'application", async () => {
+    const { challengeId, sent } = await appLogin(appEmail);
+    expect(sent).toBe(true);
+    const v = await post("/auth/otp/verify", { challengeId, code: lastCode(), client: "app" });
+    expect(v.json()).toMatchObject({ party: { slug: slugA } });
+    const token = v.json().token as string;
+    expect((await get("/auth/me", token)).statusCode).toBe(200);
+    await post("/auth/logout", {}, { token });
+    expect((await get("/auth/me", token)).statusCode).toBe(401);
   });
 });
 

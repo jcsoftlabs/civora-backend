@@ -80,11 +80,18 @@ ThemeData buildTheme(Color brand) {
       filled: true,
       fillColor: Palette.surface,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: Palette.line)),
-      enabledBorder:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: Palette.line)),
-      focusedBorder:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: brand, width: 2)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: Palette.line),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: Palette.line),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(color: brand, width: 2),
+      ),
     ),
   );
 }

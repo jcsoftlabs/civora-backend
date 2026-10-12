@@ -175,5 +175,239 @@
   "yes": "Oui",
   "no": "Non",
   "emailHint": "nom@exemple.com",
-  "phoneHint": "+509 37 00 00 00"
+  "phoneHint": "+509 37 00 00 00",
+  "navNews": "Actus",
+  "navAct": "Agir",
+  "navMe": "Moi",
+  "todoTitle": "À faire",
+  "todoNone": "Rien ne vous attend pour l'instant. Les votes, cotisations et rassemblements apparaîtront ici.",
+  "todoVote": "Voter : {title}",
+  "@todoVote": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "todoDues": "Cotisation : {amount}",
+  "@todoDues": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "todoEvent": "{title}, {when}",
+  "@todoEvent": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "cardYear": "Membre {year}",
+  "@cardYear": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "newsTitle": "Actualités",
+  "newsAll": "Tout",
+  "newsAnnouncements": "Annonces",
+  "newsArticles": "Articles",
+  "newsPodcasts": "Podcasts",
+  "newsAlbums": "Albums",
+  "newsNews": "Actualité",
+  "newsPodcast": "Podcast",
+  "newsAlbum": "Album",
+  "newsPhotos": "{n} photos",
+  "@newsPhotos": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "newsEmpty": "Rien de publié ici pour l'instant.",
+  "newsNoAudio": "Le fichier audio de cet épisode n'est pas encore disponible.",
+  "play": "Écouter",
+  "pause": "Pause",
+  "actTitle": "Agir",
+  "actVotes": "Votes",
+  "actTraining": "Formations",
+  "actEvents": "Rassemblements",
+  "actDues": "Cotisations",
+  "actPodcasts": "Podcasts",
+  "actAlbums": "Albums",
+  "actVotesOpen": "{n, plural, =0{Aucun vote ouvert} =1{1 vote ouvert} other{{n} votes ouverts}}",
+  "@actVotesOpen": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "actTrainingState": "{n, plural, =0{Aucune formation} =1{1 formation} other{{n} formations}}",
+  "@actTrainingState": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "actEventsState": "{n, plural, =0{Aucun à venir} =1{1 à venir} other{{n} à venir}}",
+  "@actEventsState": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "actDuesUpToDate": "À jour",
+  "actDuesLate": "À régler",
+  "actListen": "Écouter",
+  "actSee": "Voir",
+  "votesTitle": "Votes internes",
+  "votesEmpty": "Aucun scrutin ne vous concerne pour l'instant.",
+  "votePhasePreparation": "Liste figée",
+  "votePhaseOpen": "Vote ouvert",
+  "votePhaseCounting": "Dépouillement en cours",
+  "votePhaseClosed": "Dépouillé",
+  "votePhasePublished": "Résultats certifiés",
+  "voteChooseOne": "Cochez une case.",
+  "voteChooseUpTo": "Cochez jusqu'à {n} noms.",
+  "@voteChooseUpTo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "voteBlank": "Voter blanc",
+  "voteSecret": "Votre vote est secret : votre bulletin ne porte pas votre nom.",
+  "voteSubmit": "Déposer mon bulletin",
+  "voteConfirmTitle": "Déposer ce bulletin ?",
+  "voteConfirmLead": "Une fois déposé, il ne peut plus être modifié.",
+  "voteConfirm": "Déposer",
+  "cancel": "Annuler",
+  "voteDone": "Bulletin déposé",
+  "voteReceipt": "Votre code de reçu",
+  "voteReceiptLead": "Notez-le : il n'est enregistré nulle part. Après le dépouillement, il vous permet de vérifier que votre bulletin a été compté, sans révéler votre choix.",
+  "voteCopy": "Copier le code",
+  "voteCopied": "Code copié",
+  "voteAlready": "Vous avez déjà voté à ce tour.",
+  "voteOpensAt": "Le vote ouvre le {date}.",
+  "@voteOpensAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "voteNotOpen": "Le vote n'est pas ouvert.",
+  "voteResults": "Résultats",
+  "voteVotes": "{n} voix",
+  "@voteVotes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "voteElected": "Élu",
+  "voteAdopted": "Proposition adoptée",
+  "voteRejected": "Proposition rejetée",
+  "voteTurnout": "Participation : {p} %",
+  "@voteTurnout": {
+    "placeholders": {
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+  "voteVerify": "Vérifier mon bulletin",
+  "voteVerifyLabel": "Code de reçu",
+  "voteVerifyOk": "Votre bulletin figure dans le journal : il a été compté.",
+  "voteVerifyMissing": "Ce code ne figure pas dans le journal. Vérifiez la saisie.",
+  "voteRound2": "Second tour",
+  "coursesTitle": "Formations",
+  "coursesEmpty": "Aucune formation pour l'instant.",
+  "courseMandatory": "Obligatoire",
+  "courseDone": "Terminée",
+  "courseModule": "Module {n}",
+  "@courseModule": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "courseLocked": "Réussissez le module précédent pour l'ouvrir.",
+  "courseQuiz": "Passer le quiz",
+  "coursePassed": "Module réussi",
+  "courseOpenVideo": "Regarder la vidéo",
+  "courseOpenFile": "Ouvrir le document",
+  "courseViewed": "Lu",
+  "quizTitle": "Quiz",
+  "quizSubmit": "Valider mes réponses",
+  "quizScore": "Score : {s} %",
+  "@quizScore": {
+    "placeholders": {
+      "s": {
+        "type": "int"
+      }
+    }
+  },
+  "quizPassed": "Réussi. Le module suivant est ouvert.",
+  "quizFailed": "Pas encore. Revoyez les questions signalées et réessayez.",
+  "quizAttemptsLeft": "{n, plural, =0{Plus d'essai} =1{1 essai restant} other{{n} essais restants}}",
+  "@quizAttemptsLeft": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "quizCertificate": "Certificat n° {n}",
+  "@quizCertificate": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "quizWrong": "À revoir",
+  "eventsTitle": "Rassemblements",
+  "eventsEmpty": "Aucun rassemblement à venir.",
+  "eventRegister": "M'inscrire",
+  "eventUnregister": "Me désinscrire",
+  "eventFull": "Complet",
+  "duesTitle": "Cotisations",
+  "duesNone": "Aucune cotisation prévue.",
+  "duesStatePaid": "Réglée",
+  "duesStateDue": "À régler",
+  "duesStateLate": "En retard",
+  "duesStateUpcoming": "À venir",
+  "duesPayHint": "Réglez auprès de votre trésorier de section ; le paiement MonCash et NatCash arrive dans l'application.",
+  "meTitle": "Moi",
+  "podcastDownload": "Télécharger pour l'écouter hors ligne",
+  "podcastDownloaded": "Disponible hors ligne",
+  "podcastDownloading": "Téléchargement…",
+  "welcomeSignInLead": "Entrez l'adresse e-mail que connaît votre organisation : vous recevrez un code à 6 chiffres, et l'app vous ouvre votre espace.",
+  "welcomeUsePhone": "Utiliser mon numéro de téléphone",
+  "welcomeUseEmail": "Utiliser mon adresse e-mail",
+  "welcomeJoinOrg": "Pas encore membre ? Rejoindre une organisation",
+  "otpLeadAny": "Si {destination} est connue d'une organisation, un code vient d'y être envoyé. Il est valable 10 minutes.",
+  "@otpLeadAny": {
+    "placeholders": {
+      "destination": {
+        "type": "String"
+      }
+    }
+  }
 }

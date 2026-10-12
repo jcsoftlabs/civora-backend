@@ -148,6 +148,13 @@
       "when": 1791755955905,
       "tag": "0020_internal_votes",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1791764285073,
+      "tag": "0021_app_member_sessions",
+      "breakpoints": true
     }
   ]
 }

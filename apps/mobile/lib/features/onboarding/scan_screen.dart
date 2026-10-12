@@ -65,8 +65,11 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                       errorBuilder: (_, _) => Center(
                         child: Padding(
                           padding: const EdgeInsets.all(20),
-                          child: Text(t.scanDenied,
-                              textAlign: TextAlign.center, style: const TextStyle(color: Palette.paper)),
+                          child: Text(
+                            t.scanDenied,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Palette.paper),
+                          ),
                         ),
                       ),
                     ),
@@ -79,13 +82,17 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
             child: Column(
               children: [
-                Text(t.scanTitle,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Palette.paper)),
+                Text(
+                  t.scanTitle,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Palette.paper),
+                ),
                 const SizedBox(height: 8),
-                Text(_error ?? t.scanHelp,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: _error == null ? Palette.line : Palette.accent)),
+                Text(
+                  _error ?? t.scanHelp,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: _error == null ? Palette.line : Palette.accent),
+                ),
               ],
             ),
           ),

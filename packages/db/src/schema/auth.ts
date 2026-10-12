@@ -1,5 +1,6 @@
 // SEC-04, SEC-09 : connexion par code à usage unique, sessions révocables, double authentification des administrateurs.
-import { integer, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
+import { check, integer, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { encrypted, id, partyId, sameParty, timestamps } from "./_helpers.js";
 import { members, users } from "./people.js";
 
@@ -41,6 +42,11 @@ export const sessions = pgTable(
     /** Administrateur (poste avec permissions) : la session reste limitée tant que la 2FA n'est pas validée. */
     mfaRequiredAt: timestamp("mfa_required_at", { withTimezone: true }),
     mfaVerifiedAt: timestamp("mfa_verified_at", { withTimezone: true }),
+    /**
+     * full : back-office, droits des postes occupés. member : application mobile, espace membre seulement, sans
+     * aucun droit de gestion ; la session dure jusqu'à la déconnexion (ou la révocation depuis le web).
+     */
+    scope: text("scope").notNull().default("full"),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     revokedAt: timestamp("revoked_at", { withTimezone: true }),
     lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
@@ -48,7 +54,10 @@ export const sessions = pgTable(
     ip: text("ip"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [sameParty("sessions", t.partyId, t.memberId, members)],
+  (t) => [
+    sameParty("sessions", t.partyId, t.memberId, members),
+    check("sessions_scope", sql`${t.scope} in ('full', 'member')`),
+  ],
 );
 
 /** Double authentification par application (TOTP) : secret chiffré avec la clé du parti (SEC-04). */

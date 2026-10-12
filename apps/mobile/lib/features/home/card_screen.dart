@@ -43,13 +43,15 @@ class CardScreen extends ConsumerWidget {
               children: [
                 MemberCard(
                   brand: parseHex(party['brandColor'] as String?),
+                  secondary: party['brandColorSecondary'] == null
+                      ? null
+                      : parseHex(party['brandColorSecondary'] as String),
                   partyName: party['name'] as String,
                   name: m['name'] as String,
                   number: m['number'] as String,
-                  memberLabel: t.cardMember,
+                  numberLabel: t.cardNumber,
                   location: m['location'] as String?,
-                  since: m['since'] == null ? null : t.cardSince(m['since'] as String),
-                  badge: upToDate ? t.duesPaid('${haitiYear()}') : null,
+                  year: upToDate ? '${haitiYear()}' : null,
                   tilt: 0,
                 ),
                 const SizedBox(height: 28),
@@ -61,19 +63,29 @@ class CardScreen extends ConsumerWidget {
                       data: c['verifyUrl'] as String,
                       size: 230,
                       eyeStyle: const QrEyeStyle(eyeShape: QrEyeShape.square, color: Palette.ink),
-                      dataModuleStyle: const QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: Palette.ink),
+                      dataModuleStyle: const QrDataModuleStyle(
+                        dataModuleShape: QrDataModuleShape.square,
+                        color: Palette.ink,
+                      ),
                       semanticsLabel: t.cardShow,
                     ),
                   ),
                 ),
                 const SizedBox(height: 18),
-                Text(t.cardShow, textAlign: TextAlign.center, style: const TextStyle(color: Palette.paper, height: 1.45)),
+                Text(
+                  t.cardShow,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Palette.paper, height: 1.45),
+                ),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(l.offline ? Icons.cloud_off_outlined : Icons.offline_pin_outlined,
-                        size: 16, color: Palette.accent),
+                    Icon(
+                      l.offline ? Icons.cloud_off_outlined : Icons.offline_pin_outlined,
+                      size: 16,
+                      color: Palette.accent,
+                    ),
                     const SizedBox(width: 6),
                     Text(t.cardOffline, style: const TextStyle(color: Palette.accent, fontSize: 13)),
                   ],

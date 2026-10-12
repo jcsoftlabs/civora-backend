@@ -175,5 +175,239 @@
   "yes": "Wi",
   "no": "Non",
   "emailHint": "non@egzanp.com",
-  "phoneHint": "+509 37 00 00 00"
+  "phoneHint": "+509 37 00 00 00",
+  "navNews": "Nouvèl",
+  "navAct": "Aji",
+  "navMe": "Mwen",
+  "todoTitle": "Pou fè",
+  "todoNone": "Pa gen anyen k ap tann ou kounye a. Vòt, kotizasyon ak rasanbleman ap parèt la a.",
+  "todoVote": "Vote : {title}",
+  "@todoVote": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "todoDues": "Kotizasyon : {amount}",
+  "@todoDues": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "todoEvent": "{title}, {when}",
+  "@todoEvent": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "cardYear": "Manm {year}",
+  "@cardYear": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "newsTitle": "Nouvèl",
+  "newsAll": "Tout",
+  "newsAnnouncements": "Anons",
+  "newsArticles": "Atik",
+  "newsPodcasts": "Podkast",
+  "newsAlbums": "Albòm",
+  "newsNews": "Nouvèl",
+  "newsPodcast": "Podkast",
+  "newsAlbum": "Albòm",
+  "newsPhotos": "{n} foto",
+  "@newsPhotos": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "newsEmpty": "Pa gen anyen ki pibliye la a pou kounye a.",
+  "newsNoAudio": "Fichye odyo epizòd sa a poko disponib.",
+  "play": "Koute",
+  "pause": "Kanpe",
+  "actTitle": "Aji",
+  "actVotes": "Vòt",
+  "actTraining": "Fòmasyon",
+  "actEvents": "Rasanbleman",
+  "actDues": "Kotizasyon",
+  "actPodcasts": "Podkast",
+  "actAlbums": "Albòm",
+  "actVotesOpen": "{n, plural, =0{Pa gen vòt ouvè} =1{1 vòt ouvè} other{{n} vòt ouvè}}",
+  "@actVotesOpen": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "actTrainingState": "{n, plural, =0{Pa gen fòmasyon} =1{1 fòmasyon} other{{n} fòmasyon}}",
+  "@actTrainingState": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "actEventsState": "{n, plural, =0{Pa gen ki pral fèt} =1{1 ki pral fèt} other{{n} ki pral fèt}}",
+  "@actEventsState": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "actDuesUpToDate": "Ajou",
+  "actDuesLate": "Pou peye",
+  "actListen": "Koute",
+  "actSee": "Gade",
+  "votesTitle": "Vòt entèn",
+  "votesEmpty": "Pa gen vòt ki konsène w pou kounye a.",
+  "votePhasePreparation": "Lis fikse",
+  "votePhaseOpen": "Vòt ouvè",
+  "votePhaseCounting": "Depouyman ap fèt",
+  "votePhaseClosed": "Depouye",
+  "votePhasePublished": "Rezilta sètifye",
+  "voteChooseOne": "Make yon kaz.",
+  "voteChooseUpTo": "Make jiska {n} non.",
+  "@voteChooseUpTo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "voteBlank": "Vote blan",
+  "voteSecret": "Vòt ou sekrè : bilten ou pa gen non w sou li.",
+  "voteSubmit": "Depoze bilten mwen",
+  "voteConfirmTitle": "Depoze bilten sa a ?",
+  "voteConfirmLead": "Depi ou depoze l, ou pa ka chanje l ankò.",
+  "voteConfirm": "Depoze",
+  "cancel": "Anile",
+  "voteDone": "Bilten depoze",
+  "voteReceipt": "Kòd resi ou",
+  "voteReceiptLead": "Ekri l : li pa anrejistre okenn kote. Apre depouyman an, li pèmèt ou verifye yo konte bilten ou, san moun pa konnen chwa w.",
+  "voteCopy": "Kopye kòd la",
+  "voteCopied": "Kòd la kopye",
+  "voteAlready": "Ou deja vote nan tou sa a.",
+  "voteOpensAt": "Vòt la ouvri {date}.",
+  "@voteOpensAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "voteNotOpen": "Vòt la pa ouvè.",
+  "voteResults": "Rezilta",
+  "voteVotes": "{n} vwa",
+  "@voteVotes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "voteElected": "Eli",
+  "voteAdopted": "Pwopozisyon an pase",
+  "voteRejected": "Pwopozisyon an rejte",
+  "voteTurnout": "Patisipasyon : {p} %",
+  "@voteTurnout": {
+    "placeholders": {
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+  "voteVerify": "Verifye bilten mwen",
+  "voteVerifyLabel": "Kòd resi",
+  "voteVerifyOk": "Bilten ou nan jounal la : yo konte l.",
+  "voteVerifyMissing": "Kòd sa a pa nan jounal la. Verifye sa ou tape a.",
+  "voteRound2": "Dezyèm tou",
+  "coursesTitle": "Fòmasyon",
+  "coursesEmpty": "Pa gen fòmasyon pou kounye a.",
+  "courseMandatory": "Obligatwa",
+  "courseDone": "Fini",
+  "courseModule": "Modil {n}",
+  "@courseModule": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "courseLocked": "Reyisi modil anvan an pou ouvri sa a.",
+  "courseQuiz": "Pase kesyonè a",
+  "coursePassed": "Modil la reyisi",
+  "courseOpenVideo": "Gade videyo a",
+  "courseOpenFile": "Ouvri dokiman an",
+  "courseViewed": "Li",
+  "quizTitle": "Kesyonè",
+  "quizSubmit": "Valide repons mwen yo",
+  "quizScore": "Nòt : {s} %",
+  "@quizScore": {
+    "placeholders": {
+      "s": {
+        "type": "int"
+      }
+    }
+  },
+  "quizPassed": "Ou reyisi. Pwochen modil la ouvè.",
+  "quizFailed": "Poko. Revize kesyon ki make yo epi eseye ankò.",
+  "quizAttemptsLeft": "{n, plural, =0{Pa gen esè ankò} =1{1 esè ki rete} other{{n} esè ki rete}}",
+  "@quizAttemptsLeft": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "quizCertificate": "Sètifika nimewo {n}",
+  "@quizCertificate": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "quizWrong": "Pou revize",
+  "eventsTitle": "Rasanbleman",
+  "eventsEmpty": "Pa gen rasanbleman ki pral fèt.",
+  "eventRegister": "Enskri m",
+  "eventUnregister": "Retire non m",
+  "eventFull": "Plen",
+  "duesTitle": "Kotizasyon",
+  "duesNone": "Pa gen kotizasyon ki prevwa.",
+  "duesStatePaid": "Peye",
+  "duesStateDue": "Pou peye",
+  "duesStateLate": "An reta",
+  "duesStateUpcoming": "Pral rive",
+  "duesPayHint": "Peye kay trezorye seksyon w ; peman MonCash ak NatCash ap vini nan aplikasyon an.",
+  "meTitle": "Mwen",
+  "podcastDownload": "Telechaje l pou koute l san entènèt",
+  "podcastDownloaded": "Disponib san entènèt",
+  "podcastDownloading": "Telechajman…",
+  "welcomeSignInLead": "Tape adrès imèl òganizasyon w konnen an : w ap resevwa yon kòd 6 chif, epi aplikasyon an ouvri espas ou.",
+  "welcomeUsePhone": "Sèvi ak nimewo telefòn mwen",
+  "welcomeUseEmail": "Sèvi ak adrès imèl mwen",
+  "welcomeJoinOrg": "Ou poko manm ? Rantre nan yon òganizasyon",
+  "otpLeadAny": "Si yon òganizasyon konnen {destination}, nou fèk voye yon kòd ba li. Li bon pou 10 minit.",
+  "@otpLeadAny": {
+    "placeholders": {
+      "destination": {
+        "type": "String"
+      }
+    }
+  }
 }

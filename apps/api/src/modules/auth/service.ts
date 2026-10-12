@@ -1,6 +1,6 @@
 // SEC-04, SEC-09 : connexion par code à usage unique, sessions révocables, double authentification des administrateurs.
 import { createHash, createHmac, randomBytes, randomInt, randomUUID, timingSafeEqual } from "node:crypto";
-import { and, count, eq, gt, isNull, lte, or } from "drizzle-orm";
+import { and, count, eq, gt, isNull, lte, or, sql } from "drizzle-orm";
 import {
   memberMfa,
   members,
@@ -11,6 +11,7 @@ import {
   sessions,
   users,
   withAuthLookup,
+  withReferenceData,
   withParty,
   zones,
   type Tx,
@@ -32,6 +33,8 @@ export const OTP_MAX_PER_WINDOW = 5;
 const OTP_WINDOW_MS = 15 * 60_000;
 const MEMBER_SESSION_MS = 30 * 24 * 3600_000;
 const ADMIN_SESSION_MS = 7 * 24 * 3600_000;
+/** Application mobile : session sans droit de gestion, valable jusqu'à la déconnexion (dix ans en pratique). */
+const APP_SESSION_MS = 3650 * 24 * 3600_000;
 
 export type Channel = "email" | "sms";
 /** Un code de connexion ne sert jamais à adhérer, et inversement. */
@@ -207,9 +210,12 @@ export class AuthService {
       channel: string;
       ip?: string | undefined;
       userAgent?: string | undefined;
+      /** member : application mobile, espace membre seulement (aucun droit de gestion, donc ni 2FA ni expiration). */
+      scope?: "full" | "member";
     },
   ): Promise<{ token: string; expiresAt: Date; mfa: "none" | "required" | "setup_required" }> {
-    const isAdmin = (await this.loadGrants(tx, p.memberId)).length > 0;
+    const appSession = p.scope === "member";
+    const isAdmin = !appSession && (await this.loadGrants(tx, p.memberId)).length > 0;
     const [mfa] = isAdmin
       ? await tx
           .select({ confirmedAt: memberMfa.confirmedAt })
@@ -217,13 +223,16 @@ export class AuthService {
           .where(eq(memberMfa.memberId, p.memberId))
       : [];
     const token = randomBytes(32).toString("base64url");
-    const expiresAt = new Date(this.now() + (isAdmin ? ADMIN_SESSION_MS : MEMBER_SESSION_MS));
+    const expiresAt = new Date(
+      this.now() + (appSession ? APP_SESSION_MS : isAdmin ? ADMIN_SESSION_MS : MEMBER_SESSION_MS),
+    );
     await tx.insert(sessions).values({
       partyId: p.partyId,
       userId: p.userId,
       memberId: p.memberId,
       tokenHash: hashToken(token),
       mfaRequiredAt: isAdmin ? new Date(this.now()) : null,
+      scope: appSession ? "member" : "full",
       expiresAt,
       ip: p.ip ?? null,
       userAgent: p.userAgent?.slice(0, 300) ?? null,
@@ -240,7 +249,7 @@ export class AuthService {
       action: "auth.login",
       targetType: "member",
       targetId: p.memberId,
-      metadata: { channel: p.channel, admin: isAdmin },
+      metadata: { channel: p.channel, admin: isAdmin, app: appSession },
       ...(p.ip ? { ip: p.ip } : {}),
     });
     return { token, expiresAt, mfa: mfaState };
@@ -251,15 +260,21 @@ export class AuthService {
    * un identifiant de défi est toujours renvoyé ; il ne mène à rien si personne n'a reçu de code.
    */
   async requestOtp(input: {
-    partySlug: string;
+    /** Absent (application mobile) : l'organisation est celle du compte qui porte cette adresse. */
+    partySlug?: string | undefined;
     channel: Channel;
     destination: string;
     ip?: string;
   }): Promise<{ challengeId: string }> {
     const decoy = { challengeId: randomUUID() };
-    const party = await this.partyBySlug(input.partySlug);
+    const slug = input.partySlug ?? (await this.partyForContact(input.channel, input.destination));
+    const party = slug ? await this.partyBySlug(slug) : null;
     if (!party) return decoy;
-    if (!party.otpChannels.includes(input.channel)) throw new ApiError(400, "otp_channel_disabled");
+    if (!party.otpChannels.includes(input.channel)) {
+      // Sans organisation choisie, un refus révélerait que l'adresse est connue : même réponse que pour une inconnue.
+      if (!input.partySlug) return decoy;
+      throw new ApiError(400, "otp_channel_disabled");
+    }
 
     const found = await withParty(party.id, async (tx) => {
       const where =
@@ -289,13 +304,20 @@ export class AuthService {
 
   /** Vérifie le code et ouvre une session. Chaque essai est compté, même en cas d'échec. */
   async verifyOtp(input: {
-    partySlug: string;
+    partySlug?: string | undefined;
     challengeId: string;
     code: string;
     ip?: string;
     userAgent?: string;
-  }): Promise<{ token: string; expiresAt: Date; mfa: "none" | "required" | "setup_required" }> {
-    const party = await this.partyBySlug(input.partySlug);
+    scope?: "full" | "member";
+  }): Promise<{
+    token: string;
+    expiresAt: Date;
+    mfa: "none" | "required" | "setup_required";
+    party: { slug: string; name: string; brandColor: string | null; kind: string };
+  }> {
+    const slug = input.partySlug ?? (await this.partyForChallenge(input.challengeId));
+    const party = slug ? await this.partyBySlug(slug) : null;
     if (!party) throw new ApiError(401, "otp_invalid");
 
     const outcome = await withParty(party.id, async (tx) => {
@@ -313,11 +335,32 @@ export class AuthService {
         channel: c.channel,
         ip: input.ip,
         userAgent: input.userAgent,
+        scope: input.scope ?? "full",
       });
     });
     // L'essai est enregistré (transaction validée) avant de répondre par un refus.
     if (!outcome) throw new ApiError(401, "otp_invalid");
-    return outcome;
+    // L'organisation n'est révélée qu'à qui a saisi le bon code.
+    return {
+      ...outcome,
+      party: { slug: slug!, name: party.name, brandColor: party.brandColor, kind: party.kind },
+    };
+  }
+
+  /** Organisation du compte qui porte cette adresse (fonction login_party_slug, sql/login.sql), ou null. */
+  private async partyForContact(channel: Channel, destination: string): Promise<string | null> {
+    const email = channel === "email" ? normalizeEmail(destination) : null;
+    const phone = channel === "sms" ? destination : null;
+    const rows = await withReferenceData((tx) => tx.execute(sql`select login_party_slug(${email}, ${phone}) as slug`));
+    return ((rows as unknown as Array<{ slug: string | null }>)[0]?.slug as string | null) ?? null;
+  }
+
+  /** Organisation d'un code encore valable (sql/login.sql), ou null. */
+  private async partyForChallenge(challengeId: string): Promise<string | null> {
+    const rows = await withReferenceData((tx) =>
+      tx.execute(sql`select login_challenge_party_slug(${challengeId}::uuid) as slug`),
+    );
+    return ((rows as unknown as Array<{ slug: string | null }>)[0]?.slug as string | null) ?? null;
   }
 
   /** Droits effectifs : postes occupés à cette date, avec la zone de chaque poste (null = national). */
@@ -362,7 +405,7 @@ export class AuthService {
           .set({ lastSeenAt: new Date(this.now()) })
           .where(eq(sessions.id, s.id));
       }
-      const mfaPending = s.mfaRequiredAt !== null && s.mfaVerifiedAt === null;
+      const mfaPending = s.scope !== "member" && s.mfaRequiredAt !== null && s.mfaVerifiedAt === null;
       return {
         sessionId: s.id,
         partyId: s.partyId,
@@ -370,7 +413,8 @@ export class AuthService {
         memberId: s.memberId,
         mfaPending,
         // Tant que la 2FA n'est pas validée, aucun droit d'administration n'est actif.
-        grants: mfaPending ? [] : await this.loadGrants(tx, s.memberId),
+        // Session de l'application mobile : espace membre seulement, jamais de droit de gestion.
+        grants: mfaPending || s.scope === "member" ? [] : await this.loadGrants(tx, s.memberId),
       };
     });
   }

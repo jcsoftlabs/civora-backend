@@ -89,7 +89,9 @@ final apiGet = FutureProvider.autoDispose.family<Loaded, String>((ref, path) asy
     await offlineCache.write(s.slug, path, data);
     return Loaded(data);
   } on ApiError catch (e) {
-    if (e.status == 401) {
+    // Seule une session refusée ferme l'espace ; une double authentification manquante ou une option hors
+    // formule ne déconnecte pas.
+    if (e.status == 401 && e.code == 'unauthenticated') {
       await ref.read(sessionProvider.notifier).close();
       rethrow;
     }
@@ -107,4 +109,12 @@ String tr(Object? value, Locale locale) {
     return (value['fr'] as String?) ?? '';
   }
   return value is String ? value : '';
+}
+
+/// Envoi à l'API avec la session du membre (vote, inscription, quiz).
+Future<Map<String, dynamic>> apiSend(WidgetRef ref, String method, String path, [Object? body]) {
+  final s = ref.read(sessionProvider).value;
+  if (s == null) throw ApiError(401, 'unauthenticated');
+  final c = ApiClient(token: s.token);
+  return method == 'DELETE' ? c.delete(path) : c.post(path, body);
 }

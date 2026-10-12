@@ -7,12 +7,20 @@ import 'package:go_router/go_router.dart';
 import 'core/state.dart';
 import 'core/storage.dart';
 import 'core/theme.dart';
+import 'features/act/dues_screen.dart';
+import 'features/act/events_screen.dart';
 import 'features/home/card_screen.dart';
 import 'features/home/shell.dart';
+import 'features/news/news_screen.dart';
+import 'features/news/podcast_player.dart';
 import 'features/onboarding/code_screen.dart';
 import 'features/onboarding/scan_screen.dart';
 import 'features/onboarding/signin_screen.dart';
 import 'features/onboarding/welcome_screen.dart';
+import 'features/training/course_screen.dart';
+import 'features/training/courses_screen.dart';
+import 'features/votes/vote_screen.dart';
+import 'features/votes/votes_screen.dart';
 import 'l10n/app_localizations.dart';
 
 /// Les traductions de Flutter (boutons système, dates) n'existent pas en créole : le français les remplace.
@@ -68,6 +76,33 @@ final _routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/accueil', builder: (_, _) => const HomeShell()),
       GoRoute(path: '/carte', builder: (_, _) => const CardScreen()),
+      GoRoute(path: '/votes', builder: (_, _) => const VotesScreen()),
+      GoRoute(
+        path: '/votes/:id',
+        builder: (_, s) => VoteScreen(id: s.pathParameters['id']!),
+      ),
+      GoRoute(path: '/formations', builder: (_, _) => const CoursesScreen()),
+      GoRoute(
+        path: '/formations/:id',
+        builder: (_, s) => CourseScreen(id: s.pathParameters['id']!),
+      ),
+      GoRoute(path: '/rassemblements', builder: (_, _) => const EventsScreen()),
+      GoRoute(path: '/cotisations', builder: (_, _) => const DuesScreen()),
+      GoRoute(
+        path: '/podcasts',
+        builder: (_, _) => const NewsScreen(only: 'podcast', standalone: true),
+      ),
+      GoRoute(
+        path: '/albums',
+        builder: (_, _) => const NewsScreen(only: 'album', standalone: true),
+      ),
+      GoRoute(
+        path: '/album',
+        builder: (_, s) {
+          final (title, images) = s.extra! as (String, List<Map>);
+          return AlbumScreen(title: title, images: images);
+        },
+      ),
     ],
   );
 });

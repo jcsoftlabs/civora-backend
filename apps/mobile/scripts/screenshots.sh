@@ -22,29 +22,30 @@ capture() {
   local lang=$1
   $ADB shell am force-stop app.civora.civora
   $ADB shell am start -n app.civora.civora/.MainActivity >/dev/null
-  sleep 12
+  sleep 30 # premier lancement de l'émulateur : moteur, polices, données
   if [ "$lang" = "ht" ]; then
-    tap 1175 2790 2 # Profil
-    tap 836 873 3   # Kreyòl
-    tap 171 2790 4  # Accueil
+    tap 1175 2790 3 # Moi
+    tap 948 1980 3  # Kreyòl
+    tap 171 2790 5  # Accueil
   fi
   shot "$lang-wallet"
-  tap 429 2790; shot "$lang-section"
-  tap 916 2790; shot "$lang-carnet"
-  tap 673 2730 4; shot "$lang-card"
+  tap 429 2790 5; shot "$lang-news"
+  tap 916 2790 5; shot "$lang-act"
+  tap 1175 2790 5; shot "$lang-me"
+  tap 673 2730 5; shot "$lang-card"
   $ADB shell input keyevent 4; sleep 1
 }
 capture fr
 capture ht
 # Retour au français pour la suite.
-tap 1175 2790 2; tap 300 873 1
+tap 393 1980 1
 
 python3 - "$TMP" "$OUT" <<'PY'
 import sys
 from PIL import Image
 tmp, out = sys.argv[1], sys.argv[2]
 for lang in ("fr", "ht"):
-    for name in ("wallet", "section", "carnet", "card"):
+    for name in ("wallet", "news", "act", "me", "card"):
         im = Image.open(f"{tmp}/{lang}-{name}.png").convert("RGB")
         w, h = im.size
         # Barre d'état (150 px) et barre de gestes (78 px) retirées : pas de fausse barre système sur le site.

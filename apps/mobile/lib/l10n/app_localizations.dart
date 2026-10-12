@@ -62,8 +62,7 @@ import 'app_localizations_ht.dart';
 /// be consistent with the languages listed in the L.supportedLocales
 /// property.
 abstract class L {
-  L(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  L(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -83,19 +82,15 @@ abstract class L {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[
-    Locale('fr'),
-    Locale('ht'),
-  ];
+  static const List<Locale> supportedLocales = <Locale>[Locale('fr'), Locale('ht')];
 
   /// No description provided for @appName.
   ///
@@ -630,6 +625,678 @@ abstract class L {
   /// In fr, this message translates to:
   /// **'+509 37 00 00 00'**
   String get phoneHint;
+
+  /// No description provided for @navNews.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actus'**
+  String get navNews;
+
+  /// No description provided for @navAct.
+  ///
+  /// In fr, this message translates to:
+  /// **'Agir'**
+  String get navAct;
+
+  /// No description provided for @navMe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moi'**
+  String get navMe;
+
+  /// No description provided for @todoTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'À faire'**
+  String get todoTitle;
+
+  /// No description provided for @todoNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien ne vous attend pour l\'instant. Les votes, cotisations et rassemblements apparaîtront ici.'**
+  String get todoNone;
+
+  /// No description provided for @todoVote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voter : {title}'**
+  String todoVote(String title);
+
+  /// No description provided for @todoDues.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cotisation : {amount}'**
+  String todoDues(String amount);
+
+  /// No description provided for @todoEvent.
+  ///
+  /// In fr, this message translates to:
+  /// **'{title}, {when}'**
+  String todoEvent(String title, String when);
+
+  /// No description provided for @cardYear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Membre {year}'**
+  String cardYear(String year);
+
+  /// No description provided for @newsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actualités'**
+  String get newsTitle;
+
+  /// No description provided for @newsAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout'**
+  String get newsAll;
+
+  /// No description provided for @newsAnnouncements.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annonces'**
+  String get newsAnnouncements;
+
+  /// No description provided for @newsArticles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Articles'**
+  String get newsArticles;
+
+  /// No description provided for @newsPodcasts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Podcasts'**
+  String get newsPodcasts;
+
+  /// No description provided for @newsAlbums.
+  ///
+  /// In fr, this message translates to:
+  /// **'Albums'**
+  String get newsAlbums;
+
+  /// No description provided for @newsNews.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actualité'**
+  String get newsNews;
+
+  /// No description provided for @newsPodcast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Podcast'**
+  String get newsPodcast;
+
+  /// No description provided for @newsAlbum.
+  ///
+  /// In fr, this message translates to:
+  /// **'Album'**
+  String get newsAlbum;
+
+  /// No description provided for @newsPhotos.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n} photos'**
+  String newsPhotos(int n);
+
+  /// No description provided for @newsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien de publié ici pour l\'instant.'**
+  String get newsEmpty;
+
+  /// No description provided for @newsNoAudio.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le fichier audio de cet épisode n\'est pas encore disponible.'**
+  String get newsNoAudio;
+
+  /// No description provided for @play.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écouter'**
+  String get play;
+
+  /// No description provided for @pause.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pause'**
+  String get pause;
+
+  /// No description provided for @actTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Agir'**
+  String get actTitle;
+
+  /// No description provided for @actVotes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votes'**
+  String get actVotes;
+
+  /// No description provided for @actTraining.
+  ///
+  /// In fr, this message translates to:
+  /// **'Formations'**
+  String get actTraining;
+
+  /// No description provided for @actEvents.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rassemblements'**
+  String get actEvents;
+
+  /// No description provided for @actDues.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cotisations'**
+  String get actDues;
+
+  /// No description provided for @actPodcasts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Podcasts'**
+  String get actPodcasts;
+
+  /// No description provided for @actAlbums.
+  ///
+  /// In fr, this message translates to:
+  /// **'Albums'**
+  String get actAlbums;
+
+  /// No description provided for @actVotesOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =0{Aucun vote ouvert} =1{1 vote ouvert} other{{n} votes ouverts}}'**
+  String actVotesOpen(int n);
+
+  /// No description provided for @actTrainingState.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =0{Aucune formation} =1{1 formation} other{{n} formations}}'**
+  String actTrainingState(int n);
+
+  /// No description provided for @actEventsState.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =0{Aucun à venir} =1{1 à venir} other{{n} à venir}}'**
+  String actEventsState(int n);
+
+  /// No description provided for @actDuesUpToDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'À jour'**
+  String get actDuesUpToDate;
+
+  /// No description provided for @actDuesLate.
+  ///
+  /// In fr, this message translates to:
+  /// **'À régler'**
+  String get actDuesLate;
+
+  /// No description provided for @actListen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écouter'**
+  String get actListen;
+
+  /// No description provided for @actSee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir'**
+  String get actSee;
+
+  /// No description provided for @votesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votes internes'**
+  String get votesTitle;
+
+  /// No description provided for @votesEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun scrutin ne vous concerne pour l\'instant.'**
+  String get votesEmpty;
+
+  /// No description provided for @votePhasePreparation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste figée'**
+  String get votePhasePreparation;
+
+  /// No description provided for @votePhaseOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vote ouvert'**
+  String get votePhaseOpen;
+
+  /// No description provided for @votePhaseCounting.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépouillement en cours'**
+  String get votePhaseCounting;
+
+  /// No description provided for @votePhaseClosed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dépouillé'**
+  String get votePhaseClosed;
+
+  /// No description provided for @votePhasePublished.
+  ///
+  /// In fr, this message translates to:
+  /// **'Résultats certifiés'**
+  String get votePhasePublished;
+
+  /// No description provided for @voteChooseOne.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cochez une case.'**
+  String get voteChooseOne;
+
+  /// No description provided for @voteChooseUpTo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cochez jusqu\'à {n} noms.'**
+  String voteChooseUpTo(int n);
+
+  /// No description provided for @voteBlank.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voter blanc'**
+  String get voteBlank;
+
+  /// No description provided for @voteSecret.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre vote est secret : votre bulletin ne porte pas votre nom.'**
+  String get voteSecret;
+
+  /// No description provided for @voteSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déposer mon bulletin'**
+  String get voteSubmit;
+
+  /// No description provided for @voteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déposer ce bulletin ?'**
+  String get voteConfirmTitle;
+
+  /// No description provided for @voteConfirmLead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une fois déposé, il ne peut plus être modifié.'**
+  String get voteConfirmLead;
+
+  /// No description provided for @voteConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déposer'**
+  String get voteConfirm;
+
+  /// No description provided for @cancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get cancel;
+
+  /// No description provided for @voteDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bulletin déposé'**
+  String get voteDone;
+
+  /// No description provided for @voteReceipt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre code de reçu'**
+  String get voteReceipt;
+
+  /// No description provided for @voteReceiptLead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notez-le : il n\'est enregistré nulle part. Après le dépouillement, il vous permet de vérifier que votre bulletin a été compté, sans révéler votre choix.'**
+  String get voteReceiptLead;
+
+  /// No description provided for @voteCopy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier le code'**
+  String get voteCopy;
+
+  /// No description provided for @voteCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code copié'**
+  String get voteCopied;
+
+  /// No description provided for @voteAlready.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez déjà voté à ce tour.'**
+  String get voteAlready;
+
+  /// No description provided for @voteOpensAt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le vote ouvre le {date}.'**
+  String voteOpensAt(String date);
+
+  /// No description provided for @voteNotOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le vote n\'est pas ouvert.'**
+  String get voteNotOpen;
+
+  /// No description provided for @voteResults.
+  ///
+  /// In fr, this message translates to:
+  /// **'Résultats'**
+  String get voteResults;
+
+  /// No description provided for @voteVotes.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n} voix'**
+  String voteVotes(int n);
+
+  /// No description provided for @voteElected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Élu'**
+  String get voteElected;
+
+  /// No description provided for @voteAdopted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Proposition adoptée'**
+  String get voteAdopted;
+
+  /// No description provided for @voteRejected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Proposition rejetée'**
+  String get voteRejected;
+
+  /// No description provided for @voteTurnout.
+  ///
+  /// In fr, this message translates to:
+  /// **'Participation : {p} %'**
+  String voteTurnout(String p);
+
+  /// No description provided for @voteVerify.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifier mon bulletin'**
+  String get voteVerify;
+
+  /// No description provided for @voteVerifyLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code de reçu'**
+  String get voteVerifyLabel;
+
+  /// No description provided for @voteVerifyOk.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre bulletin figure dans le journal : il a été compté.'**
+  String get voteVerifyOk;
+
+  /// No description provided for @voteVerifyMissing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce code ne figure pas dans le journal. Vérifiez la saisie.'**
+  String get voteVerifyMissing;
+
+  /// No description provided for @voteRound2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Second tour'**
+  String get voteRound2;
+
+  /// No description provided for @coursesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Formations'**
+  String get coursesTitle;
+
+  /// No description provided for @coursesEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune formation pour l\'instant.'**
+  String get coursesEmpty;
+
+  /// No description provided for @courseMandatory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Obligatoire'**
+  String get courseMandatory;
+
+  /// No description provided for @courseDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminée'**
+  String get courseDone;
+
+  /// No description provided for @courseModule.
+  ///
+  /// In fr, this message translates to:
+  /// **'Module {n}'**
+  String courseModule(int n);
+
+  /// No description provided for @courseLocked.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réussissez le module précédent pour l\'ouvrir.'**
+  String get courseLocked;
+
+  /// No description provided for @courseQuiz.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer le quiz'**
+  String get courseQuiz;
+
+  /// No description provided for @coursePassed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Module réussi'**
+  String get coursePassed;
+
+  /// No description provided for @courseOpenVideo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Regarder la vidéo'**
+  String get courseOpenVideo;
+
+  /// No description provided for @courseOpenFile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir le document'**
+  String get courseOpenFile;
+
+  /// No description provided for @courseViewed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lu'**
+  String get courseViewed;
+
+  /// No description provided for @quizTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quiz'**
+  String get quizTitle;
+
+  /// No description provided for @quizSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider mes réponses'**
+  String get quizSubmit;
+
+  /// No description provided for @quizScore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Score : {s} %'**
+  String quizScore(int s);
+
+  /// No description provided for @quizPassed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réussi. Le module suivant est ouvert.'**
+  String get quizPassed;
+
+  /// No description provided for @quizFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas encore. Revoyez les questions signalées et réessayez.'**
+  String get quizFailed;
+
+  /// No description provided for @quizAttemptsLeft.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =0{Plus d\'essai} =1{1 essai restant} other{{n} essais restants}}'**
+  String quizAttemptsLeft(int n);
+
+  /// No description provided for @quizCertificate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Certificat n° {n}'**
+  String quizCertificate(String n);
+
+  /// No description provided for @quizWrong.
+  ///
+  /// In fr, this message translates to:
+  /// **'À revoir'**
+  String get quizWrong;
+
+  /// No description provided for @eventsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rassemblements'**
+  String get eventsTitle;
+
+  /// No description provided for @eventsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun rassemblement à venir.'**
+  String get eventsEmpty;
+
+  /// No description provided for @eventRegister.
+  ///
+  /// In fr, this message translates to:
+  /// **'M\'inscrire'**
+  String get eventRegister;
+
+  /// No description provided for @eventUnregister.
+  ///
+  /// In fr, this message translates to:
+  /// **'Me désinscrire'**
+  String get eventUnregister;
+
+  /// No description provided for @eventFull.
+  ///
+  /// In fr, this message translates to:
+  /// **'Complet'**
+  String get eventFull;
+
+  /// No description provided for @duesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cotisations'**
+  String get duesTitle;
+
+  /// No description provided for @duesNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune cotisation prévue.'**
+  String get duesNone;
+
+  /// No description provided for @duesStatePaid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réglée'**
+  String get duesStatePaid;
+
+  /// No description provided for @duesStateDue.
+  ///
+  /// In fr, this message translates to:
+  /// **'À régler'**
+  String get duesStateDue;
+
+  /// No description provided for @duesStateLate.
+  ///
+  /// In fr, this message translates to:
+  /// **'En retard'**
+  String get duesStateLate;
+
+  /// No description provided for @duesStateUpcoming.
+  ///
+  /// In fr, this message translates to:
+  /// **'À venir'**
+  String get duesStateUpcoming;
+
+  /// No description provided for @duesPayHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réglez auprès de votre trésorier de section ; le paiement MonCash et NatCash arrive dans l\'application.'**
+  String get duesPayHint;
+
+  /// No description provided for @meTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moi'**
+  String get meTitle;
+
+  /// No description provided for @podcastDownload.
+  ///
+  /// In fr, this message translates to:
+  /// **'Télécharger pour l\'écouter hors ligne'**
+  String get podcastDownload;
+
+  /// No description provided for @podcastDownloaded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disponible hors ligne'**
+  String get podcastDownloaded;
+
+  /// No description provided for @podcastDownloading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléchargement…'**
+  String get podcastDownloading;
+
+  /// No description provided for @welcomeSignInLead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez l\'adresse e-mail que connaît votre organisation : vous recevrez un code à 6 chiffres, et l\'app vous ouvre votre espace.'**
+  String get welcomeSignInLead;
+
+  /// No description provided for @welcomeUsePhone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser mon numéro de téléphone'**
+  String get welcomeUsePhone;
+
+  /// No description provided for @welcomeUseEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser mon adresse e-mail'**
+  String get welcomeUseEmail;
+
+  /// No description provided for @welcomeJoinOrg.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas encore membre ? Rejoindre une organisation'**
+  String get welcomeJoinOrg;
+
+  /// No description provided for @otpLeadAny.
+  ///
+  /// In fr, this message translates to:
+  /// **'Si {destination} est connue d\'une organisation, un code vient d\'y être envoyé. Il est valable 10 minutes.'**
+  String otpLeadAny(String destination);
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {
@@ -641,8 +1308,7 @@ class _LDelegate extends LocalizationsDelegate<L> {
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['fr', 'ht'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['fr', 'ht'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_LDelegate old) => false;

@@ -3,12 +3,32 @@
 // à 2 h locale. Pas de base de fuseaux horaires embarquée : la règle suffit et reste testable.
 
 const _monthsFr = [
-  'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-  'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
+  'janvier',
+  'février',
+  'mars',
+  'avril',
+  'mai',
+  'juin',
+  'juillet',
+  'août',
+  'septembre',
+  'octobre',
+  'novembre',
+  'décembre',
 ];
 const _monthsHt = [
-  'janvye', 'fevriye', 'mas', 'avril', 'me', 'jen',
-  'jiyè', 'out', 'septanm', 'oktòb', 'novanm', 'desanm',
+  'janvye',
+  'fevriye',
+  'mas',
+  'avril',
+  'me',
+  'jen',
+  'jiyè',
+  'out',
+  'septanm',
+  'oktòb',
+  'novanm',
+  'desanm',
 ];
 const _daysFr = ['lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.', 'dim.'];
 const _daysHt = ['len', 'mad', 'mèk', 'jed', 'van', 'sam', 'dim'];
