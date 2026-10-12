@@ -10,6 +10,7 @@
     "dev": "pnpm -r --parallel --filter ./apps/api --filter ./apps/web dev",
     "dev:worker": "pnpm --filter @civora/worker dev",
     "build": "pnpm -r build",
+    "start": "node scripts/railway-start.mjs",
     "test": "pnpm -r --workspace-concurrency=1 test",
     "lint": "pnpm -r lint",
     "format": "prettier --write .",
