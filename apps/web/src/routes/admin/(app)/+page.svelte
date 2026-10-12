@@ -12,6 +12,7 @@
   import { format, translator, type MessageKey } from "$lib/i18n";
   import type { PageData } from "./$types";
   import type { ZoneStats } from "./+page.server";
+  import Onboarding from "./Onboarding.svelte";
 
   let { data }: { data: PageData & { locale: "fr" | "ht" } } = $props();
   const orgKind = organizationKind();
@@ -74,6 +75,10 @@
       </nav>
       <h1>{t("admin.dash.title")}</h1>
     </header>
+
+    {#if data.onboarding && !data.onboarding.dismissed}
+      <Onboarding locale={data.locale} partyName={data.me.party.name} state={data.onboarding} />
+    {/if}
 
     <!-- Chiffres clés : une bande, des filets verticaux, un chiffre par case. -->
     <dl class="kpis">

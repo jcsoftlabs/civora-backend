@@ -1,7 +1,8 @@
-import { redirect } from "@sveltejs/kit";
+import { fail, redirect } from "@sveltejs/kit";
 import { ApiFailure, api } from "$lib/server/api";
 import { currentSession } from "$lib/server/session";
-import type { PageServerLoad } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
+import type { OnboardingState } from "./Onboarding.svelte";
 
 export interface ZoneStats {
   code: string;
@@ -35,11 +36,15 @@ export const load: PageServerLoad = async ({ url, cookies, locals, getClientAddr
   if (!can("bi.read")) {
     const next = FALLBACK.find(([, perms]) => perms.some(can));
     if (next) redirect(307, next[0]);
-    return { stats: null, ancestors: [] };
+    return { stats: null, ancestors: [], onboarding: null };
   }
+  const ip = getClientAddress();
+  // SOC-09 : assistant de démarrage, pour qui règle l'espace, tant qu'il n'est pas masqué.
+  const onboarding = can("settings.party")
+    ? await api<OnboardingState>("/party/onboarding", { token: s.token, ip }).catch(() => null)
+    : null;
   const zone = url.searchParams.get("zone");
   const code = zone && /^[A-Z0-9-]{2,20}$/.test(zone) ? zone : null;
-  const ip = getClientAddress();
   try {
     const stats = await api<Stats>(`/stats/zones${code ? `?parent=${code}` : ""}`, { token: s.token, ip });
     // Fil d'Ariane de la zone affichée (zones publiques du référentiel).
@@ -48,10 +53,31 @@ export const load: PageServerLoad = async ({ url, cookies, locals, getClientAddr
           ip,
         }).catch(() => ({ ancestors: [] }))
       : { ancestors: [] };
-    return { stats, ancestors: detail.ancestors };
+    return { stats, ancestors: detail.ancestors, onboarding };
   } catch (e) {
     // Zone hors de la portée de la personne : retour à sa zone.
     if (e instanceof ApiFailure && (e.status === 403 || e.status === 404) && code) redirect(303, "/admin");
     throw e;
   }
+};
+
+export const actions: Actions = {
+  /** Passer une étape, la reprendre, ou masquer l'assistant. */
+  onboarding: async ({ request, cookies, locals, getClientAddress }) => {
+    const s = await currentSession(cookies, locals.partySlug!);
+    if (!s || s.me.mfaPending) return fail(401, { code: "unauthorized" });
+    const f = await request.formData();
+    const body = f.get("skip")
+      ? { skip: String(f.get("skip")) }
+      : f.get("unskip")
+        ? { unskip: String(f.get("unskip")) }
+        : { dismiss: f.get("dismiss") === "1" };
+    try {
+      await api("/party/onboarding", { method: "PUT", body, token: s.token, ip: getClientAddress() });
+      return { ok: true };
+    } catch (e) {
+      if (e instanceof ApiFailure) return fail(400, { code: e.code });
+      throw e;
+    }
+  },
 };

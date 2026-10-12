@@ -190,6 +190,13 @@
       "when": 1791771150633,
       "tag": "0026_member_import_sheet",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1791772760866,
+      "tag": "0027_party_onboarding",
+      "breakpoints": true
     }
   ]
 }

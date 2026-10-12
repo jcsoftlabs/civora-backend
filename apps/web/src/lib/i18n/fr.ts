@@ -2,6 +2,7 @@
 import { votesFr } from "./votes.fr";
 import { cardFr } from "./card.fr";
 import { importFr } from "./import.fr";
+import { onboardingFr } from "./onboarding.fr";
 import { consoleFr } from "./console.fr";
 import { marketingFr } from "./marketing.fr";
 export const fr = {
@@ -1121,6 +1122,7 @@ export const fr = {
   ...votesFr,
   ...cardFr,
   ...importFr,
+  ...onboardingFr,
   ...marketingFr,
 } as const;
 

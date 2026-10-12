@@ -2,6 +2,7 @@
 import { votesHt } from "./votes.ht";
 import { cardHt } from "./card.ht";
 import { importHt } from "./import.ht";
+import { onboardingHt } from "./onboarding.ht";
 import type { MessageKey } from "./fr";
 import { consoleHt } from "./console.ht";
 import { marketingHt } from "./marketing.ht";
@@ -1099,5 +1100,6 @@ export const ht: Record<MessageKey, string> = {
   ...votesHt,
   ...cardHt,
   ...importHt,
+  ...onboardingHt,
   ...marketingHt,
 };

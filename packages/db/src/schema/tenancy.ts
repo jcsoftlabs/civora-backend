@@ -48,6 +48,8 @@ export const parties = pgTable(
     referralSettings: jsonb("referral_settings"),
     /** Barème des points (GAM-01) : points par action ; absent, le barème par défaut s'applique. */
     pointsScale: jsonb("points_scale"),
+    /** Assistant de démarrage (SOC-09) : { skipped: string[], dismissedAt } ; les étapes faites se déduisent des données. */
+    onboarding: jsonb("onboarding"),
     /** pending : création en attente du code envoyé au fondateur (24 h au plus) ; active : espace ouvert. */
     status: text("status").notNull().default("active"),
     activatedAt: timestamp("activated_at", { withTimezone: true }),
