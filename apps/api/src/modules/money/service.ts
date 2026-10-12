@@ -18,9 +18,11 @@ import { audit } from "../../lib/audit.js";
 import type { EmailSender } from "../../lib/messaging/email.js";
 import { RECEIPT_MESSAGES, messageLocale } from "../../lib/messaging/templates.js";
 import { formatAmount, sum, toCents } from "../../lib/money.js";
+import { today } from "../../lib/today.js";
 import { zoneScope } from "../../lib/zone-scope.js";
 import { ApiError } from "../../plugins/errors.js";
 import { authorize } from "../../plugins/tenant.js";
+import { awardPoints } from "../engagement/points.js";
 import { receiptPdf } from "./receipt-pdf.js";
 import type { cashPayment } from "./schemas.js";
 import type { z } from "zod";
@@ -52,8 +54,11 @@ export async function settle(
         .update(duesObligations)
         .set({ paidAt: now, paymentId: p.paymentId, updatedAt: now })
         .where(and(inArray(duesObligations.id, p.obligationIds), isNull(duesObligations.paidAt)))
-        .returning({ id: duesObligations.id })
+        .returning({ id: duesObligations.id, memberId: duesObligations.memberId, dueDate: duesObligations.dueDate })
     : [];
+  // Cotisation réglée à temps (au plus tard à l'échéance, heure d'Haïti) : points au barème (GAM-01).
+  const day = today();
+  for (const o of settled) if (o.dueDate >= day) await awardPoints(tx, p.partyId, o.memberId, "dues", o.id);
   await tx.insert(ledgerEntries).values({
     partyId: p.partyId,
     zoneId: p.memberZoneId,

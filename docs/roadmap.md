@@ -69,6 +69,8 @@ Jalon : deux partis pilotes actifs et facturés ; création d'un espace parti en
 - [ ] Facturation plateforme : abonnements Stripe, factures, relances, suspension, mesure de l'usage et dépassements (SOC-08)
 - [ ] Assistant de démarrage et import : correspondance des colonnes, doublons, invitations, historique des cotisations (SOC-09, ADH-07 à ADH-10)
 - [ ] Parrainage configurable (ADH-05, ENG-01) ; carte de membre QR vérifiable (ADH-11)
+  - fait : code de parrainage de chaque membre, filleuls et points dans l'application, barème dans les réglages, points de vote, formation, cotisation et parrainage ; reste : points de présence et de sondage, QR de parrainage, écran de correction des points (GAM-01, GAM-09)
+- [ ] Carte de membre personnalisable et impression PVC CR80 ou planche A4 (ADH-13) : éditeur, aperçu, exemplaires et impression groupée faits ; reste : carte de l'application au modèle du parti
 - [ ] Cotisations avancées : montants différenciés, rappels, effets du retard, paiement d'avance, Stripe diaspora, campagnes de dons (FIN-02, FIN-04, FIN-06 à FIN-08, FIN-11)
 - [ ] Présence aux rassemblements : QR tournant, fenêtre et géorepérage, hors ligne, mode inverse, liste temps réel (PRE-01 à PRE-07)
 - [ ] Gamification : barème, bonus, badges, classements, journal (GAM-01 à GAM-05, GAM-09)

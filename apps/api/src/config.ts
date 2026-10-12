@@ -63,7 +63,8 @@ const schema = z
 export type Config = z.infer<typeof schema>;
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
-  const parsed = schema.safeParse(env);
+  // Railway (et la plupart des hébergeurs) imposent le port par PORT.
+  const parsed = schema.safeParse(env.API_PORT || !env.PORT ? env : { ...env, API_PORT: env.PORT });
   if (!parsed.success) {
     const issues = parsed.error.issues.map((i) => `${i.path.join(".")} : ${i.message}`).join("\n");
     throw new Error(`Configuration invalide :\n${issues}`);

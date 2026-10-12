@@ -6,6 +6,7 @@ import '../../core/state.dart';
 import '../../core/theme.dart';
 import '../../core/time.dart';
 import '../../l10n/app_localizations.dart';
+import '../../widgets/layout.dart';
 import '../../widgets/objects.dart';
 import '../home/common.dart';
 import 'podcast_player.dart';
@@ -33,7 +34,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     final locale = Localizations.localeOf(context);
     final kind = widget.only ?? _kind;
     final path = kind == null ? '/feed?limit=50' : '/feed?kind=$kind&limit=50';
-    final party = (ref.watch(apiGet('/auth/me')).value?.data['party'] as Map?)?['name'] as String? ?? '';
+    final party = ref.watch(apiGet('/auth/me')).value?.data['party'] as Map?;
     final filters = [
       (null, t.newsAll),
       ('announcement', t.newsAnnouncements),
@@ -47,105 +48,148 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
       _ => t.newsTitle,
     };
 
-    final body = ListView(
-      padding: EdgeInsets.only(top: widget.standalone ? 8 : MediaQuery.paddingOf(context).top),
-      children: [
-        if (!widget.standalone) TabHeader(eyebrow: party, title: title),
-        if (widget.only == null)
-          SizedBox(
-            height: 64,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.fromLTRB(22, 12, 22, 4),
-              children: [
-                for (final (k, label) in filters)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: _Pill(label: label, selected: _kind == k, onTap: () => setState(() => _kind = k)),
-                  ),
-              ],
-            ),
+    final feed = <Widget>[
+      if (widget.only == null)
+        SizedBox(
+          height: 48,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              for (final (k, label) in filters)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: _Pill(label: label, selected: _kind == k, onTap: () => setState(() => _kind = k)),
+                ),
+            ],
           ),
-        const SizedBox(height: 8),
-        Remote(
-          path,
-          skeleton: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 22),
-            child: Column(children: [Skeleton(height: 110), SizedBox(height: 16), Skeleton(height: 140)]),
-          ),
-          builder: (l) {
-            final items = (l.data['items'] as List).cast<Map>();
-            if (items.isEmpty) {
-              return Padding(
-                padding: const EdgeInsets.all(22),
-                child: Text(t.newsEmpty, style: const TextStyle(color: Palette.ink2, height: 1.45)),
-              );
-            }
-            return Column(
-              children: [
-                if (l.offline)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(22, 0, 22, 8),
-                    child: OfflineBanner(text: t.offline),
-                  ),
-                for (final (i, p) in items.indexed)
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(i.isEven ? 20 : 30, 12, i.isEven ? 30 : 20, 10),
-                    child: _item(context, t, locale, p, _tilts[i % _tilts.length]),
-                  ),
-              ],
-            );
-          },
         ),
-        bottomSpace,
-      ],
-    );
-    if (!widget.standalone) return ColoredBox(color: Palette.board, child: body);
-    return Scaffold(
-      backgroundColor: Palette.board,
-      appBar: AppBar(backgroundColor: Palette.board, title: Text(title)),
-      body: body,
+      const SizedBox(height: Space.m),
+      Remote(
+        path,
+        skeleton: const Column(children: [Skeleton(height: 90), SizedBox(height: 24), Skeleton(height: 90)]),
+        builder: (l) {
+          final items = (l.data['items'] as List).cast<Map>();
+          if (items.isEmpty) return Text(t.newsEmpty, style: Txt.body.copyWith(color: Palette.ink2));
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (l.offline)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: Space.m),
+                  child: OfflineBanner(text: t.offline),
+                ),
+              for (final (i, p) in items.indexed)
+                Padding(
+                  // Notes décalées et inclinées, jamais deux fois de la même façon : le tableau du local.
+                  padding: EdgeInsets.fromLTRB(i.isEven ? 0 : 14, Space.s, i.isEven ? 14 : 0, Space.l),
+                  child: Transform.rotate(angle: _tilts[i % _tilts.length], child: _pinned(context, t, locale, p, i)),
+                ),
+            ],
+          );
+        },
+      ),
+    ];
+
+    if (widget.standalone) {
+      return Scaffold(
+        backgroundColor: Palette.board,
+        appBar: AppBar(backgroundColor: Palette.board, title: Text(title)),
+        body: ListView(padding: const EdgeInsets.fromLTRB(Space.gutter, Space.s, Space.gutter, 60), children: feed),
+      );
+    }
+    return BannerPage(
+      brand: parseHex(party?['brandColor'] as String?),
+      sheetColor: Palette.board,
+      title: title,
+      message: party == null ? null : t.newsLead(party['name'] as String),
+      children: feed,
     );
   }
 
-  Widget _item(BuildContext context, L t, Locale locale, Map p, double tilt) {
+  /// Chaque publication épinglée au tableau : texte en note de papier, podcast et album sur une feuille blanche.
+  Widget _pinned(BuildContext context, L t, Locale locale, Map p, int i) {
+    if (p['kind'] != 'podcast' && p['kind'] != 'album') {
+      final lang = locale.languageCode;
+      final when = p['publishedAt'] is String ? formatDay(DateTime.parse(p['publishedAt'] as String), lang) : null;
+      final body = tr(p['body'], locale);
+      final author = p['author'] as String?;
+      return PinnedNote(
+        label: p['kind'] == 'announcement' ? t.sectionAnnouncement : t.newsNews,
+        title: tr(p['title'], locale),
+        body: body.isEmpty ? null : body.replaceAll(RegExp(r'\s*\n+\s*'), ' '),
+        // Texte long : la note en montre le début, l'article entier s'ouvre d'un toucher.
+        more: body.length > 180 || '\n'.allMatches(body).length > 2 ? t.newsReadMore : null,
+        onTap: () => context.push('/article', extra: p),
+        footnote: author != null && when != null ? t.newsByline(when, author) : (when ?? author),
+        color: p['kind'] == 'announcement' ? Palette.cream : Palette.surface,
+        tapeAt: i.isEven ? 0.3 : 0.7,
+      );
+    }
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Material(
+          color: Palette.surface,
+          child: Padding(padding: const EdgeInsets.fromLTRB(16, 20, 16, 14), child: _item(context, t, locale, p)),
+        ),
+        Positioned(
+          top: -7,
+          left: 0,
+          right: 0,
+          child: Align(
+            alignment: Alignment(i.isEven ? -0.4 : 0.4, 0),
+            child: Transform.rotate(
+              angle: -0.06,
+              child: Container(width: 46, height: 16, color: Palette.accent.withValues(alpha: 0.72)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _item(BuildContext context, L t, Locale locale, Map p) {
     final lang = locale.languageCode;
-    final when = p['publishedAt'] is String ? formatDay(DateTime.parse(p['publishedAt'] as String), lang) : null;
+    final when = p['publishedAt'] is String ? formatDay(DateTime.parse(p['publishedAt'] as String), lang) : '';
     final media = ((p['media'] as List?) ?? const []).cast<Map>();
+    final kindLabel = switch (p['kind']) {
+      'announcement' => t.sectionAnnouncement,
+      'podcast' => t.newsPodcast,
+      'album' => t.newsAlbum,
+      _ => t.newsNews,
+    };
+    final body = tr(p['body'], locale);
+    final header = <Widget>[
+      Text(tr(p['title'], locale), style: Txt.heading),
+      const SizedBox(height: Space.xs),
+      Text(t.kindDate(kindLabel, when), style: Txt.small),
+    ];
     switch (p['kind']) {
       case 'podcast':
         final audio = media.where((m) => (m['mimeType'] as String? ?? '').startsWith('audio/')).firstOrNull;
-        return PodcastCard(
-          label: [t.newsPodcast, when].whereType<String>().join(' · '),
-          title: tr(p['title'], locale),
-          body: tr(p['body'], locale),
-          audioUrl: audio?['url'] as String?,
-          id: p['id'] as String,
-        );
+        return PodcastCard(id: p['id'] as String, header: header, body: body, audioUrl: audio?['url'] as String?);
       case 'album':
         final images = media.where((m) => (m['mimeType'] as String? ?? '').startsWith('image/')).toList();
         return AlbumCard(
-          label: [t.newsAlbum, t.newsPhotos(images.length), when].whereType<String>().join(' · '),
-          title: tr(p['title'], locale),
+          header: header,
           images: [for (final m in images) m['url'] as String],
           onTap: images.isEmpty ? null : () => context.push('/album', extra: (tr(p['title'], locale), images)),
-          tilt: tilt,
         );
       default:
-        return PinnedNote(
-          label: p['kind'] == 'announcement' ? t.sectionAnnouncement : t.newsNews,
-          title: tr(p['title'], locale),
-          body: tr(p['body'], locale).isEmpty ? null : tr(p['body'], locale),
-          footnote: when,
-          color: p['kind'] == 'announcement' ? Palette.cream : Palette.surface,
-          tilt: tilt,
-          tapeAt: tilt > 0 ? 0.7 : 0.3,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...header,
+            if (body.isNotEmpty) ...[
+              const SizedBox(height: Space.s),
+              Text(body, maxLines: 4, overflow: TextOverflow.ellipsis, style: Txt.body),
+            ],
+          ],
         );
     }
   }
 }
 
-/// Filtre du fil : pastille pleine encre quand elle est choisie, cible tactile de 44 px.
 class _Pill extends StatelessWidget {
   const _Pill({required this.label, required this.selected, required this.onTap});
   final String label;

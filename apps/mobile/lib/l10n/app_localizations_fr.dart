@@ -123,7 +123,7 @@ class LFr extends L {
 
   @override
   String hello(String name) {
-    return 'Bonjou, $name';
+    return 'Bonjour, $name';
   }
 
   @override
@@ -705,4 +705,188 @@ class LFr extends L {
   String otpLeadAny(String destination) {
     return 'Si $destination est connue d\'une organisation, un code vient d\'y être envoyé. Il est valable 10 minutes.';
   }
+
+  @override
+  String helloTitle(String name) {
+    return 'Bonjour, $name.';
+  }
+
+  @override
+  String waiting(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n choses vous attendent.',
+      one: 'Une chose vous attend.',
+      zero: 'Tout est à jour.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String newsLead(String org) {
+    return 'Le fil de $org.';
+  }
+
+  @override
+  String kindDate(String kind, String date) {
+    return '$kind, $date';
+  }
+
+  @override
+  String meStatus(String status, String number) {
+    return '$status, membre n° $number';
+  }
+
+  @override
+  String meNumber(String number) {
+    return 'Membre n° $number';
+  }
+
+  @override
+  String get statPoints => 'points';
+
+  @override
+  String get statReferrals => 'filleuls';
+
+  @override
+  String get statVotes => 'votes';
+
+  @override
+  String get actReferral => 'Parrainer';
+
+  @override
+  String get referralTitle => 'Votre code de parrainage';
+
+  @override
+  String get referralLead => 'Partagez-le : la personne qui adhère avec ce code devient votre filleul.';
+
+  @override
+  String get referralShare => 'Partager';
+
+  @override
+  String get referralCopy => 'Copier';
+
+  @override
+  String get referralCopied => 'Code copié';
+
+  @override
+  String referralShareText(String org, String code, String url) {
+    return 'Rejoins $org avec mon code de parrainage $code : $url';
+  }
+
+  @override
+  String get referralsTitle => 'Mes filleuls';
+
+  @override
+  String get referralNone => 'Vos filleuls apparaîtront ici dès leur adhésion.';
+
+  @override
+  String get referralPending => 'En attente';
+
+  @override
+  String get referralValidated => 'Validé';
+
+  @override
+  String get referralRejected => 'Refusé';
+
+  @override
+  String get pointsTitle => 'Mes points';
+
+  @override
+  String get pointsAll => 'Tout voir';
+
+  @override
+  String get pointsNone => 'Vos points apparaîtront ici : parrainage, formation, vote, cotisation réglée à temps.';
+
+  @override
+  String get pointsReferral => 'Filleul validé';
+
+  @override
+  String get pointsTraining => 'Formation réussie';
+
+  @override
+  String get pointsVote => 'Vote déposé';
+
+  @override
+  String get pointsDues => 'Cotisation réglée à temps';
+
+  @override
+  String get pointsAttendance => 'Présence à un rassemblement';
+
+  @override
+  String get pointsManual => 'Correction';
+
+  @override
+  String get photoChange => 'Changer ma photo';
+
+  @override
+  String get photoCamera => 'Prendre une photo';
+
+  @override
+  String get photoGallery => 'Choisir dans la galerie';
+
+  @override
+  String get photoError => 'La photo n\'a pas pu être envoyée. Vérifiez votre connexion et réessayez.';
+
+  @override
+  String joinAdhere(String org) {
+    return 'Adhérer à $org';
+  }
+
+  @override
+  String get adhesionLead => 'Remplissez votre fiche. Vous recevrez un code par e-mail pour confirmer votre adresse.';
+
+  @override
+  String get firstName => 'Prénom';
+
+  @override
+  String get lastName => 'Nom';
+
+  @override
+  String get zoneLabel => 'Section communale ou ville de la diaspora';
+
+  @override
+  String get zoneHelp => 'Tapez au moins deux lettres, puis choisissez dans la liste.';
+
+  @override
+  String get zoneNone => 'Aucune zone trouvée.';
+
+  @override
+  String get sponsorLabel => 'Code de parrainage';
+
+  @override
+  String get sponsorOptional => 'Code de parrainage, si un membre vous l\'a donné';
+
+  @override
+  String get sponsorRequired => 'Votre organisation adhère par parrainage : le code d\'un membre est demandé.';
+
+  @override
+  String get adhesionSubmit => 'Recevoir mon code';
+
+  @override
+  String get errorSponsorNotFound => 'Ce code de parrainage n\'existe pas. Vérifiez-le auprès de votre parrain.';
+
+  @override
+  String get errorSponsorRequired => 'Le code d\'un parrain est demandé pour adhérer.';
+
+  @override
+  String get errorAlreadyMember => 'Cette adresse a déjà une adhésion. Connectez-vous avec elle.';
+
+  @override
+  String get errorZoneTooBroad => 'Choisissez une section communale ou une ville de la diaspora.';
+
+  @override
+  String get errorRequired => 'Ce champ est obligatoire.';
+
+  @override
+  String newsByline(String date, String author) {
+    return '$date, par $author';
+  }
+
+  @override
+  String get newsReadMore => 'Lire la suite';
+
+  @override
+  String get newsArticle => 'Article';
 }

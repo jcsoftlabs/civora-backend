@@ -1,5 +1,6 @@
 // Kreyòl ayisyen. Tradiksyon pou yon moun ki pale kreyòl natifnatal relè anvan lansman (NFR-08).
 import { votesHt } from "./votes.ht";
+import { cardHt } from "./card.ht";
 import type { MessageKey } from "./fr";
 import { consoleHt } from "./console.ht";
 import { marketingHt } from "./marketing.ht";
@@ -420,6 +421,22 @@ export const ht: Record<MessageKey, string> = {
   "admin.settings.admission.validation.desc": "Yon responsab zòn nan valide chak demann.",
   "admin.settings.admission.parrainage": "Ak parenaj",
   "admin.settings.admission.parrainage.desc": "Moun nan bay nimewo yon manm ki parenen l.",
+  "admin.settings.engagement": "Parennaj ak pwen",
+  "admin.settings.engagement.lead":
+    "Parennaj la bay chak manm valide yon kòd pou l pataje ; pwen yo rekonpanse angajman dapre barèm ou.",
+  "admin.settings.referral": "Parennaj manm yo",
+  "admin.settings.referral.desc":
+    "Chak manm valide resevwa yon kòd parennaj ; moun ki fè adezyon ak kòd sa a vin fiyèl li.",
+  "admin.settings.referral.forced": "Toujou aktif : òganizasyon w fè adezyon pa parennaj.",
+  "admin.settings.points": "Barèm pwen yo",
+  "admin.settings.points.lead": "Pwen ou genyen yon sèl fwa pou chak aksyon. Mete 0 pou pa bay anyen.",
+  "admin.settings.points.referral": "Fiyèl valide",
+  "admin.settings.points.training": "Fòmasyon reyisi",
+  "admin.settings.points.vote": "Vòt depoze",
+  "admin.settings.points.dues": "Kotizasyon peye alè",
+  "admin.settings.points.attendance": "Prezans nan yon rasanbleman",
+  "admin.settings.saveEngagement": "Anrejistre",
+  "admin.settings.saved.engagement": "Parennaj ak barèm anrejistre",
   "admin.settings.saveAdmission": "Anrejistre mòd la",
   "admin.settings.saved.admission": "Mòd adezyon an anrejistre",
   "admin.settings.statuses": "Estati manm",
@@ -1079,5 +1096,6 @@ export const ht: Record<MessageKey, string> = {
   "admin.settings.saved.kind": "Kalite òganizasyon an anrejistre",
   ...consoleHt,
   ...votesHt,
+  ...cardHt,
   ...marketingHt,
 };

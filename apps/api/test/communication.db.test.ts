@@ -137,6 +137,17 @@ describe("publications ciblées (COM-01)", () => {
     expect(await feedTitles(rose.token)).toEqual(["Diaspora", "Tout le parti"].sort());
   });
 
+  it("chaque article est signé du nom de la personne qui l'a rédigé", async () => {
+    const items = (await call("GET", "/feed", paul.token)).json().items as Array<{
+      title: { fr: string };
+      author: string;
+    }>;
+    expect(Object.fromEntries(items.map((i) => [i.title.fr, i.author]))).toEqual({
+      "Pétion-Ville": "chefpv Test",
+      "Tout le parti": "national Test",
+    });
+  });
+
   it("un responsable local ne modifie pas une publication nationale et ne liste que les siennes", async () => {
     expect(
       (await call("PATCH", `/publications/${pub["Tout le parti"]}`, pvChief.token, { title: { fr: "Pirate" } }))

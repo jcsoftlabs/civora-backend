@@ -311,7 +311,7 @@ abstract class L {
   /// No description provided for @hello.
   ///
   /// In fr, this message translates to:
-  /// **'Bonjou, {name}'**
+  /// **'Bonjour, {name}'**
   String hello(String name);
 
   /// No description provided for @cardMember.
@@ -1297,6 +1297,324 @@ abstract class L {
   /// In fr, this message translates to:
   /// **'Si {destination} est connue d\'une organisation, un code vient d\'y être envoyé. Il est valable 10 minutes.'**
   String otpLeadAny(String destination);
+
+  /// No description provided for @helloTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bonjour, {name}.'**
+  String helloTitle(String name);
+
+  /// No description provided for @waiting.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =0{Tout est à jour.} =1{Une chose vous attend.} other{{n} choses vous attendent.}}'**
+  String waiting(int n);
+
+  /// No description provided for @newsLead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le fil de {org}.'**
+  String newsLead(String org);
+
+  /// No description provided for @kindDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'{kind}, {date}'**
+  String kindDate(String kind, String date);
+
+  /// No description provided for @meStatus.
+  ///
+  /// In fr, this message translates to:
+  /// **'{status}, membre n° {number}'**
+  String meStatus(String status, String number);
+
+  /// No description provided for @meNumber.
+  ///
+  /// In fr, this message translates to:
+  /// **'Membre n° {number}'**
+  String meNumber(String number);
+
+  /// No description provided for @statPoints.
+  ///
+  /// In fr, this message translates to:
+  /// **'points'**
+  String get statPoints;
+
+  /// No description provided for @statReferrals.
+  ///
+  /// In fr, this message translates to:
+  /// **'filleuls'**
+  String get statReferrals;
+
+  /// No description provided for @statVotes.
+  ///
+  /// In fr, this message translates to:
+  /// **'votes'**
+  String get statVotes;
+
+  /// No description provided for @actReferral.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parrainer'**
+  String get actReferral;
+
+  /// No description provided for @referralTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre code de parrainage'**
+  String get referralTitle;
+
+  /// No description provided for @referralLead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partagez-le : la personne qui adhère avec ce code devient votre filleul.'**
+  String get referralLead;
+
+  /// No description provided for @referralShare.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager'**
+  String get referralShare;
+
+  /// No description provided for @referralCopy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier'**
+  String get referralCopy;
+
+  /// No description provided for @referralCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code copié'**
+  String get referralCopied;
+
+  /// No description provided for @referralShareText.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoins {org} avec mon code de parrainage {code} : {url}'**
+  String referralShareText(String org, String code, String url);
+
+  /// No description provided for @referralsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes filleuls'**
+  String get referralsTitle;
+
+  /// No description provided for @referralNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos filleuls apparaîtront ici dès leur adhésion.'**
+  String get referralNone;
+
+  /// No description provided for @referralPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'En attente'**
+  String get referralPending;
+
+  /// No description provided for @referralValidated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validé'**
+  String get referralValidated;
+
+  /// No description provided for @referralRejected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Refusé'**
+  String get referralRejected;
+
+  /// No description provided for @pointsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes points'**
+  String get pointsTitle;
+
+  /// No description provided for @pointsAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout voir'**
+  String get pointsAll;
+
+  /// No description provided for @pointsNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vos points apparaîtront ici : parrainage, formation, vote, cotisation réglée à temps.'**
+  String get pointsNone;
+
+  /// No description provided for @pointsReferral.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filleul validé'**
+  String get pointsReferral;
+
+  /// No description provided for @pointsTraining.
+  ///
+  /// In fr, this message translates to:
+  /// **'Formation réussie'**
+  String get pointsTraining;
+
+  /// No description provided for @pointsVote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vote déposé'**
+  String get pointsVote;
+
+  /// No description provided for @pointsDues.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cotisation réglée à temps'**
+  String get pointsDues;
+
+  /// No description provided for @pointsAttendance.
+  ///
+  /// In fr, this message translates to:
+  /// **'Présence à un rassemblement'**
+  String get pointsAttendance;
+
+  /// No description provided for @pointsManual.
+  ///
+  /// In fr, this message translates to:
+  /// **'Correction'**
+  String get pointsManual;
+
+  /// No description provided for @photoChange.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer ma photo'**
+  String get photoChange;
+
+  /// No description provided for @photoCamera.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prendre une photo'**
+  String get photoCamera;
+
+  /// No description provided for @photoGallery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir dans la galerie'**
+  String get photoGallery;
+
+  /// No description provided for @photoError.
+  ///
+  /// In fr, this message translates to:
+  /// **'La photo n\'a pas pu être envoyée. Vérifiez votre connexion et réessayez.'**
+  String get photoError;
+
+  /// No description provided for @joinAdhere.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adhérer à {org}'**
+  String joinAdhere(String org);
+
+  /// No description provided for @adhesionLead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplissez votre fiche. Vous recevrez un code par e-mail pour confirmer votre adresse.'**
+  String get adhesionLead;
+
+  /// No description provided for @firstName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prénom'**
+  String get firstName;
+
+  /// No description provided for @lastName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get lastName;
+
+  /// No description provided for @zoneLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Section communale ou ville de la diaspora'**
+  String get zoneLabel;
+
+  /// No description provided for @zoneHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tapez au moins deux lettres, puis choisissez dans la liste.'**
+  String get zoneHelp;
+
+  /// No description provided for @zoneNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune zone trouvée.'**
+  String get zoneNone;
+
+  /// No description provided for @sponsorLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code de parrainage'**
+  String get sponsorLabel;
+
+  /// No description provided for @sponsorOptional.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code de parrainage, si un membre vous l\'a donné'**
+  String get sponsorOptional;
+
+  /// No description provided for @sponsorRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre organisation adhère par parrainage : le code d\'un membre est demandé.'**
+  String get sponsorRequired;
+
+  /// No description provided for @adhesionSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recevoir mon code'**
+  String get adhesionSubmit;
+
+  /// No description provided for @errorSponsorNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce code de parrainage n\'existe pas. Vérifiez-le auprès de votre parrain.'**
+  String get errorSponsorNotFound;
+
+  /// No description provided for @errorSponsorRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le code d\'un parrain est demandé pour adhérer.'**
+  String get errorSponsorRequired;
+
+  /// No description provided for @errorAlreadyMember.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette adresse a déjà une adhésion. Connectez-vous avec elle.'**
+  String get errorAlreadyMember;
+
+  /// No description provided for @errorZoneTooBroad.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez une section communale ou une ville de la diaspora.'**
+  String get errorZoneTooBroad;
+
+  /// No description provided for @errorRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce champ est obligatoire.'**
+  String get errorRequired;
+
+  /// No description provided for @newsByline.
+  ///
+  /// In fr, this message translates to:
+  /// **'{date}, par {author}'**
+  String newsByline(String date, String author);
+
+  /// No description provided for @newsReadMore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire la suite'**
+  String get newsReadMore;
+
+  /// No description provided for @newsArticle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Article'**
+  String get newsArticle;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

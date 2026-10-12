@@ -143,7 +143,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 const SizedBox(height: 16),
                 FilledButton(onPressed: _busy ? null : _send, child: Text(t.joinSend)),
                 const SizedBox(height: 20),
-                Text(t.joinNotMember, style: text.bodyMedium?.copyWith(color: Palette.ink2)),
+                OutlinedButton(onPressed: () => context.push('/adhesion'), child: Text(t.joinAdhere(party.name))),
                 const SizedBox(height: 8),
                 Align(
                   alignment: Alignment.centerLeft,

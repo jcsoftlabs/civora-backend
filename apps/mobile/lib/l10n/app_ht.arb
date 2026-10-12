@@ -409,5 +409,126 @@
         "type": "String"
       }
     }
-  }
+  },
+  "helloTitle": "Bonjou, {name}.",
+  "@helloTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waiting": "{n, plural, =0{Tout ajou.} =1{Gen yon bagay k ap tann ou.} other{Gen {n} bagay k ap tann ou.}}",
+  "@waiting": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "newsLead": "Nouvèl {org}.",
+  "@newsLead": {
+    "placeholders": {
+      "org": {
+        "type": "String"
+      }
+    }
+  },
+  "kindDate": "{kind}, {date}",
+  "@kindDate": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "meStatus": "{status}, manm nimewo {number}",
+  "@meStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "meNumber": "Manm nimewo {number}",
+  "@meNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "statPoints": "pwen",
+  "statReferrals": "fiyèl",
+  "statVotes": "vòt",
+  "actReferral": "Parenn",
+  "referralTitle": "Kòd parennaj ou",
+  "referralLead": "Pataje l : moun ki fè adezyon ak kòd sa a vin fiyèl ou.",
+  "referralShare": "Pataje",
+  "referralCopy": "Kopye",
+  "referralCopied": "Kòd la kopye",
+  "referralShareText": "Vin nan {org} ak kòd parennaj mwen {code} : {url}",
+  "@referralShareText": {
+    "placeholders": {
+      "org": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      },
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "referralsTitle": "Fiyèl mwen yo",
+  "referralNone": "Fiyèl ou yo ap parèt la a depi yo fè adezyon.",
+  "referralPending": "Ap tann",
+  "referralValidated": "Valide",
+  "referralRejected": "Refize",
+  "pointsTitle": "Pwen mwen",
+  "pointsAll": "Wè tout",
+  "pointsNone": "Pwen ou yo ap parèt la a : parennaj, fòmasyon, vòt, kotizasyon peye alè.",
+  "pointsReferral": "Fiyèl valide",
+  "pointsTraining": "Fòmasyon reyisi",
+  "pointsVote": "Vòt depoze",
+  "pointsDues": "Kotizasyon peye alè",
+  "pointsAttendance": "Prezans nan yon rasanbleman",
+  "pointsManual": "Koreksyon",
+  "photoChange": "Chanje foto mwen",
+  "photoCamera": "Pran yon foto",
+  "photoGallery": "Chwazi nan galri a",
+  "photoError": "Foto a pa t ka voye. Verifye koneksyon w epi eseye ankò.",
+  "joinAdhere": "Fè adezyon nan {org}",
+  "@joinAdhere": {
+    "placeholders": {
+      "org": {
+        "type": "String"
+      }
+    }
+  },
+  "adhesionLead": "Ranpli fich ou. W ap resevwa yon kòd pa imèl pou konfime adrès ou.",
+  "firstName": "Prenon",
+  "lastName": "Non",
+  "zoneLabel": "Seksyon kominal oswa vil nan dyaspora",
+  "zoneHelp": "Tape omwen de lèt, epi chwazi nan lis la.",
+  "zoneNone": "Pa jwenn zòn.",
+  "sponsorLabel": "Kòd parennaj",
+  "sponsorOptional": "Kòd parennaj, si yon manm ba ou l",
+  "sponsorRequired": "Òganizasyon w fè adezyon pa parennaj : fòk ou gen kòd yon manm.",
+  "adhesionSubmit": "Resevwa kòd mwen",
+  "errorSponsorNotFound": "Kòd parennaj sa a pa egziste. Verifye l ak parenn ou.",
+  "errorSponsorRequired": "Fòk ou gen kòd yon parenn pou fè adezyon.",
+  "errorAlreadyMember": "Adrès sa a deja gen yon adezyon. Konekte ak li.",
+  "errorZoneTooBroad": "Chwazi yon seksyon kominal oswa yon vil nan dyaspora.",
+  "errorRequired": "Fòk ou ranpli chan sa a.",
+  "newsByline": "{date}, pa {author}",
+  "newsReadMore": "Li rès la",
+  "newsArticle": "Atik"
 }

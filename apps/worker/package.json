@@ -13,7 +13,6 @@
   "devDependencies": {
     "@types/node": "^20",
     "postgres": "^3.4",
-    "tsx": "^4.19",
     "vitest": "^2.1"
   },
   "dependencies": {
@@ -21,6 +20,7 @@
     "@civora/db": "workspace:^",
     "@civora/shared": "workspace:^",
     "pg-boss": "10.4.2",
-    "pino": "^9"
+    "pino": "^9",
+    "tsx": "^4.19"
   }
 }

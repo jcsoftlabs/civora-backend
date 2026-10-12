@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../core/theme.dart';
@@ -160,7 +159,8 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                       maxLines: 1,
                       overflow: TextOverflow.clip,
                       softWrap: false,
-                      style: GoogleFonts.figtree(
+                      style: TextStyle(
+                        fontFamily: 'Figtree',
                         fontSize: 4.5,
                         letterSpacing: 0.4,
                         fontWeight: FontWeight.w500,
@@ -182,7 +182,8 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                                 widget.partyName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.figtree(
+                                style: TextStyle(
+                                  fontFamily: 'Figtree',
                                   color: text,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 16,
@@ -196,7 +197,8 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                                 decoration: BoxDecoration(color: pill, borderRadius: BorderRadius.circular(20)),
                                 child: Text(
                                   year,
-                                  style: GoogleFonts.figtree(
+                                  style: TextStyle(
+                                    fontFamily: 'Figtree',
                                     color: onPill,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 12,
@@ -209,7 +211,8 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                         const Spacer(),
                         Text(
                           widget.numberLabel,
-                          style: GoogleFonts.figtree(
+                          style: TextStyle(
+                            fontFamily: 'Figtree',
                             color: text.withValues(alpha: 0.72),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -219,7 +222,8 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                         // Numéro frappé : ombre sombre dessous, lumière dessus (inversé sur un fond clair).
                         Text(
                           widget.number,
-                          style: GoogleFonts.figtree(
+                          style: TextStyle(
+                            fontFamily: 'Figtree',
                             color: text,
                             fontWeight: FontWeight.w600,
                             fontSize: (w * 0.105).clamp(26, 40),
@@ -250,7 +254,8 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                                     widget.name,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.figtree(
+                                    style: TextStyle(
+                                      fontFamily: 'Figtree',
                                       color: text,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 16,
@@ -262,7 +267,11 @@ class _MemberCardState extends State<MemberCard> with SingleTickerProviderStateM
                                       widget.location!,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.figtree(color: text.withValues(alpha: 0.78), fontSize: 12),
+                                      style: TextStyle(
+                                        fontFamily: 'Figtree',
+                                        color: text.withValues(alpha: 0.78),
+                                        fontSize: 12,
+                                      ),
                                     ),
                                 ],
                               ),
@@ -339,7 +348,13 @@ class _Seal extends StatelessWidget {
       ),
       child: Text(
         initials,
-        style: GoogleFonts.figtree(color: color, fontWeight: FontWeight.w600, fontSize: 12, letterSpacing: 0.3),
+        style: TextStyle(
+          fontFamily: 'Figtree',
+          color: color,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+          letterSpacing: 0.3,
+        ),
       ),
     ),
   );

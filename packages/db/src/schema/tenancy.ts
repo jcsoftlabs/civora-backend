@@ -44,7 +44,10 @@ export const parties = pgTable(
     electionsModuleUntil: timestamp("elections_module_until", { withTimezone: true }),
     /** Mode d'adhésion (ADH-04) : libre, validation, parrainage. */
     admissionMode: text("admission_mode").notNull().default("validation"),
+    /** Parrainage des membres (ENG-01) : { enabled } ; toujours actif si l'adhésion se fait par parrainage. */
     referralSettings: jsonb("referral_settings"),
+    /** Barème des points (GAM-01) : points par action ; absent, le barème par défaut s'applique. */
+    pointsScale: jsonb("points_scale"),
     /** pending : création en attente du code envoyé au fondateur (24 h au plus) ; active : espace ouvert. */
     status: text("status").notNull().default("active"),
     activatedAt: timestamp("activated_at", { withTimezone: true }),

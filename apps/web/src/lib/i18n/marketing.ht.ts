@@ -62,6 +62,7 @@ export const marketingHt = {
   "mk.m.members.b1": "Filt AK / OSWA ak segman ki anrejistre",
   "mk.m.members.b2": "Aksyon an gwoup : valide, mete etikèt, ekspòte",
   "mk.m.members.b3": "Kotizasyon ane a parèt sou chak liy",
+  "mk.m.members.b4": "Kat manm nan koulè òganizasyon an, enprime sou PVC oswa sou fèy A4",
   "mk.m.members.r": "Excel, kaye adezyon, fòmilè sou entènèt",
   "mk.m.members.shot": "Lis manm yo ak filt, etikèt ak kotizasyon ane a",
 
@@ -120,6 +121,8 @@ export const marketingHt = {
   "mk.m.votes.shot": "Rezilta yon eleksyon entèn : patisipasyon, vwa chak kandida, moun ki eli a make sou bilten an",
   "mk.marquee.17": "Vòt ak bilten sekrè",
   "mk.marquee.18": "Pwosè-vèbal depouyman",
+  "mk.marquee.19": "Kat enprime sou PVC",
+  "mk.marquee.20": "Parennaj ak pwen",
   "mk.price.f.votes": "Vòt entèn ak bilten sekrè, yon vòt alafwa",
   "mk.price.f.votesAdvanced": "De tou, vòt pa lis, kandidati sou entènèt",
   "mk.app.title": "Aplikasyon manm yo",
@@ -128,6 +131,7 @@ export const marketingHt = {
   "mk.app.b2": "Kat manm ak kòd QR, li mache san koneksyon",
   "mk.app.b3": "Vòt ak bilten sekrè, fòmasyon, rasanbleman, kotizasyon",
   "mk.app.b4": "Nouvèl, podkast ou ka koute menm san entènèt, albòm",
+  "mk.app.b5": "Foto, pwen ou genyen, kòd parennaj ak moun ou mennen",
   "mk.app.soon": "Talè konsa sou Android ak iPhone",
   "mk.app.shot.wallet": "Akèy aplikasyon an : kat manm ak sa ki ap tann manm nan",
   "mk.app.shot.news": "Nouvèl òganizasyon an : anons, atik, podkast ak albòm",
@@ -309,5 +313,6 @@ export const marketingHt = {
   "mk.footer.tagline": "Platfòm pati, asosyasyon ak sendika Ayiti ak dyaspora a.",
   "mk.footer.product": "Pwodui",
   "mk.footer.contact": "Kontak",
-  "mk.footer.rights": "© 2026 civora",
+  "mk.footer.rights": "© 2026 CODESHELL LLC. Tout dwa rezève.",
+  "mk.footer.maker": "civora se yon pwodui",
 } as const;

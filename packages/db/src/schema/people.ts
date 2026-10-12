@@ -70,6 +70,8 @@ export const members = pgTable(
     statusId: uuid("status_id"),
     category: text("category"), // étudiant, diaspora, élu... (FIN-04)
     referentMemberId: uuid("referent_member_id"),
+    /** Code de parrainage (ENG-01), attribué à chaque membre validé quand le parti active le parrainage. */
+    referralCode: text("referral_code"),
     applicationState: applicationStateEnum("application_state").notNull().default("pending"),
     applicationScore: integer("application_score"),
     tags: text("tags").array().notNull().default([]),
@@ -79,6 +81,7 @@ export const members = pgTable(
   },
   (t) => [
     unique().on(t.partyId, t.memberNumber),
+    unique("members_referral_code_key").on(t.partyId, t.referralCode),
     index("members_party_zone").on(t.partyId, t.zoneId),
     partyKey("members", t),
     // Un compte n'appartient qu'à un seul parti (une adhésion par personne).
@@ -156,5 +159,32 @@ export const memberSegments = pgTable(
     partyKey("member_segments", t),
     unique("member_segments_party_name").on(t.partyId, t.name),
     sameParty("member_segments", t.partyId, t.createdByMemberId, members),
+  ],
+);
+
+/**
+ * Journal des points (GAM-01, GAM-09) : chaque gain ou correction est une ligne, jamais modifiée. Une même action
+ * ne rapporte qu'une fois (référence unique : le parrainage, la formation, le scrutin, l'échéance).
+ */
+export const pointEntries = pgTable(
+  "point_entries",
+  {
+    id: id(),
+    partyId: partyId(),
+    memberId: uuid("member_id").notNull(),
+    /** referral | training | vote | dues | attendance | manual */
+    action: text("action").notNull(),
+    points: integer("points").notNull(),
+    referenceId: uuid("reference_id"),
+    note: text("note"),
+    createdByMemberId: uuid("created_by_member_id"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    unique("point_entries_once").on(t.partyId, t.memberId, t.action, t.referenceId),
+    index("point_entries_member").on(t.partyId, t.memberId),
+    sameParty("point_entries", t.partyId, t.memberId, members),
+    sameParty("point_entries", t.partyId, t.createdByMemberId, members),
+    check("point_entries_action", sql`${t.action} in ('referral', 'training', 'vote', 'dues', 'attendance', 'manual')`),
   ],
 );

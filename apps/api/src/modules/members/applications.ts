@@ -8,6 +8,7 @@ import { APPLICATION_MESSAGES, messageLocale } from "../../lib/messaging/templat
 import { zoneScope } from "../../lib/zone-scope.js";
 import { ApiError } from "../../plugins/errors.js";
 import type { DuesService } from "../dues/service.js";
+import { onApproved } from "../engagement/points.js";
 import { authorize } from "../../plugins/tenant.js";
 
 type Req = FastifyRequest;
@@ -90,6 +91,7 @@ export class ApplicationsService {
           .set({ validatedAt: now, updatedAt: now })
           .where(eq(referrals.referredMemberId, memberId));
         await this.dues.onMemberApproved(tx, req.partyId, memberId, now); // formules par défaut (FIN-03)
+        await onApproved(tx, req.partyId, memberId); // code de parrainage, points du parrain (ENG-01)
       }
       await audit(tx, {
         partyId: req.partyId,

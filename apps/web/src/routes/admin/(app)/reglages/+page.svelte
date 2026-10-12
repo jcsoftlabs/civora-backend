@@ -9,7 +9,7 @@
   import { enhance } from "$app/forms";
   import { env } from "$env/dynamic/public";
   import { ORGANIZATION_KINDS, PLANS, TIERS } from "@civora/shared";
-  import { Badge, Button, Field, MemberCard } from "@civora/ui";
+  import { Badge, Button, Field, MemberCard, Switch } from "@civora/ui";
   import BrandColors from "$lib/components/BrandColors.svelte";
   import { format, translator, type MessageKey } from "$lib/i18n";
   import type { ActionData, PageData } from "./$types";
@@ -62,7 +62,10 @@
         ? { bad: false, text: tk(`admin.settings.saved.${f.done}`) }
         : null,
   );
-  const SECTIONS = ["identity", "kind", "languages", "admission", "statuses"] as const;
+  const SECTIONS = ["identity", "kind", "languages", "admission", "engagement", "statuses"] as const;
+  const eng = $derived(data.engagement);
+  let referral = $derived(eng.referralEnabled);
+  const ACTIONS = ["referral", "training", "vote", "dues", "attendance"] as const;
 </script>
 
 <div class="layout">
@@ -214,6 +217,42 @@
           <Button type="submit" pending={pending === "admission"} disabled={admission === st.admissionMode}>
             {t("admin.settings.saveAdmission")}
           </Button>
+        </div>
+      </form>
+    </section>
+
+    <section id="engagement" aria-labelledby="engagement-title">
+      <h2 id="engagement-title">{t("admin.settings.engagement")}</h2>
+      <p class="lead">{t("admin.settings.engagement.lead")}</p>
+      <form method="POST" action="?/engagement" use:enhance={submit("engagement")} class="stack">
+        <input type="hidden" name="referral" value={referral || eng.referralForced ? "on" : ""} />
+        <Switch
+          label={t("admin.settings.referral")}
+          description={eng.referralForced ? t("admin.settings.referral.forced") : t("admin.settings.referral.desc")}
+          checked={referral || eng.referralForced}
+          disabled={eng.referralForced}
+          onchange={(v) => (referral = v)}
+          onLabel={t("common.yes")}
+          offLabel={t("common.no")}
+        />
+        <fieldset class="scale">
+          <legend>{t("admin.settings.points")}</legend>
+          {#if eng.points}
+            <p class="hint">{t("admin.settings.points.lead")}</p>
+            <div class="scale-grid">
+              {#each ACTIONS as a (a)}
+                <label class="scale-row">
+                  <span>{tk(`admin.settings.points.${a}`)}</span>
+                  <input type="number" name="scale_{a}" min="0" max="1000" value={eng.scale[a]} inputmode="numeric" />
+                </label>
+              {/each}
+            </div>
+          {:else}
+            <p class="hint">{format(t("plan.lockedIn"), { tier: t("plan.mouvement") })}</p>
+          {/if}
+        </fieldset>
+        <div class="row end">
+          <Button type="submit" pending={pending === "engagement"}>{t("admin.settings.saveEngagement")}</Button>
         </div>
       </form>
     </section>
@@ -519,6 +558,46 @@
   .lock {
     font-size: var(--fs-12);
     color: var(--c-ink-2);
+  }
+  .scale {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+  .scale legend {
+    font: 600 var(--fs-15) / 1.3 var(--font-ui);
+    margin-bottom: var(--s-1);
+  }
+  .hint {
+    margin: 0;
+    font-size: var(--fs-13);
+    color: var(--c-ink-2);
+  }
+  .scale-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--s-2) var(--s-5);
+  }
+  .scale-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    min-height: 44px;
+    font-size: var(--fs-14);
+  }
+  .scale-row input {
+    width: 88px;
+    min-height: 40px;
+    padding: 0 var(--s-2);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-md);
+    font: 600 var(--fs-15) / 1 var(--font-ui);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
   }
   .modes {
     display: grid;

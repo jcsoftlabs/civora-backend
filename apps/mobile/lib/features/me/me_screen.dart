@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../core/state.dart';
 import '../../core/theme.dart';
 import '../../core/time.dart';
 import '../../l10n/app_localizations.dart';
+import '../../widgets/layout.dart';
 import '../../widgets/objects.dart';
-import '../home/common.dart';
+import 'photo.dart';
 
-/// Moi : le carnet du militant, mémoire du membre (douze cases de cotisation pour l'année, un tampon par vote
-/// déposé et par formation certifiée), puis l'organisation, la langue et la déconnexion.
+/// Moi : la photo et le nom du membre dans la banderole ; dessous, ses points et ses filleuls, son code de
+/// parrainage à partager, ses derniers points, son carnet (cotisations de l'année, tampons), puis les réglages.
 class MeScreen extends ConsumerWidget {
   const MeScreen({super.key});
 
@@ -17,167 +21,250 @@ class MeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = L.of(context);
     final locale = Localizations.localeOf(context);
-    final me = ref.watch(apiGet('/auth/me')).value;
-    final profile = ref.watch(apiGet('/members/me')).value;
-    final dues = ref.watch(apiGet('/members/me/dues')).value;
-    final votes = ref.watch(apiGet('/votes')).value;
-    final training = ref.watch(apiGet('/training')).value;
-    final year = haitiYear();
-    final number = (me?.data['member'] as Map?)?['number'] as String? ?? '';
+    final me = ref.watch(apiGet('/auth/me')).value?.data;
+    final profile = ref.watch(apiGet('/members/me')).value?.data;
+    final points = ref.watch(apiGet('/members/me/points')).value?.data;
+    final referrals = ref.watch(apiGet('/members/me/referrals')).value?.data;
+    final votes = ref.watch(apiGet('/votes')).value?.data;
+    final member = me?['member'] as Map?;
+    final party = me?['party'] as Map?;
+    final brand = parseHex(party?['brandColor'] as String?);
+    final status = tr(profile?['statusLabel'], locale);
+    final number = member?['number'] as String? ?? '';
+    final voted = ((votes?['elections'] as List?) ?? const []).cast<Map>().where((v) => v['voted'] == true).length;
 
-    // État de chaque mois de l'année : réglé, dû ou en retard, ou rien de prévu.
-    final months = List<String?>.filled(12, null);
-    for (final o in ((dues?.data['obligations'] as List?) ?? const []).cast<Map>()) {
-      final start = DateTime.tryParse(o['periodStart'] as String? ?? '');
-      if (start == null || start.year != year) continue;
-      final s = o['paidAt'] != null ? 'paid' : (o['state'] as String? ?? 'due');
-      months[start.month - 1] = s;
-    }
-    final stamps = <Widget>[];
-    for (final v in ((votes?.data['elections'] as List?) ?? const []).cast<Map>().where((v) => v['voted'] == true)) {
-      stamps.add(
-        Stamp(
-          text: t.carnetVoted,
-          date: formatDay(DateTime.parse(v['opensAt'] as String), locale.languageCode),
-          color: Palette.inkBlue,
-          angle: stamps.length.isEven ? -0.1 : 0.08,
-        ),
-      );
-    }
-    for (final c in ((training?.data['courses'] as List?) ?? const []).cast<Map>()) {
-      if (c['certificateNumber'] == null) continue;
-      stamps.add(
-        Stamp(text: t.carnetCertified, date: tr(c['title'], locale), angle: stamps.length.isEven ? 0.07 : -0.09),
-      );
-    }
-
-    return ColoredBox(
-      color: Palette.cream,
-      child: ListView(
-        padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
-        children: [
-          TabHeader(eyebrow: t.carnetNumber(number), title: t.meTitle),
-          if (profile?.data['statusLabel'] != null)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(22, 6, 22, 0),
-              child: Text(
-                t.carnetStatus(tr(profile!.data['statusLabel'], locale)),
-                style: const TextStyle(color: Palette.ink2),
-              ),
-            ),
-          _Page(
-            title: t.carnetDues('$year'),
-            child: dues == null
-                ? const Skeleton(height: 110)
-                : months.every((m) => m == null)
-                ? Text(t.carnetDuesNone, style: const TextStyle(color: Palette.ink2))
-                : GridView.count(
-                    crossAxisCount: 6,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                    children: [
-                      for (var i = 0; i < 12; i++)
-                        _Month(letter: monthInitial(i + 1, locale.languageCode), state: months[i]),
-                    ],
-                  ),
-          ),
-          _Page(
-            title: t.carnetStamps,
-            child: stamps.isEmpty
-                ? Text(t.carnetStampsNone, style: const TextStyle(color: Palette.ink2, height: 1.45))
-                : Wrap(spacing: 18, runSpacing: 18, children: stamps),
-          ),
-          const _Settings(),
-          bottomSpace,
-        ],
+    return BannerPage(
+      brand: brand,
+      leading: MemberPhoto(
+        photoFileId: profile?['photoFileId'] as String?,
+        initials: member == null
+            ? ''
+            : '${member['firstName']}'.characters.first + '${member['lastName']}'.characters.first,
+        ring: onColor(brand),
       ),
+      title: member == null ? '' : '${member['firstName']} ${member['lastName']}',
+      message: status.isEmpty ? t.meNumber(number) : t.meStatus(status, number),
+      children: [
+        Row(
+          children: [
+            if (points?['enabled'] == true)
+              Expanded(
+                child: Figure(value: '${points!['total']}', label: t.statPoints),
+              ),
+            if (referrals?['enabled'] == true)
+              Expanded(
+                child: Figure(
+                  value: '${((referrals!['referrals'] as List?) ?? const []).length}',
+                  label: t.statReferrals,
+                ),
+              ),
+            Expanded(
+              child: Figure(value: '$voted', label: t.statVotes),
+            ),
+          ],
+        ),
+        if (referrals?['enabled'] == true) ReferralPanel(data: referrals!, partyName: party?['name'] as String? ?? ''),
+        if (points?['enabled'] == true) PointsList(data: points!, limit: 4),
+        const _Carnet(),
+        const _Settings(),
+      ],
     );
   }
 }
 
-/// Organisation, langue, déconnexion.
-class _Settings extends ConsumerWidget {
-  const _Settings();
+/// Code de parrainage (ENG-01) en grand, avec Partager et Copier ; puis les filleuls et leur état.
+class ReferralPanel extends StatelessWidget {
+  const ReferralPanel({super.key, required this.data, required this.partyName});
+  final Map<String, dynamic> data;
+  final String partyName;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = L.of(context);
+    final code = data['code'] as String?;
+    final url = data['shareUrl'] as String? ?? '';
+    final list = ((data['referrals'] as List?) ?? const []).cast<Map>();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SheetHeading(t.referralTitle),
+        Text(t.referralLead, style: Txt.body.copyWith(color: Palette.ink2)),
+        if (code != null) ...[
+          const SizedBox(height: Space.m),
+          Semantics(
+            label: '${t.referralTitle} $code',
+            excludeSemantics: true,
+            child: Text(
+              code,
+              style: Txt.title.copyWith(letterSpacing: 3, fontFeatures: const [FontFeature.tabularFigures()]),
+            ),
+          ),
+          const SizedBox(height: Space.m),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () =>
+                      SharePlus.instance.share(ShareParams(text: t.referralShareText(partyName, code, url))),
+                  icon: const Icon(Icons.ios_share),
+                  label: Text(t.referralShare),
+                ),
+              ),
+              const SizedBox(width: Space.s),
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(minimumSize: const Size(110, 52)),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: code));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.referralCopied)));
+                },
+                child: Text(t.referralCopy),
+              ),
+            ],
+          ),
+        ],
+        SheetHeading(t.referralsTitle),
+        if (list.isEmpty)
+          Text(t.referralNone, style: Txt.body.copyWith(color: Palette.ink2))
+        else
+          for (final r in list)
+            ActionRow(
+              title: r['name'] as String,
+              detail: r['since'] is String
+                  ? formatDay(DateTime.parse(r['since'] as String), Localizations.localeOf(context).languageCode)
+                  : null,
+              state: switch (r['state']) {
+                'validated' => t.referralValidated,
+                'rejected' => t.referralRejected,
+                _ => t.referralPending,
+              },
+              stateColor: r['state'] == 'validated' ? Palette.success : null,
+            ),
+      ],
+    );
+  }
+}
+
+/// Journal des points (GAM-09) : l'action, sa date, les points gagnés ou retirés.
+class PointsList extends StatelessWidget {
+  const PointsList({super.key, required this.data, this.limit});
+  final Map<String, dynamic> data;
+  final int? limit;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = L.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+    final entries = ((data['entries'] as List?) ?? const []).cast<Map>();
+    final shown = limit == null ? entries : entries.take(limit!).toList();
+    String label(String a) => switch (a) {
+      'referral' => t.pointsReferral,
+      'training' => t.pointsTraining,
+      'vote' => t.pointsVote,
+      'dues' => t.pointsDues,
+      'attendance' => t.pointsAttendance,
+      _ => t.pointsManual,
+    };
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SheetHeading(
+          t.pointsTitle,
+          trailing: limit != null && entries.length > limit!
+              ? TextButton(onPressed: () => context.push('/points'), child: Text(t.pointsAll))
+              : null,
+        ),
+        if (entries.isEmpty)
+          Text(t.pointsNone, style: Txt.body.copyWith(color: Palette.ink2))
+        else
+          for (final e in shown)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          e['note'] is String
+                              ? '${label(e['action'] as String)} : ${e['note']}'
+                              : label(e['action'] as String),
+                          style: Txt.body.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        Text(formatDay(DateTime.parse(e['createdAt'] as String), lang), style: Txt.small),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    '${(e['points'] as int) > 0 ? '+' : ''}${e['points']}',
+                    style: Txt.heading.copyWith(
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                      color: (e['points'] as int) < 0 ? Palette.danger : Palette.ink,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+      ],
+    );
+  }
+}
+
+/// Carnet du militant : douze mois de cotisation (tamponnés une fois réglés), un tampon par vote et certificat.
+class _Carnet extends ConsumerWidget {
+  const _Carnet();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = L.of(context);
-    final me = ref.watch(apiGet('/auth/me')).value?.data;
-    final locale = ref.watch(localeProvider);
-    final member = me?['member'] as Map?;
+    final locale = Localizations.localeOf(context);
+    final dues = ref.watch(apiGet('/members/me/dues')).value;
+    final votes = ref.watch(apiGet('/votes')).value;
+    final training = ref.watch(apiGet('/training')).value;
+    final year = haitiYear();
+    final months = List<String?>.filled(12, null);
+    for (final o in ((dues?.data['obligations'] as List?) ?? const []).cast<Map>()) {
+      final start = DateTime.tryParse(o['periodStart'] as String? ?? '');
+      if (start == null || start.year != year) continue;
+      months[start.month - 1] = o['paidAt'] != null ? 'paid' : (o['state'] as String? ?? 'due');
+    }
+    final stamps = <Widget>[
+      for (final v in ((votes?.data['elections'] as List?) ?? const []).cast<Map>().where((v) => v['voted'] == true))
+        Stamp(
+          text: t.carnetVoted,
+          date: formatDay(DateTime.parse(v['opensAt'] as String), locale.languageCode),
+          color: Palette.inkBlue,
+          angle: -0.08,
+        ),
+      for (final c in ((training?.data['courses'] as List?) ?? const []).cast<Map>().where(
+        (c) => c['certificateNumber'] != null,
+      ))
+        Stamp(text: t.carnetCertified, date: tr(c['title'], locale), angle: 0.07),
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _Page(
-          title: t.profileTitle,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        SheetHeading(t.carnetDues('$year')),
+        if (months.every((m) => m == null))
+          Text(t.carnetDuesNone, style: Txt.body.copyWith(color: Palette.ink2))
+        else
+          GridView.count(
+            crossAxisCount: 6,
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
             children: [
-              Text(
-                member == null ? '' : '${member['firstName']} ${member['lastName']}',
-                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-              ),
-              Text((me?['party'] as Map?)?['name'] as String? ?? '', style: const TextStyle(color: Palette.ink2)),
-              const SizedBox(height: 16),
-              Text(t.profileLanguage, style: const TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              SegmentedButton<String>(
-                expandedInsets: EdgeInsets.zero,
-                segments: const [
-                  ButtonSegment(value: 'fr', label: Text('Français')),
-                  ButtonSegment(value: 'ht', label: Text('Kreyòl')),
-                ],
-                selected: {locale.languageCode},
-                onSelectionChanged: (s) => ref.read(localeProvider.notifier).set(Locale(s.first)),
-              ),
+              for (var i = 0; i < 12; i++) _Month(letter: monthInitial(i + 1, locale.languageCode), state: months[i]),
             ],
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(22, 16, 22, 0),
-          child: OutlinedButton.icon(
-            onPressed: () => ref.read(sessionProvider.notifier).close(),
-            icon: const Icon(Icons.logout),
-            label: Text(t.profileLogout),
-          ),
-        ),
+        if (stamps.isNotEmpty) ...[SheetHeading(t.carnetStamps), Wrap(spacing: 18, runSpacing: 18, children: stamps)],
       ],
     );
   }
 }
 
-class _Page extends StatelessWidget {
-  const _Page({required this.title, required this.child});
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    margin: const EdgeInsets.fromLTRB(22, 18, 22, 0),
-    padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
-    decoration: BoxDecoration(
-      color: Palette.surface,
-      border: Border.all(color: Palette.line),
-      borderRadius: BorderRadius.circular(14),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 13, color: Palette.ink2, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 14),
-        child,
-      ],
-    ),
-  );
-}
-
-/// Case d'un mois : tampon plein si réglé, pointillé ambre si dû, rouge si en retard, vide sinon.
 class _Month extends StatelessWidget {
   const _Month({required this.letter, required this.state});
   final String letter;
@@ -185,8 +272,9 @@ class _Month extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brand = Theme.of(context).colorScheme.primary;
     final (color, filled) = switch (state) {
-      'paid' => (Palette.primary, true),
+      'paid' => (brand, true),
       'late' => (Palette.danger, false),
       'due' => (Palette.warning, false),
       _ => (Palette.line, false),
@@ -195,12 +283,98 @@ class _Month extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: filled ? color.withValues(alpha: 0.12) : null,
-        border: Border.all(color: color, width: filled ? 2 : 1.4),
+        color: filled ? color : null,
+        border: Border.all(color: color, width: filled ? 0 : 1.5),
       ),
       child: Text(
         letter,
-        style: TextStyle(fontWeight: FontWeight.w600, color: state == null ? Palette.ink2 : color),
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: filled ? onColor(color) : (state == null ? Palette.ink2 : color),
+        ),
+      ),
+    );
+  }
+}
+
+/// Langue et déconnexion.
+class _Settings extends ConsumerWidget {
+  const _Settings();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = L.of(context);
+    final locale = ref.watch(localeProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SheetHeading(t.profileLanguage),
+        SegmentedButton<String>(
+          expandedInsets: EdgeInsets.zero,
+          segments: const [
+            ButtonSegment(value: 'fr', label: Text('Français')),
+            ButtonSegment(value: 'ht', label: Text('Kreyòl')),
+          ],
+          selected: {locale.languageCode},
+          onSelectionChanged: (s) => ref.read(localeProvider.notifier).set(Locale(s.first)),
+        ),
+        const SizedBox(height: Space.xl),
+        OutlinedButton.icon(
+          onPressed: () => ref.read(sessionProvider.notifier).close(),
+          icon: const Icon(Icons.logout),
+          label: Text(t.profileLogout),
+        ),
+      ],
+    );
+  }
+}
+
+/// Historique complet des points.
+class PointsScreen extends ConsumerWidget {
+  const PointsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = L.of(context);
+    final data = ref.watch(apiGet('/members/me/points')).value?.data;
+    return Scaffold(
+      backgroundColor: Palette.paper,
+      appBar: AppBar(backgroundColor: Palette.paper, title: Text(t.pointsTitle)),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(Space.gutter, 0, Space.gutter, 40),
+        children: [
+          if (data == null)
+            const Skeleton(height: 200)
+          else ...[
+            Figure(value: '${data['total']}', label: t.statPoints),
+            PointsList(data: data),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Parrainer (depuis Agir) : le code à partager et les filleuls.
+class ReferralScreen extends ConsumerWidget {
+  const ReferralScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = L.of(context);
+    final data = ref.watch(apiGet('/members/me/referrals')).value?.data;
+    final party = ref.watch(apiGet('/auth/me')).value?.data['party'] as Map?;
+    return Scaffold(
+      backgroundColor: Palette.paper,
+      appBar: AppBar(backgroundColor: Palette.paper, title: Text(t.actReferral)),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(Space.gutter, 0, Space.gutter, 40),
+        children: [
+          if (data == null)
+            const Skeleton(height: 200)
+          else
+            ReferralPanel(data: data, partyName: party?['name'] as String? ?? ''),
+        ],
       ),
     );
   }

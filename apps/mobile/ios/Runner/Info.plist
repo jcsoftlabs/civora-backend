@@ -2,8 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choisir la photo de votre fiche de membre.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Scanner le QR code de votre organisation et des rassemblements.</string>
+	<string>Scanner le QR code de votre organisation et des rassemblements, et prendre la photo de votre fiche.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

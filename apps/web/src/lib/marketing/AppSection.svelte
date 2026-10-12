@@ -19,7 +19,7 @@
       <h2 id="app-title">{t("mk.app.title")}</h2>
       <p class="lead">{t("mk.app.lead")}</p>
       <ul>
-        {#each [1, 2, 3, 4] as i (i)}<li>{tk(`mk.app.b${i}`)}</li>{/each}
+        {#each [1, 2, 3, 4, 5] as i (i)}<li>{tk(`mk.app.b${i}`)}</li>{/each}
       </ul>
       <p class="soon"><span class="dot" aria-hidden="true"></span>{t("mk.app.soon")}</p>
     </div>

@@ -20,11 +20,26 @@ export interface Settings {
   statuses: Array<{ id: string; label: { fr: string; ht?: string }; rank: number; members: number }>;
 }
 
-/** SOC-01, SOC-03, ADH-03, ADH-04 : réglages du parti (settings.party), tous journalisés par l'API. */
+export interface Engagement {
+  referralEnabled: boolean;
+  /** Adhésion par parrainage : le parrainage ne peut pas être désactivé. */
+  referralForced: boolean;
+  /** Points compris dans la formule (Mouvement, National). */
+  points: boolean;
+  scale: Record<"referral" | "training" | "vote" | "dues" | "attendance", number>;
+}
+const POINT_ACTIONS = ["referral", "training", "vote", "dues", "attendance"] as const;
+
+/** SOC-01, SOC-03, ADH-03, ADH-04, ENG-01, GAM-01 : réglages du parti (settings.party), journalisés par l'API. */
 export const load: PageServerLoad = async ({ cookies, locals, getClientAddress }) => {
   const s = (await currentSession(cookies, locals.partySlug!))!;
+  const ip = getClientAddress();
   try {
-    return { settings: await api<Settings>("/party/settings", { token: s.token, ip: getClientAddress() }) };
+    const [settings, engagement] = await Promise.all([
+      api<Settings>("/party/settings", { token: s.token, ip }),
+      api<Engagement>("/party/engagement", { token: s.token, ip }),
+    ]);
+    return { settings, engagement };
   } catch (e) {
     if (e instanceof ApiFailure && e.status === 403) error(403, { message: "forbidden", code: "forbidden" });
     throw e;
@@ -89,6 +104,23 @@ export const actions: Actions = {
     act(event, "languages", (f, token, ip) =>
       branding({ languages: [...new Set(f.getAll("languages").map(String))] }, token, ip),
     ),
+
+  /** ENG-01, GAM-01 : parrainage des membres et barème des points. */
+  engagement: (event) =>
+    act(event, "engagement", (f, token, ip) => {
+      const scale = Object.fromEntries(
+        POINT_ACTIONS.flatMap((a) => {
+          const v = text(f, `scale_${a}`);
+          return /^\d{1,4}$/.test(v) ? [[a, Number(v)]] : [];
+        }),
+      );
+      return api("/party/engagement", {
+        method: "PUT",
+        body: { referralEnabled: f.get("referral") === "on", ...(Object.keys(scale).length ? { scale } : {}) },
+        token,
+        ip,
+      });
+    }),
 
   admission: (event) =>
     act(event, "admission", (f, token, ip) =>

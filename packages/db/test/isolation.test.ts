@@ -38,7 +38,7 @@ let testUserId = "";
 
 /** Valeur valide (en texte, castée côté SQL) pour une colonne obligatoire, selon son type. */
 /** Valeurs imposées par une contrainte CHECK sur une colonne texte. */
-const CHECKED_TEXT: Record<string, string> = { "roll_contests.kind": "missing" };
+const CHECKED_TEXT: Record<string, string> = { "roll_contests.kind": "missing", "point_entries.action": "manual" };
 
 function sampleValue(c: Column): string {
   const checked = CHECKED_TEXT[`${c.table}.${c.column}`];

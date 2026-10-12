@@ -24,6 +24,32 @@
     labels: { card: string; number: string; member?: string; qr?: string };
     /** Change pour relancer le reflet. */
     shineKey?: string;
+    /**
+     * Modèle du parti (ADH-13) : fond, couleurs, motif, champs. Absent : la carte par défaut, inchangée.
+     * Les valeurs suivent cardDesign de @civora/shared.
+     */
+    design?: {
+      background?: { kind?: "color" | "image"; color?: string | null; veil?: number };
+      textColor?: string | null;
+      accentColor?: string | null;
+      pattern?: "rosette" | "waves" | "none";
+      showLogo?: boolean;
+      qrSide?: "front" | "back";
+    } | null;
+    backgroundUrl?: string | null;
+    photoUrl?: string | null;
+    /** Intitulé au-dessus du numéro (« Carte de membre »). */
+    title?: string | null;
+    /** Lignes sous le nom : statut, ancienneté. */
+    details?: string[];
+    /** Face montrée : recto (défaut) ou verso. */
+    side?: "front" | "back";
+    back?: { text?: string | null; signatory?: { name: string; role: string; signatureUrl?: string | null } | null };
+    showPhoto?: boolean;
+    showNumber?: boolean;
+    showLocation?: boolean;
+    /** Pastille de validité ; null : masquée. */
+    validity?: string | null;
   }
   let {
     partyName,
@@ -38,9 +64,27 @@
     orientation = "horizontal",
     labels,
     shineKey = "",
+    design = null,
+    backgroundUrl = null,
+    photoUrl = null,
+    title = null,
+    details = [],
+    side = "front",
+    back = {},
+    showPhoto = false,
+    showNumber = true,
+    showLocation = true,
+    validity = undefined,
   }: Props = $props();
+  const pill = $derived(validity === undefined ? year : validity);
+  const pattern = $derived(design?.pattern ?? "rosette");
+  const qrBack = $derived(design?.qrSide === "back");
+  const showLogo = $derived(design?.showLogo ?? true);
+  const bgOverride = $derived(
+    design?.background?.kind !== "image" && design?.background?.color ? design.background.color : null,
+  );
 
-  const bg = $derived(cardBackground(brandColor));
+  const bg = $derived(cardBackground(bgOverride ?? brandColor));
   const second = $derived(secondaryTheme(secondaryColor));
   /** Opacité du disque : la plus forte qui laisse le texte lisible par-dessus. */
   const discAlpha = $derived(second ? discOpacity(bg.background, bg.text, second["--c-secondary"]) : 0.4);
@@ -66,6 +110,15 @@
     }
     return `${path}Z`;
   }
+  /** Ondes fines et serrées (motif « ondes »), comme sur un billet de banque. */
+  const WAVES = Array.from({ length: 14 }, (_, i) => {
+    let d = "";
+    for (let x = 0; x <= 340; x += 6) {
+      const y = 24 + i * 13 + Math.sin((x / 340) * Math.PI * 3 + i * 0.5) * 9;
+      d += `${x ? "L" : "M"}${x} ${y.toFixed(1)}`;
+    }
+    return d;
+  });
   const ROSETTE = [hypotrochoid(100, 36, 62), hypotrochoid(100, 36, 44), hypotrochoid(90, 30, 30)];
   const micro = $derived(`${partyName}  `.repeat(12));
   const vertical = $derived(orientation === "vertical");
@@ -77,46 +130,86 @@
   class:has-second={!!second}
   style:--card-deep={bg.background}
   style:--card-main={bg.depth}
-  style:--card-text={bg.text}
+  style:--card-text={design?.textColor ?? bg.text}
+  style:--card-accent={design?.accentColor ?? null}
+  class:back={side === "back"}
   style:--disc-alpha={discAlpha}
   class:light-bg={!bg.dark}
   style:--card-second={second?.["--c-secondary"] ?? null}
   style:--card-on-second={second?.["--c-on-secondary"] ?? null}
   aria-label="{labels.card} {partyName}, {memberName}, {labels.number} {memberNumber}"
 >
+  {#if design?.background?.kind === "image" && backgroundUrl}
+    <img class="bg-image" src={backgroundUrl} alt="" aria-hidden="true" />
+    <span class="veil" style:opacity={design.background.veil ?? 0.35} aria-hidden="true"></span>
+  {/if}
   <span class="disc" aria-hidden="true"></span>
-  <svg class="rosette" viewBox="-170 -170 340 340" aria-hidden="true">
-    {#each ROSETTE as d, i (i)}<path {d} />{/each}
-  </svg>
+  {#if pattern === "rosette"}
+    <svg class="rosette" viewBox="-170 -170 340 340" aria-hidden="true">
+      {#each ROSETTE as d, i (i)}<path {d} />{/each}
+    </svg>
+  {:else if pattern === "waves"}
+    <svg class="waves" viewBox="0 0 340 214" preserveAspectRatio="none" aria-hidden="true">
+      {#each WAVES as d, i (i)}<path {d} />{/each}
+    </svg>
+  {/if}
   <span class="frame" aria-hidden="true"></span>
   {#if vertical}<span class="slot" aria-hidden="true"></span>{/if}
-  <span class="micro" aria-hidden="true">{micro}</span>
+  {#if side === "front"}<span class="micro" aria-hidden="true">{micro}</span>{/if}
   {#key shineKey}<span class="shine" aria-hidden="true"></span>{/key}
 
-  <header>
-    {#if logoUrl}
-      <img src={logoUrl} alt="" class="logo" />
-    {:else}
-      <span class="seal" aria-hidden="true">{initials || "•"}</span>
-    {/if}
-    <span class="party">{partyName}</span>
-    <span class="year" aria-label="{labels.member ?? labels.card} {year}">{year}</span>
-  </header>
-
-  <div class="number">
-    <span class="label">{labels.number}</span>
-    <span class="value">{memberNumber}</span>
-  </div>
-
-  <footer>
-    <div class="who">
-      <span class="name">{memberName}</span>
-      <span class="place">{location}</span>
+  {#if side === "back"}
+    <div class="back-body">
+      <p class="back-party">{partyName}</p>
+      {#if back.text}<p class="back-text">{back.text}</p>{/if}
+      <div class="back-foot">
+        {#if back.signatory}
+          <div class="signatory">
+            {#if back.signatory.signatureUrl}<img src={back.signatory.signatureUrl} alt="" class="signature" />{/if}
+            <span class="sig-line" aria-hidden="true"></span>
+            <span class="sig-name">{back.signatory.name}</span>
+            <span class="sig-role">{back.signatory.role}</span>
+          </div>
+        {/if}
+        {#if verifyUrl && qrBack}
+          <QrCode value={verifyUrl} label={labels.qr ?? labels.card} size={vertical ? 92 : 70} />
+        {/if}
+      </div>
     </div>
-    {#if verifyUrl}
-      <QrCode value={verifyUrl} label={labels.qr ?? labels.card} size={vertical ? 92 : 62} />
-    {/if}
-  </footer>
+  {:else}
+    <header>
+      {#if logoUrl && showLogo}
+        <img src={logoUrl} alt="" class="logo" />
+      {:else}
+        <span class="seal" aria-hidden="true">{initials || "•"}</span>
+      {/if}
+      <span class="party">{partyName}</span>
+      {#if pill}<span class="year" aria-label="{labels.member ?? labels.card} {pill}">{pill}</span>{/if}
+    </header>
+
+    <div class="middle">
+      <div class="number">
+        <span class="label">{title ?? labels.number}</span>
+        {#if showNumber}<span class="value">{memberNumber}</span>{/if}
+      </div>
+      {#if showPhoto}
+        <span class="photo">
+          {#if photoUrl}<img src={photoUrl} alt="" />{/if}
+        </span>
+      {/if}
+    </div>
+
+    <footer>
+      <div class="who">
+        <span class="name">{memberName}</span>
+        {#if showLocation && location}<span class="place">{location}</span>{/if}
+        {#each details as line, i (i)}<span class="place">{line}</span>{/each}
+      </div>
+      {#if verifyUrl && !qrBack}
+        <QrCode value={verifyUrl} label={labels.qr ?? labels.card} size={vertical ? 92 : 62} />
+      {/if}
+    </footer>
+  {/if}
 </figure>
 
 <style>
@@ -161,6 +254,103 @@
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
   }
 
+  .bg-image {
+    position: absolute;
+    inset: 0;
+    z-index: -4;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .veil {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    background: #000;
+  }
+  .waves {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    opacity: 0.28;
+  }
+  .waves path {
+    fill: none;
+    stroke: var(--card-text);
+    stroke-width: 0.6;
+  }
+  .middle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+  }
+  .vertical .middle {
+    flex-direction: column-reverse;
+  }
+  .photo {
+    flex: none;
+    width: 64px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--card-text) 18%, transparent);
+  }
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .back-body {
+    grid-row: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+    min-height: 0;
+  }
+  .back-party {
+    margin: 0;
+    font: 600 var(--fs-14) / 1.2 var(--font-display);
+  }
+  .back-text {
+    margin: 0;
+    font: 400 var(--fs-12) / 1.45 var(--font-ui);
+    opacity: 0.9;
+    overflow: hidden;
+  }
+  .back-foot {
+    margin-top: auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--s-3);
+  }
+  .signatory {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .signature {
+    max-width: 120px;
+    max-height: 36px;
+    object-fit: contain;
+    filter: brightness(1.6) grayscale(1);
+  }
+  .sig-line {
+    width: 130px;
+    height: 0;
+    border-top: 0.5px solid var(--card-text);
+  }
+  .sig-name {
+    font: 600 var(--fs-12) / 1.2 var(--font-ui);
+  }
+  .sig-role {
+    font: 400 var(--fs-12) / 1.2 var(--font-ui);
+    opacity: 0.78;
+  }
   /* Volume : grand disque de la seconde couleur du parti (sinon sa couleur vive), en aplat, coupé par le bord. */
   .disc {
     position: absolute;
@@ -305,6 +495,9 @@
     color: var(--c-on-accent);
     font: 700 var(--fs-12) / 1 var(--font-ui);
     font-variant-numeric: tabular-nums;
+  }
+  .card[style*="--card-accent"] .year {
+    background: var(--card-accent);
   }
   .has-second .year {
     background: var(--card-second);

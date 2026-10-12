@@ -12,4 +12,10 @@ void main() {
     expect(JoinFlow.slugFrom('https://console.civora.app'), isNull);
     expect(JoinFlow.slugFrom('pas un code !'), isNull);
   });
+
+  test('code de parrainage d\'un lien d\'invitation', () {
+    expect(JoinFlow.sponsorFrom('https://horizon.civora.app/rejoindre?parrain=fara-6azu'), 'FARA-6AZU');
+    expect(JoinFlow.sponsorFrom('https://horizon.civora.app/rejoindre'), isNull);
+    expect(JoinFlow.sponsorFrom('https://horizon.civora.app/rejoindre?parrain=<script>'), isNull);
+  });
 }

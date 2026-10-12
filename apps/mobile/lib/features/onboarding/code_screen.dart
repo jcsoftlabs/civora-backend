@@ -39,13 +39,15 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
     });
     try {
       final flow = ref.read(joinFlowProvider);
-      final r = await ref.read(joinFlowProvider.notifier).verify(_code.text);
+      final adhering = flow.adhesion != null;
+      final notifier = ref.read(joinFlowProvider.notifier);
+      final r = adhering ? await notifier.completeAdhesion(_code.text) : await notifier.verify(_code.text);
       final session = Session(
         slug: (r['party'] as Map?)?['slug'] as String? ?? flow.party!.slug,
         token: r['token'] as String,
         expiresAt: DateTime.parse(r['expiresAt'] as String),
       );
-      final mfa = r['mfa'] as String? ?? 'none';
+      final mfa = adhering ? 'none' : (r['mfa'] as String? ?? 'none');
       if (!mounted) return;
       if (mfa == 'none') {
         await ref.read(sessionProvider.notifier).open(session);

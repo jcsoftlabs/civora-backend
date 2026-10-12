@@ -10,6 +10,10 @@ String errorText(L t, Object e) {
     'mfa_invalid' => t.errorMfaInvalid,
     'rate_limited' => t.errorRateLimited,
     'otp_channel_disabled' => t.errorChannelDisabled,
+    'sponsor_not_found' => t.errorSponsorNotFound,
+    'sponsor_required' => t.errorSponsorRequired,
+    'already_member' => t.errorAlreadyMember,
+    'zone_too_broad' => t.errorZoneTooBroad,
     _ => t.errorGeneric,
   };
 }

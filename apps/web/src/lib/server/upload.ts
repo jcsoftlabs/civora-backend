@@ -8,6 +8,7 @@ export const UPLOAD_RULES = {
     max: (type: string) => (type.startsWith("audio/") ? 100 : 10) * 1024 * 1024,
   },
   signature: { types: ["image/png", "image/jpeg"], max: () => 1024 * 1024 },
+  card_background: { types: ["image/png", "image/jpeg", "image/webp"], max: () => 5 * 1024 * 1024 },
   training_media: {
     types: [
       "video/mp4",

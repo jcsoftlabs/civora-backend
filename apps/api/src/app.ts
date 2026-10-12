@@ -18,6 +18,9 @@ import authRoutes from "./modules/auth/routes.js";
 import territoryRoutes from "./modules/territory/routes.js";
 import organRoutes from "./modules/organs/routes.js";
 import biRoutes from "./modules/bi/stats.js";
+import engagementRoutes from "./modules/engagement/routes.js";
+import { CardTemplateService } from "./modules/members/card-template.js";
+import cardTemplateRoutes from "./modules/members/card-template-routes.js";
 import trainingRoutes from "./modules/training/routes.js";
 import voteRoutes from "./modules/votes/routes.js";
 import partyRoutes from "./modules/parties/routes.js";
@@ -159,6 +162,11 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   await app.register(biRoutes);
   await app.register(trainingRoutes, { files: filesService });
   await app.register(voteRoutes);
+  const cardTemplates = new CardTemplateService(keys, filesService.storage, config.WEB_PARTY_ORIGIN);
+  await app.register(cardTemplateRoutes, { templates: cardTemplates });
+  await app.register(engagementRoutes, {
+    partyOrigin: (slug) => config.WEB_PARTY_ORIGIN.replace("{slug}", slug),
+  });
   await app.register(communicationRoutes, { push: deps.push ?? buildPushSender(config, app.log), files: filesService });
   const providers = deps.paymentProviders ?? buildPaymentProviders(config.NODE_ENV);
   await app.register(moneyRoutes, {

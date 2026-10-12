@@ -151,6 +151,22 @@ export const courseCompletions = pgTable(
  * Modèle de certificat du parti (FOR-04) : textes, couleur, logo, signataires (nom, fonction, image de
  * signature envoyée ou tracée à l'écran). Une ligne par parti.
  */
+/**
+ * Modèle de carte de membre (ADH-13), un par parti : fond, couleurs, motif, champs, validité, verso. Le contenu
+ * suit le schéma cardDesign de @civora/shared ; il règle la carte imprimée et la carte numérique.
+ */
+export const cardTemplates = pgTable(
+  "card_templates",
+  {
+    id: id(),
+    partyId: partyId(),
+    design: jsonb("design").notNull().default({}),
+    updatedByMemberId: uuid("updated_by_member_id"),
+    ...timestamps,
+  },
+  (t) => [unique("card_templates_party").on(t.partyId)],
+);
+
 export const certificateTemplates = pgTable(
   "certificate_templates",
   {
@@ -178,6 +194,8 @@ export const publications = pgTable("publications", {
   mediaFileIds: uuid("media_file_ids").array(), // tableau : contrôle applicatif
   audience: jsonb("audience"),
   publishedAt: timestamp("published_at", { withTimezone: true }),
+  /** Membre qui a rédigé la publication, signé sous l'article dans l'application. */
+  authorMemberId: uuid("author_member_id"),
   ...timestamps,
 });
 

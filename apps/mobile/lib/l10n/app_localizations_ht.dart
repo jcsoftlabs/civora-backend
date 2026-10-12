@@ -699,4 +699,188 @@ class LHt extends L {
   String otpLeadAny(String destination) {
     return 'Si yon òganizasyon konnen $destination, nou fèk voye yon kòd ba li. Li bon pou 10 minit.';
   }
+
+  @override
+  String helloTitle(String name) {
+    return 'Bonjou, $name.';
+  }
+
+  @override
+  String waiting(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Gen $n bagay k ap tann ou.',
+      one: 'Gen yon bagay k ap tann ou.',
+      zero: 'Tout ajou.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String newsLead(String org) {
+    return 'Nouvèl $org.';
+  }
+
+  @override
+  String kindDate(String kind, String date) {
+    return '$kind, $date';
+  }
+
+  @override
+  String meStatus(String status, String number) {
+    return '$status, manm nimewo $number';
+  }
+
+  @override
+  String meNumber(String number) {
+    return 'Manm nimewo $number';
+  }
+
+  @override
+  String get statPoints => 'pwen';
+
+  @override
+  String get statReferrals => 'fiyèl';
+
+  @override
+  String get statVotes => 'vòt';
+
+  @override
+  String get actReferral => 'Parenn';
+
+  @override
+  String get referralTitle => 'Kòd parennaj ou';
+
+  @override
+  String get referralLead => 'Pataje l : moun ki fè adezyon ak kòd sa a vin fiyèl ou.';
+
+  @override
+  String get referralShare => 'Pataje';
+
+  @override
+  String get referralCopy => 'Kopye';
+
+  @override
+  String get referralCopied => 'Kòd la kopye';
+
+  @override
+  String referralShareText(String org, String code, String url) {
+    return 'Vin nan $org ak kòd parennaj mwen $code : $url';
+  }
+
+  @override
+  String get referralsTitle => 'Fiyèl mwen yo';
+
+  @override
+  String get referralNone => 'Fiyèl ou yo ap parèt la a depi yo fè adezyon.';
+
+  @override
+  String get referralPending => 'Ap tann';
+
+  @override
+  String get referralValidated => 'Valide';
+
+  @override
+  String get referralRejected => 'Refize';
+
+  @override
+  String get pointsTitle => 'Pwen mwen';
+
+  @override
+  String get pointsAll => 'Wè tout';
+
+  @override
+  String get pointsNone => 'Pwen ou yo ap parèt la a : parennaj, fòmasyon, vòt, kotizasyon peye alè.';
+
+  @override
+  String get pointsReferral => 'Fiyèl valide';
+
+  @override
+  String get pointsTraining => 'Fòmasyon reyisi';
+
+  @override
+  String get pointsVote => 'Vòt depoze';
+
+  @override
+  String get pointsDues => 'Kotizasyon peye alè';
+
+  @override
+  String get pointsAttendance => 'Prezans nan yon rasanbleman';
+
+  @override
+  String get pointsManual => 'Koreksyon';
+
+  @override
+  String get photoChange => 'Chanje foto mwen';
+
+  @override
+  String get photoCamera => 'Pran yon foto';
+
+  @override
+  String get photoGallery => 'Chwazi nan galri a';
+
+  @override
+  String get photoError => 'Foto a pa t ka voye. Verifye koneksyon w epi eseye ankò.';
+
+  @override
+  String joinAdhere(String org) {
+    return 'Fè adezyon nan $org';
+  }
+
+  @override
+  String get adhesionLead => 'Ranpli fich ou. W ap resevwa yon kòd pa imèl pou konfime adrès ou.';
+
+  @override
+  String get firstName => 'Prenon';
+
+  @override
+  String get lastName => 'Non';
+
+  @override
+  String get zoneLabel => 'Seksyon kominal oswa vil nan dyaspora';
+
+  @override
+  String get zoneHelp => 'Tape omwen de lèt, epi chwazi nan lis la.';
+
+  @override
+  String get zoneNone => 'Pa jwenn zòn.';
+
+  @override
+  String get sponsorLabel => 'Kòd parennaj';
+
+  @override
+  String get sponsorOptional => 'Kòd parennaj, si yon manm ba ou l';
+
+  @override
+  String get sponsorRequired => 'Òganizasyon w fè adezyon pa parennaj : fòk ou gen kòd yon manm.';
+
+  @override
+  String get adhesionSubmit => 'Resevwa kòd mwen';
+
+  @override
+  String get errorSponsorNotFound => 'Kòd parennaj sa a pa egziste. Verifye l ak parenn ou.';
+
+  @override
+  String get errorSponsorRequired => 'Fòk ou gen kòd yon parenn pou fè adezyon.';
+
+  @override
+  String get errorAlreadyMember => 'Adrès sa a deja gen yon adezyon. Konekte ak li.';
+
+  @override
+  String get errorZoneTooBroad => 'Chwazi yon seksyon kominal oswa yon vil nan dyaspora.';
+
+  @override
+  String get errorRequired => 'Fòk ou ranpli chan sa a.';
+
+  @override
+  String newsByline(String date, String author) {
+    return '$date, pa $author';
+  }
+
+  @override
+  String get newsReadMore => 'Li rès la';
+
+  @override
+  String get newsArticle => 'Atik';
 }

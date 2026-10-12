@@ -40,6 +40,7 @@ import type {
   contestDecision,
   ElectionInput,
 } from "./schemas.js";
+import { awardPoints } from "../engagement/points.js";
 import { tally, type Method, type TallyResult } from "./tally.js";
 
 type Req = FastifyRequest;
@@ -534,6 +535,13 @@ export class VotesService {
         outcome: { winners: r.winners, runoff: r.runoff, reason: r.reason },
       });
       await tx.update(elections).set({ state: "closed", updatedAt: new Date() }).where(eq(elections.id, id));
+      // Points de vote (GAM-01) donnés à tous les votants au dépouillement, jamais au moment du vote : une heure
+      // exacte dans le journal des points permettrait de rapprocher l'ordre des votants de celui des bulletins.
+      const voters = await tx
+        .select({ memberId: ballotReceipts.memberId })
+        .from(ballotReceipts)
+        .where(and(eq(ballotReceipts.electionId, id), eq(ballotReceipts.round, e.round)));
+      for (const v of voters) await awardPoints(tx, req.partyId, v.memberId, "vote", id);
       await audit(tx, {
         ...actor(req),
         action: "votes.count",

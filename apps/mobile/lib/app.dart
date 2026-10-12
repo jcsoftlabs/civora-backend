@@ -11,8 +11,11 @@ import 'features/act/dues_screen.dart';
 import 'features/act/events_screen.dart';
 import 'features/home/card_screen.dart';
 import 'features/home/shell.dart';
+import 'features/news/article_screen.dart';
 import 'features/news/news_screen.dart';
 import 'features/news/podcast_player.dart';
+import 'features/me/me_screen.dart';
+import 'features/onboarding/adhesion_screen.dart';
 import 'features/onboarding/code_screen.dart';
 import 'features/onboarding/scan_screen.dart';
 import 'features/onboarding/signin_screen.dart';
@@ -43,7 +46,7 @@ class _FallbackDelegate<T> extends LocalizationsDelegate<T> {
 }
 
 /// Écrans accessibles sans session : accueil, scan, connexion, code, double authentification.
-const _public = ['/bienvenue', '/scanner', '/connexion', '/code', '/double-authentification'];
+const _public = ['/bienvenue', '/scanner', '/connexion', '/adhesion', '/code', '/double-authentification'];
 
 final _routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier(0);
@@ -67,6 +70,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/scanner', builder: (_, _) => const ScanScreen()),
       GoRoute(path: '/connexion', builder: (_, _) => const SignInScreen()),
       GoRoute(path: '/code', builder: (_, _) => const CodeScreen()),
+      GoRoute(path: '/adhesion', builder: (_, _) => const AdhesionScreen()),
       GoRoute(
         path: '/double-authentification',
         builder: (_, s) {
@@ -76,6 +80,8 @@ final _routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/accueil', builder: (_, _) => const HomeShell()),
       GoRoute(path: '/carte', builder: (_, _) => const CardScreen()),
+      GoRoute(path: '/points', builder: (_, _) => const PointsScreen()),
+      GoRoute(path: '/parrainage', builder: (_, _) => const ReferralScreen()),
       GoRoute(path: '/votes', builder: (_, _) => const VotesScreen()),
       GoRoute(
         path: '/votes/:id',
@@ -95,6 +101,10 @@ final _routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/albums',
         builder: (_, _) => const NewsScreen(only: 'album', standalone: true),
+      ),
+      GoRoute(
+        path: '/article',
+        builder: (_, s) => ArticleScreen(item: s.extra! as Map),
       ),
       GoRoute(
         path: '/album',

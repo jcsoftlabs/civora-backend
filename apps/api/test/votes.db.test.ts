@@ -86,6 +86,7 @@ afterAll(async () => {
   for (const p of [A, B]) {
     for (const t of [
       "audit_log",
+      "point_entries",
       "ballots",
       "ballot_receipts",
       "election_results",
@@ -335,6 +336,9 @@ describe("élection à la présidence de la section (majorité simple)", () => {
     await closeNow(id);
     const r = (await call("POST", `/votes/admin/${id}/count`, chef.token)).json();
     expect(r).toMatchObject({ reason: "elected", winners: [marieCand], ballots: 4, blank: 1, validVotes: 3 });
+    // Points de vote donnés au dépouillement à chaque votant (GAM-01), jamais à l'heure du vote.
+    const pts = await owner`select member_id from point_entries where reference_id = ${id} and action = 'vote'`;
+    expect(pts.map((p) => p.member_id).sort()).toEqual([marie.id, paul.id, luc.id, rose.id].sort());
     // Résultats réservés au responsable jusqu'à la certification.
     expect((await call("GET", `/votes/${id}`, marie.token)).json().results).toEqual([]);
     const j = (await call("GET", `/votes/${id}/journal`, paul.token)).json();

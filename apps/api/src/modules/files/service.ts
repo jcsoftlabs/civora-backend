@@ -37,6 +37,8 @@ export const PURPOSES = {
   },
   /** Logo du parti (SOC-03) : images matricielles seulement (pas de SVG, qui peut contenir du script). */
   party_logo: { folder: "branding", types: IMAGES, maxBytes: () => 2 * MB },
+  /** Fond de la carte de membre (ADH-13) : image matricielle. */
+  card_background: { folder: "cards", types: IMAGES, maxBytes: () => 5 * MB },
   /** Signature d'un certificat (FOR-04), envoyée ou tracée à l'écran : PNG ou JPEG, que le PDF sait intégrer. */
   signature: { folder: "signatures", types: ["image/png", "image/jpeg"], maxBytes: () => 1 * MB },
 } as const;
@@ -66,10 +68,15 @@ export class FilesService {
     }
     if (body.purpose === "document" && !req.grants.some((g) => g.permission === "documents.write"))
       throw new ApiError(403, "forbidden");
+    if (body.purpose === "training_media" && !req.grants.some((g) => g.permission === "training.manage"))
+      throw new ApiError(403, "forbidden");
+    // Signature : certificat de formation (FOR-04) ou verso de la carte de membre (ADH-13).
     if (
-      (body.purpose === "training_media" || body.purpose === "signature") &&
-      !req.grants.some((g) => g.permission === "training.manage")
+      body.purpose === "signature" &&
+      !req.grants.some((g) => g.permission === "training.manage" || g.permission === "settings.party")
     )
+      throw new ApiError(403, "forbidden");
+    if (body.purpose === "card_background" && !req.grants.some((g) => g.permission === "settings.party"))
       throw new ApiError(403, "forbidden");
 
     const id = randomUUID();

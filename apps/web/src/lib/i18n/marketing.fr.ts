@@ -63,6 +63,7 @@ export const marketingFr = {
   "mk.m.members.b1": "Filtres ET / OU et segments enregistrés",
   "mk.m.members.b2": "Actions groupées : valider, étiqueter, exporter",
   "mk.m.members.b3": "Cotisations de l'année visibles sur chaque ligne",
+  "mk.m.members.b4": "Carte de membre à vos couleurs, imprimée sur PVC ou en planche A4",
   "mk.m.members.r": "Excel, cahiers d'adhésion, formulaires en ligne",
   "mk.m.members.shot": "Liste des membres avec filtres, étiquettes et cotisations de l'année",
 
@@ -121,6 +122,8 @@ export const marketingFr = {
   "mk.m.votes.shot": "Résultats d'une élection interne : participation, voix par candidat, élu coché sur le bulletin",
   "mk.marquee.17": "Vote à bulletin secret",
   "mk.marquee.18": "Procès-verbal de dépouillement",
+  "mk.marquee.19": "Carte imprimée sur PVC",
+  "mk.marquee.20": "Parrainage et points",
   "mk.price.f.votes": "Votes internes à bulletin secret, un scrutin à la fois",
   "mk.price.f.votesAdvanced": "Deux tours, scrutin de liste, candidatures en ligne",
   "mk.app.title": "L'application des membres",
@@ -130,6 +133,7 @@ export const marketingFr = {
   "mk.app.b2": "Carte de membre avec QR code, lisible sans connexion",
   "mk.app.b3": "Votes à bulletin secret, formations, rassemblements, cotisations",
   "mk.app.b4": "Actualités, podcasts à écouter même hors ligne, albums",
+  "mk.app.b5": "Photo, points gagnés, code de parrainage et filleuls",
   "mk.app.soon": "Bientôt sur Android et iPhone",
   "mk.app.shot.wallet": "Accueil de l'application : carte de membre et ce qui attend le membre",
   "mk.app.shot.news": "Actualités de l'organisation : annonces, articles, podcasts et albums",
@@ -315,5 +319,6 @@ export const marketingFr = {
   "mk.footer.tagline": "La plateforme des partis, associations et syndicats d'Haïti et de la diaspora.",
   "mk.footer.product": "Produit",
   "mk.footer.contact": "Contact",
-  "mk.footer.rights": "© 2026 civora",
+  "mk.footer.rights": "© 2026 CODESHELL LLC. Tous droits réservés.",
+  "mk.footer.maker": "civora est un produit de",
 } as const;

@@ -74,7 +74,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
       return;
     }
     try {
-      await ref.read(joinFlowProvider.notifier).choose(slug);
+      await ref.read(joinFlowProvider.notifier).choose(slug, sponsorCode: JoinFlow.sponsorFrom(_code.text));
       if (mounted) context.push('/connexion');
     } on Object catch (e) {
       setState(() => _joinError = errorText(t, e));

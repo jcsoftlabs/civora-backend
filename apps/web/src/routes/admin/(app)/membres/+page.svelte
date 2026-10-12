@@ -11,6 +11,7 @@
   import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
   import { Badge, Button, DataTable } from "@civora/ui";
+  import { hasFeature } from "@civora/shared";
   import { format, translator, type MessageKey } from "$lib/i18n";
   import type { ActionData, PageData } from "./$types";
   import type { MemberRow } from "./+page.server";
@@ -122,6 +123,8 @@
     selected = [];
   });
   const can = (p: string) => data.me.permissions.includes(p);
+  // ADH-13 : impression des cartes et éditeur de la carte, à partir de la formule Mouvement.
+  const cards = $derived(!!data.me.tier && hasFeature(data.me.tier, "members.card"));
   const selectable = $derived(can("members.write") || can("members.export") || can("members.approve"));
   let tool = $state<null | "add" | "remove" | "status">(null);
   let bulkPending = $state(false);
@@ -183,6 +186,9 @@
           </li>
         {/each}
       </ul>
+    {/if}
+    {#if can("settings.party")}
+      <a class="card-link" href={resolve("/admin/membres/carte")}>{t("admin.cardEditor.nav")}</a>
     {/if}
   </aside>
 
@@ -435,6 +441,15 @@
             <button type="submit">{t("admin.bulk.export")}</button>
           </form>
         {/if}
+        {#if cards && data.state !== "pending"}
+          <form method="POST" action={resolve("/admin/membres/cartes")} target="_blank" class="inline">
+            {#each selected as id (id)}<input type="hidden" name="ids" value={id} />{/each}
+            <span class="print-label">{t("admin.members.print")}</span>
+            {#each ["cr80", "a4"] as f (f)}
+              <button type="submit" name="format" value={f}>{tk(`admin.members.print.${f}`)}</button>
+            {/each}
+          </form>
+        {/if}
       </div>
     {/if}
     <button type="button" class="clear-sel" onclick={() => (selected = [])}>{t("admin.bulk.clear")}</button>
@@ -462,6 +477,26 @@
     display: grid;
     grid-template-columns: 220px minmax(0, 1fr);
     min-height: 100dvh;
+  }
+  .card-link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: var(--s-5);
+    padding: 0 var(--s-3);
+    border: 1px dashed var(--c-line);
+    border-radius: var(--r-md);
+    color: var(--c-primary);
+    font-weight: 600;
+    font-size: var(--fs-14);
+    text-decoration: none;
+  }
+  .card-link:hover {
+    border-color: var(--c-primary);
+  }
+  .print-label {
+    font-size: var(--fs-13);
+    opacity: 0.8;
   }
   .views {
     padding: var(--s-6) var(--s-3);

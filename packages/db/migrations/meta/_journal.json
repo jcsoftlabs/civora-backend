@@ -155,6 +155,27 @@
       "when": 1791764285073,
       "tag": "0021_app_member_sessions",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1791765556644,
+      "tag": "0022_referrals_points",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1791766833000,
+      "tag": "0023_card_templates",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791768743109,
+      "tag": "0024_publication_author",
+      "breakpoints": true
     }
   ]
 }

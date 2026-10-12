@@ -35,7 +35,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     _handled = true;
     final t = L.of(context);
     try {
-      await ref.read(joinFlowProvider.notifier).choose(slug);
+      await ref.read(joinFlowProvider.notifier).choose(slug, sponsorCode: JoinFlow.sponsorFrom(raw!));
       if (mounted) context.pushReplacement('/connexion');
     } on Object catch (e) {
       setState(() => _error = errorText(t, e));

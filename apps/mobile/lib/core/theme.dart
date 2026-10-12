@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Couleurs de docs/design/tokens.css. La couleur du parti remplace le pétrole dans son espace.
 abstract final class Palette {
@@ -35,8 +34,8 @@ double _contrast(Color a, Color b) {
 Color onColor(Color c) => _contrast(c, Colors.white) >= _contrast(c, Palette.ink) ? Colors.white : Palette.ink;
 
 ThemeData buildTheme(Color brand) {
-  final base = ThemeData(useMaterial3: true, brightness: Brightness.light);
-  final text = GoogleFonts.figtreeTextTheme(base.textTheme).apply(bodyColor: Palette.ink, displayColor: Palette.ink);
+  final base = ThemeData(useMaterial3: true, brightness: Brightness.light, fontFamily: 'Figtree');
+  final text = base.textTheme.apply(fontFamily: 'Figtree').apply(bodyColor: Palette.ink, displayColor: Palette.ink);
   return base.copyWith(
     scaffoldBackgroundColor: Palette.paper,
     colorScheme: ColorScheme.fromSeed(seedColor: brand).copyWith(
@@ -57,7 +56,7 @@ ThemeData buildTheme(Color brand) {
       style: FilledButton.styleFrom(
         minimumSize: const Size.fromHeight(52),
         shape: const StadiumBorder(),
-        textStyle: GoogleFonts.figtree(fontWeight: FontWeight.w600, fontSize: 16),
+        textStyle: TextStyle(fontFamily: 'Figtree', fontWeight: FontWeight.w600, fontSize: 16),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -66,14 +65,14 @@ ThemeData buildTheme(Color brand) {
         shape: const StadiumBorder(),
         foregroundColor: Palette.ink,
         side: const BorderSide(color: Palette.ink),
-        textStyle: GoogleFonts.figtree(fontWeight: FontWeight.w600, fontSize: 16),
+        textStyle: TextStyle(fontFamily: 'Figtree', fontWeight: FontWeight.w600, fontSize: 16),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         minimumSize: const Size(44, 44),
         foregroundColor: Palette.ink,
-        textStyle: GoogleFonts.figtree(fontWeight: FontWeight.w600, fontSize: 15),
+        textStyle: TextStyle(fontFamily: 'Figtree', fontWeight: FontWeight.w600, fontSize: 15),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(

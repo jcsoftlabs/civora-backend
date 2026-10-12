@@ -709,9 +709,9 @@ async function main() {
     body: { fr: string; ht: string },
     days: number,
   ) => {
-    await sql`insert into publications (party_id, kind, title, body, audience, published_at, created_at)
+    await sql`insert into publications (party_id, kind, title, body, audience, published_at, author_member_id, created_at)
       values (${P}, ${kind}, ${sql.json(title)}, ${sql.json(body)}, null, ${new Date(now.getTime() - days * DAY)},
-        ${new Date(now.getTime() - days * DAY - 3600_000)})`;
+        ${adminId}, ${new Date(now.getTime() - days * DAY - 3600_000)})`;
   };
   await publication(
     "announcement",
@@ -726,8 +726,8 @@ async function main() {
     "news",
     { fr: "Bilan du rassemblement de Carrefour", ht: "Bilan rasanbleman Kafou a" },
     {
-      fr: "Plus de quatre cents militants présents, quarante nouvelles adhésions sur place.",
-      ht: "Plis pase katsan militan te la, karant nouvo manm sou plas.",
+      fr: "Plus de quatre cents militants présents, quarante nouvelles adhésions sur place.\n\nLa coordination de l'Ouest avait préparé la journée depuis trois semaines : porte-à-porte dans les quartiers de Carrefour, inscriptions dans l'application et transport organisé depuis Mariani et Waney. Les sections ont pointé leurs militants à l'entrée par le QR code de leur carte, même là où le réseau manquait.\n\nLa secrétaire générale a présenté le programme de formation des nouveaux militants, qui ouvre le mois prochain, et rappelé le calendrier du congrès national. Les quarante nouveaux membres recevront leur carte dans leur section avant la fin du mois.",
+      ht: "Plis pase katsan militan te la, karant nouvo manm sou plas.\n\nKowòdinasyon Lwès la te prepare jounen an depi twa semèn : pòt an pòt nan katye Kafou yo, enskripsyon nan aplikasyon an ak transpò depi Mariani ak Waney. Seksyon yo te pwente militan yo nan antre a ak kòd QR kat yo, menm kote rezo a te manke.\n\nSekretè jeneral la prezante pwogram fòmasyon nouvo militan yo, k ap louvri mwa pwochen, epi li raple kalandriye kongrè nasyonal la. Karant nouvo manm yo ap resevwa kat yo nan seksyon yo anvan fen mwa a.",
     },
     56,
   );
@@ -1075,6 +1075,47 @@ async function main() {
     const [u] = await sql<{ id: string }[]>`
       insert into users (email, locale) values ('membre@horizon.demo', 'fr') returning id`;
     await sql`update members set user_id = ${u!.id} where id = ${militante.id}`;
+    // Parrainage actif : un code pour chaque membre validé, trois filleuls pour la militante, et ses points.
+    await sql`update parties set referral_settings = ${sql.json({ enabled: true })} where id = ${P}`;
+    const approvedRows = await sql<{ id: string; first_name: string }[]>`
+      select id, first_name from members where party_id = ${P} and application_state = 'approved'`;
+    const used = new Set<string>();
+    const codeAlphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+    for (const r of approvedRows) {
+      let code = "";
+      do {
+        const head = r.first_name
+          .normalize("NFD")
+          .replace(/[^A-Za-z]/g, "")
+          .toUpperCase()
+          .slice(0, 4)
+          .padEnd(4, "X");
+        code = `${head}-${Array.from({ length: 4 }, () => codeAlphabet[Math.floor(rand() * codeAlphabet.length)]).join("")}`;
+      } while (used.has(code));
+      used.add(code);
+      await sql`update members set referral_code = ${code} where id = ${r.id}`;
+    }
+    const pick = (state: string, n: number) => sql<{ id: string; state: string }[]>`
+      select id, application_state as state from members
+      where party_id = ${P} and id <> ${militante.id} and application_state = ${state}
+      order by member_number desc limit ${n}`;
+    const filleuls = [...(await pick("approved", 2)), ...(await pick("pending", 1))];
+    for (const [i, f] of filleuls.entries()) {
+      const at = new Date(now.getTime() - (40 - i * 12) * DAY);
+      await sql`insert into referrals (party_id, sponsor_member_id, referred_member_id, validated_at, created_at)
+        values (${P}, ${militante.id}, ${f.id}, ${f.state === "approved" ? at : null}, ${at})`;
+      if (f.state === "approved")
+        await sql`insert into point_entries (party_id, member_id, action, points, reference_id, created_at)
+          values (${P}, ${militante.id}, 'referral', 50, ${f.id}, ${at})`;
+    }
+    const paidOnTime = await sql<{ id: string; paid_at: Date }[]>`
+      select id, paid_at from dues_obligations
+      where member_id = ${militante.id} and paid_at is not null and paid_at::date <= due_date limit 6`;
+    for (const o of paidOnTime)
+      await sql`insert into point_entries (party_id, member_id, action, points, reference_id, created_at)
+        values (${P}, ${militante.id}, 'dues', 20, ${o.id}, ${o.paid_at})`;
+    await sql`insert into point_entries (party_id, member_id, action, points, reference_id, created_at)
+      values (${P}, ${militante.id}, 'vote', 10, ${coord}, ${closed})`;
     // Session de la militante pour les captures de l'application (aucun e-mail envoyé).
     memberToken = randomBytes(32).toString("base64url");
     await sql`insert into sessions (party_id, user_id, member_id, token_hash, expires_at)

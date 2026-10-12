@@ -1,5 +1,6 @@
 // Français, langue de référence : toute clé existe ici d'abord.
 import { votesFr } from "./votes.fr";
+import { cardFr } from "./card.fr";
 import { consoleFr } from "./console.fr";
 import { marketingFr } from "./marketing.fr";
 export const fr = {
@@ -429,6 +430,22 @@ export const fr = {
   "admin.settings.admission.validation.desc": "Un responsable de la zone valide chaque demande.",
   "admin.settings.admission.parrainage": "Par parrainage",
   "admin.settings.admission.parrainage.desc": "La personne indique le numéro d'un membre qui la parraine.",
+  "admin.settings.engagement": "Parrainage et points",
+  "admin.settings.engagement.lead":
+    "Le parrainage donne à chaque membre validé un code à partager ; les points récompensent l'engagement selon votre barème.",
+  "admin.settings.referral": "Parrainage des membres",
+  "admin.settings.referral.desc":
+    "Chaque membre validé reçoit un code de parrainage ; la personne qui adhère avec ce code devient son filleul.",
+  "admin.settings.referral.forced": "Toujours actif : votre organisation adhère par parrainage.",
+  "admin.settings.points": "Barème des points",
+  "admin.settings.points.lead": "Points gagnés une fois par action. Mettez 0 pour ne rien donner.",
+  "admin.settings.points.referral": "Filleul validé",
+  "admin.settings.points.training": "Formation réussie",
+  "admin.settings.points.vote": "Vote déposé",
+  "admin.settings.points.dues": "Cotisation réglée à temps",
+  "admin.settings.points.attendance": "Présence à un rassemblement",
+  "admin.settings.saveEngagement": "Enregistrer",
+  "admin.settings.saved.engagement": "Parrainage et barème enregistrés",
   "admin.settings.saveAdmission": "Enregistrer le mode",
   "admin.settings.saved.admission": "Mode d'adhésion enregistré",
   "admin.settings.statuses": "Statuts de membre",
@@ -1101,6 +1118,7 @@ export const fr = {
   "admin.settings.saved.kind": "Type d'organisation enregistré",
   ...consoleFr,
   ...votesFr,
+  ...cardFr,
   ...marketingFr,
 } as const;
 

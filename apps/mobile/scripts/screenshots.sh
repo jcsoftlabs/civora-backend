@@ -17,6 +17,18 @@ $ADB shell pm clear app.civora.civora >/dev/null
 
 shot() { $ADB exec-out screencap -p > "$TMP/$1.png"; }
 tap() { $ADB shell input tap "$1" "$2"; sleep "${3:-3}"; }
+# Touche l'élément dont le texte est donné, retrouvé dans l'arbre d'interface (Moi défilé jusqu'aux réglages).
+tap_text() {
+  for _ in 1 2 3 4 5 6; do $ADB shell input swipe 670 2300 670 900 250; sleep 1; done
+  $ADB shell uiautomator dump /sdcard/ui.xml >/dev/null
+  local xy
+  xy=$($ADB exec-out cat /sdcard/ui.xml | python3 -c "
+import re, sys
+x = sys.stdin.read()
+m = re.search(r'(?:text|content-desc)=\"$1[^\"]*\"[^>]*bounds=\"\\[(\\d+),(\\d+)\\]\\[(\\d+),(\\d+)\\]', x)
+print((int(m[1]) + int(m[3])) // 2, (int(m[2]) + int(m[4])) // 2)")
+  tap $xy 3
+}
 
 capture() {
   local lang=$1
@@ -24,21 +36,24 @@ capture() {
   $ADB shell am start -n app.civora.civora/.MainActivity >/dev/null
   sleep 30 # premier lancement de l'émulateur : moteur, polices, données
   if [ "$lang" = "ht" ]; then
-    tap 1175 2790 3 # Moi
-    tap 948 1980 3  # Kreyòl
-    tap 171 2790 5  # Accueil
+    tap 1175 2840 3 # Moi
+    tap_text Kreyòl
+    tap 171 2840 5  # Accueil
   fi
   shot "$lang-wallet"
-  tap 429 2790 5; shot "$lang-news"
-  tap 916 2790 5; shot "$lang-act"
-  tap 1175 2790 5; shot "$lang-me"
-  tap 673 2730 5; shot "$lang-card"
+  tap 429 2840 5; shot "$lang-news"
+  tap 916 2840 5; shot "$lang-act"
+  tap 1175 2840 3
+  for _ in 1 2 3 4 5 6; do $ADB shell input swipe 670 900 670 2300 200; done # Moi garde sa position : retour en haut
+  sleep 2; shot "$lang-me"
+  tap 673 2745 5; shot "$lang-card"
   $ADB shell input keyevent 4; sleep 1
 }
 capture fr
 capture ht
 # Retour au français pour la suite.
-tap 393 1980 1
+tap 1175 2840 3
+tap_text Français
 
 python3 - "$TMP" "$OUT" <<'PY'
 import sys

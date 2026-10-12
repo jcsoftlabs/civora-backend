@@ -149,7 +149,7 @@
           <h3 id="m-{m.key}">{tk(`mk.m.${m.key}.title`)}</h3>
           <p>{tk(`mk.m.${m.key}.lead`)}</p>
           <ul class="ticks">
-            {#each [1, 2, 3] as b (b)}<li>{tk(`mk.m.${m.key}.b${b}`)}</li>{/each}
+            {#each m.key === "members" ? [1, 2, 3, 4] : [1, 2, 3] as b (b)}<li>{tk(`mk.m.${m.key}.b${b}`)}</li>{/each}
           </ul>
           <p class="replaces"><span>{t("mk.replaces")}</span> {tk(`mk.m.${m.key}.r`)}</p>
         </div>
@@ -234,7 +234,13 @@
       <a href={resolve("/creer")}>{t("mk.nav.create")}</a>
     </nav>
   </div>
-  <p class="wrap rights">{t("mk.footer.rights")}</p>
+  <div class="wrap rights">
+    <p>
+      {t("mk.footer.maker")}
+      <a href="https://www.codeshell.biz" rel="noopener" target="_blank">CODESHELL LLC</a>
+    </p>
+    <p>{t("mk.footer.rights")}</p>
+  </div>
 </footer>
 
 <!-- eslint-enable svelte/no-navigation-without-resolve -->
@@ -764,6 +770,21 @@
     padding-top: var(--s-5);
     border-top: 1px solid rgb(255 255 255 / 12%);
     font-size: var(--fs-13);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-2) var(--s-6);
+  }
+  .rights p {
+    margin: 0;
+  }
+  .rights a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--c-surface);
+    font-weight: 600;
+    text-underline-offset: 3px;
   }
 
   a:focus-visible,

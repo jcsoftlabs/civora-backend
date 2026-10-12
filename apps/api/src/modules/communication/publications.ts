@@ -2,7 +2,7 @@
 import type { FastifyRequest } from "fastify";
 import { and, desc, eq, gt, inArray, isNotNull, isNull, lt, lte, sql } from "drizzle-orm";
 import { z } from "zod";
-import { files, publications, withParty, type Tx } from "@civora/db";
+import { files, members, publications, withParty, type Tx } from "@civora/db";
 import { audienceInput, memberInAudience, resolveAudience, type Audience } from "../../lib/audience.js";
 import { audit } from "../../lib/audit.js";
 import { currentMember } from "../../lib/member-context.js";
@@ -69,6 +69,7 @@ export class PublicationsService {
           body: body.body ?? null,
           audience,
           mediaFileIds: body.mediaFileIds,
+          authorMemberId: req.memberId,
         })
         .returning({ id: publications.id });
       return { id: p!.id };
@@ -189,8 +190,19 @@ export class PublicationsService {
           body: publications.body,
           publishedAt: publications.publishedAt,
           mediaFileIds: publications.mediaFileIds,
+          authorFirst: members.firstName,
+          authorLast: members.lastName,
         })
         .from(publications)
+        // Auteur signé sous l'article (nom de la personne qui l'a rédigé), absent si sa fiche a été supprimée.
+        .leftJoin(
+          members,
+          and(
+            eq(members.partyId, publications.partyId),
+            eq(members.id, publications.authorMemberId),
+            isNull(members.deletedAt),
+          ),
+        )
         .where(
           and(
             isNotNull(publications.publishedAt),
@@ -207,8 +219,9 @@ export class PublicationsService {
         tx,
         rows.flatMap((r) => r.mediaFileIds ?? []),
       );
-      const items = rows.map(({ mediaFileIds, ...r }) => ({
+      const items = rows.map(({ mediaFileIds, authorFirst, authorLast, ...r }) => ({
         ...r,
+        author: authorFirst ? `${authorFirst} ${authorLast}` : null,
         media: (mediaFileIds ?? []).flatMap((id) => (urls.has(id) ? [{ id, ...urls.get(id)! }] : [])),
       }));
       return { items, nextBefore: rows.length === q.limit ? rows.at(-1)?.publishedAt : null };

@@ -30,11 +30,26 @@ export const joinComplete = z.object({
   referentMemberNumber: memberNumber.optional(),
   /** Obligatoire si le parti adhère par parrainage (ADH-04). */
   sponsorMemberNumber: memberNumber.optional(),
+  /** Code de parrainage du parrain (ENG-01), à la place de son numéro de membre. */
+  sponsorCode: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z]{4}-[A-Z0-9]{4}$/)
+    .optional(),
   identity: z.object({ kind: z.enum(IDENTITY_KINDS), value: z.string().min(4).max(40) }).optional(),
+  /** app : adhésion depuis l'application mobile, session de l'espace membre jusqu'à la déconnexion. */
+  client: z.enum(["web", "app"]).default("web"),
 });
 
 export const meUpdate = z
-  .object({ firstName: name, lastName: name, birthDate: z.coerce.date().nullable(), zoneCode, phone: phone.nullable() })
+  .object({
+    firstName: name,
+    lastName: name,
+    birthDate: z.coerce.date().nullable(),
+    zoneCode,
+    phone: phone.nullable(),
+  })
   .partial();
 
 export const memberAdminUpdate = z

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../core/theme.dart';
 
-TextStyle _label = GoogleFonts.figtree(fontSize: 12, color: Palette.ink2, fontWeight: FontWeight.w500);
-TextStyle _title = GoogleFonts.figtree(fontSize: 17, color: Palette.ink, fontWeight: FontWeight.w600, height: 1.25);
+TextStyle _label = TextStyle(fontFamily: 'Figtree', fontSize: 12, color: Palette.ink2, fontWeight: FontWeight.w500);
+TextStyle _title = TextStyle(
+  fontFamily: 'Figtree',
+  fontSize: 17,
+  color: Palette.ink,
+  fontWeight: FontWeight.w600,
+  height: 1.25,
+);
 
 /// Billet de rassemblement : demi-cercles découpés sur les côtés, ligne pointillée, talon avec la date.
 class TicketCard extends StatelessWidget {
@@ -64,7 +69,15 @@ class TicketCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(when, style: GoogleFonts.figtree(fontSize: 14, fontWeight: FontWeight.w600, height: 1.3)),
+                        Text(
+                          when,
+                          style: TextStyle(
+                            fontFamily: 'Figtree',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            height: 1.3,
+                          ),
+                        ),
                         if (footnote != null) ...[const SizedBox(height: 6), Text(footnote!, style: _label)],
                       ],
                     ),
@@ -174,7 +187,10 @@ class BallotSlip extends StatelessWidget {
                               children: [
                                 InkCrossBox(crossed: crossed == i),
                                 const SizedBox(width: 8),
-                                Text(o, style: GoogleFonts.figtree(fontSize: 15, fontWeight: FontWeight.w500)),
+                                Text(
+                                  o,
+                                  style: TextStyle(fontFamily: 'Figtree', fontSize: 15, fontWeight: FontWeight.w500),
+                                ),
                               ],
                             ),
                         ],
@@ -184,7 +200,12 @@ class BallotSlip extends StatelessWidget {
                       const SizedBox(height: 12),
                       Text(
                         action!,
-                        style: GoogleFonts.figtree(fontSize: 15, fontWeight: FontWeight.w600, color: Palette.inkBlue),
+                        style: TextStyle(
+                          fontFamily: 'Figtree',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Palette.inkBlue,
+                        ),
                       ),
                     ],
                   ],
@@ -266,6 +287,7 @@ class PinnedNote extends StatelessWidget {
     this.tilt = 0,
     this.tapeAt = 0.5,
     this.onTap,
+    this.more,
   });
   final String label;
   final String title;
@@ -276,6 +298,9 @@ class PinnedNote extends StatelessWidget {
   final double tilt;
   final double tapeAt;
   final VoidCallback? onTap;
+
+  /// Lien « Lire la suite » sous un texte coupé.
+  final String? more;
 
   @override
   Widget build(BuildContext context) {
@@ -303,7 +328,22 @@ class PinnedNote extends StatelessWidget {
                         body!,
                         maxLines: 4,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.figtree(fontSize: 14, height: 1.45, color: onColor),
+                        style: TextStyle(fontFamily: 'Figtree', fontSize: 14, height: 1.45, color: onColor),
+                      ),
+                    ],
+                    if (more != null) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        more!,
+                        style: TextStyle(
+                          fontFamily: 'Figtree',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: onColor,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Palette.accent,
+                          decorationThickness: 2,
+                        ),
                       ),
                     ],
                     if (footnote != null) ...[
@@ -355,7 +395,8 @@ class Stamp extends StatelessWidget {
         children: [
           Text(
             text,
-            style: GoogleFonts.figtree(
+            style: TextStyle(
+              fontFamily: 'Figtree',
               color: color.withValues(alpha: 0.9),
               fontWeight: FontWeight.w700,
               fontSize: 13,
@@ -365,7 +406,12 @@ class Stamp extends StatelessWidget {
           if (date != null)
             Text(
               date!,
-              style: GoogleFonts.figtree(color: color.withValues(alpha: 0.8), fontSize: 11, letterSpacing: 0.8),
+              style: TextStyle(
+                fontFamily: 'Figtree',
+                color: color.withValues(alpha: 0.8),
+                fontSize: 11,
+                letterSpacing: 0.8,
+              ),
             ),
         ],
       ),
@@ -425,7 +471,10 @@ class OfflineBanner extends StatelessWidget {
         const Icon(Icons.cloud_off_outlined, size: 18, color: Palette.warning),
         const SizedBox(width: 10),
         Expanded(
-          child: Text(text, style: GoogleFonts.figtree(fontSize: 13, color: Palette.ink)),
+          child: Text(
+            text,
+            style: TextStyle(fontFamily: 'Figtree', fontSize: 13, color: Palette.ink),
+          ),
         ),
       ],
     ),
@@ -445,7 +494,11 @@ class ErrorRetry extends StatelessWidget {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(message, textAlign: TextAlign.center, style: GoogleFonts.figtree(fontSize: 15, height: 1.45)),
+        Text(
+          message,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontFamily: 'Figtree', fontSize: 15, height: 1.45),
+        ),
         const SizedBox(height: 16),
         OutlinedButton(onPressed: onRetry, child: Text(retry)),
       ],

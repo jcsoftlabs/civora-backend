@@ -40,6 +40,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | ADH-10 | Import de l'historique des cotisations | M N | P3 | Neuf | à faire |
 | ADH-11 | Carte de membre numérique avec QR code vérifiable | M N | P3 | NOU (partiel) | en cours |
 | ADH-12 | Export filtré (Excel, CSV, PDF), journalisé, limité aux rôles autorisés | E M N | P2 | NOU | fait |
+| ADH-13 | Carte de membre personnalisable dans le back-office (fond couleur ou image, couleurs, motif, champs, validité, verso, signature, QR) et impression PDF : carte PVC CR80 ou planche A4 avec traits de coupe | M N | P3 | Neuf | en cours |
 
 ## FIN : cotisations et dons
 
@@ -82,7 +83,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| ENG-01 | Parrainage par QR code, suivi des filleuls, points selon le barème | M N | P3 | NOU | à faire |
+| ENG-01 | Parrainage par QR code, suivi des filleuls, points selon le barème | M N | P3 | NOU | en cours |
 | ENG-02 | Sondages ciblés, résultats en temps réel | M N | P3 | NOU | à faire |
 | ENG-03 | Agenda et événements avec inscription | E M N | P2 | NOU | fait |
 | ENG-04 | Réunions : convocation, quorum, présence par QR, procès-verbal | N | P4 | Neuf | à faire |
@@ -104,7 +105,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| GAM-01 | Barème configurable par action (parrainage, présence, cotisation à temps, formation, vote, sondage) | M N | P3 | NOU (partiel) | à faire |
+| GAM-01 | Barème configurable par action (parrainage, présence, cotisation à temps, formation, vote, sondage) | M N | P3 | NOU (partiel) | en cours |
 | GAM-02 | Points différents selon l'événement | M N | P3 | Neuf | à faire |
 | GAM-03 | Bonus de régularité, plafonds anti-abus | M N | P3 | Neuf | à faire |
 | GAM-04 | Badges et niveaux nommés par le parti | M N | P3 | Neuf | à faire |
@@ -112,7 +113,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 | GAM-06 | Défis temporaires avec date de fin | N | P4 | Neuf | à faire |
 | GAM-07 | Récompenses attribuées depuis le back-office | N | P4 | Neuf | à faire |
 | GAM-08 | Points utilisables comme critère dans d'autres modules | N | P4 | Neuf | à faire |
-| GAM-09 | Journal des points, corrections manuelles tracées | M N | P3 | Neuf | à faire |
+| GAM-09 | Journal des points, corrections manuelles tracées | M N | P3 | Neuf | en cours |
 
 ## VOT : votes internes
 

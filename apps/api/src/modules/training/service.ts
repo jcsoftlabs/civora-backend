@@ -22,6 +22,7 @@ import {
 } from "@civora/db";
 import { audit } from "../../lib/audit.js";
 import { currentMember } from "../../lib/member-context.js";
+import { awardPoints } from "../engagement/points.js";
 import { ApiError } from "../../plugins/errors.js";
 import { authorize } from "../../plugins/tenant.js";
 import type { FilesService } from "../files/service.js";
@@ -627,6 +628,7 @@ export class TrainingService {
     await tx
       .insert(courseCompletions)
       .values({ partyId: req.partyId, courseId, memberId: req.memberId!, certificateNumber: number });
+    await awardPoints(tx, req.partyId, req.memberId!, "training", courseId); // GAM-01
     await audit(tx, { ...actor(req), action: "course.completed", targetType: "course", targetId: courseId });
     return number;
   }

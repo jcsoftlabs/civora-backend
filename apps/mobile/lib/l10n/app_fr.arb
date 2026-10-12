@@ -43,7 +43,7 @@
   "navScan": "Ma carte",
   "navCarnet": "Carnet",
   "navProfile": "Profil",
-  "hello": "Bonjou, {name}",
+  "hello": "Bonjour, {name}",
   "@hello": {
     "placeholders": {
       "name": {
@@ -406,6 +406,137 @@
   "@otpLeadAny": {
     "placeholders": {
       "destination": {
+        "type": "String"
+      }
+    }
+  },
+  "helloTitle": "Bonjour, {name}.",
+  "@helloTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waiting": "{n, plural, =0{Tout est à jour.} =1{Une chose vous attend.} other{{n} choses vous attendent.}}",
+  "@waiting": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "newsLead": "Le fil de {org}.",
+  "@newsLead": {
+    "placeholders": {
+      "org": {
+        "type": "String"
+      }
+    }
+  },
+  "kindDate": "{kind}, {date}",
+  "@kindDate": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "meStatus": "{status}, membre n° {number}",
+  "@meStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "meNumber": "Membre n° {number}",
+  "@meNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "statPoints": "points",
+  "statReferrals": "filleuls",
+  "statVotes": "votes",
+  "actReferral": "Parrainer",
+  "referralTitle": "Votre code de parrainage",
+  "referralLead": "Partagez-le : la personne qui adhère avec ce code devient votre filleul.",
+  "referralShare": "Partager",
+  "referralCopy": "Copier",
+  "referralCopied": "Code copié",
+  "referralShareText": "Rejoins {org} avec mon code de parrainage {code} : {url}",
+  "@referralShareText": {
+    "placeholders": {
+      "org": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      },
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "referralsTitle": "Mes filleuls",
+  "referralNone": "Vos filleuls apparaîtront ici dès leur adhésion.",
+  "referralPending": "En attente",
+  "referralValidated": "Validé",
+  "referralRejected": "Refusé",
+  "pointsTitle": "Mes points",
+  "pointsAll": "Tout voir",
+  "pointsNone": "Vos points apparaîtront ici : parrainage, formation, vote, cotisation réglée à temps.",
+  "pointsReferral": "Filleul validé",
+  "pointsTraining": "Formation réussie",
+  "pointsVote": "Vote déposé",
+  "pointsDues": "Cotisation réglée à temps",
+  "pointsAttendance": "Présence à un rassemblement",
+  "pointsManual": "Correction",
+  "photoChange": "Changer ma photo",
+  "photoCamera": "Prendre une photo",
+  "photoGallery": "Choisir dans la galerie",
+  "photoError": "La photo n'a pas pu être envoyée. Vérifiez votre connexion et réessayez.",
+  "joinAdhere": "Adhérer à {org}",
+  "@joinAdhere": {
+    "placeholders": {
+      "org": {
+        "type": "String"
+      }
+    }
+  },
+  "adhesionLead": "Remplissez votre fiche. Vous recevrez un code par e-mail pour confirmer votre adresse.",
+  "firstName": "Prénom",
+  "lastName": "Nom",
+  "zoneLabel": "Section communale ou ville de la diaspora",
+  "zoneHelp": "Tapez au moins deux lettres, puis choisissez dans la liste.",
+  "zoneNone": "Aucune zone trouvée.",
+  "sponsorLabel": "Code de parrainage",
+  "sponsorOptional": "Code de parrainage, si un membre vous l'a donné",
+  "sponsorRequired": "Votre organisation adhère par parrainage : le code d'un membre est demandé.",
+  "adhesionSubmit": "Recevoir mon code",
+  "errorSponsorNotFound": "Ce code de parrainage n'existe pas. Vérifiez-le auprès de votre parrain.",
+  "errorSponsorRequired": "Le code d'un parrain est demandé pour adhérer.",
+  "errorAlreadyMember": "Cette adresse a déjà une adhésion. Connectez-vous avec elle.",
+  "errorZoneTooBroad": "Choisissez une section communale ou une ville de la diaspora.",
+  "errorRequired": "Ce champ est obligatoire.",
+  "newsByline": "{date}, par {author}",
+  "newsReadMore": "Lire la suite",
+  "newsArticle": "Article",
+  "@newsByline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "author": {
         "type": "String"
       }
     }

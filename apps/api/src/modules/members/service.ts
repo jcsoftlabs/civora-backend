@@ -12,6 +12,7 @@ import {
   zones,
   type Tx,
 } from "@civora/db";
+import { backfillReferralCodes, onApproved, partyEngagement, sponsorByCode } from "../engagement/points.js";
 import { audit } from "../../lib/audit.js";
 import { ApiError } from "../../plugins/errors.js";
 import { authorize } from "../../plugins/tenant.js";
@@ -180,12 +181,17 @@ export class MembersService {
     const referent = input.referentMemberNumber ? await approvedMemberByNumber(tx, input.referentMemberNumber) : null;
     if (input.referentMemberNumber && !referent) throw new ApiError(400, "referent_not_found");
 
+    // Parrain : par son code de parrainage (ENG-01) ou son numéro ; obligatoire si le parti adhère par parrainage.
     let sponsor: { id: string } | null = null;
-    if (party.admissionMode === "parrainage") {
-      if (!input.sponsorMemberNumber) throw new ApiError(400, "sponsor_required");
+    const engagement = await partyEngagement(tx);
+    if (input.sponsorCode && engagement.referral) {
+      sponsor = await sponsorByCode(tx, input.sponsorCode);
+      if (!sponsor) throw new ApiError(400, "sponsor_not_found");
+    } else if (input.sponsorMemberNumber) {
       sponsor = await approvedMemberByNumber(tx, input.sponsorMemberNumber);
       if (!sponsor) throw new ApiError(400, "sponsor_not_found");
     }
+    if (party.admissionMode === "parrainage" && !sponsor) throw new ApiError(400, "sponsor_required");
     if (
       input.identity &&
       (await this.identity.findDuplicates(tx, party.id, input.identity.kind, input.identity.value)).length
@@ -215,9 +221,14 @@ export class MembersService {
       .returning({ id: members.id, memberNumber: members.memberNumber, applicationState: members.applicationState });
     const member = m!;
     if (sponsor)
-      await tx
-        .insert(referrals)
-        .values({ partyId: party.id, sponsorMemberId: sponsor.id, referredMemberId: member.id });
+      await tx.insert(referrals).values({
+        partyId: party.id,
+        sponsorMemberId: sponsor.id,
+        referredMemberId: member.id,
+        // Adhésion libre : le filleul est membre tout de suite, le parrainage est validé.
+        validatedAt: approved ? new Date() : null,
+      });
+    if (approved) await onApproved(tx, party.id, member.id);
     if (input.identity) await this.identity.store(tx, party.id, member.id, input.identity.kind, input.identity.value);
     if (approved) await this.dues.onMemberApproved(tx, party.id, member.id, new Date()); // adhésion libre
     await audit(tx, {
@@ -237,6 +248,7 @@ export class MembersService {
       channel: "email",
       ip: meta.ip,
       userAgent: meta.userAgent,
+      scope: input.client === "app" ? "member" : "full",
     });
     return { ...member, token: session.token, expiresAt: session.expiresAt };
   }
@@ -434,6 +446,8 @@ export class MembersService {
         .update(parties)
         .set({ admissionMode: body.admissionMode, updatedAt: new Date() })
         .where(eq(parties.id, req.partyId));
+      // Adhésion par parrainage : le parrainage devient actif, chaque membre validé reçoit son code (ENG-01).
+      if (body.admissionMode === "parrainage") await backfillReferralCodes(tx);
       await audit(tx, {
         ...actor(req),
         action: "settings.admission",
