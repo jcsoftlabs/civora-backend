@@ -84,7 +84,7 @@ describe("carte de membre (ADH-11)", () => {
   it("donne la carte et le lien signé du QR, à l'adresse du parti", async () => {
     const res = (await get("/members/me/card", marie.token)).json();
     expect(res.member).toMatchObject({ name: "Marie Joseph", location: "1re Section Montagne Noire" });
-    expect(res.verifyUrl).toMatch(new RegExp(`^https://card-a-${tag}\\.civora\\.app/v/[A-Za-z0-9_-]+$`));
+    expect(res.verifyUrl).toMatch(new RegExp(`^https://card-a-${tag}\\.civora\\.space/v/[A-Za-z0-9_-]+$`));
     cardToken = res.verifyUrl.split("/v/")[1];
   });
 
