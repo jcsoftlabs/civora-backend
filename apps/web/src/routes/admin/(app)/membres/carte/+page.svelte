@@ -322,7 +322,7 @@
                   memberName="Nadège Pierre-Louis"
                   memberNumber="000001"
                   location="1re Section Morne Chandelle"
-                  verifyUrl="https://civora.app/v/exemple"
+                  verifyUrl="https://civora.space/v/exemple"
                   orientation={design.orientation}
                   labels={{ card: t("admin.sheet.card"), number: t("create.card.number") }}
                   {design}

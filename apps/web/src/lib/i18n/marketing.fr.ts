@@ -274,7 +274,7 @@ export const marketingFr = {
     "Les responsables travaillent dans le navigateur. L'application mobile, en préparation, apportera aux membres la carte de membre, le scan de présence et le paiement de la cotisation.",
   "mk.faq.q12": "Peut-on avoir notre propre adresse et notre propre application ?",
   "mk.faq.a12":
-    "Chaque organisation a son adresse en civora.app dès la création. La formule National ajoute votre propre nom de domaine et une application publiée à votre nom dans les stores.",
+    "Chaque organisation a son adresse en civora.space dès la création. La formule National ajoute votre propre nom de domaine et une application publiée à votre nom dans les stores.",
   "mk.faq.q13": "Que se passe-t-il si nous arrêtons l'abonnement ?",
   "mk.faq.a13":
     "Vos données restent conservées 90 jours après l'arrêt. Vous pouvez les exporter à tout moment, puis demander leur suppression définitive.",

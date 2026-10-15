@@ -5,17 +5,17 @@ void main() {
   test('code, lien d\'invitation ou QR : identifiant de l\'organisation', () {
     expect(JoinFlow.slugFrom('horizon'), 'horizon');
     expect(JoinFlow.slugFrom('  Horizon '), 'horizon');
-    expect(JoinFlow.slugFrom('https://horizon.civora.app'), 'horizon');
-    expect(JoinFlow.slugFrom('horizon.civora.app/rejoindre'), 'horizon');
-    expect(JoinFlow.slugFrom('https://civora.app/rejoindre/fanmi-lavalas'), 'fanmi-lavalas');
+    expect(JoinFlow.slugFrom('https://horizon.civora.space'), 'horizon');
+    expect(JoinFlow.slugFrom('horizon.civora.space/rejoindre'), 'horizon');
+    expect(JoinFlow.slugFrom('https://civora.space/rejoindre/fanmi-lavalas'), 'fanmi-lavalas');
     expect(JoinFlow.slugFrom('http://horizon.localhost:5173/v/abc'), 'horizon');
-    expect(JoinFlow.slugFrom('https://console.civora.app'), isNull);
+    expect(JoinFlow.slugFrom('https://console.civora.space'), isNull);
     expect(JoinFlow.slugFrom('pas un code !'), isNull);
   });
 
   test('code de parrainage d\'un lien d\'invitation', () {
-    expect(JoinFlow.sponsorFrom('https://horizon.civora.app/rejoindre?parrain=fara-6azu'), 'FARA-6AZU');
-    expect(JoinFlow.sponsorFrom('https://horizon.civora.app/rejoindre'), isNull);
-    expect(JoinFlow.sponsorFrom('https://horizon.civora.app/rejoindre?parrain=<script>'), isNull);
+    expect(JoinFlow.sponsorFrom('https://horizon.civora.space/rejoindre?parrain=fara-6azu'), 'FARA-6AZU');
+    expect(JoinFlow.sponsorFrom('https://horizon.civora.space/rejoindre'), isNull);
+    expect(JoinFlow.sponsorFrom('https://horizon.civora.space/rejoindre?parrain=<script>'), isNull);
   });
 }

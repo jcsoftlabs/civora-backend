@@ -9,7 +9,7 @@ import { partySlugFromHost } from "$lib/party-host";
  */
 export const handle: Handle = async ({ event, resolve }) => {
   const host = event.url.hostname;
-  const root = env.PUBLIC_ROOT_DOMAIN || "civora.app";
+  const root = env.PUBLIC_ROOT_DOMAIN || "civora.space";
 
   if (host === `console.${root}` || host === "console.localhost") {
     event.locals.surface = "console";

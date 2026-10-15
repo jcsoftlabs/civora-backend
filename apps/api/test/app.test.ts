@@ -16,11 +16,11 @@ describe("configuration", () => {
     expect(() => loadConfig({ API_ALLOWED_ORIGINS: "*" })).toThrow(/jamais \*/);
   });
   it("refuse une origine avec chemin", () => {
-    expect(() => loadConfig({ API_ALLOWED_ORIGINS: "https://a.civora.app/admin" })).toThrow();
+    expect(() => loadConfig({ API_ALLOWED_ORIGINS: "https://a.civora.space/admin" })).toThrow();
   });
   it("accepte une liste séparée par des virgules", () => {
-    const c = loadConfig({ API_ALLOWED_ORIGINS: "https://a.civora.app, https://b.civora.app" });
-    expect(c.API_ALLOWED_ORIGINS).toEqual(["https://a.civora.app", "https://b.civora.app"]);
+    const c = loadConfig({ API_ALLOWED_ORIGINS: "https://a.civora.space, https://b.civora.space" });
+    expect(c.API_ALLOWED_ORIGINS).toEqual(["https://a.civora.space", "https://b.civora.space"]);
   });
 });
 

@@ -1,5 +1,5 @@
 /**
- * Slug du parti à partir de l'hôte : <slug>.civora.app en production, <slug>.localhost en développement.
+ * Slug du parti à partir de l'hôte : <slug>.civora.space en production, <slug>.localhost en développement.
  * null pour le site commercial, la console ou un hôte inconnu (domaines personnalisés : SOC-04, plus tard).
  */
 export function partySlugFromHost(host: string, root: string): string | null {

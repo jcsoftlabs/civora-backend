@@ -2,7 +2,7 @@ import type { Cookies } from "@sveltejs/kit";
 import { dev } from "$app/environment";
 import { ApiFailure, api } from "./api";
 
-/** Session de la console (SOC-10) : cookie propre à console.civora.app, limité aux chemins /console. */
+/** Session de la console (SOC-10) : cookie propre à console.civora.space, limité aux chemins /console. */
 export const CONSOLE_COOKIE = "civora_console";
 
 export interface Staff {

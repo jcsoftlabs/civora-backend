@@ -24,7 +24,7 @@ const schema = z
     /** Protège les empreintes des codes de connexion. 32 caractères au moins ; obligatoire en production. */
     AUTH_SECRET: z.string().min(32).optional(),
     RESEND_API_KEY: z.string().optional(),
-    RESEND_FROM: z.string().default("civora <notifications@civora.app>"),
+    RESEND_FROM: z.string().default("civora <notifications@civora.space>"),
     /** Boîte qui reçoit les demandes de démonstration du site commercial (SOC-12). */
     SALES_EMAIL: z.string().email().optional(),
     /** Fournisseur SMS de la plateforme : « none » en production tant qu'aucun n'est choisi, « log » en local. */
@@ -37,7 +37,7 @@ const schema = z
     /** Compte de service Firebase (JSON) pour les notifications push ; absent en local : envois écrits au journal. */
     FCM_SERVICE_ACCOUNT: z.string().optional(),
     /** Adresse publique des espaces des partis ({slug} remplacé) : lien du QR de la carte de membre (ADH-11). */
-    WEB_PARTY_ORIGIN: z.string().default("https://{slug}.civora.app"),
+    WEB_PARTY_ORIGIN: z.string().default("https://{slug}.civora.space"),
     /** Proxys de l'hébergeur devant l'API (Railway : 1). 0 en local : l'adresse de la connexion. */
     TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).optional(),
     /** Secret partagé avec le serveur web pour transmettre l'adresse IP de la personne (32 caractères au moins). */

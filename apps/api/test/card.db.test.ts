@@ -43,7 +43,7 @@ let cardToken = "";
 beforeAll(async () => {
   await owner`insert into parties (id, slug, name, tier) values (${A}, ${"card-a-" + tag}, 'Parti Horizon', 'mouvement'), (${B}, ${"card-b-" + tag}, 'Parti B', 'essentiel')`;
   app = await buildApp(
-    loadConfig({ NODE_ENV: "test", LOG_LEVEL: "silent", WEB_PARTY_ORIGIN: "https://{slug}.civora.app" }),
+    loadConfig({ NODE_ENV: "test", LOG_LEVEL: "silent", WEB_PARTY_ORIGIN: "https://{slug}.civora.space" }),
     { keys, email: new LogEmailSender() },
   );
   await app.ready();

@@ -171,7 +171,7 @@
 
   const steps = ["party", "founder", "code"] as const;
   const rootDomain =
-    env.PUBLIC_ROOT_DOMAIN && env.PUBLIC_ROOT_DOMAIN !== "localhost" ? env.PUBLIC_ROOT_DOMAIN : "civora.app";
+    env.PUBLIC_ROOT_DOMAIN && env.PUBLIC_ROOT_DOMAIN !== "localhost" ? env.PUBLIC_ROOT_DOMAIN : "civora.space";
 </script>
 
 <svelte:head><title>{t("create.title")} | civora</title></svelte:head>

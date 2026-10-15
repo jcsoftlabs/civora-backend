@@ -8,7 +8,7 @@ import type { RequestHandler } from "./$types";
 
 /**
  * Confirmation : l'espace s'ouvre et la session du fondateur passe en cookie de relais httpOnly (dix minutes,
- * domaine racine). À la première visite de <slug>.civora.app, le serveur vérifie que la session est bien celle
+ * domaine racine). À la première visite de <slug>.civora.space, le serveur vérifie que la session est bien celle
  * de ce parti et la range dans le cookie propre à cette adresse (voir lib/server/session.ts).
  */
 export const POST: RequestHandler = async ({ request, url, cookies, getClientAddress }) => {

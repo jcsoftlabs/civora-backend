@@ -4,10 +4,10 @@ Une seule application sert trois surfaces, choisies par l'hôte dans `src/hooks.
 
 | Hôte | Surface | Contenu |
 | --- | --- | --- |
-| `<slug>.civora.app/admin` | Back-office du parti | Gestion du parti |
-| `<slug>.civora.app` ou domaine du parti | Site public du parti | Pages publiques, pré-adhésion, dons (SOC-03, SOC-04) |
-| `console.civora.app` | Console éditeur | Partis clients, usage, santé (SOC-10), agrégats seulement |
-| `civora.app` | Site commercial | Landing page, tarifs, démo |
+| `<slug>.civora.space/admin` | Back-office du parti | Gestion du parti |
+| `<slug>.civora.space` ou domaine du parti | Site public du parti | Pages publiques, pré-adhésion, dons (SOC-03, SOC-04) |
+| `console.civora.space` | Console éditeur | Partis clients, usage, santé (SOC-10), agrégats seulement |
+| `civora.space` | Site commercial | Landing page, tarifs, démo |
 
 Avant tout écran : charger le skill `ui-design`. Styles uniquement via `docs/design/tokens.css` et les composants de `packages/ui`.
 

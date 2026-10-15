@@ -49,7 +49,7 @@ await withParty(ctx.partyId, async (tx) => {
 
 ## 2. Résolution du parti
 
-- **Web** : `hooks.server.ts` lit l'hôte. `<slug>.civora.app` ou domaine personnalisé (table `party_domains`) vers `party_id`. La console éditeur vit sur `console.civora.app` (chemins `/console`, cookie propre). Elle a ses propres comptes (`platform_staff`), ouverts seulement aux transactions `withConsole()` (sql/console.sql) ; elle liste les organisations par `console_parties()` et n'en lit que des totaux, dans `withParty()`. Ses requêtes à l'API passent l'en-tête `x-civora-console` et, en production, le secret du serveur web.
+- **Web** : `hooks.server.ts` lit l'hôte. `<slug>.civora.space` ou domaine personnalisé (table `party_domains`) vers `party_id`. La console éditeur vit sur `console.civora.space` (chemins `/console`, cookie propre). Elle a ses propres comptes (`platform_staff`), ouverts seulement aux transactions `withConsole()` (sql/console.sql) ; elle liste les organisations par `console_parties()` et n'en lit que des totaux, dans `withParty()`. Ses requêtes à l'API passent l'en-tête `x-civora-console` et, en production, le secret du serveur web.
 - **Mobile** : application commune. Le membre rejoint un parti par QR code, lien d'invitation ou code ; le jeton de session porte `party_id` et l'app charge le thème. En marque blanche (palier National), le `party_id` est fixé à la compilation par le flavor.
 - **API** : `party_id` vient toujours du jeton, jamais d'un paramètre envoyé par le client.
 
@@ -75,7 +75,7 @@ await withParty(ctx.partyId, async (tx) => {
 
 ## 3 ter. Carte de membre (ADH-11)
 
-- Le QR de la carte porte un lien `https://<slug>.civora.app/v/<jeton>`. Jeton : format, version de la clé du parti, identifiant du membre (18 octets) et signature HMAC tronquée à 16 octets, dérivée de la clé du parti (`member-card`). Aucune donnée personnelle dans le QR ; encodage canonique exigé.
+- Le QR de la carte porte un lien `https://<slug>.civora.space/v/<jeton>`. Jeton : format, version de la clé du parti, identifiant du membre (18 octets) et signature HMAC tronquée à 16 octets, dérivée de la clé du parti (`member-card`). Aucune donnée personnelle dans le QR ; encodage canonique exigé.
 - Vérification publique `GET /parties/:slug/cards/:jeton` : signature, membre présent et validé, cotisations à jour ; renvoie seulement le nom, le numéro, la photo (lien de 2 minutes) et l'état. Toute carte invalide répond `{ valid: false }` sans détail. Une adhésion rejetée ou supprimée invalide aussitôt la carte.
 - Carte du membre `GET /members/me/card` (formules Mouvement et National). Composant `MemberCard` : format carte ou badge, couleur principale et seconde couleur du parti, QR en SVG (correction M). Page de scan `/v/<jeton>` sur l'adresse du parti, avec un tampon VALIDE ou NON VALIDE, jamais mise en cache.
 

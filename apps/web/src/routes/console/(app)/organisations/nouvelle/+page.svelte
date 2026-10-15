@@ -84,7 +84,7 @@
       <Field label={t("con.new.name")} name="name" required minlength={2} maxlength={120} bind:value={name} />
       <Field
         label={t("con.new.slug")}
-        hint="{t('con.new.slug.hint')} {slug || '…'}.civora.app"
+        hint="{t('con.new.slug.hint')} {slug || '…'}.civora.space"
         name="slug"
         required
         maxlength={40}

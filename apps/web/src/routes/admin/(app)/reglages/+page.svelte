@@ -94,7 +94,7 @@
         <Field label={t("admin.settings.name")} name="name" required minlength={2} maxlength={120} bind:value={name} />
         <p class="address">
           <span>{t("admin.settings.address")}</span>
-          <strong>{st.slug}.{env.PUBLIC_ROOT_DOMAIN || "civora.app"}</strong>
+          <strong>{st.slug}.{env.PUBLIC_ROOT_DOMAIN || "civora.space"}</strong>
         </p>
         <BrandColors bind:color bind:secondary locale={data.locale} />
         <input type="hidden" name="brandColor" value={color} />

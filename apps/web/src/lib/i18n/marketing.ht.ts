@@ -269,7 +269,7 @@ export const marketingHt = {
     "Responsab yo travay nan navigatè a. Aplikasyon mobil la, k ap prepare, pral bay manm yo kat manm, eskane prezans ak peye kotizasyon.",
   "mk.faq.q12": "Èske nou ka gen pwòp adrès nou ak pwòp aplikasyon nou ?",
   "mk.faq.a12":
-    "Chak òganizasyon gen adrès li sou civora.app depi l kreye. Fòmil Nasyonal la ajoute pwòp non domèn ou ak yon aplikasyon pibliye sou non w nan magazen yo.",
+    "Chak òganizasyon gen adrès li sou civora.space depi l kreye. Fòmil Nasyonal la ajoute pwòp non domèn ou ak yon aplikasyon pibliye sou non w nan magazen yo.",
   "mk.faq.q13": "Kisa k ap pase si nou kanpe abònman an ?",
   "mk.faq.a13":
     "Done ou yo rete konsève 90 jou apre ou kanpe. Ou ka ekspòte yo nenpòt lè, epi apre sa mande pou yo efase nèt.",

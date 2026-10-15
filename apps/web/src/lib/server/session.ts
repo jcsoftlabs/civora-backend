@@ -31,7 +31,7 @@ export interface Me {
 }
 
 /** Domaine du cookie de relais : le domaine racine en production, l'hôte seul en développement. */
-export const handoffDomain = () => (dev ? {} : { domain: `.${env.PUBLIC_ROOT_DOMAIN || "civora.app"}` });
+export const handoffDomain = () => (dev ? {} : { domain: `.${env.PUBLIC_ROOT_DOMAIN || "civora.space"}` });
 
 export function setSession(cookies: Cookies, token: string, expiresAt: string | Date) {
   cookies.set(SESSION_COOKIE, token, {
