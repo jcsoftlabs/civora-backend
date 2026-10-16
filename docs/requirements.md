@@ -28,7 +28,7 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| ADH-01 | Inscription mobile avec OTP, photo et pièce d'identité (NIN, NIF, passeport, SSN) | E M N | P2 | NOU | en cours |
+| ADH-01 | Inscription mobile avec OTP, photo et pièce d'identité (NIN, NIF, passeport, SSN) | E M N | P2 | NOU | fait |
 | ADH-02 | Fiche membre : localisation jusqu'à la section communale, local ou diaspora, pays, personne référente | E M N | P2 | NOU | fait |
 | ADH-03 | Niveaux de statut configurables par le parti | E M N | P2 | NOU | fait |
 | ADH-04 | Mode d'adhésion au choix et modifiable : libre, sur validation, par parrainage obligatoire | E M N | P2 | Neuf | fait |
@@ -63,10 +63,10 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Palier | Phase | Origine | Statut |
 | --- | --- | --- | --- | --- | --- |
-| FOR-01 | Modules séquentiels avec vidéo, audio, documents, liens YouTube ou Vimeo et quiz par module ; module suivant verrouillé tant que le précédent n'est pas réussi | M N | P3 | NOU | en cours |
-| FOR-02 | Seuil de réussite et nombre de reprises paramétrables | M N | P3 | NOU | en cours |
-| FOR-03 | Formation obligatoire par statut, suivi de complétion par zone | M N | P3 | Neuf | en cours |
-| FOR-04 | Certificat de complétion téléchargeable, au modèle du parti (textes, couleur, logo, signataires et signatures) | N | P3 | Neuf | en cours |
+| FOR-01 | Modules séquentiels avec vidéo, audio, documents, liens YouTube ou Vimeo et quiz par module ; module suivant verrouillé tant que le précédent n'est pas réussi | M N | P3 | NOU | fait |
+| FOR-02 | Seuil de réussite et nombre de reprises paramétrables | M N | P3 | NOU | fait |
+| FOR-03 | Formation obligatoire par statut, suivi de complétion par zone | M N | P3 | Neuf | fait |
+| FOR-04 | Certificat de complétion téléchargeable, au modèle du parti (textes, couleur, logo, signataires et signatures) | N | P3 | Neuf | fait |
 
 ## COM : communication
 
@@ -233,8 +233,8 @@ Version de travail du cahier des charges. Chaque ligne est une unité de travail
 
 | ID | Exigence | Phase | Statut |
 | --- | --- | --- | --- |
-| NFR-01 | Hors ligne : formations, podcasts, albums, fiche membre ; saisies Élections et porte-à-porte synchronisées sans perte ni doublon | P2, P4 | à faire |
-| NFR-02 | Android 8 et plus, 2 Go de mémoire | P2 | à faire |
+| NFR-01 | Hors ligne : formations, podcasts, albums, fiche membre ; saisies Élections et porte-à-porte synchronisées sans perte ni doublon | P2, P4 | en cours |
+| NFR-02 | Android 8 et plus, 2 Go de mémoire | P2 | en cours |
 | NFR-03 | Disponibilité 99,5 % par mois, 99,9 % le jour du scrutin | P3, P4 | à faire |
 | NFR-04 | API : 95 % des requêtes sous 500 ms | P3 | à faire |
 | NFR-05 | Test de charge des remontées de procès-verbaux | P4 | à faire |
