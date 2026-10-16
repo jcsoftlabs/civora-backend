@@ -11,6 +11,7 @@ Auteur et responsable produit : Christopher Jerome.
 | Toutes les exigences numérotées (ADH, FIN, VOT…) avec palier et phase | `docs/requirements.md` |
 | Ordre de réalisation, phases, jalons, tâches | `docs/roadmap.md` |
 | Architecture : multi-tenant, RLS, jobs, webhooks, hors ligne, facturation à l'usage | `docs/architecture.md` |
+| Exploitation : supervision, sauvegardes, restauration | `docs/exploitation.md`, `ops/backup/` |
 | Paliers, quotas et activation des modules | `packages/shared/src/plans.ts` |
 | Rôles et permissions | `packages/shared/src/permissions.ts` |
 | Schéma de données | `packages/db/src/schema/` |
