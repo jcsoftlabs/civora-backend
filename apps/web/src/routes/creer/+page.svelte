@@ -5,7 +5,7 @@
   du produit, et le seul moment animé de l'écran (le reflet passe à chaque nouvelle couleur).
 -->
 <script lang="ts">
-  import { Badge, Button, Field, MemberCard, partyTheme, themeStyle } from "@civora/ui";
+  import { Badge, BrandMark, Button, Field, MemberCard, partyTheme, themeStyle } from "@civora/ui";
   import { untrack } from "svelte";
   import { ORGANIZATION_KINDS, type OrganizationKind } from "@civora/shared";
   import { format, translator, type MessageKey } from "$lib/i18n";
@@ -176,15 +176,18 @@
 
 <svelte:head><title>{t("create.title")} | civora</title></svelte:head>
 
-<main style={themeStyle(theme)}>
-  <header class="top">
-    <a href={resolve("/")} class="brand display">civora</a>
-    <form method="POST" action="/langue">
+<!-- Même en-tête que le site commercial ; hors de <main>, il garde les couleurs de civora, pas celles du parti. -->
+<header class="top">
+  <div class="bar">
+    <a href={resolve("/")} class="brand"><BrandMark size={30} />civora</a>
+    <form method="POST" action="/langue" class="lang-switch">
       <input type="hidden" name="lang" value={data.locale === "fr" ? "ht" : "fr"} />
-      <button type="submit" class="lang-switch">{t("lang.switch")}</button>
+      <button type="submit">{t("lang.switch")}</button>
     </form>
-  </header>
+  </div>
+</header>
 
+<main style={themeStyle(theme)}>
   <div class="layout">
     <section class="form" aria-labelledby="title">
       {#if step !== "done"}
@@ -373,32 +376,49 @@
 </main>
 
 <style>
+  /* Largeur, en-tête et logo repris du site commercial (lib/marketing/Marketing.svelte). */
   main {
-    max-width: 1120px;
+    width: min(1200px, 100% - 2 * var(--s-6));
     margin: 0 auto;
-    padding: var(--s-5) var(--s-4) var(--s-24);
+    padding: var(--s-2) 0 var(--s-24);
   }
   .top {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--c-paper) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .bar {
+    width: min(1200px, 100% - 2 * var(--s-6));
+    margin-inline: auto;
+    min-height: 72px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    min-height: var(--touch-min);
+    justify-content: space-between;
+    gap: var(--s-4);
   }
   .brand {
-    font-size: var(--fs-22);
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
     color: var(--c-ink);
     text-decoration: none;
+    font: 700 var(--fs-22) / 1 var(--font-display);
+    letter-spacing: var(--tracking-display);
   }
-  .lang-switch {
-    min-height: var(--touch-min);
-    padding: 0 var(--s-4);
-    border: 1.5px solid var(--c-line);
-    border-radius: var(--r-pill);
-    background: var(--c-surface);
-    color: var(--c-ink);
-    font: 600 var(--fs-14) / 1 var(--font-ui);
+  .lang-switch button {
+    min-height: 44px;
+    padding: 0 var(--s-3);
+    border: 0;
+    background: none;
+    color: var(--c-ink-2);
+    font: 500 var(--fs-15) / 1 var(--font-ui);
     cursor: pointer;
+  }
+  .lang-switch button:hover {
+    color: var(--c-ink);
   }
   .layout {
     display: grid;
@@ -409,7 +429,7 @@
   }
   .preview {
     position: sticky;
-    top: var(--s-10);
+    top: calc(72px + var(--s-6));
     padding-top: var(--s-6);
     display: flex;
     flex-direction: column;
