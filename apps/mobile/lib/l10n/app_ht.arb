@@ -572,5 +572,8 @@
   "courseOfflineReady": "Medya yo disponib san rezo",
   "courseOfflineFailed": "Kèk medya pa t telechaje. Eseye ankò ak rezo.",
   "courseMediaOffline": "Medya sa a poko nan telefòn nan. Fòk gen rezo pou louvri l.",
-  "welcomeHaveCode": "Mwen gen kòd òganizasyon mwen"
+  "welcomeHaveCode": "Mwen gen kòd òganizasyon mwen",
+  "shortcutsTitle": "Chemen kout",
+  "shortcutCard": "Kat mwen",
+  "shortcutProfile": "Fich mwen"
 }

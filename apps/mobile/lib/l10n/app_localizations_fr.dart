@@ -1022,4 +1022,13 @@ class LFr extends L {
 
   @override
   String get welcomeHaveCode => 'J\'ai le code de mon organisation';
+
+  @override
+  String get shortcutsTitle => 'Raccourcis';
+
+  @override
+  String get shortcutCard => 'Ma carte';
+
+  @override
+  String get shortcutProfile => 'Ma fiche';
 }

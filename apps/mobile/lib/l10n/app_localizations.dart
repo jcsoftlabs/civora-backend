@@ -1867,6 +1867,24 @@ abstract class L {
   /// In fr, this message translates to:
   /// **'J\'ai le code de mon organisation'**
   String get welcomeHaveCode;
+
+  /// No description provided for @shortcutsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Raccourcis'**
+  String get shortcutsTitle;
+
+  /// No description provided for @shortcutCard.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma carte'**
+  String get shortcutCard;
+
+  /// No description provided for @shortcutProfile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma fiche'**
+  String get shortcutProfile;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

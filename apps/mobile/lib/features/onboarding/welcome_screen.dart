@@ -89,29 +89,18 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                 Text('civora', style: text.titleLarge?.copyWith(color: Palette.primaryDeep)),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             // Pile d'objets : un aperçu de ce que contient l'espace membre, sans données réelles.
             LayoutBuilder(
               builder: (context, box) {
                 // Carte aux trois quarts de la largeur ; le billet et le bulletin dépassent dessous, en éventail.
                 final w = box.maxWidth;
-                final cardH = w * 0.78 / 1.586;
+                final cardH = w * 0.7 / 1.586;
                 return SizedBox(
-                  height: cardH + 214,
+                  // Carte et billet seulement : les deux façons d'entrer restent visibles sans faire défiler.
+                  height: cardH + 112,
                   child: Stack(
                     children: [
-                      Positioned(
-                        left: w * 0.16,
-                        right: 0,
-                        top: cardH + 96,
-                        child: BallotSlip(
-                          label: t.ballotOpen,
-                          title: t.ballotVote,
-                          options: [t.yes, t.no],
-                          crossed: 0,
-                          tilt: 0.035,
-                        ),
-                      ),
                       Positioned(
                         left: w * 0.06,
                         right: w * 0.08,
@@ -120,7 +109,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                       ),
                       Positioned(
                         left: 0,
-                        width: w * 0.78,
+                        width: w * 0.7,
                         top: 6,
                         child: MemberCard(
                           brand: Palette.primary,
@@ -137,11 +126,11 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                 );
               },
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 16),
             Text(t.welcomeTitle, style: text.headlineMedium),
             const SizedBox(height: 10),
             Text(t.welcomeSignInLead, style: text.bodyLarge?.copyWith(color: Palette.ink2, height: 1.45)),
-            const SizedBox(height: 28),
+            const SizedBox(height: 20),
             TextField(
               controller: _contact,
               autocorrect: false,
@@ -160,10 +149,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
             FilledButton(onPressed: _busy ? null : _signIn, child: Text(t.joinSend)),
             // Pas de connexion par SMS ici : aucun fournisseur SMS n'est branché sur la plateforme. Un parti qui
             // l'active le propose sur son propre écran de connexion (otpChannels).
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Divider(color: Palette.line),
-            ),
+            const SizedBox(height: 10),
             // Deuxième façon d'entrer : le QR code de son organisation (affiche, carte, invitation).
             OutlinedButton.icon(
               onPressed: () => context.push('/scanner'),

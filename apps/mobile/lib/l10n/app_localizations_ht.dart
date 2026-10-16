@@ -1014,4 +1014,13 @@ class LHt extends L {
 
   @override
   String get welcomeHaveCode => 'Mwen gen kòd òganizasyon mwen';
+
+  @override
+  String get shortcutsTitle => 'Chemen kout';
+
+  @override
+  String get shortcutCard => 'Kat mwen';
+
+  @override
+  String get shortcutProfile => 'Fich mwen';
 }

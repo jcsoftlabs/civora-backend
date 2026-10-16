@@ -596,5 +596,8 @@
       }
     }
   },
-  "welcomeHaveCode": "J'ai le code de mon organisation"
+  "welcomeHaveCode": "J'ai le code de mon organisation",
+  "shortcutsTitle": "Raccourcis",
+  "shortcutCard": "Ma carte",
+  "shortcutProfile": "Ma fiche"
 }

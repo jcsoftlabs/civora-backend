@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/api.dart';
 import '../../core/state.dart';
 import '../../core/theme.dart';
 import '../../core/time.dart';
@@ -72,6 +73,11 @@ class WalletScreen extends ConsumerWidget {
     final next = ((events?.data['events'] as List?) ?? const []).cast<Map>().firstOrNull;
     final pointsOn = points?.data['enabled'] == true;
     final referralOn = referrals?.data['enabled'] == true;
+    // Un module hors de la formule (402) n'a pas de raccourci.
+    bool on(String path) {
+      final e = ref.watch(apiGet(path)).error;
+      return !(e is ApiError && e.status == 402);
+    }
 
     return BannerPage(
       brand: brand,
@@ -133,6 +139,19 @@ class WalletScreen extends ConsumerWidget {
           if (todos.isEmpty && ballots.isEmpty && next == null)
             Text(t.todoNone, style: Txt.body.copyWith(color: Palette.ink2)),
         ],
+        SheetHeading(t.shortcutsTitle),
+        _Shortcuts(
+          items: [
+            (Icons.badge_outlined, t.shortcutCard, '/carte'),
+            (Icons.person_outline, t.shortcutProfile, '/fiche'),
+            if (on('/training')) (Icons.school_outlined, t.actTraining, '/formations'),
+            if (on('/events')) (Icons.event_outlined, t.actEvents, '/rassemblements'),
+            if (on('/members/me/dues')) (Icons.payments_outlined, t.actDues, '/cotisations'),
+            if (on('/votes')) (Icons.how_to_vote_outlined, t.actVotes, '/votes'),
+            if (referralOn) (Icons.group_add_outlined, t.actReferral, '/parrainage'),
+            if (on('/feed?kind=podcast&limit=50')) (Icons.headphones_outlined, t.actPodcasts, '/podcasts'),
+          ],
+        ),
         if (pointsOn || referralOn) ...[
           const SizedBox(height: Space.xl),
           Row(
@@ -152,6 +171,59 @@ class WalletScreen extends ConsumerWidget {
             ],
           ),
         ],
+      ],
+    );
+  }
+}
+
+/// Raccourcis de l'accueil : des pastilles rondes en grille de quatre, fonds alternés (teinte du parti, ambre,
+/// papier fort) comme les autocollants de l'onglet Agir. Cibles de 72 px.
+class _Shortcuts extends StatelessWidget {
+  const _Shortcuts({required this.items});
+  final List<(IconData, String, String)> items;
+
+  @override
+  Widget build(BuildContext context) {
+    final brand = Theme.of(context).colorScheme.primary;
+    final tints = [brand.withValues(alpha: 0.12), Palette.accent.withValues(alpha: 0.22), const Color(0xFFE9E2D6)];
+    return GridView.count(
+      crossAxisCount: 4,
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 6,
+      crossAxisSpacing: 4,
+      childAspectRatio: 0.78,
+      children: [
+        for (final (i, (icon, label, path)) in items.indexed)
+          Semantics(
+            button: true,
+            label: label,
+            excludeSemantics: true,
+            child: InkWell(
+              onTap: () => context.push(path),
+              borderRadius: BorderRadius.circular(16),
+              child: Column(
+                children: [
+                  const SizedBox(height: 6),
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(color: tints[i % 3], shape: BoxShape.circle),
+                    child: Icon(icon, color: Palette.ink, size: 26),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Txt.small.copyWith(color: Palette.ink, fontWeight: FontWeight.w500, height: 1.2),
+                  ),
+                ],
+              ),
+            ),
+          ),
       ],
     );
   }
