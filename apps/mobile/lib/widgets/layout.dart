@@ -81,8 +81,17 @@ class BannerPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final on = onColor(brand);
     final top = MediaQuery.paddingOf(context).top;
-    return ColoredBox(
-      color: brand,
+    // Fond fixe : la couleur du parti en haut, celle de la feuille en bas. En bout de défilement (et quand iOS fait
+    // rebondir la page), on voit la feuille et non une bande de couleur sous elle.
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [brand, brand, sheetColor, sheetColor],
+          stops: const [0, 0.5, 0.5, 1],
+        ),
+      ),
       child: LayoutBuilder(
         builder: (context, box) {
           final objectW = (box.maxWidth - 2 * Space.gutter) * objectScale;
