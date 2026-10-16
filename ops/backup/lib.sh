@@ -12,6 +12,13 @@ need() {
 # Destination : BACKUP_TARGET=r2 (production) ou file:///chemin (essais locaux).
 target() { printf '%s' "${BACKUP_TARGET:-r2}"; }
 
+# Par défaut, le compartiment et la clé des fichiers de l'API, sous le préfixe backups/ ; un compartiment et une
+# clé à part (R2_BACKUP_*) restent possibles pour que l'API ne puisse pas effacer les sauvegardes.
+R2_BACKUP_BUCKET="${R2_BACKUP_BUCKET:-${R2_BUCKET:-}}"
+R2_BACKUP_ACCESS_KEY_ID="${R2_BACKUP_ACCESS_KEY_ID:-${R2_ACCESS_KEY_ID:-}}"
+R2_BACKUP_SECRET_ACCESS_KEY="${R2_BACKUP_SECRET_ACCESS_KEY:-${R2_SECRET_ACCESS_KEY:-}}"
+PREFIX="${BACKUP_PREFIX:-backups/postgres}"
+
 r2_url() { printf 'https://%s.r2.cloudflarestorage.com/%s' "$R2_ACCOUNT_ID" "$R2_BACKUP_BUCKET"; }
 
 r2_curl() {

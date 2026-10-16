@@ -18,7 +18,7 @@ fail() {
 }
 
 ts=$(date -u +%Y-%m-%dT%H%M%SZ)
-key="postgres/$(date -u +%Y/%m)/civora-$ts.dump.enc"
+key="$PREFIX/$(date -u +%Y/%m)/civora-$ts.dump.enc"
 
 pg_dump --format=custom --compress=6 --file="$work/db.dump" "$DATABASE_URL_BACKUP" || fail "copie de la base (pg_dump)"
 # La copie doit être lisible avant d'être envoyée.
@@ -36,8 +36,8 @@ echo "Sauvegarde déposée : $key ($size octets, $tables tables)"
 # Rétention : on n'efface que des copies plus anciennes que la limite, et jamais la dernière.
 now=$(date -u +%s)
 limit=$((now - RETENTION_DAYS * 86400))
-latest=$(store_list "postgres/" | tail -n 1)
-store_list "postgres/" | while read -r old; do
+latest=$(store_list "$PREFIX/" | tail -n 1)
+store_list "$PREFIX/" | while read -r old; do
   [ -n "$old" ] && [ "$old" != "$latest" ] || continue
   e=$(key_epoch "$old")
   if [ "$e" -gt 0 ] && [ "$e" -lt "$limit" ]; then

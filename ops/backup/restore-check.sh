@@ -22,7 +22,7 @@ fail() {
   exit 1
 }
 
-key=$(store_list "postgres/" | tail -n 1)
+key=$(store_list "$PREFIX/" | tail -n 1)
 [ -n "$key" ] || fail "aucune copie trouvée"
 age_h=$((($(date -u +%s) - $(key_epoch "$key")) / 3600))
 [ "$age_h" -le "$MAX_AGE_HOURS" ] || fail "dernière copie trop ancienne (${age_h} h)"
