@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,15 +6,17 @@ import '../../core/state.dart';
 import '../../core/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../widgets/layout.dart';
+import '../../widgets/liquid_glass.dart';
 import '../../widgets/nav_icons.dart';
 import '../act/act_screen.dart';
 import '../me/me_screen.dart';
 import '../news/news_screen.dart';
 import 'wallet_screen.dart';
 
-/// Coque de l'espace membre. Barre de verre fumé qui flotte au-dessus du contenu : quatre onglets nommés aux icônes
-/// dessinées pour civora (le nom reste visible, pour tous les lecteurs), l'onglet actif en bulle de verre éclairée
-/// à la couleur du parti ; au centre, la carte de membre en miniature, qui dépasse de la barre et ouvre la carte.
+/// Coque de l'espace membre. Barre de verre liquide qui flotte au-dessus du contenu (le contenu se courbe près de ses
+/// bords) : quatre onglets nommés aux icônes dessinées pour civora (le nom reste visible, pour tous les lecteurs),
+/// l'onglet actif dans une bulle qui glisse et s'étire d'un onglet à l'autre ; au centre, la carte de membre en
+/// miniature, qui dépasse de la barre et ouvre la carte.
 class HomeShell extends ConsumerStatefulWidget {
   const HomeShell({super.key});
 
@@ -26,6 +26,7 @@ class HomeShell extends ConsumerStatefulWidget {
 
 class _HomeShellState extends ConsumerState<HomeShell> {
   int _tab = 0;
+  int _from = 0;
   static const _pages = [WalletScreen(), NewsScreen(), ActScreen(), MeScreen()];
 
   @override
@@ -33,7 +34,8 @@ class _HomeShellState extends ConsumerState<HomeShell> {
     final t = L.of(context);
     final party = ref.watch(apiGet('/auth/me')).value?.data['party'] as Map?;
     final brand = parseHex(party?['brandColor'] as String?);
-    final mark = brandOnInk(brand);
+    // Verre clair : l'onglet actif à la couleur du parti (assombrie si elle est trop claire pour être lue).
+    final mark = brandOnPaper(brand);
     final items = [
       (NavGlyph.home, t.navWallet),
       (NavGlyph.news, t.navNews),
@@ -42,7 +44,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
     ];
     Widget tab(int i) {
       final on = _tab == i;
-      final fg = on ? Palette.paper : const Color(0xFFB4BCB8);
+      final fg = on ? Palette.ink : Palette.ink2;
       return Expanded(
         child: Semantics(
           selected: on,
@@ -51,28 +53,19 @@ class _HomeShellState extends ConsumerState<HomeShell> {
           excludeSemantics: true,
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => setState(() => _tab = i),
+            onTap: () => setState(() {
+              _from = _tab;
+              _tab = i;
+            }),
             child: SizedBox(
               height: 64,
               child: Center(
-                // L'onglet actif est une bulle de verre plus claire, en relief dans la barre.
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  curve: Curves.easeOutCubic,
-                  width: 78,
+                child: Padding(
                   padding: const EdgeInsets.fromLTRB(4, 7, 4, 6),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    color: on ? Colors.white.withValues(alpha: 0.14) : Colors.transparent,
-                    border: Border.all(color: on ? Colors.white.withValues(alpha: 0.22) : Colors.transparent),
-                    boxShadow: on
-                        ? [BoxShadow(color: mark.withValues(alpha: 0.35), blurRadius: 14, spreadRadius: -4)]
-                        : const [],
-                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      NavIcon(items[i].$1, color: on ? mark : fg, active: on, size: 24),
+                      NavIcon(items[i].$1, color: on ? mark : Palette.ink2, active: on, size: 24),
                       const SizedBox(height: 3),
                       Text(
                         items[i].$2,
@@ -98,43 +91,84 @@ class _HomeShellState extends ConsumerState<HomeShell> {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
+            // Capsule de verre clair qui flotte : ombre douce dessous, liseré clair sur l'arête.
             DecoratedBox(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: BorderRadius.circular(35),
                 boxShadow: const [
-                  BoxShadow(color: Color(0x40000000), blurRadius: 28, offset: Offset(0, 14), spreadRadius: -6),
-                  BoxShadow(color: Color(0x26000000), blurRadius: 6, offset: Offset(0, 3)),
+                  BoxShadow(color: Color(0x33000000), blurRadius: 32, offset: Offset(0, 14), spreadRadius: -6),
+                  BoxShadow(color: Color(0x1F000000), blurRadius: 3, offset: Offset(0, 1)),
                 ],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(28),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
-                  child: Container(
-                    height: 70,
+              child: SizedBox(
+                height: 70,
+                width: double.infinity,
+                child: LiquidGlass(
+                  radius: 35,
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
+                      borderRadius: BorderRadius.circular(35),
+                      color: Colors.white.withValues(alpha: 0.62),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.9), width: 1),
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [
-                          Color.alphaBlend(Colors.white.withValues(alpha: 0.14), Palette.ink.withValues(alpha: 0.82)),
-                          Palette.ink.withValues(alpha: 0.86),
-                        ],
-                        stops: const [0, 0.55],
+                        colors: [Colors.white.withValues(alpha: 0.78), Colors.white.withValues(alpha: 0.56)],
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-            // Liseré de lumière sur l'arête supérieure, qui donne l'épaisseur du verre.
-            Positioned(
-              top: 1,
-              left: 28,
-              right: 28,
-              child: IgnorePointer(child: Container(height: 1, color: Colors.white.withValues(alpha: 0.35))),
+            // La bulle de l'onglet actif : une goutte qui glisse, le bord de devant part avant celui de derrière.
+            Positioned.fill(
+              child: LayoutBuilder(
+                builder: (context, box) {
+                  final w = (box.maxWidth - 76) / 4;
+                  double center(int i) => i < 2 ? (i + 0.5) * w : 2 * w + 76 + (i - 1.5) * w;
+                  return TweenAnimationBuilder<double>(
+                    tween: Tween(end: _tab.toDouble()),
+                    duration: const Duration(milliseconds: 420),
+                    builder: (context, v, _) {
+                      final a = center(_from);
+                      final b = center(_tab);
+                      final span = (_tab - _from).toDouble();
+                      final p = span == 0 ? 1.0 : ((v - _from) / span).clamp(0.0, 1.0);
+                      final lead = a + (b - a) * Curves.easeOutCubic.transform(p);
+                      final trail = a + (b - a) * Curves.easeInOutCubic.transform(p);
+                      const half = 39.0;
+                      final left = (b >= a ? trail : lead) - half;
+                      final right = (b >= a ? lead : trail) + half;
+                      return Stack(
+                        children: [
+                          Positioned(
+                            left: left,
+                            width: right - left,
+                            top: 6,
+                            height: 58,
+                            child: IgnorePointer(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(22),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white.withValues(alpha: 0.24),
+                                      Colors.white.withValues(alpha: 0.08),
+                                    ],
+                                  ),
+                                  border: Border.all(color: Colors.white.withValues(alpha: 0.28)),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
             ),
             // Onglets hors du découpage du verre : la carte du centre peut en dépasser.
             Positioned.fill(
@@ -226,7 +260,7 @@ class _MiniCard extends StatelessWidget {
                 bottom: 9,
                 child: Text(
                   label,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Palette.paper),
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Palette.ink),
                 ),
               ),
             ],

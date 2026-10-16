@@ -266,3 +266,13 @@ Color brandOnInk(Color brand) {
   final hsl = HSLColor.fromColor(brand);
   return hsl.lightness < 0.55 ? hsl.withLightness(0.62).toColor() : brand;
 }
+
+/// Couleur du parti lisible sur le verre clair : assombrie si elle est trop claire (contraste d'au moins 4,5:1).
+Color brandOnPaper(Color brand) {
+  var hsl = HSLColor.fromColor(brand);
+  double lum(Color c) => c.computeLuminance();
+  while ((0.95 + 0.05) / (lum(hsl.toColor()) + 0.05) < 4.5 && hsl.lightness > 0.05) {
+    hsl = hsl.withLightness(hsl.lightness - 0.04);
+  }
+  return hsl.toColor();
+}
