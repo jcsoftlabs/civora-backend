@@ -10,6 +10,16 @@ const run = (args) => {
   if (r.status !== 0) process.exit(r.status ?? 1);
 };
 
+// Les services de sauvegarde ont leur propre image (ops/backup/Dockerfile) : arriver ici veut dire que leur fichier
+// de configuration Railway n'a pas été pris en compte. On s'arrête net au lieu de lancer l'API à leur place.
+if (service.includes("backup") || service.includes("restore")) {
+  console.error(
+    `Le service « ${service} » doit être construit avec ops/backup/Dockerfile : dans Railway, Settings, ` +
+      "Config as code, indiquer ops/backup/railway.json (ou ops/backup/railway.restore-check.json).",
+  );
+  process.exit(1);
+}
+
 if (service.includes("worker")) {
   run(["--filter", "@civora/worker", "start"]);
 } else {
