@@ -583,5 +583,17 @@
     }
   },
   "certificateDownload": "Télécharger mon certificat",
-  "certificateError": "Le certificat n'a pas pu être téléchargé. Vérifiez votre connexion et réessayez."
+  "certificateError": "Le certificat n'a pas pu être téléchargé. Vérifiez votre connexion et réessayez.",
+  "courseOfflineDownload": "Garder sur le téléphone ({n} médias)",
+  "courseOfflineBusy": "Téléchargement en cours",
+  "courseOfflineReady": "Médias disponibles hors ligne",
+  "courseOfflineFailed": "Certains médias n'ont pas été téléchargés. Réessayez avec le réseau.",
+  "courseMediaOffline": "Ce média n'est pas encore sur le téléphone. Il faut le réseau pour l'ouvrir.",
+  "@courseOfflineDownload": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  }
 }

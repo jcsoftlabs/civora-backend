@@ -566,5 +566,10 @@
   "profileOfflineEdit": "San rezo : fich ou parèt, men fòk gen rezo pou chanje l.",
   "memberSince": "Manm depi {date}",
   "certificateDownload": "Telechaje sètifika mwen",
-  "certificateError": "Nou pa t ka telechaje sètifika a. Verifye koneksyon ou epi eseye ankò."
+  "certificateError": "Nou pa t ka telechaje sètifika a. Verifye koneksyon ou epi eseye ankò.",
+  "courseOfflineDownload": "Kenbe yo nan telefòn nan ({n} medya)",
+  "courseOfflineBusy": "Telechajman ap fèt",
+  "courseOfflineReady": "Medya yo disponib san rezo",
+  "courseOfflineFailed": "Kèk medya pa t telechaje. Eseye ankò ak rezo.",
+  "courseMediaOffline": "Medya sa a poko nan telefòn nan. Fòk gen rezo pou louvri l."
 }

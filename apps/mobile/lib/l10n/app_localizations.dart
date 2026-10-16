@@ -1831,6 +1831,36 @@ abstract class L {
   /// In fr, this message translates to:
   /// **'Le certificat n\'a pas pu être téléchargé. Vérifiez votre connexion et réessayez.'**
   String get certificateError;
+
+  /// No description provided for @courseOfflineDownload.
+  ///
+  /// In fr, this message translates to:
+  /// **'Garder sur le téléphone ({n} médias)'**
+  String courseOfflineDownload(int n);
+
+  /// No description provided for @courseOfflineBusy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléchargement en cours'**
+  String get courseOfflineBusy;
+
+  /// No description provided for @courseOfflineReady.
+  ///
+  /// In fr, this message translates to:
+  /// **'Médias disponibles hors ligne'**
+  String get courseOfflineReady;
+
+  /// No description provided for @courseOfflineFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Certains médias n\'ont pas été téléchargés. Réessayez avec le réseau.'**
+  String get courseOfflineFailed;
+
+  /// No description provided for @courseMediaOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce média n\'est pas encore sur le téléphone. Il faut le réseau pour l\'ouvrir.'**
+  String get courseMediaOffline;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

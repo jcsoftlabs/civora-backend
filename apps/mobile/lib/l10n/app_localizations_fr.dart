@@ -1002,4 +1002,21 @@ class LFr extends L {
 
   @override
   String get certificateError => 'Le certificat n\'a pas pu être téléchargé. Vérifiez votre connexion et réessayez.';
+
+  @override
+  String courseOfflineDownload(int n) {
+    return 'Garder sur le téléphone ($n médias)';
+  }
+
+  @override
+  String get courseOfflineBusy => 'Téléchargement en cours';
+
+  @override
+  String get courseOfflineReady => 'Médias disponibles hors ligne';
+
+  @override
+  String get courseOfflineFailed => 'Certains médias n\'ont pas été téléchargés. Réessayez avec le réseau.';
+
+  @override
+  String get courseMediaOffline => 'Ce média n\'est pas encore sur le téléphone. Il faut le réseau pour l\'ouvrir.';
 }

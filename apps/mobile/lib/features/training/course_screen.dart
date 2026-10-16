@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,6 +12,8 @@ import '../../core/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../widgets/objects.dart';
 import 'certificate.dart';
+import 'offline_media.dart';
+import '../../core/sync.dart';
 
 /// Une formation : modules dans l'ordre, verrouillés tant que le précédent n'est pas réussi (FOR-01) ;
 /// chapitres à lire, à regarder ou à ouvrir, marqués « lu » ; quiz du module quand il est ouvert.
@@ -54,6 +58,9 @@ class CourseScreen extends ConsumerWidget {
                   CertificateButton(courseId: id, number: (c['completion'] as Map)['number'] as String),
                 ],
               ],
+              if (l.offline) ...[const SizedBox(height: 16), OfflineBanner(text: t.offline)],
+              const SizedBox(height: 16),
+              CourseOfflineButton(coursePath: path),
               const SizedBox(height: 18),
               for (final m in modules) _Module(module: m, coursePath: path),
             ],
@@ -77,6 +84,7 @@ class _Module extends ConsumerWidget {
     final passed = module['passed'] == true;
     final brand = Theme.of(context).colorScheme.primary;
     final chapters = (module['chapters'] as List).cast<Map>();
+    final pending = ref.watch(syncProvider).pendingIds('training.chapter.view', 'chapterId');
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
@@ -105,7 +113,7 @@ class _Module extends ConsumerWidget {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                 leading: Icon(_icon(ch['kind'] as String?), color: Palette.ink2),
                 title: Text(tr(ch['title'], locale)),
-                trailing: ch['viewed'] == true
+                trailing: ch['viewed'] == true || pending.contains(ch['id'])
                     ? Text(
                         t.courseViewed,
                         style: const TextStyle(color: Palette.success, fontWeight: FontWeight.w600),
@@ -139,18 +147,25 @@ class _Module extends ConsumerWidget {
   };
 
   Future<void> _open(BuildContext context, WidgetRef ref, Map ch) async {
-    // Le chapitre est marqué vu dès qu'il est ouvert (la progression du module en dépend).
-    apiSend(
-      ref,
-      'POST',
-      '/training/chapters/${ch['id']}/view',
-    ).then((_) => ref.invalidate(apiGet(coursePath)), onError: (_) {});
+    // Le chapitre est marqué vu dès qu'il est ouvert (la progression du module en dépend). La saisie passe par la
+    // file du téléphone : sans réseau, elle part plus tard, avec son heure d'origine (NFR-01).
+    unawaited(ref.read(syncProvider.notifier).record('training.chapter.view', {'chapterId': ch['id']}));
     final embed = ch['embedUrl'] as String?;
     final media = ch['media'] as Map?;
+    final slug = ref.read(sessionProvider).value?.slug;
     if (embed != null) {
       await launchUrl(Uri.parse(watchUrl(embed)), mode: LaunchMode.externalApplication);
-    } else if (media?['url'] != null) {
-      await launchUrl(Uri.parse(mediaUrl(media!['url'] as String)), mode: LaunchMode.externalApplication);
+    } else if (media != null) {
+      if (slug != null && await openLocalChapter(context, slug, ch)) return;
+      final opened =
+          media['url'] != null &&
+          await launchUrl(
+            Uri.parse(mediaUrl(media['url'] as String)),
+            mode: LaunchMode.externalApplication,
+          ).catchError((_) => false);
+      if (!opened && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(L.of(context).courseMediaOffline)));
+      }
     } else if (context.mounted) {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => _Reading(chapter: ch)));
     }

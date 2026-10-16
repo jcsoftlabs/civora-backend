@@ -26,6 +26,8 @@ import engagementRoutes from "./modules/engagement/routes.js";
 import { CardTemplateService } from "./modules/members/card-template.js";
 import cardTemplateRoutes from "./modules/members/card-template-routes.js";
 import trainingRoutes from "./modules/training/routes.js";
+import { TrainingService } from "./modules/training/service.js";
+import syncRoutes from "./modules/sync/routes.js";
 import voteRoutes from "./modules/votes/routes.js";
 import partyRoutes from "./modules/parties/routes.js";
 import { PartiesService } from "./modules/parties/service.js";
@@ -182,6 +184,7 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   await app.register(partyRoutes, { parties: partiesService });
   await app.register(biRoutes);
   await app.register(trainingRoutes, { files: filesService });
+  await app.register(syncRoutes, { training: new TrainingService(filesService) });
   await app.register(voteRoutes);
   const cardTemplates = new CardTemplateService(keys, filesService.storage, config.WEB_PARTY_ORIGIN);
   await app.register(cardTemplateRoutes, { templates: cardTemplates });

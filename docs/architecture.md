@@ -178,6 +178,9 @@ En place : `payments.reconcile` (toutes les 5 minutes), `dues.generate` (2 h, he
 - Chaque saisie hors ligne (scan de présence, PV, fiche porte-à-porte) reçoit un UUID généré sur le téléphone et l'horodatage d'origine.
 - L'app envoie une file d'opérations ; l'API applique chaque opération de façon idempotente (clé = UUID) et renvoie l'état.
 - Le scan de présence hors ligne est contrôlé à la synchronisation (fenêtre horaire, jeton de QR valide pour la période).
+- API : `POST /sync` (module `sync`), lots de 50 au plus, `{ deviceId, operations: [{ id, kind, payload, createdAt }] }`. Chaque opération est réservée dans `sync_operations` (clé = UUID, par parti) avant d'être appliquée, puis son résultat y est gardé : un lot rejoué renvoie les mêmes résultats sans second effet. Appliquées dans l'ordre d'origine. Un UUID déjà utilisé par un autre membre, pour une autre sorte d'opération ou dans un autre parti est refusé (`operation_conflict`). Une opération refusée n'arrête pas le lot. Sortes : `training.chapter.view` (FOR-01) ; la présence (PRE-04) et les PV (ELE-10) s'y ajouteront.
+- App : file par organisation dans le stockage de l'application (`lib/core/sync.dart`), écrite de façon atomique ; envoi à l'ouverture, au retour au premier plan, toutes les deux minutes et après chaque saisie. Une saisie en attente s'affiche déjà prise en compte ; une saisie refusée garde son motif et n'est plus renvoyée.
+- Préchargement (NFR-01) : à l'ouverture et au retour au premier plan (dix minutes d'écart au moins), l'app garde la session, la fiche, la carte et son modèle, les cotisations, les points, l'agenda, les votes, les actualités et chaque formation avec ses textes. Les médias des formations (audio, vidéo envoyée, documents) se gardent depuis l'écran de la formation ; les podcasts depuis leur carte. Les vidéos YouTube et Vimeo demandent le réseau.
 
 ## 9. Présence par QR
 

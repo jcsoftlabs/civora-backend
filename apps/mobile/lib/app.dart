@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import 'core/state.dart';
 import 'core/storage.dart';
+import 'core/sync.dart';
 import 'core/theme.dart';
 import 'features/me/profile_screen.dart';
 import 'features/act/dues_screen.dart';
@@ -142,6 +143,7 @@ class CivoraApp extends ConsumerWidget {
         _FallbackDelegate<WidgetsLocalizations>(GlobalWidgetsLocalizations.delegate),
       ],
       routerConfig: ref.watch(_routerProvider),
+      builder: (context, child) => SyncScope(child: child ?? const SizedBox.shrink()),
     );
   }
 }

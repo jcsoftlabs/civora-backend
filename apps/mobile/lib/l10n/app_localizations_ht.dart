@@ -994,4 +994,21 @@ class LHt extends L {
 
   @override
   String get certificateError => 'Nou pa t ka telechaje sètifika a. Verifye koneksyon ou epi eseye ankò.';
+
+  @override
+  String courseOfflineDownload(int n) {
+    return 'Kenbe yo nan telefòn nan ($n medya)';
+  }
+
+  @override
+  String get courseOfflineBusy => 'Telechajman ap fèt';
+
+  @override
+  String get courseOfflineReady => 'Medya yo disponib san rezo';
+
+  @override
+  String get courseOfflineFailed => 'Kèk medya pa t telechaje. Eseye ankò ak rezo.';
+
+  @override
+  String get courseMediaOffline => 'Medya sa a poko nan telefòn nan. Fòk gen rezo pou louvri l.';
 }
