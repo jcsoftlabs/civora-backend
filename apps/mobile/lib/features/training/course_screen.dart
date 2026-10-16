@@ -9,6 +9,7 @@ import '../../core/state.dart';
 import '../../core/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../widgets/objects.dart';
+import 'certificate.dart';
 
 /// Une formation : modules dans l'ordre, verrouillés tant que le précédent n'est pas réussi (FOR-01) ;
 /// chapitres à lire, à regarder ou à ouvrir, marqués « lu » ; quiz du module quand il est ouvert.
@@ -39,15 +40,19 @@ class CourseScreen extends ConsumerWidget {
                 const SizedBox(height: 6),
                 Text(tr(c['description'], locale), style: const TextStyle(color: Palette.ink2, height: 1.45)),
               ],
-              if ((c['completion'] as Map?)?['certificateNumber'] != null) ...[
+              if ((c['completion'] as Map?)?['number'] != null) ...[
                 const SizedBox(height: 16),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Stamp(
                     text: t.carnetCertified,
-                    date: t.quizCertificate((c['completion'] as Map)['certificateNumber'] as String),
+                    date: t.quizCertificate((c['completion'] as Map)['number'] as String),
                   ),
                 ),
+                if (c['certificates'] == true) ...[
+                  const SizedBox(height: 16),
+                  CertificateButton(courseId: id, number: (c['completion'] as Map)['number'] as String),
+                ],
               ],
               const SizedBox(height: 18),
               for (final m in modules) _Module(module: m, coursePath: path),

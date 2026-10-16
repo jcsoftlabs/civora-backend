@@ -988,4 +988,10 @@ class LHt extends L {
   String memberSince(String date) {
     return 'Manm depi $date';
   }
+
+  @override
+  String get certificateDownload => 'Telechaje sètifika mwen';
+
+  @override
+  String get certificateError => 'Nou pa t ka telechaje sètifika a. Verifye koneksyon ou epi eseye ankò.';
 }

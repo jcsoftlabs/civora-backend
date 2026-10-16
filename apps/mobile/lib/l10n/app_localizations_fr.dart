@@ -996,4 +996,10 @@ class LFr extends L {
   String memberSince(String date) {
     return 'Membre depuis le $date';
   }
+
+  @override
+  String get certificateDownload => 'Télécharger mon certificat';
+
+  @override
+  String get certificateError => 'Le certificat n\'a pas pu être téléchargé. Vérifiez votre connexion et réessayez.';
 }

@@ -581,5 +581,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "certificateDownload": "Télécharger mon certificat",
+  "certificateError": "Le certificat n'a pas pu être téléchargé. Vérifiez votre connexion et réessayez."
 }

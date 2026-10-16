@@ -564,5 +564,7 @@
   "profileLocation": "Kote",
   "profileZoneChange": "Chanje kote",
   "profileOfflineEdit": "San rezo : fich ou parèt, men fòk gen rezo pou chanje l.",
-  "memberSince": "Manm depi {date}"
+  "memberSince": "Manm depi {date}",
+  "certificateDownload": "Telechaje sètifika mwen",
+  "certificateError": "Nou pa t ka telechaje sètifika a. Verifye koneksyon ou epi eseye ankò."
 }

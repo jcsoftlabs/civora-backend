@@ -358,6 +358,10 @@ describe("formations (FOR-01 à FOR-04)", () => {
     ).toMatchObject({ code: "module_already_passed" });
     const list = (await call("GET", "/training", paul.token)).json().courses;
     expect(list.find((c: { id: string }) => c.id === course.id)).toMatchObject({ completed: true, passedModules: 2 });
+    // FOR-04 : l'app sait si la formule du parti comprend le certificat avant de le proposer.
+    const seen = (await call("GET", `/training/${course.id}`, paul.token)).json();
+    expect(seen.completion.number).toBe(`${year}-000001`);
+    expect(typeof seen.certificates).toBe("boolean");
   });
 
   it("chaque parti règle son certificat : textes, couleur, logo, signataires avec signature", async () => {

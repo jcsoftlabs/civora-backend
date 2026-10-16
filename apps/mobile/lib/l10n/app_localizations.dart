@@ -1819,6 +1819,18 @@ abstract class L {
   /// In fr, this message translates to:
   /// **'Membre depuis le {date}'**
   String memberSince(String date);
+
+  /// No description provided for @certificateDownload.
+  ///
+  /// In fr, this message translates to:
+  /// **'Télécharger mon certificat'**
+  String get certificateDownload;
+
+  /// No description provided for @certificateError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le certificat n\'a pas pu être téléchargé. Vérifiez votre connexion et réessayez.'**
+  String get certificateError;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

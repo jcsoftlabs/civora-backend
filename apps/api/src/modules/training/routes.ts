@@ -1,4 +1,5 @@
 import type { FastifyInstance } from "fastify";
+import { can } from "@civora/shared";
 import { messageLocale } from "../../lib/messaging/templates.js";
 import { requireAuth } from "../../plugins/auth.js";
 import { requireFeature } from "../../plugins/tenant.js";
@@ -71,7 +72,11 @@ export default async function trainingRoutes(app: FastifyInstance, opts: { files
 
   // Membre
   app.get("/training", guard, async (req) => ({ courses: await svc.myCourses(req) }));
-  app.get("/training/:id", guard, async (req) => svc.myCourse(req, id(req.params)));
+  // FOR-04 : l'app ne propose le certificat que si la formule du parti le comprend.
+  app.get("/training/:id", guard, async (req) => ({
+    ...(await svc.myCourse(req, id(req.params))),
+    certificates: !!req.partyEntitlements && can(req.partyEntitlements, "training.certificates"),
+  }));
   app.post("/training/chapters/:id/view", guard, async (req) => svc.markViewed(req, id(req.params)));
   app.post(
     "/training/modules/:id/attempt",
