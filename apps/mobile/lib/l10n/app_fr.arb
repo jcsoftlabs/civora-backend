@@ -158,7 +158,7 @@
       }
     }
   },
-  "profileTitle": "Profil",
+  "profileTitle": "Ma fiche",
   "profileLanguage": "Langue",
   "profileLogout": "Se déconnecter",
   "profileOrganization": "Organisation",
@@ -537,6 +537,47 @@
         "type": "String"
       },
       "author": {
+        "type": "String"
+      }
+    }
+  },
+  "adhesionMore": "Compléter ma fiche maintenant",
+  "adhesionMoreHelp": "Facultatif : vous pourrez le faire plus tard depuis votre fiche.",
+  "phoneLabel": "Téléphone ou WhatsApp",
+  "phoneHelp": "Avec l'indicatif du pays, par exemple +509 3712 3456.",
+  "birthDateLabel": "Date de naissance",
+  "birthDateNone": "Non renseignée",
+  "birthDatePick": "Choisir",
+  "referentLabel": "Personne référente",
+  "referentHelp": "Numéro de membre d'une personne du parti qui vous connaît.",
+  "referentNone": "Aucune",
+  "referentRemove": "Retirer",
+  "identityLabel": "Pièce d'identité",
+  "identityKindNin": "NIN, carte d'identification nationale",
+  "identityKindNif": "NIF",
+  "identityKindPassport": "Passeport",
+  "identityKindSsn": "SSN, États-Unis",
+  "identityNumber": "Numéro de la pièce",
+  "identityNote": "Le numéro est chiffré dès l'envoi. Personne ne le lit sans une autorisation tracée, et l'application ne l'affiche jamais.",
+  "identityAdd": "Ajouter une pièce",
+  "identityNone": "Aucune pièce enregistrée.",
+  "identitySaved": "Pièce enregistrée et chiffrée",
+  "errorPhone": "Saisissez le numéro avec l'indicatif, par exemple +509 3712 3456.",
+  "errorIdentityValue": "Saisissez le numéro complet de la pièce.",
+  "errorIdentityDuplicate": "Ce numéro de pièce est déjà enregistré dans le parti. Contactez le responsable de votre section.",
+  "errorIdentityExists": "Vous avez déjà enregistré une pièce de ce type.",
+  "errorReferentNotFound": "Aucun membre validé ne porte ce numéro.",
+  "profileOpen": "Voir et modifier ma fiche",
+  "profileSave": "Enregistrer",
+  "profileSaved": "Fiche enregistrée",
+  "profileEmailHelp": "Elle sert à vous connecter. Pour la changer, contactez le responsable de votre section.",
+  "profileLocation": "Lieu",
+  "profileZoneChange": "Changer de lieu",
+  "profileOfflineEdit": "Hors ligne : votre fiche s'affiche, mais il faut le réseau pour la modifier.",
+  "memberSince": "Membre depuis le {date}",
+  "@memberSince": {
+    "placeholders": {
+      "date": {
         "type": "String"
       }
     }

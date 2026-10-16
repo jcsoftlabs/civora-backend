@@ -521,7 +521,7 @@ abstract class L {
   /// No description provided for @profileTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Profil'**
+  /// **'Ma fiche'**
   String get profileTitle;
 
   /// No description provided for @profileLanguage.
@@ -1615,6 +1615,210 @@ abstract class L {
   /// In fr, this message translates to:
   /// **'Article'**
   String get newsArticle;
+
+  /// No description provided for @adhesionMore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compléter ma fiche maintenant'**
+  String get adhesionMore;
+
+  /// No description provided for @adhesionMoreHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Facultatif : vous pourrez le faire plus tard depuis votre fiche.'**
+  String get adhesionMoreHelp;
+
+  /// No description provided for @phoneLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléphone ou WhatsApp'**
+  String get phoneLabel;
+
+  /// No description provided for @phoneHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avec l\'indicatif du pays, par exemple +509 3712 3456.'**
+  String get phoneHelp;
+
+  /// No description provided for @birthDateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date de naissance'**
+  String get birthDateLabel;
+
+  /// No description provided for @birthDateNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non renseignée'**
+  String get birthDateNone;
+
+  /// No description provided for @birthDatePick.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir'**
+  String get birthDatePick;
+
+  /// No description provided for @referentLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personne référente'**
+  String get referentLabel;
+
+  /// No description provided for @referentHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numéro de membre d\'une personne du parti qui vous connaît.'**
+  String get referentHelp;
+
+  /// No description provided for @referentNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune'**
+  String get referentNone;
+
+  /// No description provided for @referentRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get referentRemove;
+
+  /// No description provided for @identityLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pièce d\'identité'**
+  String get identityLabel;
+
+  /// No description provided for @identityKindNin.
+  ///
+  /// In fr, this message translates to:
+  /// **'NIN, carte d\'identification nationale'**
+  String get identityKindNin;
+
+  /// No description provided for @identityKindNif.
+  ///
+  /// In fr, this message translates to:
+  /// **'NIF'**
+  String get identityKindNif;
+
+  /// No description provided for @identityKindPassport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passeport'**
+  String get identityKindPassport;
+
+  /// No description provided for @identityKindSsn.
+  ///
+  /// In fr, this message translates to:
+  /// **'SSN, États-Unis'**
+  String get identityKindSsn;
+
+  /// No description provided for @identityNumber.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numéro de la pièce'**
+  String get identityNumber;
+
+  /// No description provided for @identityNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le numéro est chiffré dès l\'envoi. Personne ne le lit sans une autorisation tracée, et l\'application ne l\'affiche jamais.'**
+  String get identityNote;
+
+  /// No description provided for @identityAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une pièce'**
+  String get identityAdd;
+
+  /// No description provided for @identityNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune pièce enregistrée.'**
+  String get identityNone;
+
+  /// No description provided for @identitySaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pièce enregistrée et chiffrée'**
+  String get identitySaved;
+
+  /// No description provided for @errorPhone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez le numéro avec l\'indicatif, par exemple +509 3712 3456.'**
+  String get errorPhone;
+
+  /// No description provided for @errorIdentityValue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisissez le numéro complet de la pièce.'**
+  String get errorIdentityValue;
+
+  /// No description provided for @errorIdentityDuplicate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce numéro de pièce est déjà enregistré dans le parti. Contactez le responsable de votre section.'**
+  String get errorIdentityDuplicate;
+
+  /// No description provided for @errorIdentityExists.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez déjà enregistré une pièce de ce type.'**
+  String get errorIdentityExists;
+
+  /// No description provided for @errorReferentNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun membre validé ne porte ce numéro.'**
+  String get errorReferentNotFound;
+
+  /// No description provided for @profileOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir et modifier ma fiche'**
+  String get profileOpen;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get profileSave;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fiche enregistrée'**
+  String get profileSaved;
+
+  /// No description provided for @profileEmailHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Elle sert à vous connecter. Pour la changer, contactez le responsable de votre section.'**
+  String get profileEmailHelp;
+
+  /// No description provided for @profileLocation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lieu'**
+  String get profileLocation;
+
+  /// No description provided for @profileZoneChange.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer de lieu'**
+  String get profileZoneChange;
+
+  /// No description provided for @profileOfflineEdit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors ligne : votre fiche s\'affiche, mais il faut le réseau pour la modifier.'**
+  String get profileOfflineEdit;
+
+  /// No description provided for @memberSince.
+  ///
+  /// In fr, this message translates to:
+  /// **'Membre depuis le {date}'**
+  String memberSince(String date);
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

@@ -63,6 +63,12 @@ class MeScreen extends ConsumerWidget {
             ),
           ],
         ),
+        const SizedBox(height: Space.l),
+        OutlinedButton.icon(
+          onPressed: () => context.push('/fiche'),
+          icon: const Icon(Icons.badge_outlined),
+          label: Text(t.profileOpen),
+        ),
         if (referrals?['enabled'] == true) ReferralPanel(data: referrals!, partyName: party?['name'] as String? ?? ''),
         if (points?['enabled'] == true) PointsList(data: points!, limit: 4),
         const _Carnet(),

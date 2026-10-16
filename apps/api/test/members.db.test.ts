@@ -246,6 +246,55 @@ describe("fiche membre et statuts (ADH-02, ADH-03)", () => {
     expect(me.phone).toBe("+50937009999");
   });
 
+  it("le membre ajoute sa pièce d'identité une fois, chiffrée, et choisit sa personne référente", async () => {
+    const res = await inject("PATCH", "/members/me", { identity: { kind: "nin", value: "003-456-789-1" } }, marieToken);
+    expect(res.statusCode).toBe(204);
+    const me = (await inject("GET", "/members/me", undefined, marieToken)).json();
+    expect(me.identities).toContainEqual({ id: expect.any(String), kind: "nin" });
+    expect(JSON.stringify(me)).not.toContain("003-456-789-1");
+    // Une seule pièce par type ; le numéro n'est jamais conservé en clair.
+    expect(
+      (await inject("PATCH", "/members/me", { identity: { kind: "nin", value: "009-999-999-9" } }, marieToken)).json()
+        .code,
+    ).toBe("identity_exists");
+    const rows = await owner.begin(async (sql) => {
+      await sql`select set_config('app.party_id', ${A}, true)`;
+      return sql`select value_encrypted::text as c from member_identities where party_id = ${A} and member_id = ${marieId}
+        and kind = 'nin'`;
+    });
+    expect(rows).toHaveLength(1);
+    expect(String(rows[0]!.c)).not.toContain("003-456-789-1");
+    expect(String(rows[0]!.c)).not.toContain("0034567891");
+    const [log] =
+      await owner`select metadata from audit_log where action = 'member.identity.add' and target_id = ${marieId}`;
+    expect(log?.metadata).toEqual({ kind: "nin" });
+
+    // Référent : un membre validé, jamais soi-même ; « null » le retire.
+    const [other] = await owner.begin(async (sql) => {
+      await sql`select set_config('app.party_id', ${A}, true)`;
+      // Un numéro porté par un seul membre du parti (les fabriques de test en réutilisent certains).
+      return sql`select member_number from members where party_id = ${A} and id <> ${marieId}
+        and application_state = 'approved' and deleted_at is null and member_number in
+          (select member_number from members where party_id = ${A} group by 1 having count(*) = 1)
+        limit 1`;
+    });
+    const mine = (await inject("GET", "/members/me", undefined, marieToken)).json().memberNumber as string;
+    expect((await inject("PATCH", "/members/me", { referentMemberNumber: mine }, marieToken)).json().code).toBe(
+      "referent_not_found",
+    );
+    expect((await inject("PATCH", "/members/me", { referentMemberNumber: "999999999" }, marieToken)).json().code).toBe(
+      "referent_not_found",
+    );
+    expect(
+      (await inject("PATCH", "/members/me", { referentMemberNumber: other!.member_number }, marieToken)).statusCode,
+    ).toBe(204);
+    expect((await inject("GET", "/members/me", undefined, marieToken)).json().referent.number).toBe(
+      other!.member_number,
+    );
+    await inject("PATCH", "/members/me", { referentMemberNumber: null }, marieToken);
+    expect((await inject("GET", "/members/me", undefined, marieToken)).json().referent).toBeNull();
+  });
+
   it("seul un responsable national crée les statuts, en français et en créole", async () => {
     expect(
       (await inject("POST", "/member-statuses", { label: { fr: "Militant" }, rank: 1 }, pvCoordinator)).statusCode,

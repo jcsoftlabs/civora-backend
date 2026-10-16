@@ -14,6 +14,9 @@ String errorText(L t, Object e) {
     'sponsor_required' => t.errorSponsorRequired,
     'already_member' => t.errorAlreadyMember,
     'zone_too_broad' => t.errorZoneTooBroad,
+    'identity_duplicate' => t.errorIdentityDuplicate,
+    'identity_exists' => t.errorIdentityExists,
+    'referent_not_found' => t.errorReferentNotFound,
     _ => t.errorGeneric,
   };
 }

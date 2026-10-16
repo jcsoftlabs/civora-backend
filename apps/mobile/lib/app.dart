@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'core/state.dart';
 import 'core/storage.dart';
 import 'core/theme.dart';
+import 'features/me/profile_screen.dart';
 import 'features/act/dues_screen.dart';
 import 'features/act/events_screen.dart';
 import 'features/home/card_screen.dart';
@@ -81,6 +82,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/accueil', builder: (_, _) => const HomeShell()),
       GoRoute(path: '/carte', builder: (_, _) => const CardScreen()),
       GoRoute(path: '/points', builder: (_, _) => const PointsScreen()),
+      GoRoute(path: '/fiche', builder: (_, _) => const ProfileScreen()),
       GoRoute(path: '/parrainage', builder: (_, _) => const ReferralScreen()),
       GoRoute(path: '/votes', builder: (_, _) => const VotesScreen()),
       GoRoute(

@@ -76,6 +76,10 @@ String formatDay(DateTime instant, String locale) {
   return '${t.day} ${(locale == 'ht' ? _monthsHt : _monthsFr)[t.month - 1]}';
 }
 
+/// Date du calendrier, sans heure ni fuseau (date de naissance) : « 17 octobre 1990 ».
+String formatDate(DateTime date, String locale) =>
+    '${date.day} ${(locale == 'ht' ? _monthsHt : _monthsFr)[date.month - 1]} ${date.year}';
+
 /// Année en cours à l'heure d'Haïti.
 int haitiYear([DateTime? now]) => haitiTime(now ?? DateTime.now()).year;
 

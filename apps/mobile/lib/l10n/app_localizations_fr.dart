@@ -251,7 +251,7 @@ class LFr extends L {
   }
 
   @override
-  String get profileTitle => 'Profil';
+  String get profileTitle => 'Ma fiche';
 
   @override
   String get profileLanguage => 'Langue';
@@ -889,4 +889,111 @@ class LFr extends L {
 
   @override
   String get newsArticle => 'Article';
+
+  @override
+  String get adhesionMore => 'Compléter ma fiche maintenant';
+
+  @override
+  String get adhesionMoreHelp => 'Facultatif : vous pourrez le faire plus tard depuis votre fiche.';
+
+  @override
+  String get phoneLabel => 'Téléphone ou WhatsApp';
+
+  @override
+  String get phoneHelp => 'Avec l\'indicatif du pays, par exemple +509 3712 3456.';
+
+  @override
+  String get birthDateLabel => 'Date de naissance';
+
+  @override
+  String get birthDateNone => 'Non renseignée';
+
+  @override
+  String get birthDatePick => 'Choisir';
+
+  @override
+  String get referentLabel => 'Personne référente';
+
+  @override
+  String get referentHelp => 'Numéro de membre d\'une personne du parti qui vous connaît.';
+
+  @override
+  String get referentNone => 'Aucune';
+
+  @override
+  String get referentRemove => 'Retirer';
+
+  @override
+  String get identityLabel => 'Pièce d\'identité';
+
+  @override
+  String get identityKindNin => 'NIN, carte d\'identification nationale';
+
+  @override
+  String get identityKindNif => 'NIF';
+
+  @override
+  String get identityKindPassport => 'Passeport';
+
+  @override
+  String get identityKindSsn => 'SSN, États-Unis';
+
+  @override
+  String get identityNumber => 'Numéro de la pièce';
+
+  @override
+  String get identityNote =>
+      'Le numéro est chiffré dès l\'envoi. Personne ne le lit sans une autorisation tracée, et l\'application ne l\'affiche jamais.';
+
+  @override
+  String get identityAdd => 'Ajouter une pièce';
+
+  @override
+  String get identityNone => 'Aucune pièce enregistrée.';
+
+  @override
+  String get identitySaved => 'Pièce enregistrée et chiffrée';
+
+  @override
+  String get errorPhone => 'Saisissez le numéro avec l\'indicatif, par exemple +509 3712 3456.';
+
+  @override
+  String get errorIdentityValue => 'Saisissez le numéro complet de la pièce.';
+
+  @override
+  String get errorIdentityDuplicate =>
+      'Ce numéro de pièce est déjà enregistré dans le parti. Contactez le responsable de votre section.';
+
+  @override
+  String get errorIdentityExists => 'Vous avez déjà enregistré une pièce de ce type.';
+
+  @override
+  String get errorReferentNotFound => 'Aucun membre validé ne porte ce numéro.';
+
+  @override
+  String get profileOpen => 'Voir et modifier ma fiche';
+
+  @override
+  String get profileSave => 'Enregistrer';
+
+  @override
+  String get profileSaved => 'Fiche enregistrée';
+
+  @override
+  String get profileEmailHelp =>
+      'Elle sert à vous connecter. Pour la changer, contactez le responsable de votre section.';
+
+  @override
+  String get profileLocation => 'Lieu';
+
+  @override
+  String get profileZoneChange => 'Changer de lieu';
+
+  @override
+  String get profileOfflineEdit => 'Hors ligne : votre fiche s\'affiche, mais il faut le réseau pour la modifier.';
+
+  @override
+  String memberSince(String date) {
+    return 'Membre depuis le $date';
+  }
 }

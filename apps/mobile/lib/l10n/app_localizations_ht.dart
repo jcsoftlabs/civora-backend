@@ -247,7 +247,7 @@ class LHt extends L {
   }
 
   @override
-  String get profileTitle => 'Pwofil';
+  String get profileTitle => 'Fich mwen';
 
   @override
   String get profileLanguage => 'Lang';
@@ -883,4 +883,109 @@ class LHt extends L {
 
   @override
   String get newsArticle => 'Atik';
+
+  @override
+  String get adhesionMore => 'Konplete fich mwen kounye a';
+
+  @override
+  String get adhesionMoreHelp => 'Si w vle : ou ka fè l pita nan fich ou.';
+
+  @override
+  String get phoneLabel => 'Telefòn oswa WhatsApp';
+
+  @override
+  String get phoneHelp => 'Ak endikatif peyi a, pa egzanp +509 3712 3456.';
+
+  @override
+  String get birthDateLabel => 'Dat nesans';
+
+  @override
+  String get birthDateNone => 'Pa ranpli';
+
+  @override
+  String get birthDatePick => 'Chwazi';
+
+  @override
+  String get referentLabel => 'Moun referans';
+
+  @override
+  String get referentHelp => 'Nimewo manm yon moun nan pati a ki konnen w.';
+
+  @override
+  String get referentNone => 'Okenn';
+
+  @override
+  String get referentRemove => 'Retire';
+
+  @override
+  String get identityLabel => 'Pyès idantite';
+
+  @override
+  String get identityKindNin => 'NIN, kat idantifikasyon nasyonal';
+
+  @override
+  String get identityKindNif => 'NIF';
+
+  @override
+  String get identityKindPassport => 'Paspò';
+
+  @override
+  String get identityKindSsn => 'SSN, Etazini';
+
+  @override
+  String get identityNumber => 'Nimewo pyès la';
+
+  @override
+  String get identityNote =>
+      'Nimewo a chiffre depi li pati. Pèsonn pa li l san yon otorizasyon ki make, epi aplikasyon an pa janm montre l.';
+
+  @override
+  String get identityAdd => 'Ajoute yon pyès';
+
+  @override
+  String get identityNone => 'Pa gen pyès ki anrejistre.';
+
+  @override
+  String get identitySaved => 'Pyès la anrejistre e li chiffre';
+
+  @override
+  String get errorPhone => 'Ekri nimewo a ak endikatif la, pa egzanp +509 3712 3456.';
+
+  @override
+  String get errorIdentityValue => 'Ekri tout nimewo pyès la.';
+
+  @override
+  String get errorIdentityDuplicate => 'Nimewo pyès sa a deja anrejistre nan pati a. Kontakte responsab seksyon ou.';
+
+  @override
+  String get errorIdentityExists => 'Ou deja anrejistre yon pyès kalite sa a.';
+
+  @override
+  String get errorReferentNotFound => 'Pa gen manm valide ki gen nimewo sa a.';
+
+  @override
+  String get profileOpen => 'Wè epi chanje fich mwen';
+
+  @override
+  String get profileSave => 'Anrejistre';
+
+  @override
+  String get profileSaved => 'Fich la anrejistre';
+
+  @override
+  String get profileEmailHelp => 'Se li ki sèvi pou w konekte. Pou chanje l, kontakte responsab seksyon ou.';
+
+  @override
+  String get profileLocation => 'Kote';
+
+  @override
+  String get profileZoneChange => 'Chanje kote';
+
+  @override
+  String get profileOfflineEdit => 'San rezo : fich ou parèt, men fòk gen rezo pou chanje l.';
+
+  @override
+  String memberSince(String date) {
+    return 'Manm depi $date';
+  }
 }

@@ -308,6 +308,23 @@ export class MembersService {
   async updateMe(req: Req, body: z.infer<typeof meUpdate>) {
     await withParty(req.partyId, async (tx) => {
       const zone = body.zoneCode ? await memberZone(tx, body.zoneCode) : null;
+      let referentId: string | null | undefined;
+      if (body.referentMemberNumber !== undefined) {
+        const referent = body.referentMemberNumber ? await approvedMemberByNumber(tx, body.referentMemberNumber) : null;
+        if (body.referentMemberNumber && (!referent || referent.id === req.memberId))
+          throw new ApiError(400, "referent_not_found");
+        referentId = referent?.id ?? null;
+      }
+      if (body.identity) {
+        const [same] = await tx
+          .select({ id: memberIdentities.id })
+          .from(memberIdentities)
+          .where(and(eq(memberIdentities.memberId, req.memberId!), eq(memberIdentities.kind, body.identity.kind)));
+        if (same) throw new ApiError(409, "identity_exists");
+        const owners = await this.identity.findDuplicates(tx, req.partyId, body.identity.kind, body.identity.value);
+        // Ne dit pas à qui appartient le numéro : la fusion est l'affaire d'un responsable (ADH-08).
+        if (owners.some((id) => id !== req.memberId)) throw new ApiError(409, "identity_duplicate");
+      }
       await tx
         .update(members)
         .set({
@@ -318,9 +335,21 @@ export class MembersService {
             : {}),
           ...(body.phone !== undefined ? { phoneE164: body.phone } : {}),
           ...(zone ? { zoneId: zone.id, isDiaspora: zone.isDiaspora, residenceCountry: zone.residenceCountry } : {}),
+          ...(referentId !== undefined ? { referentMemberId: referentId } : {}),
           updatedAt: new Date(),
         })
         .where(eq(members.id, req.memberId!));
+      if (body.identity) {
+        await this.identity.store(tx, req.partyId, req.memberId!, body.identity.kind, body.identity.value);
+        await audit(tx, {
+          ...actor(req),
+          action: "member.identity.add",
+          targetType: "member",
+          targetId: req.memberId!,
+          // Le type seulement : jamais le numéro (SEC-02).
+          metadata: { kind: body.identity.kind },
+        });
+      }
     });
   }
 

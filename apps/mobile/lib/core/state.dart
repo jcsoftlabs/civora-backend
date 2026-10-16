@@ -116,5 +116,10 @@ Future<Map<String, dynamic>> apiSend(WidgetRef ref, String method, String path, 
   final s = ref.read(sessionProvider).value;
   if (s == null) throw ApiError(401, 'unauthenticated');
   final c = ApiClient(token: s.token);
-  return method == 'DELETE' ? c.delete(path) : c.post(path, body);
+  return switch (method) {
+    'DELETE' => c.delete(path),
+    'PATCH' => c.patch(path, body),
+    'PUT' => c.put(path, body),
+    _ => c.post(path, body),
+  };
 }

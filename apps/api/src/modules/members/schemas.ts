@@ -49,6 +49,10 @@ export const meUpdate = z
     birthDate: z.coerce.date().nullable(),
     zoneCode,
     phone: phone.nullable(),
+    /** Personne référente (ADH-02) : un membre validé du parti, ou personne. */
+    referentMemberNumber: memberNumber.nullable(),
+    /** Pièce d'identité ajoutée par le membre (ADH-01) : chiffrée, une seule par type, jamais relue par l'app. */
+    identity: z.object({ kind: z.enum(IDENTITY_KINDS), value: z.string().min(4).max(40) }),
   })
   .partial();
 
