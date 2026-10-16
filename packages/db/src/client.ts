@@ -50,6 +50,24 @@ export async function withConsole<T>(fn: (tx: Tx) => Promise<T>): Promise<T> {
   });
 }
 
+/**
+ * NFR-07 : état du service pour la supervision. Aucune donnée de parti : la base répond, et le worker a terminé
+ * récemment un de ses jobs à la minute (file pg-boss, lisible par civora_app).
+ */
+export async function serviceHealth(): Promise<{ database: boolean; workerLastRunAt: Date | null }> {
+  try {
+    const rows = await db.execute<{ last: Date | string | null }>(
+      sql`select max(completed_on) as last from pgboss.job
+          where name in ('notifications.fanout', 'import.members') and state = 'completed'
+            and completed_on > now() - interval '1 day'`,
+    );
+    const last = rows[0]?.last ?? null;
+    return { database: true, workerLastRunAt: last ? new Date(last) : null };
+  } catch {
+    return { database: false, workerLastRunAt: null };
+  }
+}
+
 /** Ferme le pool (arrêt du processus, fin des tests). */
 export async function closeDb(): Promise<void> {
   await client.end({ timeout: 5 });

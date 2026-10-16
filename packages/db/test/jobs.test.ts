@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { sql } from "drizzle-orm";
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { closeDb, db, listPartyIdsForJobs } from "../src/client.js";
+import { closeDb, db, listPartyIdsForJobs, serviceHealth } from "../src/client.js";
 
 const owner = postgres(process.env.DATABASE_URL_MIGRATOR ?? "", { max: 1, onnotice: () => {} });
 const A = randomUUID();
@@ -34,5 +34,19 @@ describe("job_party_ids", () => {
     await expect(db.execute(sql`create table public.essai_droits (x int)`)).rejects.toThrow();
     const queues = await db.execute<{ name: string }>(sql`select name from pgboss.queue`);
     expect(queues.map((q) => q.name)).toEqual(expect.arrayContaining(["payments.reconcile", "dues.generate"]));
+  });
+
+  it("la file interne des planifications existe : sans elle, aucun job planifié ne part", async () => {
+    const queues = await db.execute<{ name: string }>(sql`select name from pgboss.queue`);
+    expect(queues.map((q) => q.name)).toContain("__pgboss__send-it");
+    // Le worker y dépose et y lit les planifications avec le rôle applicatif.
+    await expect(
+      db.execute(sql`select count(*) from pgboss.job where name = '__pgboss__send-it'`),
+    ).resolves.toBeDefined();
+  });
+
+  it("la sonde de supervision répond avec le rôle applicatif", async () => {
+    const h = await serviceHealth();
+    expect(h.database).toBe(true);
   });
 });

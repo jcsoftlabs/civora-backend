@@ -10,6 +10,8 @@ import { randomBytes } from "node:crypto";
 import type { KeyProvider } from "./lib/crypto.js";
 import { EntitlementsCache, fetchEntitlements } from "./lib/entitlements.js";
 import { LazyKeyProvider } from "./lib/lazy-key-provider.js";
+import { serviceHealth } from "@civora/db";
+import { LatencyWindow } from "./lib/latency.js";
 import { configureBrands } from "./lib/messaging/brand.js";
 import { configureMail } from "./lib/messaging/mail.js";
 import { LogEmailSender, ResendEmailSender, type EmailSender } from "./lib/messaging/email.js";
@@ -74,6 +76,8 @@ export interface AppDeps {
   push?: PushSender;
   storage?: ObjectStorage;
   credentials?: CredentialStore;
+  /** Sonde de l'état du service (tests) ; par défaut, la base réelle. */
+  health?: typeof serviceHealth;
 }
 
 export async function buildApp(config: Config, deps: AppDeps = {}) {
@@ -223,6 +227,26 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   });
 
   app.get("/health", async () => ({ ok: true }));
+
+  // NFR-07 : état détaillé pour la supervision et la page de statut. 503 si la base ou le worker ne suivent plus.
+  // NFR-04 : temps de réponse mesurés sur les 15 dernières minutes (hors sondes).
+  const latency = new LatencyWindow();
+  app.addHook("onResponse", async (req, reply) => {
+    if (!req.url.startsWith("/health")) latency.record(reply.elapsedTime);
+  });
+  app.get("/health/status", async (_req, reply) => {
+    const h = await (deps.health ?? serviceHealth)();
+    const workerOk = !!h.workerLastRunAt && Date.now() - h.workerLastRunAt.getTime() < 10 * 60_000;
+    const ok = h.database && workerOk;
+    return reply
+      .code(ok ? 200 : 503)
+      .header("cache-control", "no-store")
+      .send({
+        status: ok ? "ok" : "degraded",
+        checks: { database: h.database ? "ok" : "down", worker: workerOk ? "ok" : "late" },
+        latency: latency.summary(),
+      });
+  });
 
   // Les modules sont enregistrés ici au fur et à mesure (voir apps/api/CLAUDE.md).
 

@@ -9,5 +9,6 @@ export {
   listPartyIdsForJobs,
   closeDb,
   assertAppRole,
+  serviceHealth,
   type Tx,
 } from "./client.js";
