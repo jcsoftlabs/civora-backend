@@ -105,6 +105,19 @@ class BannerPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Écran ouvert par-dessus un autre (Ma fiche, adhésion) : retour en haut à gauche, 44 px.
+                    if (ModalRoute.of(context)?.canPop ?? false) ...[
+                      Transform.translate(
+                        offset: const Offset(-12, 0),
+                        child: IconButton(
+                          onPressed: () => Navigator.of(context).maybePop(),
+                          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                          icon: Icon(Icons.adaptive.arrow_back, color: on),
+                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                        ),
+                      ),
+                      const SizedBox(height: Space.s),
+                    ],
                     if (leading != null) ...[leading!, const SizedBox(height: Space.m)],
                     Text(title, style: Txt.display.copyWith(color: on)),
                     if (message != null) ...[
