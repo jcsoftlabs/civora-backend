@@ -4,7 +4,7 @@ import { PLATFORM_BRAND, composeMail, onColor, renderMail, type Brand } from "..
 import { OTP_MESSAGES, RECEIPT_MESSAGES } from "../src/lib/messaging/templates.js";
 
 const party: Brand = { kind: "party", name: "Parti Horizon", color: "#7A2E5C" };
-const site = "https://civora.space";
+const site = "https://www.civora.space";
 
 describe("e-mails aux couleurs du parti", () => {
   it("met le code en avant et garde une version texte lisible", () => {
@@ -25,7 +25,12 @@ describe("e-mails aux couleurs du parti", () => {
   });
 
   it("ne rend cliquables que les liens web", () => {
-    const body = { preheader: "", heading: "Test", paragraphs: [], action: { label: "Ouvrir", url: "javascript:alert(1)" } };
+    const body = {
+      preheader: "",
+      heading: "Test",
+      paragraphs: [],
+      action: { label: "Ouvrir", url: "javascript:alert(1)" },
+    };
     const { html, text } = renderMail(body, party, "fr", site);
     expect(html).not.toContain("javascript:");
     expect(text).not.toContain("javascript:");
@@ -48,7 +53,13 @@ describe("e-mails aux couleurs du parti", () => {
     const m = composeMail({
       to: "a@example.test",
       subject: "S",
-      body: RECEIPT_MESSAGES.ht.body({ number: "R-1", amount: "500,00 HTG", method: "MonCash", periods: "2026", recordedBy: "" }),
+      body: RECEIPT_MESSAGES.ht.body({
+        number: "R-1",
+        amount: "500,00 HTG",
+        method: "MonCash",
+        periods: "2026",
+        recordedBy: "",
+      }),
       brand: { ...party, logo: { content: Buffer.from("png"), contentType: "image/png" } },
       locale: "ht",
     });

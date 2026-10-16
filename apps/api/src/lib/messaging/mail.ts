@@ -220,7 +220,7 @@ export function renderMail(body: MailBody, brand: Brand, locale: MessageLocale, 
 }
 
 /** Adresse publique du site commercial : images de l'en-tête et lien du pied de page. */
-let siteUrl = "https://civora.space";
+let siteUrl = "https://www.civora.space";
 export function configureMail(opts: { siteUrl: string }) {
   siteUrl = opts.siteUrl.replace(/\/$/, "");
 }

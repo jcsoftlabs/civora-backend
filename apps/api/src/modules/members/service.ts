@@ -123,13 +123,7 @@ export class MembersService {
       return ch ? { ...ch, locale: user.locale } : null;
     });
     if (!issued) return decoy;
-    await this.auth.deliverCode(
-      { email, phone: null, locale: issued.locale },
-      "email",
-      party,
-      issued.code,
-      "signup",
-    );
+    await this.auth.deliverCode({ email, phone: null, locale: issued.locale }, "email", party, issued.code, "signup");
     return { challengeId: issued.challengeId };
   }
 

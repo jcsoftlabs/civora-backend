@@ -24,7 +24,11 @@ export interface EmailMessage {
 export function formatFrom(defaultFrom: string, name?: string): string {
   if (!name) return defaultFrom;
   const address = /<([^>]+)>/.exec(defaultFrom)?.[1] ?? defaultFrom.trim();
-  const clean = name.replace(/[\r\n"<>\\]/g, " ").replace(/\s+/g, " ").trim().slice(0, 70);
+  const clean = name
+    .replace(/[\r\n"<>\\]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 70);
   return clean ? `"${clean}" <${address}>` : defaultFrom;
 }
 

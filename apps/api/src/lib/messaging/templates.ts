@@ -65,8 +65,7 @@ export const OTP_MESSAGES: Record<MessageLocale, OtpMessage> = {
         paragraphs: [`Antre kòd sa a pou w konekte nan espas ${party}.`],
         code: { label: "Kòd ou", value: code, hint: "L ap ekspire nan 10 minit." },
         note:
-          "Pa bay pèsonn kòd sa a, menm yon responsab pati a. " +
-          "Si se pa ou ki mande kòd sa a, pa okipe mesaj la.",
+          "Pa bay pèsonn kòd sa a, menm yon responsab pati a. " + "Si se pa ou ki mande kòd sa a, pa okipe mesaj la.",
       }),
       signup: (party, code) => ({
         preheader: `Kòd ou : ${code}. L ap ekspire nan 10 minit.`,
