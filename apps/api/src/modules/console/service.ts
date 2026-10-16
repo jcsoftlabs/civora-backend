@@ -2,6 +2,7 @@
 // de gestion (activer, suspendre, formule, essai, module Élections, invitation), création manuelle, équipe et
 // journal. La console ne lit que des totaux : jamais un membre, un paiement ou un document d'une organisation
 // (SEC-11). Chaque action est inscrite au journal de la console et au journal de l'organisation concernée.
+import { PLATFORM_BRAND, composeMail } from "../../lib/messaging/mail.js";
 import { and, count, desc, eq, isNull, sql } from "drizzle-orm";
 import {
   members,
@@ -398,20 +399,27 @@ export class ConsoleService {
     const f = await this.founder(id);
     if (!f?.email) throw new ApiError(409, "founder_without_email");
     const url = `${this.d.partyOrigin(p.slug)}/admin/connexion`;
-    await this.d.email.send({
-      to: f.email,
-      subject: `L'espace ${p.name} est prêt sur civora`,
-      text: [
-        `Bonjour ${f.name},`,
-        "",
-        `L'espace de ${p.name} est ouvert sur civora. Vous en êtes le membre n° 000001, avec tous les droits.`,
-        "",
-        `Connectez-vous ici : ${url}`,
-        "Saisissez votre adresse e-mail : vous recevrez un code, puis vous activerez la double authentification.",
-        "",
-        "L'équipe civora",
-      ].join("\n"),
-    });
+    await this.d.email.send(
+      composeMail({
+        to: f.email,
+        subject: `L'espace ${p.name} est prêt sur civora`,
+        body: {
+          preheader: `L'espace de ${p.name} est ouvert. Connectez-vous pour commencer.`,
+          heading: `L'espace ${p.name} est ouvert`,
+          paragraphs: [
+            `Bonjour ${f.name},`,
+            `L'espace de ${p.name} est ouvert sur civora. Vous en êtes le membre n° 000001, avec tous les droits.`,
+          ],
+          action: { label: "Ouvrir mon espace", url },
+          after: [
+            "Saisissez votre adresse e-mail : vous recevrez un code, puis vous activerez la double authentification.",
+          ],
+          signature: "L'équipe civora",
+        },
+        brand: PLATFORM_BRAND,
+        locale: "fr",
+      }),
+    );
     await this.trace(staff, id, "party.invite", { to: "founder" }, ip);
   }
 

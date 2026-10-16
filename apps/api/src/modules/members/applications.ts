@@ -5,6 +5,8 @@ import { members, parties, referrals, users, withParty, zones } from "@civora/db
 import { audit } from "../../lib/audit.js";
 import type { EmailSender } from "../../lib/messaging/email.js";
 import { APPLICATION_MESSAGES, messageLocale } from "../../lib/messaging/templates.js";
+import { partyBrand } from "../../lib/messaging/brand.js";
+import { composeMail } from "../../lib/messaging/mail.js";
 import { zoneScope } from "../../lib/zone-scope.js";
 import { ApiError } from "../../plugins/errors.js";
 import type { DuesService } from "../dues/service.js";
@@ -109,20 +111,21 @@ export class ApplicationsService {
     });
 
     if (notice.email) {
-      const t = APPLICATION_MESSAGES[messageLocale(notice.locale)];
-      await this.email
-        .send(
-          decision === "approved"
-            ? {
-                to: notice.email,
-                subject: t.approvedSubject(notice.partyName),
-                text: t.approvedText(notice.partyName, notice.number),
-              }
-            : {
-                to: notice.email,
-                subject: t.rejectedSubject(notice.partyName),
-                text: t.rejectedText(notice.partyName),
-              },
+      const locale = messageLocale(notice.locale);
+      const t = APPLICATION_MESSAGES[locale];
+      const to = notice.email;
+      await partyBrand(req.partyId)
+        .then((brand) =>
+          this.email.send(
+            composeMail({
+              to,
+              brand,
+              locale,
+              ...(decision === "approved"
+                ? { subject: t.approvedSubject(notice.partyName), body: t.approved(notice.partyName, notice.number) }
+                : { subject: t.rejectedSubject(notice.partyName), body: t.rejected(notice.partyName) }),
+            }),
+          ),
         )
         // La décision est enregistrée même si l'e-mail échoue ; le membre la verra dans l'application.
         .catch((err: unknown) => req.log.warn({ err }, "e-mail de décision non envoyé"));

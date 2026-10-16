@@ -17,6 +17,8 @@ import {
 import { audit } from "../../lib/audit.js";
 import type { EmailSender } from "../../lib/messaging/email.js";
 import { RECEIPT_MESSAGES, messageLocale } from "../../lib/messaging/templates.js";
+import { partyBrand } from "../../lib/messaging/brand.js";
+import { composeMail } from "../../lib/messaging/mail.js";
 import { formatAmount, sum, toCents } from "../../lib/money.js";
 import { today } from "../../lib/today.js";
 import { zoneScope } from "../../lib/zone-scope.js";
@@ -320,18 +322,21 @@ export class PaymentsService {
     if (!r?.email) return;
     const lang = messageLocale(r.locale);
     const t = RECEIPT_MESSAGES[lang];
-    await this.email.send({
-      to: r.email,
-      subject: t.subject(r.partyName, r.number),
-      text: t.text({
-        party: r.partyName,
-        number: r.number,
-        amount: formatAmount(r.amount, r.currency),
-        method: t.methods[r.provider] ?? r.provider,
-        periods: r.lines.map((l) => `${l.plan[lang] ?? l.plan.fr} (${l.periodStart})`).join(", "),
-        recordedBy: r.recordedBy ?? "",
+    await this.email.send(
+      composeMail({
+        to: r.email,
+        subject: t.subject(r.partyName, r.number),
+        body: t.body({
+          number: r.number,
+          amount: formatAmount(r.amount, r.currency),
+          method: t.methods[r.provider] ?? r.provider,
+          periods: r.lines.map((l) => `${l.plan[lang] ?? l.plan.fr} (${l.periodStart})`).join(", "),
+          recordedBy: r.recordedBy ?? "",
+        }),
+        brand: await partyBrand(partyId),
+        locale: lang,
       }),
-    });
+    );
   }
 
   /** Reçu : visible par le membre lui-même, ou par un responsable qui lit les paiements dans sa zone. */

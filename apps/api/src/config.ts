@@ -25,6 +25,8 @@ const schema = z
     AUTH_SECRET: z.string().min(32).optional(),
     RESEND_API_KEY: z.string().optional(),
     RESEND_FROM: z.string().default("civora <notifications@civora.space>"),
+    /** Site commercial : images et liens du pied de page des e-mails. */
+    PUBLIC_SITE_URL: z.string().url().default("https://civora.space"),
     /** Boîte qui reçoit les demandes de démonstration du site commercial (SOC-12). */
     SALES_EMAIL: z.string().email().optional(),
     /** Fournisseur SMS de la plateforme : « none » en production tant qu'aucun n'est choisi, « log » en local. */

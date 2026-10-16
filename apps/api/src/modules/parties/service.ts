@@ -217,7 +217,7 @@ export class PartiesService {
     await this.auth.deliverCode(
       { email, phone: null, locale: body.founder.locale },
       "email",
-      body.party.name,
+      { id: partyId, name: body.party.name },
       issued.code,
       "party_signup",
     );

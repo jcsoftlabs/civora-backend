@@ -126,7 +126,7 @@ export class MembersService {
     await this.auth.deliverCode(
       { email, phone: null, locale: issued.locale },
       "email",
-      party.name,
+      party,
       issued.code,
       "signup",
     );

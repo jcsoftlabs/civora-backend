@@ -22,6 +22,8 @@ import { deriveKey, open, seal } from "../../lib/crypto.js";
 import type { EmailSender } from "../../lib/messaging/email.js";
 import type { SmsSender } from "../../lib/messaging/sms.js";
 import { OTP_MESSAGES, messageLocale } from "../../lib/messaging/templates.js";
+import { partyBrand } from "../../lib/messaging/brand.js";
+import { PLATFORM_BRAND, composeMail } from "../../lib/messaging/mail.js";
 import type { PartyKeys } from "../../lib/party-keys.js";
 import { generateTotpSecret, otpauthUri, verifyTotp } from "../../lib/totp.js";
 import { ApiError } from "../../plugins/errors.js";
@@ -175,29 +177,29 @@ export class AuthService {
     await tx.update(otpChallenges).set({ consumedAt: null }).where(eq(otpChallenges.id, challengeId));
   }
 
-  /** Envoie le code par le canal choisi, dans la langue du compte. */
+  /** Envoie le code par le canal choisi, dans la langue du compte, aux couleurs du parti (civora pour une création). */
   async deliverCode(
     to: { email: string | null; phone: string | null; locale: string | null },
     channel: Channel,
-    partyName: string,
+    party: { id: string; name: string },
     code: string,
     purpose: OtpPurpose,
   ): Promise<void> {
-    const t = OTP_MESSAGES[messageLocale(to.locale)];
-    const subject =
-      purpose === "party_signup"
-        ? t.partySubject(partyName)
-        : purpose === "signup"
-          ? t.signupSubject(partyName)
-          : t.subject(partyName);
-    const text =
-      purpose === "party_signup"
-        ? t.partyText(partyName, code)
-        : purpose === "signup"
-          ? t.signupText(partyName, code)
-          : t.text(partyName, code);
-    if (channel === "email" && to.email) await this.d.email.send({ to: to.email, subject, text });
-    else if (channel === "sms" && to.phone) await this.d.sms.send(to.phone, t.sms(partyName, code));
+    const locale = messageLocale(to.locale);
+    const t = OTP_MESSAGES[locale];
+    const key = purpose === "party_signup" || purpose === "signup" ? purpose : "login";
+    if (channel === "email" && to.email) {
+      const brand = purpose === "party_signup" ? PLATFORM_BRAND : await partyBrand(party.id);
+      await this.d.email.send(
+        composeMail({
+          to: to.email,
+          subject: t.subject[key](party.name),
+          body: t.body[key](party.name, code),
+          brand,
+          locale,
+        }),
+      );
+    } else if (channel === "sms" && to.phone) await this.d.sms.send(to.phone, t.sms(party.name, code));
   }
 
   /** Ouvre une session ; un titulaire de poste devra valider sa 2FA avant d'exercer ses droits. */
@@ -298,7 +300,7 @@ export class AuthService {
       return ch ? { ...ch, m } : null;
     });
     if (!found) return decoy;
-    await this.deliverCode(found.m, input.channel, party.name, found.code, "login");
+    await this.deliverCode(found.m, input.channel, party, found.code, "login");
     return { challengeId: found.challengeId };
   }
 

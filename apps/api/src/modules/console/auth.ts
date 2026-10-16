@@ -1,6 +1,7 @@
 // SOC-10 : connexion à la console de l'éditeur. Comptes du personnel distincts des comptes d'organisation :
 // code à six chiffres par e-mail (dix minutes, cinq essais), puis double authentification obligatoire
 // (application d'authentification). Session de douze heures, jeton aléatoire dont seule l'empreinte est gardée.
+import { PLATFORM_BRAND, composeMail } from "../../lib/messaging/mail.js";
 import { createHash, createHmac, randomBytes, randomInt, randomUUID, timingSafeEqual } from "node:crypto";
 import { and, count, eq, gt, isNull } from "drizzle-orm";
 import { platformAuditLog, platformStaff, staffChallenges, staffSessions, withConsole, type Tx } from "@civora/db";
@@ -78,11 +79,21 @@ export class ConsoleAuth {
         expiresAt: new Date(this.now() + CODE_TTL_MS),
         createdAt: new Date(this.now()),
       });
-      await this.d.email.send({
-        to: email,
-        subject: `${code} : votre code de connexion à la console civora`,
-        text: `Bonjour ${s.name},\n\nVotre code de connexion à la console civora : ${code}\nIl expire dans dix minutes.\n\nSi vous n'avez rien demandé, ignorez ce message.`,
-      });
+      await this.d.email.send(
+        composeMail({
+          to: email,
+          subject: `${code} : votre code de connexion à la console civora`,
+          body: {
+            preheader: `Votre code : ${code}. Il expire dans 10 minutes.`,
+            heading: "Connexion à la console",
+            paragraphs: [`Bonjour ${s.name},`, "Saisissez ce code pour vous connecter à la console civora."],
+            code: { label: "Votre code", value: code, hint: "Il expire dans 10 minutes." },
+            note: "Si vous n'avez rien demandé, ignorez ce message et prévenez l'équipe.",
+          },
+          brand: PLATFORM_BRAND,
+          locale: "fr",
+        }),
+      );
       await consoleAudit(tx, { staffId: s.id, action: "console.code", ...(ip ? { ip } : {}) });
       return { challengeId };
     });

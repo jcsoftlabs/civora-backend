@@ -28,6 +28,8 @@ import { audit } from "../../../lib/audit.js";
 import { deriveKey, hmacHex, open, seal } from "../../../lib/crypto.js";
 import type { EmailSender } from "../../../lib/messaging/email.js";
 import { INVITE_MESSAGES, type MessageLocale } from "../../../lib/messaging/templates.js";
+import { partyBrand } from "../../../lib/messaging/brand.js";
+import { composeMail } from "../../../lib/messaging/mail.js";
 import type { PartyKeys } from "../../../lib/party-keys.js";
 import type { ObjectStorage } from "../../../lib/storage/types.js";
 import { ApiError } from "../../../plugins/errors.js";
@@ -1023,20 +1025,26 @@ export class MemberImportService {
       return { rows, party: rows.length ? await this.partyInfo(tx) : null };
     });
     let sent = 0;
+    const brand = batch.rows.length ? await partyBrand(partyId) : null;
     for (const r of batch.rows) {
       if (!r.email) continue;
-      const msg = INVITE_MESSAGES[(r.locale === "ht" ? "ht" : "fr") as MessageLocale];
-      await this.deps.email.send({
-        to: r.email,
-        subject: msg.subject(batch.party!.name),
-        text: msg.text({
-          party: batch.party!.name,
-          firstName: r.firstName,
-          number: r.number,
-          email: r.email,
-          link: batch.party!.link,
+      const locale = (r.locale === "ht" ? "ht" : "fr") as MessageLocale;
+      const msg = INVITE_MESSAGES[locale];
+      await this.deps.email.send(
+        composeMail({
+          to: r.email,
+          subject: msg.subject(batch.party!.name),
+          body: msg.body({
+            party: batch.party!.name,
+            firstName: r.firstName,
+            number: r.number,
+            email: r.email,
+            link: batch.party!.link,
+          }),
+          brand: brand!,
+          locale,
         }),
-      });
+      );
       await withParty(partyId, (tx) =>
         tx.update(memberImportRows).set({ invitedAt: new Date() }).where(eq(memberImportRows.id, r.id)),
       );

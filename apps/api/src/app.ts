@@ -10,6 +10,8 @@ import { randomBytes } from "node:crypto";
 import type { KeyProvider } from "./lib/crypto.js";
 import { EntitlementsCache, fetchEntitlements } from "./lib/entitlements.js";
 import { LazyKeyProvider } from "./lib/lazy-key-provider.js";
+import { configureBrands } from "./lib/messaging/brand.js";
+import { configureMail } from "./lib/messaging/mail.js";
 import { LogEmailSender, ResendEmailSender, type EmailSender } from "./lib/messaging/email.js";
 import { createSmsSender } from "./lib/messaging/sms.js";
 import { PartyKeys } from "./lib/party-keys.js";
@@ -151,6 +153,9 @@ export async function buildApp(config: Config, deps: AppDeps = {}) {
   await app.register(territoryRoutes);
   await app.register(organRoutes);
   const filesService = new FilesService(deps.storage ?? buildStorage(config));
+  // E-mails aux couleurs du parti : logo lu dans le stockage, images de l'en-tête sur le site commercial.
+  configureBrands(filesService.storage);
+  configureMail({ siteUrl: config.PUBLIC_SITE_URL });
   const dues = new DuesService();
   await app.register(memberRoutes, {
     members: new MembersService(authService, new IdentityService(keys), dues),

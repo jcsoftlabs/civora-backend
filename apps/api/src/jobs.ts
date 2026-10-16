@@ -15,6 +15,8 @@ import { OnlinePayments } from "./modules/money/online.js";
 import { PushService } from "./modules/communication/push.js";
 import { buildPushSender } from "./lib/messaging/push-registry.js";
 import type { PushSender } from "./lib/messaging/push.js";
+import { configureBrands } from "./lib/messaging/brand.js";
+import { configureMail } from "./lib/messaging/mail.js";
 import { LogEmailSender, ResendEmailSender, type EmailSender } from "./lib/messaging/email.js";
 import { LazyKeyProvider } from "./lib/lazy-key-provider.js";
 import { PartyKeys } from "./lib/party-keys.js";
@@ -52,6 +54,9 @@ export function createJobServices(
 ): JobServices {
   const keys = overrides.keys ?? new PartyKeys(new LazyKeyProvider());
   const dues = new DuesService();
+  const storage = overrides.storage ?? buildStorage(config);
+  configureBrands(storage);
+  configureMail({ siteUrl: config.PUBLIC_SITE_URL });
   return {
     online: new OnlinePayments({
       providers: overrides.providers ?? buildPaymentProviders(config.NODE_ENV),
@@ -62,7 +67,7 @@ export function createJobServices(
     dues,
     push: new PushService(overrides.push ?? buildPushSender(config, log)),
     imports: new MemberImportService({
-      storage: overrides.storage ?? buildStorage(config),
+      storage,
       keys,
       identity: new IdentityService(keys),
       dues,
