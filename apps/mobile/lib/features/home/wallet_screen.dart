@@ -9,6 +9,7 @@ import '../../core/time.dart';
 import '../../l10n/app_localizations.dart';
 import '../../widgets/layout.dart';
 import '../../widgets/member_card.dart';
+import '../../widgets/module_icons.dart';
 import '../../widgets/objects.dart';
 import 'common.dart';
 
@@ -142,14 +143,14 @@ class WalletScreen extends ConsumerWidget {
         SheetHeading(t.shortcutsTitle),
         _Shortcuts(
           items: [
-            (Icons.badge_outlined, t.shortcutCard, '/carte'),
-            (Icons.person_outline, t.shortcutProfile, '/fiche'),
-            if (on('/training')) (Icons.school_outlined, t.actTraining, '/formations'),
-            if (on('/events')) (Icons.event_outlined, t.actEvents, '/rassemblements'),
-            if (on('/members/me/dues')) (Icons.payments_outlined, t.actDues, '/cotisations'),
-            if (on('/votes')) (Icons.how_to_vote_outlined, t.actVotes, '/votes'),
-            if (referralOn) (Icons.group_add_outlined, t.actReferral, '/parrainage'),
-            if (on('/feed?kind=podcast&limit=50')) (Icons.headphones_outlined, t.actPodcasts, '/podcasts'),
+            (ModuleKind.card, t.shortcutCard, '/carte'),
+            (ModuleKind.profile, t.shortcutProfile, '/fiche'),
+            if (on('/training')) (ModuleKind.training, t.actTraining, '/formations'),
+            if (on('/events')) (ModuleKind.events, t.actEvents, '/rassemblements'),
+            if (on('/members/me/dues')) (ModuleKind.dues, t.actDues, '/cotisations'),
+            if (on('/votes')) (ModuleKind.votes, t.actVotes, '/votes'),
+            if (referralOn) (ModuleKind.referral, t.actReferral, '/parrainage'),
+            if (on('/feed?kind=podcast&limit=50')) (ModuleKind.podcasts, t.actPodcasts, '/podcasts'),
           ],
         ),
         if (pointsOn || referralOn) ...[
@@ -176,55 +177,30 @@ class WalletScreen extends ConsumerWidget {
   }
 }
 
-/// Raccourcis de l'accueil : des pastilles rondes en grille de quatre, fonds alternés (teinte du parti, ambre,
-/// papier fort) comme les autocollants de l'onglet Agir. Cibles de 72 px.
+/// Raccourcis de l'accueil : les mêmes pastilles que l'onglet Agir (objets dessinés, posés de travers), en plus
+/// petit et sur quatre colonnes.
 class _Shortcuts extends StatelessWidget {
   const _Shortcuts({required this.items});
-  final List<(IconData, String, String)> items;
+  final List<(ModuleKind, String, String)> items;
 
   @override
-  Widget build(BuildContext context) {
-    final brand = Theme.of(context).colorScheme.primary;
-    final tints = [brand.withValues(alpha: 0.12), Palette.accent.withValues(alpha: 0.22), const Color(0xFFE9E2D6)];
-    return GridView.count(
-      crossAxisCount: 4,
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 6,
-      crossAxisSpacing: 4,
-      childAspectRatio: 0.78,
-      children: [
-        for (final (i, (icon, label, path)) in items.indexed)
-          Semantics(
-            button: true,
-            label: label,
-            excludeSemantics: true,
-            child: InkWell(
-              onTap: () => context.push(path),
-              borderRadius: BorderRadius.circular(16),
-              child: Column(
-                children: [
-                  const SizedBox(height: 6),
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(color: tints[i % 3], shape: BoxShape.circle),
-                    child: Icon(icon, color: Palette.ink, size: 26),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Txt.small.copyWith(color: Palette.ink, fontWeight: FontWeight.w500, height: 1.2),
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => GridView.count(
+    crossAxisCount: 4,
+    shrinkWrap: true,
+    padding: EdgeInsets.zero,
+    physics: const NeverScrollableScrollPhysics(),
+    mainAxisSpacing: 4,
+    crossAxisSpacing: 2,
+    childAspectRatio: 0.8,
+    children: [
+      for (final (i, (kind, label, path)) in items.indexed)
+        ModuleSticker(
+          kind: kind,
+          label: label,
+          size: 64,
+          tilt: const [-0.06, 0.05, -0.03, 0.07, -0.05, 0.03, -0.07, 0.04][i % 8],
+          onTap: () => context.push(path),
+        ),
+    ],
+  );
 }

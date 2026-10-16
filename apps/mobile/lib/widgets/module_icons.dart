@@ -6,7 +6,7 @@ import '../core/theme.dart';
 
 /// Modules de l'onglet Agir, dessinés comme des objets du militantisme (skill ui-design) plutôt qu'avec des
 /// pictogrammes du commerce : urne, livre, billet, pièces, micro, tirages photo, cartes de membre.
-enum ModuleKind { votes, training, events, dues, podcasts, albums, referral }
+enum ModuleKind { votes, training, events, dues, podcasts, albums, referral, card, profile }
 
 /// Pastille d'un module : l'objet dessiné sur un fond teinté, posée de travers comme un autocollant.
 class ModuleSticker extends StatelessWidget {
@@ -19,6 +19,7 @@ class ModuleSticker extends StatelessWidget {
     this.stateColor,
     this.count = 0,
     this.tilt = 0,
+    this.size = 92,
   });
 
   final ModuleKind kind;
@@ -27,6 +28,9 @@ class ModuleSticker extends StatelessWidget {
   final Color? stateColor;
   final int count;
   final double tilt;
+
+  /// Côté de la pastille : 92 sur l'onglet Agir, plus petite pour les raccourcis de l'Accueil.
+  final double size;
   final VoidCallback onTap;
 
   @override
@@ -35,7 +39,7 @@ class ModuleSticker extends StatelessWidget {
     // Fonds alternés : teinte du parti, ambre, papier fort ; jamais deux voisins identiques.
     final tint = switch (kind) {
       ModuleKind.votes || ModuleKind.dues || ModuleKind.albums => brand.withValues(alpha: 0.12),
-      ModuleKind.training || ModuleKind.referral => Palette.accent.withValues(alpha: 0.22),
+      ModuleKind.training || ModuleKind.referral || ModuleKind.profile => Palette.accent.withValues(alpha: 0.22),
       _ => const Color(0xFFE9E2D6),
     };
     return Semantics(
@@ -50,21 +54,21 @@ class ModuleSticker extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(
-                width: 92,
-                height: 92,
+                width: size,
+                height: size,
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
                     Transform.rotate(
                       angle: tilt,
                       child: Container(
-                        width: 92,
-                        height: 92,
+                        width: size,
+                        height: size,
                         decoration: ShapeDecoration(
                           color: tint,
-                          shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(46)),
+                          shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(size / 2)),
                         ),
-                        padding: const EdgeInsets.all(14),
+                        padding: EdgeInsets.all(size * 0.152),
                         child: CustomPaint(painter: _ObjectPainter(kind, brand)),
                       ),
                     ),
@@ -93,13 +97,13 @@ class ModuleSticker extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: size < 80 ? 6 : 10),
               Text(
                 label,
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: -0.1),
+                style: TextStyle(fontSize: size < 80 ? 13 : 15, fontWeight: FontWeight.w600, letterSpacing: -0.1),
               ),
               if (state != null) ...[
                 const SizedBox(height: 2),
@@ -310,6 +314,50 @@ class _ObjectPainter extends CustomPainter {
           ..strokeCap = StrokeCap.round;
         canvas.drawLine(const Offset(54, 10.5), const Offset(54, 17.5), plus);
         canvas.drawLine(const Offset(50.5, 14), const Offset(57.5, 14), plus);
+      case ModuleKind.card:
+        // La carte de membre, de biais : bande ambre, numéro, QR code dans le coin.
+        canvas.save();
+        canvas.translate(32, 32);
+        canvas.rotate(-0.18);
+        final c = rr(-26, -17, 26, 17, 5);
+        canvas.drawRRect(c, fill(brand));
+        canvas.drawRRect(c, stroke..strokeWidth = 2);
+        canvas.drawRRect(rr(-20, -11, -6, -7, 2), amber);
+        canvas.drawLine(
+          const Offset(-20, 3),
+          const Offset(2, 3),
+          Paint()
+            ..color = Colors.white
+            ..strokeWidth = 3.2
+            ..strokeCap = StrokeCap.round,
+        );
+        canvas.drawLine(
+          const Offset(-20, 10),
+          const Offset(-6, 10),
+          Paint()
+            ..color = Colors.white.withValues(alpha: 0.7)
+            ..strokeWidth = 2
+            ..strokeCap = StrokeCap.round,
+        );
+        canvas.drawRRect(rr(8, -2, 21, 11, 1.5), white);
+        for (final o in const [Offset(10.5, 0.5), Offset(15, 5), Offset(10.5, 6), Offset(16.5, 0.5)]) {
+          canvas.drawRect(Rect.fromLTWH(o.dx, o.dy, 3, 3), fill(Palette.ink));
+        }
+        canvas.restore();
+      case ModuleKind.profile:
+        // La fiche d'adhésion sur sa planchette : photo, lignes remplies, pince ambre.
+        final board = rr(14, 10, 50, 58, 4);
+        canvas.drawRRect(board, white);
+        canvas.drawRRect(board, stroke);
+        canvas.drawRRect(rr(24, 6, 40, 14, 3), amber);
+        canvas.drawRRect(rr(24, 6, 40, 14, 3), ink..strokeWidth = 2);
+        canvas.drawRRect(rr(19, 20, 30, 32, 2), fill(brand.withValues(alpha: 0.25)));
+        canvas.drawCircle(const Offset(24.5, 25), 2.6, fill(brand));
+        canvas.drawLine(const Offset(34, 23), const Offset(45, 23), ink..strokeWidth = 2);
+        canvas.drawLine(const Offset(34, 29), const Offset(42, 29), ink..strokeWidth = 2);
+        for (final y in [39.0, 46.0, 52.0]) {
+          canvas.drawLine(Offset(19, y), Offset(y == 52 ? 36 : 45, y), ink..strokeWidth = 1.8);
+        }
     }
   }
 
