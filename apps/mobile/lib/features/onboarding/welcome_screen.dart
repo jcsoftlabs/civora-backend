@@ -20,7 +20,6 @@ class WelcomeScreen extends ConsumerStatefulWidget {
 }
 
 class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
-  bool _byPhone = false;
   bool _joining = false;
   bool _busy = false;
   String? _error;
@@ -39,17 +38,9 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
   Future<void> _signIn() async {
     final t = L.of(context);
     var v = _contact.text.trim();
-    if (!_byPhone && !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v)) {
+    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v)) {
       setState(() => _error = t.errorInvalidEmail);
       return;
-    }
-    if (_byPhone) {
-      v = v.replaceAll(RegExp(r'[\s.-]'), '');
-      if (RegExp(r'^\d{8}$').hasMatch(v)) v = '+509$v';
-      if (!RegExp(r'^\+\d{8,15}$').hasMatch(v)) {
-        setState(() => _error = t.errorInvalidPhone);
-        return;
-      }
     }
     setState(() {
       _busy = true;
@@ -57,7 +48,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
     });
     try {
       final flow = ref.read(joinFlowProvider.notifier)..reset();
-      await flow.requestCode(_byPhone ? 'sms' : 'email', v);
+      await flow.requestCode('email', v);
       if (mounted) context.push('/code');
     } on Object catch (e) {
       setState(() => _error = errorText(t, e));
@@ -154,44 +145,34 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
             TextField(
               controller: _contact,
               autocorrect: false,
-              keyboardType: _byPhone ? TextInputType.phone : TextInputType.emailAddress,
-              autofillHints: [_byPhone ? AutofillHints.telephoneNumber : AutofillHints.email],
+              keyboardType: TextInputType.emailAddress,
+              autofillHints: const [AutofillHints.email],
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => _signIn(),
               decoration: InputDecoration(
-                labelText: _byPhone ? t.joinPhone : t.joinEmail,
-                hintText: _byPhone ? t.phoneHint : t.emailHint,
+                labelText: t.joinEmail,
+                hintText: t.emailHint,
                 errorText: _error,
                 errorMaxLines: 3,
               ),
             ),
             const SizedBox(height: 14),
             FilledButton(onPressed: _busy ? null : _signIn, child: Text(t.joinSend)),
-            const SizedBox(height: 4),
-            TextButton(
-              onPressed: () => setState(() {
-                _byPhone = !_byPhone;
-                _contact.clear();
-                _error = null;
-              }),
-              child: Text(_byPhone ? t.welcomeUseEmail : t.welcomeUsePhone),
-            ),
+            // Pas de connexion par SMS ici : aucun fournisseur SMS n'est branché sur la plateforme. Un parti qui
+            // l'active le propose sur son propre écran de connexion (otpChannels).
             const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.symmetric(vertical: 16),
               child: Divider(color: Palette.line),
             ),
+            // Deuxième façon d'entrer : le QR code de son organisation (affiche, carte, invitation).
+            OutlinedButton.icon(
+              onPressed: () => context.push('/scanner'),
+              icon: const Icon(Icons.qr_code_scanner),
+              label: Text(t.welcomeScan),
+            ),
             if (!_joining)
-              TextButton.icon(
-                onPressed: () => setState(() => _joining = true),
-                icon: const Icon(Icons.qr_code_scanner),
-                label: Text(t.welcomeJoinOrg),
-              )
+              TextButton(onPressed: () => setState(() => _joining = true), child: Text(t.welcomeHaveCode))
             else ...[
-              OutlinedButton.icon(
-                onPressed: () => context.push('/scanner'),
-                icon: const Icon(Icons.qr_code_scanner),
-                label: Text(t.welcomeScan),
-              ),
               const SizedBox(height: 12),
               TextField(
                 controller: _code,

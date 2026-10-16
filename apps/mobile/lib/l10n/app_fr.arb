@@ -595,5 +595,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "welcomeHaveCode": "J'ai le code de mon organisation"
 }

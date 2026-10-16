@@ -1861,6 +1861,12 @@ abstract class L {
   /// In fr, this message translates to:
   /// **'Ce média n\'est pas encore sur le téléphone. Il faut le réseau pour l\'ouvrir.'**
   String get courseMediaOffline;
+
+  /// No description provided for @welcomeHaveCode.
+  ///
+  /// In fr, this message translates to:
+  /// **'J\'ai le code de mon organisation'**
+  String get welcomeHaveCode;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

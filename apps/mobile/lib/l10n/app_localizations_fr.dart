@@ -1019,4 +1019,7 @@ class LFr extends L {
 
   @override
   String get courseMediaOffline => 'Ce média n\'est pas encore sur le téléphone. Il faut le réseau pour l\'ouvrir.';
+
+  @override
+  String get welcomeHaveCode => 'J\'ai le code de mon organisation';
 }

@@ -571,5 +571,6 @@
   "courseOfflineBusy": "Telechajman ap fèt",
   "courseOfflineReady": "Medya yo disponib san rezo",
   "courseOfflineFailed": "Kèk medya pa t telechaje. Eseye ankò ak rezo.",
-  "courseMediaOffline": "Medya sa a poko nan telefòn nan. Fòk gen rezo pou louvri l."
+  "courseMediaOffline": "Medya sa a poko nan telefòn nan. Fòk gen rezo pou louvri l.",
+  "welcomeHaveCode": "Mwen gen kòd òganizasyon mwen"
 }

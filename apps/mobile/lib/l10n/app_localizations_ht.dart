@@ -1011,4 +1011,7 @@ class LHt extends L {
 
   @override
   String get courseMediaOffline => 'Medya sa a poko nan telefòn nan. Fòk gen rezo pou louvri l.';
+
+  @override
+  String get welcomeHaveCode => 'Mwen gen kòd òganizasyon mwen';
 }
