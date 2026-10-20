@@ -33,7 +33,10 @@ openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:BACKUP_PASSPHRASE \
 
 mkdir -p "$pgdata" "$sock"
 [ "$(id -u)" = 0 ] && chown -R postgres "$work" "$sock"
-as_pg initdb -D "$pgdata" -U postgres --auth=trust -E UTF8 --locale=C >/dev/null || fail "création du Postgres temporaire"
+as_pg initdb -D "$pgdata" -U postgres --auth=trust -E UTF8 --locale=C >"$work/initdb.log" 2>&1 || {
+  tail -n 20 "$work/initdb.log" >&2
+  fail "création du Postgres temporaire ($(tail -n 1 "$work/initdb.log"))"
+}
 as_pg pg_ctl -D "$pgdata" -l "$work/server.log" -o "-c listen_addresses='' -k $sock" -w start >/dev/null || {
   tail -n 20 "$work/server.log" >&2
   fail "démarrage du Postgres temporaire"

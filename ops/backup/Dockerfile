@@ -3,6 +3,9 @@
 FROM postgres:18-alpine
 RUN apk add --no-cache curl openssl
 COPY ops/backup/*.sh /opt/backup/
+# Tout tourne sous le compte postgres : initdb refuse root, et l'hébergeur peut interdire de changer de compte.
+USER postgres
+WORKDIR /tmp
 # L'image Postgres démarre un serveur par défaut : ici, on lance seulement le script.
 ENTRYPOINT []
 CMD ["sh", "/opt/backup/run.sh"]
